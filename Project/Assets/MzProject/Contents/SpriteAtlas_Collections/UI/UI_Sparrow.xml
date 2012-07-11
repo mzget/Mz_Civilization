@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://texturepacker.com-->
+<!-- $TexturePacker:SmartUpdate:85d33a250738fa71cb6457c726411a9f$ -->
+<TextureAtlas imagePath="UI_Sparrow.png">
+    <SubTexture name="ProcessBar_bg" x="2" y="2" width="256" height="32"/>
+    <SubTexture name="ProcessBar_scroll" x="2" y="36" width="256" height="32"/>
+</TextureAtlas>
