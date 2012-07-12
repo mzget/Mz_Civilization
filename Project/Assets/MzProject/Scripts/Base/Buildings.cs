@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class BuildingsTimeData {
 	
-	public float[] buildingTimesData = new float[Buildings.MAX_LEVEL];
+	public float[] arrBuildingTimesData = new float[Buildings.MAX_LEVEL];
 	
 	public BuildingsTimeData(Buildings.BuildingType r_buildingType) 
 	{
@@ -19,7 +19,7 @@ public class BuildingsTimeData {
 				30f, 90f, 300f, 600f, 1200f
 			};
 			
-			buildingTimesData = time_resourceType;
+			arrBuildingTimesData = time_resourceType;
 		}
 	}
 };
@@ -49,8 +49,8 @@ public class Buildings : MonoBehaviour {
 	public BuildingStatus buildingStatus;
 	public enum BuildingType { general = 0, resource, };
 	protected BuildingType buildingType;
-	
-	protected float timeToBuild = 0f;
+
+    protected BuildingsTimeData buildingTimeData;
 
 
     protected virtual void DestructionBuilding() { 

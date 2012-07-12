@@ -22,8 +22,14 @@ public class Sawmill : Buildings {
 	
 	// Use this for initialization
 	void Start () {
-        name = BuildingName; 
-		base.timeToBuild = 10f;
+        this.name = BuildingName;
+        base.buildingType = BuildingType.resource;
+        base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+
+        Buildings.SawMillInstance = this;
+        this.level = 1;
+        this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
+        this.OnBuildingProcess();
 	}
 	
 	// Update is called once per frame
@@ -67,6 +73,7 @@ public class Sawmill : Buildings {
 		Hashtable scaleData = new Hashtable();
 		scaleData.Add("from", new Vector2(12,24));
 		scaleData.Add("to", new Vector2(124,24));
+        scaleData.Add("time", base.buildingTimeData.arrBuildingTimesData[level - 1]);
 		scaleData.Add("onupdate", "BuildingProcess");
 		scaleData.Add("easetype", iTween.EaseType.linear);
 		scaleData.Add("oncomplete", "DestroyBuildingProcess");

@@ -27,7 +27,6 @@ public class Manager : MonoBehaviour
 	//<!-- Audio Manage.	
 	public static bool ToggleAudioActive = true;
     private string hoverName = string.Empty;            /// name of gui tooltip.
-    private bool _playSoundHoverButton = false;         /// bool isplay sound hover button.
     private AudioEffectManager audioEffect;
 //    private AudioDescribeManager audioDescribe;
     private GameObject audioBackground;
@@ -225,7 +224,7 @@ public class Manager : MonoBehaviour
         GUI.BeginGroup(new Rect((Main.GameWidth / 2) - 256, (Main.GameHeight / 2) - 250, 512, 400), GUIContent.none, newgame_Skin.window);
         {
 			if(GUI.Button(new Rect(192,175,128,32), username)) {
-				LoadNewDataToSaveStorage();
+                StartCoroutine(this.LoadNewDataToSaveStorage());
 			}
 			else if(GUI.Button(new Rect(192,224,128,32), "Delete Account.")) {
 				username = "";
@@ -250,10 +249,10 @@ public class Manager : MonoBehaviour
         PlayerPrefs.SetInt("farmlevel", 0);
         PlayerPrefs.SetInt("sawmilllevel", 0);
 
-        LoadNewDataToSaveStorage();
+        StartCoroutine(this.LoadNewDataToSaveStorage());
     }
 
-    void LoadNewDataToSaveStorage() 
+    private IEnumerator LoadNewDataToSaveStorage() 
     {
         StorageManage.Username = PlayerPrefs.GetString("username");
         
@@ -261,8 +260,8 @@ public class Manager : MonoBehaviour
 		{
             Mz_LoadingScreen.SceneName = Scenes.ScenesInstance.Town.ToString();
             Application.LoadLevel(Scenes.ScenesInstance.LoadingScreen.ToString());
-			
-            Destroy(this.gameObject);
         }
+
+        yield return null;
     }
 }

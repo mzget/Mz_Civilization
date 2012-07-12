@@ -454,11 +454,6 @@ public class BuildingArea : MonoBehaviour {
 
                         GameObject building = Instantiate(sawmill_Obj) as GameObject;
                         building.transform.position = sprite.position;
-
-	                    Buildings.SawMillInstance = building.GetComponent<Sawmill>();
-	                    Buildings.SawMillInstance.level = 1;
-						Buildings.SawMillInstance.buildingStatus = Buildings.BuildingStatus.buildingProcess;
-						Buildings.SawMillInstance.OnBuildingProcess();
 						
                         drawOrderList.RemoveAt(sawmill.order);
                         DestroyManager();
@@ -499,7 +494,6 @@ public class BuildingArea : MonoBehaviour {
                         GameObject building = Instantiate(millStone_Obj) as GameObject;
                         building.transform.position = sprite.position;
 
-                        //Buildings.MillStoneInstance = building.GetComponent<MillStone>();
                         drawOrderList.RemoveAt(millstone.order);
                         DestroyManager();
                     }

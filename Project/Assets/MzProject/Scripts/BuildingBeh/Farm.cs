@@ -14,7 +14,6 @@ public class Farm : Buildings
 
     private int productionRate = 1;        // produce food per second.
     private float timeInterval = 0;
-    private BuildingsTimeData timeData; 
 
 
 
@@ -27,7 +26,7 @@ public class Farm : Buildings
 	{
         this.name = BuildingName;
 		base.buildingType = Buildings.BuildingType.resource;
-        timeData = new BuildingsTimeData(base.buildingType);
+        base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 		
         Buildings.FarmInstance = this;
         Buildings.FarmInstance.level = 1;
@@ -74,7 +73,7 @@ public class Farm : Buildings
 		Hashtable scaleData = new Hashtable();
 		scaleData.Add("from", new Vector2(12,24));
 		scaleData.Add("to", new Vector2(124,24));
-        scaleData.Add("time", timeData.buildingTimesData[level]);
+        scaleData.Add("time", base.buildingTimeData.arrBuildingTimesData[level - 1]);
 		scaleData.Add("onupdate", "BuildingProcess");
 		scaleData.Add("easetype", iTween.EaseType.linear);
 		scaleData.Add("oncomplete", "DestroyBuildingProcess");
