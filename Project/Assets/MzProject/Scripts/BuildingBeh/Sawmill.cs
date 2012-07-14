@@ -8,7 +8,7 @@ public class Sawmill : Buildings {
 	public static string BuildingName = "Sawmill";
     public static string Description = "โรงตัดไม้ ตัดต้นไม้เพื่อนำมาทำท่อนไม้ ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้ไม้มากขึ้นไปด้วย";
 
-    public Texture2D icon_Texture;
+    [System.NonSerialized]
     public OTSprite sprite;
 
     private int productionRate = 1;        // produce food per second.
@@ -46,7 +46,7 @@ public class Sawmill : Buildings {
 	
 	#region Building Processing.
 	
-	public override void OnBuildingProcess ()
+	protected override void OnBuildingProcess ()
 	{
 		base.OnBuildingProcess ();
 		Debug.Log(processbar_Obj_parent);
@@ -107,9 +107,11 @@ public class Sawmill : Buildings {
             scrollPosition, 
             new Rect(0, 0, base.background_Rect.width, base.background_Rect.height));
         {
-            GUI.BeginGroup(background_Rect, new GUIContent(Description), building_Skin.box);
+            GUI.BeginGroup(background_Rect, GUIContent.none, building_Skin.box);
             {
-                GUI.DrawTexture(new Rect(24, 38, 80, 80), icon_Texture, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
+                GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
+                GUI.TextArea(base.discription_Rect, Description, standard_Skin.textArea);
             }
             GUI.EndGroup();
         }

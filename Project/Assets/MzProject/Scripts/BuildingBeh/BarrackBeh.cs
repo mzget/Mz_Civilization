@@ -28,39 +28,18 @@ public class BarrackBeh : Buildings
 	{
 
 	}
-
-    #region All Mouse Event.
-
-	void OnMouseOver ()
-	{
-
-	}
-
-	void OnMouseDown ()
-	{
-		_clicked = true;
-	}
-
-	void OnMouseExit ()
-	{
-
-	}
-
-    #endregion
-    
 	
 	private Rect buttonRect = new Rect (460, 140, 100, 30);
     
 	protected override void CreateWindow (int windowID)
-	{		
+	{
         base.CreateWindow(windowID);
-        
-		// An absolute-positioned example: We make a scrollview that has a really large client
-		// rect and put it in a small rect on the screen.
-		scrollPosition = GUI.BeginScrollView (new Rect (0, 100, windowRect.width, 400), scrollPosition, new Rect (0, 0, 780, 1000));
-		{
-			float height = 200F;
 
+        float height = 160f;
+
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
+            scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height * 5));
+		{
             GUI.BeginGroup(new Rect (0, 0 * height, background_Rect.width, height), new GUIContent(string.Empty, "Barrack Header"), GUIStyle.none);
             {
                 Rect headerContentRect = new Rect(5, 0 * height, background_Rect.width - 10, height);

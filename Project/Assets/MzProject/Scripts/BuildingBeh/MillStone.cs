@@ -8,7 +8,6 @@ public class MillStone : Buildings {
     public static string BuildingName = "MillStone";
     public static string Description = "โรงโม่หิน มีช่างหินเป็นผู้เชี่ยวชาญในการตัดหิน ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้หินมากขึ้นไปด้วย";
 
-    public Texture2D icon_Texture;
     [System.NonSerialized]
     public OTSprite sprite;
 
@@ -31,7 +30,7 @@ public class MillStone : Buildings {
 
     #region Building Processing.
 
-    public override void OnBuildingProcess()
+    protected override void OnBuildingProcess()
     {
         base.OnBuildingProcess();
         Debug.Log(processbar_Obj_parent);
@@ -104,9 +103,11 @@ public class MillStone : Buildings {
         {
             building_Skin.box.contentOffset = new Vector2(128, 38);
 
-            GUI.BeginGroup(background_Rect, new GUIContent(Description), building_Skin.box);
+            GUI.BeginGroup(base.background_Rect, GUIContent.none, building_Skin.box);
             {
-                GUI.DrawTexture(new Rect(24, 38, 80, 80), icon_Texture, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
+                GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
+                GUI.TextArea(base.discription_Rect, Description, standard_Skin.textArea);
             }
             GUI.EndGroup();
         }

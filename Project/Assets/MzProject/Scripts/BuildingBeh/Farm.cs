@@ -8,8 +8,7 @@ public class Farm : Buildings
     public static string BuildingName = "Farm";
     public static string Description = "อาหารเพื่อเลี้ยงประชากรของคุณผลิตขึ้นที่นี่ เพิ่มระดับฟาร์มเพื่อเพิ่มกำลังการผลิตธัญพืช";
 	
-	
-    public Texture2D farm_Icon;
+	[System.NonSerialized]
     public OTSprite sprite;
 
     private int productionRate = 1;        // produce food per second.
@@ -47,7 +46,7 @@ public class Farm : Buildings
 	
 	#region Building Processing.
 	
-	public override void OnBuildingProcess ()
+	protected override void OnBuildingProcess ()
 	{
 		base.OnBuildingProcess ();
 		
@@ -104,17 +103,16 @@ public class Farm : Buildings
 		
 		GUI.Box(new Rect(48, 24, 256, 48), base.buildingStatus.ToString(), standard_Skin.box);
 
-        scrollPosition = GUI.BeginScrollView(
-            new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
-            scrollPosition, 
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), scrollPosition, 
             new Rect(0, 0, base.windowRect.width, base.background_Rect.height), false, false);
         {
             building_Skin.box.contentOffset = new Vector2(128, 38);
-            GUI.BeginGroup(background_Rect, GUIContent.none, building_Skin.box);
+
+            GUI.BeginGroup(base.background_Rect, GUIContent.none, building_Skin.box);
             {
-                GUI.DrawTexture(new Rect(40, 48, 80, 80), farm_Icon, ScaleMode.ScaleToFit);
-                GUI.Label(new Rect(25, 132, 120, 32), "Level " + this.level, standard_Skin.box);
-                GUI.TextArea(new Rect(150, 48, 530, base.background_Rect.height - 96), Description, standard_Skin.textArea);
+                GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
+                GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
+                GUI.TextArea(base.discription_Rect, Description, standard_Skin.textArea);
             }
             GUI.EndGroup();
         }

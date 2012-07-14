@@ -31,7 +31,9 @@ public class Buildings : MonoBehaviour {
     public Font showG;
     public GUISkin standard_Skin;
     public GUISkin building_Skin;
+    //<!-- Building Icon.
     public Texture2D buildingIcon_Texture;
+
 	protected GameObject processbar_Obj_parent;
 	protected OTSprite processBar_Scolling; 
 		
@@ -52,6 +54,20 @@ public class Buildings : MonoBehaviour {
 
     protected BuildingsTimeData buildingTimeData;
 
+    protected Rect windowRect;
+    protected Rect exitButton_Rect;
+    protected Vector2 scrollPosition = Vector2.zero;
+
+    protected Rect background_Rect;
+    protected Rect upgradeButton_Rect;
+    protected Rect destructionButton_Rect;
+    protected Rect imgContent_Rect = new Rect(40, 60, 100, 100);
+    protected Rect buildingIcon_Rect = new Rect(40, 48, 80, 80);
+    protected Rect levelLable_Rect = new Rect(25, 132, 120, 32);
+    protected Rect discription_Rect;
+    protected Rect contentRect = new Rect(170, 20, 590, 160);
+    protected Rect warnningMessage_Rect = new Rect(Main.GameWidth / 2 - 150, Main.GameHeight / 2 - 120, 300, 240);
+
 
     protected virtual void DestructionBuilding() { 
     
@@ -59,7 +75,7 @@ public class Buildings : MonoBehaviour {
 	
 	#region Building Process Section.
 	
-	public virtual void OnBuildingProcess() {
+	protected virtual void OnBuildingProcess() {
 		Debug.Log("Class :: Building" + ":: OnBuildingProcess()");
 	}
 	
@@ -91,18 +107,6 @@ public class Buildings : MonoBehaviour {
     }
 	
 	#endregion
-	
-    protected Rect windowRect;
-    protected Rect exitButton_Rect;
-    protected Vector2 scrollPosition = Vector2.zero;
-
-    protected Rect background_Rect;
-    protected Rect buildingIcon_Rect = new Rect(24, 24, 128, 128);
-    protected Rect upgradeButton_Rect;
-    protected Rect destructionButton_Rect;
-    protected Rect imgContent_Rect = new Rect(40, 60, 100, 100);
-    protected Rect contentRect = new Rect(170, 20, 590, 160);
-	protected Rect warnningMessage_Rect = new Rect(Main.GameWidth/2 - 150, Main.GameHeight/2 -120, 300, 240);
 
     protected void OnGUI()
     {
@@ -110,7 +114,8 @@ public class Buildings : MonoBehaviour {
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
         upgradeButton_Rect = new Rect (windowRect.width - 140, 32, 100, 32);
         destructionButton_Rect = new Rect(windowRect.width - 250, 32, 100, 32);
-        background_Rect = new Rect(0, 0, 700, 320);
+        background_Rect = new Rect(0, 0, windowRect.width - 12, 320);
+        discription_Rect = new Rect(150, 48, 530, background_Rect.height - 96);
 
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GameWidth, Screen.height / Main.GameHeight, 1));
 
