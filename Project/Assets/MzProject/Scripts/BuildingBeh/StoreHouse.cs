@@ -82,7 +82,14 @@ public class StoreHouse : Buildings {
 		sumOfGold -= usedResource.Gold;
 		sumOfStone -= usedResource.Stone;
 	}
-
+	
+	
+	void Awake() {
+		this.level = 1;
+		this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
+		this.OnBuildingProcess(this);
+	}
+	
 	// Use this for initialization
 	void Start () {
         name = "StoreHouse";
@@ -110,6 +117,19 @@ public class StoreHouse : Buildings {
 //		CalculationSumofWood();
 //		CalculationSumofGold();
 //		CalculationSumofStone();
+	}
+	
+	protected override void OnBuildingProcess (Buildings obj)
+	{
+		base.OnBuildingProcess (obj);
+	}
+	protected override void CreateProcessBar ()
+	{
+		base.CreateProcessBar ();
+	}
+	protected override void DestroyBuildingProcess (Buildings obj)
+	{
+		base.DestroyBuildingProcess (obj);
 	}
 	
 	// Update is called once per frame

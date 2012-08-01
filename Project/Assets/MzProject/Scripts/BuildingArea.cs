@@ -552,19 +552,20 @@ public class BuildingArea : MonoBehaviour {
             }
             GUI.EndGroup();
             //<!-- Create Button.
-            if (StoreHouse.sumOfFood >= MargetBeh.CreateResource.Food &&
-                StoreHouse.sumOfWood >= MargetBeh.CreateResource.Wood &&
-                StoreHouse.sumOfGold >= MargetBeh.CreateResource.Gold &&
-                StoreHouse.sumOfStone >= MargetBeh.CreateResource.Stone)
+            if (StoreHouse.sumOfFood >= MargetBeh.CreateResource.Food && StoreHouse.sumOfWood >= MargetBeh.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= MargetBeh.CreateResource.Gold && StoreHouse.sumOfStone >= MargetBeh.CreateResource.Stone)
             {
-                if (GUI.Button(creatButton_Rect, "Create"))
-                {
-                    StoreHouse.UsedResource(MargetBeh.CreateResource);
-
-                    GameObject market = Instantiate(marketObj) as GameObject;
-                    market.transform.position = sprite.position;
-                    DestroyManager();
-                }
+				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+				if(Buildings._CanCreateBuilding) {
+		            if (GUI.Button(creatButton_Rect, "Create"))
+		            {
+		                StoreHouse.UsedResource(MargetBeh.CreateResource);
+		
+		                GameObject market = Instantiate(marketObj) as GameObject;
+		                market.transform.position = sprite.position;
+		                DestroyManager();
+		            }
+				}
             }
         }
         GUI.EndGroup();
@@ -585,23 +586,24 @@ public class BuildingArea : MonoBehaviour {
             }
             GUI.EndGroup();
             //<!-- Create button.
-            if (StoreHouse.sumOfFood >= StoreHouse.CreateResource.Food &&
-                StoreHouse.sumOfWood >= StoreHouse.CreateResource.Wood &&
-                StoreHouse.sumOfGold >= StoreHouse.CreateResource.Gold &&
-                StoreHouse.sumOfStone >= StoreHouse.CreateResource.Stone)
+            if (StoreHouse.sumOfFood >= StoreHouse.CreateResource.Food && StoreHouse.sumOfWood >= StoreHouse.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= StoreHouse.CreateResource.Gold && StoreHouse.sumOfStone >= StoreHouse.CreateResource.Stone)
             {
-                if (GUI.Button(creatButton_Rect, "Build"))
-                {
-                    StoreHouse.UsedResource(StoreHouse.CreateResource);
-
-                    GameObject building = Instantiate(storeHouse_Obj) as GameObject;
-                    building.transform.position = sprite.position;
-                    DestroyManager();
-
-                    StoreHouse storeHouse = building.GetComponent<StoreHouse>();
-                    Buildings.storeHouseId.Add(storeHouse);
-                    storeHouse.ID = Buildings.storeHouseId.Count;
-                }
+				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+				if(Buildings._CanCreateBuilding) {
+	                if (GUI.Button(creatButton_Rect, "Build"))
+	                {
+	                    StoreHouse.UsedResource(StoreHouse.CreateResource);
+	
+	                    GameObject building = Instantiate(storeHouse_Obj) as GameObject;
+	                    building.transform.position = sprite.position;
+	                    DestroyManager();
+	
+	                    StoreHouse storeHouse = building.GetComponent<StoreHouse>();
+	                    Buildings.storeHouseId.Add(storeHouse);
+	                    storeHouse.ID = Buildings.storeHouseId.Count;
+	                }
+				}
             }
         }
         GUI.EndGroup();

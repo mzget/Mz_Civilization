@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Mz_LoadingScreen : MonoBehaviour
 {
-    public GUISkin standardSkin;
     public Texture2D background;
 
 	private static string sceneName = string.Empty;
@@ -21,7 +20,7 @@ public class Mz_LoadingScreen : MonoBehaviour
 	
     IEnumerator Start()
     {
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(.1f);
 		Application.LoadLevel(sceneName);
 		
 #if UNITY_FLASH || UNITY_WEBPLAYER
@@ -59,11 +58,10 @@ public class Mz_LoadingScreen : MonoBehaviour
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GameWidth, Screen.height / Main.GameHeight, 1));
 
         GUI.DrawTexture(new Rect(0, 0, Main.GameWidth, Main.GameHeight), background);
-
-        standardSkin.textField.fontSize = 32;
-        standardSkin.textField.fontStyle = FontStyle.Bold;
-
+		
+		GUI.skin.box.fontSize = 32;
+		GUI.skin.box.alignment = TextAnchor.MiddleCenter;
 //        float process = async.progress * 100f;
-        GUI.Box(new Rect(Main.GameWidth / 2 - 200, Main.GameHeight / 2 - 40, 400, 80), "Loading..." /*+ process.ToString("F1") + " %"*/, standardSkin.textField);
+        GUI.Box(new Rect(Main.GameWidth / 2 - 200, Main.GameHeight / 2 - 40, 400, 80), "Loading..." /*+ process.ToString("F1") + " %"*/, GUI.skin.box);
     }
 }

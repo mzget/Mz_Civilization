@@ -35,7 +35,8 @@ public class Buildings : MonoBehaviour {
     public Texture2D buildingIcon_Texture;
 
 	protected GameObject processbar_Obj_parent;
-	protected OTSprite processBar_Scolling; 
+    protected OTSprite processBar_Scolling;
+    [System.NonSerialized]    public OTSprite sprite;
 		
     public int level = 0;
     protected bool _clicked = false;
@@ -92,11 +93,44 @@ public class Buildings : MonoBehaviour {
 	}
     protected virtual void CreateProcessBar()
     {
-        for (int i = 0; i < onBuilding_Obj.Count; i++)
-			Debug.Log(onBuilding_Obj[i]);
+        if (processbar_Obj_parent == null)
+        {
+            processbar_Obj_parent = Instantiate(Resources.Load("Processbar_Group", typeof(GameObject)),
+                new Vector3(this.sprite.position.x, this.sprite.position.y + this.sprite.size.y, 0),
+                Quaternion.identity) as GameObject;
+
+            OTSprite backgroundSprite = processbar_Obj_parent.GetComponentInChildren<OTSprite>();
+            backgroundSprite.size = new Vector2(128, 24);
+
+            if (processBar_Scolling == null)
+            {
+                var scrolling = Instantiate(Resources.Load("processbar_scroll", typeof(GameObject))) as GameObject;
+                scrolling.transform.parent = processbar_Obj_parent.transform;
+
+                processBar_Scolling = scrolling.GetComponent<OTSprite>();
+                processBar_Scolling.pivot = OTObject.Pivot.Left;
+                processBar_Scolling.position = new Vector2((-backgroundSprite.size.x / 2) + 2, 0);
+                processBar_Scolling.size = new Vector2(12, 24);
+            }
+        }
+
+        Hashtable scaleData = new Hashtable();
+        scaleData.Add("from", new Vector2(12, 24));
+        scaleData.Add("to", new Vector2(124, 24));
+        scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level - 1]);
+        scaleData.Add("onupdate", "BuildingProcess");
+        scaleData.Add("easetype", iTween.EaseType.linear);
+        scaleData.Add("oncomplete", "DestroyBuildingProcess");
+        scaleData.Add("oncompleteparams", this);
+        scaleData.Add("oncompletetarget", this.gameObject);
+
+        iTween.ValueTo(this.gameObject, scaleData);
     }
 	protected virtual void BuildingProcess(Vector2 Rvalue) {
 		Debug.Log("Class :: Buildings" + ":: BuildingProcess");
+		
+		if(this.processBar_Scolling)
+			this.processBar_Scolling.size = Rvalue;
 	}
 	
 	protected virtual void DestroyBuildingProcess(Buildings obj) {
