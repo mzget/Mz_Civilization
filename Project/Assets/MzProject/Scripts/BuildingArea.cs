@@ -404,21 +404,22 @@ public class BuildingArea : MonoBehaviour {
             }
             GUI.EndGroup();
             //<!-- Create button.
-            if (StoreHouse.sumOfFood >= Farm.CreateResource.Food &&
-                StoreHouse.sumOfWood >= Farm.CreateResource.Wood &&
-                StoreHouse.sumOfGold >= Farm.CreateResource.Gold &&
-                StoreHouse.sumOfStone >= Farm.CreateResource.Stone)
+            if (StoreHouse.sumOfFood >= Farm.CreateResource.Food && StoreHouse.sumOfWood >= Farm.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= Farm.CreateResource.Gold && StoreHouse.sumOfStone >= Farm.CreateResource.Stone)
             {
-                if (GUI.Button(creatButton_Rect, "Build"))
-                {
-                    StoreHouse.UsedResource(Farm.CreateResource);
-
-                    GameObject building = Instantiate(farm_Obj) as GameObject;
-                    building.transform.position = sprite.position;
-
-                    drawOrderList.RemoveAt(farm.order);
-                    DestroyManager();
-                }
+				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+				if(Buildings._CanCreateBuilding) {
+	                if (GUI.Button(creatButton_Rect, "Build"))
+	                {
+	                    StoreHouse.UsedResource(Farm.CreateResource);
+	
+	                    GameObject building = Instantiate(farm_Obj) as GameObject;
+	                    building.transform.position = sprite.position;
+	
+	                    drawOrderList.RemoveAt(farm.order);
+	                    DestroyManager();
+	                }
+				}
             }
         }
         GUI.EndGroup();
@@ -426,121 +427,114 @@ public class BuildingArea : MonoBehaviour {
 	
 	void DrawIntroduceSawMill()
 	{
-        if (Buildings.SawMillInstance == null)
+        GUI.Box(imgRect, new GUIContent(sawmill_Icon, "IconTexture"));
+        GUI.Label(tagName_Rect, new GUIContent(Sawmill.BuildingName), buildingArea_Skin.label);
+		
+        GUI.BeginGroup(contentRect, new GUIContent(Sawmill.Description, "content"), mainBuildingSkin.textArea);
         {
-            GUI.Box(imgRect, new GUIContent(sawmill_Icon, "IconTexture"));
-            GUI.Label(tagName_Rect, new GUIContent(Sawmill.BuildingName), buildingArea_Skin.label);
-			
-            GUI.BeginGroup(contentRect, new GUIContent(Sawmill.Description, "content"), mainBuildingSkin.textArea);
+            //<!-- Requirements Resource.
+            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                //<!-- Requirements Resource.
-                GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
-                {
-                    GUI.Label(food_Rect, new GUIContent(Sawmill.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                    GUI.Label(wood_Rect, new GUIContent(Sawmill.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                    GUI.Label(gold_Rect, new GUIContent(Sawmill.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                    GUI.Label(stone_Rect, new GUIContent(Sawmill.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
-                }
-                GUI.EndGroup();
-                //<!-- Create button.
-                if (StoreHouse.sumOfFood >= Sawmill.CreateResource.Food &&
-                    StoreHouse.sumOfWood >= Sawmill.CreateResource.Wood &&
-                    StoreHouse.sumOfGold >= Sawmill.CreateResource.Gold &&
-                    StoreHouse.sumOfStone >= Sawmill.CreateResource.Stone)
-                {
-                    if (GUI.Button(creatButton_Rect, "Build"))
-                    {
-                        StoreHouse.UsedResource(Sawmill.CreateResource);
-
-                        GameObject building = Instantiate(sawmill_Obj) as GameObject;
-                        building.transform.position = sprite.position;
-						
-                        drawOrderList.RemoveAt(sawmill.order);
-                        DestroyManager();
-                    }
-                }
+                GUI.Label(food_Rect, new GUIContent(Sawmill.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(wood_Rect, new GUIContent(Sawmill.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(gold_Rect, new GUIContent(Sawmill.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(stone_Rect, new GUIContent(Sawmill.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
+            //<!-- Create button.
+            if (StoreHouse.sumOfFood >= Sawmill.CreateResource.Food && StoreHouse.sumOfWood >= Sawmill.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= Sawmill.CreateResource.Gold && StoreHouse.sumOfStone >= Sawmill.CreateResource.Stone)
+            {
+				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+				if(Buildings._CanCreateBuilding) {
+	                if (GUI.Button(creatButton_Rect, "Build")) {
+	                    StoreHouse.UsedResource(Sawmill.CreateResource);
+	
+	                    GameObject building = Instantiate(sawmill_Obj) as GameObject;
+	                    building.transform.position = sprite.position;
+						
+	                    drawOrderList.RemoveAt(sawmill.order);
+	                    DestroyManager();
+	                }
+				}
+            }
         }
+        GUI.EndGroup();
 	}
 	
 	void DrawIntroduceMillStone()
 	{
-        if (Buildings.MillStoneInstance == null)
+        GUI.Box(imgRect, new GUIContent(millStone_Icon, "IconTexture"));
+        GUI.Label(tagName_Rect, new GUIContent(MillStone.BuildingName), buildingArea_Skin.label);
+        GUI.BeginGroup(contentRect, new GUIContent(MillStone.Description, "content"), mainBuildingSkin.textArea);
         {
-            GUI.Box(imgRect, new GUIContent(millStone_Icon, "IconTexture"));
-            GUI.Label(tagName_Rect, new GUIContent(MillStone.BuildingName), buildingArea_Skin.label);
-            GUI.BeginGroup(contentRect, new GUIContent(MillStone.Description, "content"), mainBuildingSkin.textArea);
+            //<!-- Requirements Resource.
+            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                //<!-- Requirements Resource.
-                GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
-                {
-                    GUI.Label(food_Rect, new GUIContent(MillStone.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                    GUI.Label(wood_Rect, new GUIContent(MillStone.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                    GUI.Label(gold_Rect, new GUIContent(MillStone.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                    GUI.Label(stone_Rect, new GUIContent(MillStone.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
-                }
-                GUI.EndGroup();
-                //<!-- Create button.
-                if (StoreHouse.sumOfFood >= MillStone.CreateResource.Food &&
-                    StoreHouse.sumOfWood >= MillStone.CreateResource.Wood &&
-                    StoreHouse.sumOfGold >= MillStone.CreateResource.Gold &&
-                    StoreHouse.sumOfStone >= MillStone.CreateResource.Stone)
-                {
-                    if (GUI.Button(creatButton_Rect, "Build"))
-                    {
-                        StoreHouse.UsedResource(MillStone.CreateResource);
-
-                        GameObject building = Instantiate(millStone_Obj) as GameObject;
-                        building.transform.position = sprite.position;
-
-                        drawOrderList.RemoveAt(millstone.order);
-                        DestroyManager();
-                    }
-                }
+                GUI.Label(food_Rect, new GUIContent(MillStone.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(wood_Rect, new GUIContent(MillStone.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(gold_Rect, new GUIContent(MillStone.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(stone_Rect, new GUIContent(MillStone.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
+            //<!-- Create button.
+            if (StoreHouse.sumOfFood >= MillStone.CreateResource.Food && StoreHouse.sumOfWood >= MillStone.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= MillStone.CreateResource.Gold && StoreHouse.sumOfStone >= MillStone.CreateResource.Stone)
+            {
+				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+				if(Buildings._CanCreateBuilding) {
+	                if (GUI.Button(creatButton_Rect, "Build"))
+	                {
+	                    StoreHouse.UsedResource(MillStone.CreateResource);
+	
+	                    GameObject building = Instantiate(millStone_Obj) as GameObject;
+	                    building.transform.position = sprite.position;
+	
+	                    drawOrderList.RemoveAt(millstone.order);
+	                    DestroyManager();
+	                }
+				}
+            }
         }
+        GUI.EndGroup();
 	}
 	
 	void DrawIntroduceSmelter() 
 	{
-        if (Buildings.SmelterInstance == null)
+        GUI.Box(imgRect, new GUIContent(smelter_icon, "IconTexture"));
+        GUI.Label(tagName_Rect, new GUIContent(Smelter.BuildingName), buildingArea_Skin.label);
+        GUI.BeginGroup(contentRect, new GUIContent(Smelter.Description, "content"), mainBuildingSkin.textArea);
         {
-            GUI.Box(imgRect, new GUIContent(smelter_icon, "IconTexture"));
-            GUI.Label(tagName_Rect, new GUIContent(Smelter.BuildingName), buildingArea_Skin.label);
-            GUI.BeginGroup(contentRect, new GUIContent(Smelter.Description, "content"), mainBuildingSkin.textArea);
+            //<!-- Requirements Resource.
+            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                //<!-- Requirements Resource.
-                GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
-                {
-                    GUI.Label(food_Rect, new GUIContent(Smelter.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                    GUI.Label(wood_Rect, new GUIContent(Smelter.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                    GUI.Label(gold_Rect, new GUIContent(Smelter.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                    GUI.Label(stone_Rect, new GUIContent(Smelter.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
-                }
-                GUI.EndGroup();
-                //<!-- Create button.
-                if (StoreHouse.sumOfFood >= Smelter.CreateResource.Food &&
-                    StoreHouse.sumOfWood >= Smelter.CreateResource.Wood &&
-                    StoreHouse.sumOfGold >= Smelter.CreateResource.Gold &&
-                    StoreHouse.sumOfStone >= Smelter.CreateResource.Stone)
-                {
-                    if (GUI.Button(creatButton_Rect, "Build"))
-                    {
-                        StoreHouse.UsedResource(Smelter.CreateResource);
-
-                        GameObject building = Instantiate(smelter_Obj) as GameObject;
-                        building.transform.position = sprite.position;
-
-                        //Buildings.SmelterInstance = building.GetComponent<Smelter>();
-                        drawOrderList.RemoveAt(smelter.order);
-                        DestroyManager();
-                    }
-                }
+                GUI.Label(food_Rect, new GUIContent(Smelter.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(wood_Rect, new GUIContent(Smelter.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(gold_Rect, new GUIContent(Smelter.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(stone_Rect, new GUIContent(Smelter.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
+            //<!-- Create button.
+            if (StoreHouse.sumOfFood >= Smelter.CreateResource.Food && StoreHouse.sumOfWood >= Smelter.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= Smelter.CreateResource.Gold && StoreHouse.sumOfStone >= Smelter.CreateResource.Stone)
+            {
+				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+				if(Buildings._CanCreateBuilding) {
+	                if (GUI.Button(creatButton_Rect, "Build"))
+	                {
+	                    StoreHouse.UsedResource(Smelter.CreateResource);
+	
+	                    GameObject building = Instantiate(smelter_Obj) as GameObject;
+	                    building.transform.position = sprite.position;
+	
+	                    //Buildings.SmelterInstance = building.GetComponent<Smelter>();
+	                    drawOrderList.RemoveAt(smelter.order);
+	                    DestroyManager();
+	                }
+				}
+            }
         }
+        GUI.EndGroup();
 	}
 
     private void DrawIntroMarKet()

@@ -34,7 +34,6 @@ public class Main : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		GenerateBackground();
-        //Camera.main.orthographicSize = 300f;
 	}
 	
     void GenerateBackground()

@@ -40,14 +40,12 @@ public class Buildings : MonoBehaviour {
     public int level = 0;
     protected bool _clicked = false;
     protected bool _CanDestruction = true;
-
-    public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
-    public static Farm FarmInstance = null;
-    public static Sawmill SawMillInstance = null;
-    public static MillStone MillStoneInstance = null;
-    public static Smelter SmelterInstance = null;
 	
-	public enum BuildingStatus { none = 0, buildingProcess = 1, };
+	public static bool _CanCreateBuilding = false;
+    public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
+    public static List<Buildings> onBuilding_Obj = new List<Buildings>();
+	
+	public enum BuildingStatus { none = 0, buildingProcess = 1, buildingComplete, };
 	public BuildingStatus buildingStatus;
 	public enum BuildingType { general = 0, resource, };
 	protected BuildingType buildingType;
@@ -74,17 +72,37 @@ public class Buildings : MonoBehaviour {
     }
 	
 	#region Building Process Section.
-	
-	protected virtual void OnBuildingProcess() {
-		Debug.Log("Class :: Building" + ":: OnBuildingProcess()");
+	public static bool CheckingCanCreateBuilding() {
+		if(onBuilding_Obj.Count < 2)
+			return true;
+		else 
+			return false;
 	}
 	
+	protected virtual void OnBuildingProcess(Buildings obj) {
+        Debug.Log("Class :: Building" + obj.name + ": OnBuildingProcess()");
+
+        if (onBuilding_Obj.Count < 2)
+        {
+            onBuilding_Obj.Add(obj);
+			
+			for(int i = 0; i<onBuilding_Obj.Count; i++)
+				onBuilding_Obj[i].CreateProcessBar();
+        }
+	}
+    protected virtual void CreateProcessBar()
+    {
+        for (int i = 0; i < onBuilding_Obj.Count; i++)
+			Debug.Log(onBuilding_Obj[i]);
+    }
 	protected virtual void BuildingProcess(Vector2 Rvalue) {
 		Debug.Log("Class :: Buildings" + ":: BuildingProcess");
 	}
 	
-	protected virtual void DestroyBuildingProcess() {		
-		Debug.Log("Class :: Buildings" + ":: DestroyBuildingProcess");
+	protected virtual void DestroyBuildingProcess(Buildings obj) {
+        Debug.Log("Class :: Buildings" + obj.name + ": DestroyBuildingProcess");
+
+        onBuilding_Obj.Remove(obj);
 	}
 	
 	#endregion
@@ -105,8 +123,35 @@ public class Buildings : MonoBehaviour {
     {
 
     }
-	
-	#endregion
+
+    #endregion
+
+    protected virtual void CreateWindow(int windowID)
+    {
+        //<!-- Exit Button.
+        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), building_Skin.customStyles[0]))
+        {
+            _clicked = false;
+        }
+
+        if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), standard_Skin.button))
+        {
+
+        }
+
+        if (_CanDestruction)
+        {
+            if (GUI.Button(destructionButton_Rect, new GUIContent("Destruction"), standard_Skin.button))
+            {
+                //GUI.Box()
+            }
+        }
+    }
+
+    protected virtual IEnumerator BuildingTimer()
+    {
+        yield return 0;
+    }
 
     protected void OnGUI()
     {
@@ -130,26 +175,4 @@ public class Buildings : MonoBehaviour {
             windowRect = GUI.Window(0, windowRect, CreateWindow, new GUIContent(name, "GUI window"), standard_Skin.window);
         }
     }
-
-    protected virtual void CreateWindow(int windowID)
-    {        
-        //<!-- Exit Button.
-        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), building_Skin.customStyles[0])) {
-            _clicked = false;
-        }
-
-        if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), standard_Skin.button)) { 
-        
-        }
-
-        if (_CanDestruction) {
-            if (GUI.Button(destructionButton_Rect, new GUIContent("Destruction"), standard_Skin.button)) {
-                //GUI.Box()
-            }
-        }
-    }
-	
-	protected virtual IEnumerator BuildingTimer() {
-		yield return 0;
-	}
 }

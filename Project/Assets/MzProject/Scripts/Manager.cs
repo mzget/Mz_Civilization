@@ -42,17 +42,26 @@ public class Manager : MonoBehaviour
     // Use this for initialization
     void Start() 
 	{
-		username = PlayerPrefs.GetString("username");
-		
-		if(username == "") {
+		if(PlayerPrefs.HasKey("username")) {
+			username = PlayerPrefs.GetString("username");
+				
+			if(username == "") {
+				guiState = GUIState.showNewGame;
+				
+	            if (newgameUIState != NewGameUIState.showTextField) {
+	                newgameUIState = NewGameUIState.showTextField;
+				}
+			}
+			else 
+			{ guiState = GUIState.showSaveGame; }
+		}
+		else {			
 			guiState = GUIState.showNewGame;
 			
             if (newgameUIState != NewGameUIState.showTextField) {
                 newgameUIState = NewGameUIState.showTextField;
 			}
 		}
-		else { guiState = GUIState.showSaveGame; }
-		
 		
         //<!-- Setup All Audio Objects.
         audioEffect = GameObject.FindGameObjectWithTag("AudioEffect").GetComponent<AudioEffectManager>();
@@ -131,27 +140,25 @@ public class Manager : MonoBehaviour
         else if (guiState == GUIState.showOption)
             return;
         else if (guiState == GUIState.showSaveGame)
-            ShowSaveGameSlot(false);
+            this.ShowSaveGameSlot(false);
 		
 		#region Show Notification When Username have a problem.
 
 		string notificationText = "";
 		string dublicateNoticeText = "";
 
-		if(Application.platform == RuntimePlatform.WindowsPlayer) 
-		{
-			
+#if UNITY_STANDALONE_WIN || UNITY_WEBPLAYER
 			notificationText = "Please Fill Your Username. \n ¡ÃØ³ÒãÊèª×èÍŒÙéàÅè¹ãËÁè";
 			dublicateNoticeText = "This name already exists. \n ª×èÍ¹Õé¶Ù¡ãªéä»áÅéÇ";
-		}
-		else if(Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android) 
-		{
+#endif
+
+#if UNITY_IPHONE || UNITY_ANDROID
 			notificationText = "Please Fill Your Username.";
 			dublicateNoticeText = "This name already exists.";
-		}
+#endif
 
-        mainMenuSkin.textField.fontSize = 16;
-        mainMenuSkin.textField.normal.textColor = Color.red;
+//        mainMenuSkin.textField.fontSize = 16;
+//        mainMenuSkin.textField.normal.textColor = Color.red;
 
         if (_showNotification)           
             GUI.Box(new Rect(Main.GameWidth / 2 - 256, 0, 512, 50), notificationText, mainMenuSkin.textField);
@@ -221,7 +228,7 @@ public class Manager : MonoBehaviour
 	/// </param>
     void ShowSaveGameSlot(bool toSaveGame)
     {
-        GUI.BeginGroup(new Rect((Main.GameWidth / 2) - 256, (Main.GameHeight / 2) - 250, 512, 400), GUIContent.none, newgame_Skin.window);
+        GUI.BeginGroup(new Rect((Main.GameWidth / 2) - 256, (Main.GameHeight / 2) - 200, 512, 400), GUIContent.none, newgame_Skin.window);
         {
 			if(GUI.Button(new Rect(192,175,128,32), username)) {
                 StartCoroutine(this.LoadNewDataToSaveStorage());

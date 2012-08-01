@@ -25,28 +25,20 @@ public class Smelter : Buildings {
         base.buildingType = Buildings.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 
-        Buildings.SmelterInstance = this;
-        Buildings.SmelterInstance.level = 1;
-        Buildings.SmelterInstance.buildingStatus = Buildings.BuildingStatus.buildingProcess;
-        Buildings.SmelterInstance.OnBuildingProcess();
+        this.level = 1;
+        this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
+        this.OnBuildingProcess(this);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-        timeInterval += Time.deltaTime;
-        if (timeInterval >= 1f)
-        {
-            timeInterval = 0;
-
-            StoreHouse.sumOfGold += productionRate;
-        }
-    }
 
     #region Building Processing.
 
-    protected override void OnBuildingProcess()
+    protected override void OnBuildingProcess(Buildings building)
     {
-        base.OnBuildingProcess();
+        base.OnBuildingProcess(building);
+    }
+    protected override void CreateProcessBar()
+    {
+        base.CreateProcessBar();
 
         if (processbar_Obj_parent == null)
         {
@@ -76,26 +68,44 @@ public class Smelter : Buildings {
         scaleData.Add("onupdate", "BuildingProcess");
         scaleData.Add("easetype", iTween.EaseType.linear);
         scaleData.Add("oncomplete", "DestroyBuildingProcess");
+        scaleData.Add("oncompleteparams", this);
         scaleData.Add("oncompletetarget", this.gameObject);
 
         iTween.ValueTo(this.gameObject, scaleData);
     }
-
     protected override void BuildingProcess(Vector2 Rvalue)
     {
         base.BuildingProcess(Rvalue);
 
         processBar_Scolling.size = Rvalue;
     }
-
-    protected override void DestroyBuildingProcess()
+    protected override void DestroyBuildingProcess(Buildings building)
     {
-        base.DestroyBuildingProcess();
+        base.DestroyBuildingProcess(building);
 
         Destroy(processbar_Obj_parent);
+		
+		if(this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
+			this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
     }
 
     #endregion
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (this.buildingStatus == Buildings.BuildingStatus.buildingComplete)
+        {
+            timeInterval += Time.deltaTime;
+            if (timeInterval >= 1f)
+            {
+                timeInterval = 0;
+
+                StoreHouse.sumOfGold += productionRate;
+            }
+        }
+    }
 
     protected override void CreateWindow(int windowID)
     {

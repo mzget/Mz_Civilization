@@ -25,15 +25,18 @@ public class MillStone : Buildings {
 
         this.level = 1;
         this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
-        this.OnBuildingProcess();
+        this.OnBuildingProcess(this);
     }
 
     #region Building Processing.
 
-    protected override void OnBuildingProcess()
+    protected override void OnBuildingProcess(Buildings building)
     {
-        base.OnBuildingProcess();
-        Debug.Log(processbar_Obj_parent);
+        base.OnBuildingProcess(building);
+    }
+    protected override void CreateProcessBar()
+    {
+        base.CreateProcessBar();
 
         if (base.processbar_Obj_parent == null)
         {
@@ -63,36 +66,41 @@ public class MillStone : Buildings {
         scaleData.Add("onupdate", "BuildingProcess");
         scaleData.Add("easetype", iTween.EaseType.linear);
         scaleData.Add("oncomplete", "DestroyBuildingProcess");
+        scaleData.Add("oncompleteparams", this);
         scaleData.Add("oncompletetarget", this.gameObject);
 
         iTween.ValueTo(this.gameObject, scaleData);
     }
-
     protected override void BuildingProcess(Vector2 Rvalue)
     {
         base.BuildingProcess(Rvalue);
 
         processBar_Scolling.size = Rvalue;
     }
-
-    protected override void DestroyBuildingProcess()
+    protected override void DestroyBuildingProcess(Buildings obj)
     {
-        base.DestroyBuildingProcess();
+        base.DestroyBuildingProcess(obj);
 
         Destroy(processbar_Obj_parent);
+		
+		if(this.buildingStatus == Buildings.BuildingStatus.buildingComplete)
+			this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
     }
 
     #endregion
 	
 	// Update is called once per frame
 	void Update () {
-        timeInterval += Time.deltaTime;
-        if (timeInterval >= 1f)
-        {
-            timeInterval = 0;
-
-            StoreHouse.sumOfStone += productionRate;
-        }
+		
+		if(this.buildingStatus == Buildings.BuildingStatus.buildingComplete) {
+	        timeInterval += Time.deltaTime;
+	        if (timeInterval >= 1f)
+	        {
+	            timeInterval = 0;
+	
+	            StoreHouse.sumOfStone += productionRate;
+	        }
+		}
 	}
 
     protected override void CreateWindow(int windowID)

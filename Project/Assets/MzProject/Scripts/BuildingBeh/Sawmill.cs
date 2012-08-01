@@ -26,74 +26,82 @@ public class Sawmill : Buildings {
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 
-        Buildings.SawMillInstance = this;
         this.level = 1;
         this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
-        this.OnBuildingProcess();
+        this.OnBuildingProcess(this);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-        timeInterval += Time.deltaTime;
-        if (timeInterval >= 1f)
-        {
-            timeInterval = 0;
-
-            StoreHouse.sumOfWood += productionRate;
-        }
+		
+		if(this.buildingStatus == Buildings.BuildingStatus.buildingComplete) {
+	        timeInterval += Time.deltaTime;
+	        if (timeInterval >= 1f)
+	        {
+	            timeInterval = 0;
+	
+	            StoreHouse.sumOfWood += productionRate;
+	        }
+		}
 	}
 	
 	#region Building Processing.
 	
-	protected override void OnBuildingProcess ()
+	protected override void OnBuildingProcess (Buildings obj)
 	{
-		base.OnBuildingProcess ();
-		Debug.Log(processbar_Obj_parent);
-		
-		if(base.processbar_Obj_parent == null) { 
-				processbar_Obj_parent = Instantiate(Resources.Load("Processbar_Group", typeof(GameObject)),
-				new Vector3(this.sprite.position.x, this.sprite.position.y + this.sprite.size.y, 0),
-				Quaternion.identity) as GameObject;
-			
-			OTSprite backgroundSprite = processbar_Obj_parent.GetComponentInChildren<OTSprite>();
-			backgroundSprite.size = new Vector2(128,24);
-			
-			if(processBar_Scolling == null) {
-				var scrolling = Instantiate(Resources.Load("processbar_scroll", typeof(GameObject))) as GameObject;
-				scrolling.transform.parent = processbar_Obj_parent.transform;
-				
-				processBar_Scolling = scrolling.GetComponent<OTSprite>();
-				processBar_Scolling.pivot = OTObject.Pivot.Left;
-				processBar_Scolling.position = new Vector2((-backgroundSprite.size.x/2) + 2,0);
-				processBar_Scolling.size = new Vector2(12,24);
-			}
-		}
-		
-		Hashtable scaleData = new Hashtable();
-		scaleData.Add("from", new Vector2(12,24));
-		scaleData.Add("to", new Vector2(124,24));
-        scaleData.Add("time", base.buildingTimeData.arrBuildingTimesData[level - 1]);
-		scaleData.Add("onupdate", "BuildingProcess");
-		scaleData.Add("easetype", iTween.EaseType.linear);
-		scaleData.Add("oncomplete", "DestroyBuildingProcess");
-		scaleData.Add("oncompletetarget", this.gameObject);
-		
-		iTween.ValueTo(this.gameObject, scaleData);
+		base.OnBuildingProcess (obj);
 	}
-	
+    protected override void CreateProcessBar()
+    {
+        base.CreateProcessBar();
+
+        if (base.processbar_Obj_parent == null)
+        {
+            processbar_Obj_parent = Instantiate(Resources.Load("Processbar_Group", typeof(GameObject)),
+            new Vector3(this.sprite.position.x, this.sprite.position.y + this.sprite.size.y, 0),
+            Quaternion.identity) as GameObject;
+
+            OTSprite backgroundSprite = processbar_Obj_parent.GetComponentInChildren<OTSprite>();
+            backgroundSprite.size = new Vector2(128, 24);
+
+            if (processBar_Scolling == null)
+            {
+                var scrolling = Instantiate(Resources.Load("processbar_scroll", typeof(GameObject))) as GameObject;
+                scrolling.transform.parent = processbar_Obj_parent.transform;
+
+                processBar_Scolling = scrolling.GetComponent<OTSprite>();
+                processBar_Scolling.pivot = OTObject.Pivot.Left;
+                processBar_Scolling.position = new Vector2((-backgroundSprite.size.x / 2) + 2, 0);
+                processBar_Scolling.size = new Vector2(12, 24);
+            }
+        }
+
+        Hashtable scaleData = new Hashtable();
+        scaleData.Add("from", new Vector2(12, 24));
+        scaleData.Add("to", new Vector2(124, 24));
+        scaleData.Add("time", base.buildingTimeData.arrBuildingTimesData[level - 1]);
+        scaleData.Add("onupdate", "BuildingProcess");
+        scaleData.Add("easetype", iTween.EaseType.linear);
+        scaleData.Add("oncomplete", "DestroyBuildingProcess");
+        scaleData.Add("oncompleteparams", this);
+        scaleData.Add("oncompletetarget", this.gameObject);
+
+        iTween.ValueTo(this.gameObject, scaleData);
+    }
 	protected override void BuildingProcess (Vector2 Rvalue)
 	{
 		base.BuildingProcess (Rvalue);
 		
 		processBar_Scolling.size = Rvalue;
 	}
-	
-	protected override void DestroyBuildingProcess ()
+	protected override void DestroyBuildingProcess (Buildings obj)
 	{
-		base.DestroyBuildingProcess ();
+		base.DestroyBuildingProcess (obj);
 		
 		Destroy(processbar_Obj_parent);
+		
+		if(this.buildingStatus != Buildings.BuildingStatus.buildingComplete) 
+			this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
 	}
 	
 	#endregion
