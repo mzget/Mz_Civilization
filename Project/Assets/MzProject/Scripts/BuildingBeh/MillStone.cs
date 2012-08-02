@@ -12,16 +12,20 @@ public class MillStone : Buildings {
     private float timeInterval = 0;
 
 
-
-	// Use this for initialization
-	void Start () {
+	
+	void Awake() {
         sprite = this.GetComponent<OTSprite>();
+	}
+	
+	
+	// Use this for initialization
+	void Start () {		
         this.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 
         this.level = 1;
-        this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
+        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
     }
 
@@ -34,10 +38,6 @@ public class MillStone : Buildings {
     protected override void CreateProcessBar()
     {
         base.CreateProcessBar();
-    }
-    protected override void BuildingProcess(Vector2 Rvalue)
-    {
-        base.BuildingProcess(Rvalue);
     }
     protected override void DestroyBuildingProcess(Buildings obj)
     {

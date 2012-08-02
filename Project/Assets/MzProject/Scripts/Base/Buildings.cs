@@ -9,10 +9,11 @@ public class BuildingsTimeData {
 	public BuildingsTimeData(Buildings.BuildingType r_buildingType) 
 	{
 		if(r_buildingType == Buildings.BuildingType.general) {
-//			float[] time_generalType = new float[];
-//			time_generalType[0] = 10;
-//			
-//			buildingTimesData = time_generalType;
+            float[] time_generalType = {
+				30f, 90f, 300f, 600f, 1200f
+			};
+			
+			arrBuildingTimesData = time_generalType;
 		}
 		else if(r_buildingType == Buildings.BuildingType.resource) {
 			float[] time_resourceType = { 
@@ -46,7 +47,7 @@ public class Buildings : MonoBehaviour {
     public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
     public static List<Buildings> onBuilding_Obj = new List<Buildings>();
 	
-	public enum BuildingStatus { none = 0, buildingProcess = 1, buildingComplete, };
+	public enum BuildingStatus { none = 0, onBuildingProcess = 1, buildingComplete, };
 	public BuildingStatus buildingStatus;
 	public enum BuildingType { general = 0, resource, };
 	protected BuildingType buildingType;
@@ -73,6 +74,7 @@ public class Buildings : MonoBehaviour {
     }
 	
 	#region Building Process Section.
+
 	public static bool CheckingCanCreateBuilding() {
 		if(onBuilding_Obj.Count < 2)
 			return true;
@@ -126,7 +128,7 @@ public class Buildings : MonoBehaviour {
 
         iTween.ValueTo(this.gameObject, scaleData);
     }
-	protected virtual void BuildingProcess(Vector2 Rvalue) {
+	private void BuildingProcess(Vector2 Rvalue) {
 		Debug.Log("Class :: Buildings" + ":: BuildingProcess");
 		
 		if(this.processBar_Scolling)

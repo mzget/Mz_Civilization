@@ -24,9 +24,31 @@ public class Sawmill : Buildings {
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 
         this.level = 1;
-        this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
+        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
-	}
+    }
+
+    #region Building Processing.
+
+    protected override void OnBuildingProcess(Buildings obj)
+    {
+        base.OnBuildingProcess(obj);
+    }
+    protected override void CreateProcessBar()
+    {
+        base.CreateProcessBar();
+    }
+    protected override void DestroyBuildingProcess(Buildings obj)
+    {
+        base.DestroyBuildingProcess(obj);
+
+        Destroy(processbar_Obj_parent);
+
+        if (this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
+            this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+    }
+
+    #endregion
 	
 	// Update is called once per frame
 	void Update () {
@@ -41,32 +63,6 @@ public class Sawmill : Buildings {
 	        }
 		}
 	}
-	
-	#region Building Processing.
-	
-	protected override void OnBuildingProcess (Buildings obj)
-	{
-		base.OnBuildingProcess (obj);
-	}
-    protected override void CreateProcessBar()
-    {
-        base.CreateProcessBar();
-    }
-	protected override void BuildingProcess (Vector2 Rvalue)
-	{
-		base.BuildingProcess (Rvalue);
-	}
-	protected override void DestroyBuildingProcess (Buildings obj)
-	{
-		base.DestroyBuildingProcess (obj);
-		
-		Destroy(processbar_Obj_parent);
-		
-		if(this.buildingStatus != Buildings.BuildingStatus.buildingComplete) 
-			this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
-	}
-	
-	#endregion
 
     protected override void CreateWindow(int windowID)
     {

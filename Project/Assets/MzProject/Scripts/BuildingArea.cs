@@ -540,6 +540,7 @@ public class BuildingArea : MonoBehaviour {
     private void DrawIntroMarKet()
     {
         GUI.Box(imgRect, new GUIContent(marketNotation, "Market Texture"));
+        GUI.Label(tagName_Rect, new GUIContent(MargetBeh.BuildingName), buildingArea_Skin.label);
         GUI.BeginGroup(contentRect, new GUIContent("สร้างและฝึกฝนกองคาราวาน ซื้อขายและแลกเปลี่ยนสินค้า \n วิจัยและพัฒนากลไกการตลาด", "content"), mainBuildingSkin.textArea);
         {
             //<!-- Requirements Resource.
@@ -573,8 +574,9 @@ public class BuildingArea : MonoBehaviour {
 	
 	private void DrawIntroduceStoreHouse()
 	{
-		GUI.Box(imgRect, new GUIContent(storeHouse_Icon, "Market Texture"));
-        GUI.BeginGroup(contentRect, new GUIContent(StoreHouse.description, "content"), mainBuildingSkin.textArea);
+        GUI.Box(imgRect, new GUIContent(storeHouse_Icon, "Market Texture"));
+        GUI.Label(tagName_Rect, new GUIContent(StoreHouse.BuildingName), buildingArea_Skin.label);
+        GUI.BeginGroup(contentRect, new GUIContent(StoreHouse.Description, "content"), mainBuildingSkin.textArea);
         {
             //<!-- Requirements Resource.
             GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);

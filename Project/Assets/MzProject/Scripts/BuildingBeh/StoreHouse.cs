@@ -35,7 +35,8 @@ public class StoreHouse : Buildings {
 	public static int sumOfGold = 500;
 	public static int sumOfStone = 500;
     public static int SumOfCapacity = 500;
-	public static string description = "The Storehouse functions as a resource drop site \n " +
+    public static string BuildingName = "Store House";
+	public static string Description = "The Storehouse functions as a resource drop site \n " +
 		"It is also the place where resource Gathering technologies are researched";
 	
 	
@@ -69,36 +70,38 @@ public class StoreHouse : Buildings {
         foreach (StoreHouse obj in Buildings.storeHouseId) {
             SumOfCapacity += obj.maxCapacity;
         }
-    }
-//	public static void UsedResource(int food, int wood, int gold, int stone) {
-//		sumOfFood -= food;
-//		sumOfWood -= wood;
-//		sumOfGold -= gold;
-//		sumOfStone -= stone;
-//	}	
+    }	
 	public static void UsedResource(GameResource usedResource) {
 		sumOfFood -= usedResource.Food;
 		sumOfWood -= usedResource.Wood;
 		sumOfGold -= usedResource.Gold;
 		sumOfStone -= usedResource.Stone;
 	}
-	
-	
-	void Awake() {
-		this.level = 1;
-		this.buildingStatus = Buildings.BuildingStatus.buildingProcess;
-		this.OnBuildingProcess(this);
-	}
+
+
+    void Awake()
+    {
+		base.sprite = this.gameObject.GetComponent<OTSprite>();
+
+        this.name = StoreHouse.BuildingName;
+        base.buildingType = BuildingType.general;
+        base.buildingTimeData = new BuildingsTimeData(buildingType);
+		
+        this.level = 1;
+        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+        this.OnBuildingProcess(this);
+    }
 	
 	// Use this for initialization
-	void Start () {
+    void Start()
+    {
         name = "StoreHouse";
         Debug.Log("StoreHouse:ID ::" + ID + "Level ::" + level);
 
         switch (level)
         {
-			case 0: maxCapacity = 500;
-				break;
+            case 0: maxCapacity = 500;
+                break;
             case 1: maxCapacity = 800;
                 break;
             case 2: maxCapacity = 1200;
@@ -110,14 +113,14 @@ public class StoreHouse : Buildings {
             default:
                 break;
         }
-			
-		
+
+
         CalculationMaxCapacity();
-//		CalculationSumofFood();
-//		CalculationSumofWood();
-//		CalculationSumofGold();
-//		CalculationSumofStone();
-	}
+        //		CalculationSumofFood();
+        //		CalculationSumofWood();
+        //		CalculationSumofGold();
+        //		CalculationSumofStone();
+    }
 	
 	protected override void OnBuildingProcess (Buildings obj)
 	{
