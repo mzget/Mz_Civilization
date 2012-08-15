@@ -20,7 +20,7 @@ public class Mz_LoadingScreen : MonoBehaviour
 	
     IEnumerator Start()
     {
-		yield return new WaitForSeconds(.1f);
+		yield return new WaitForSeconds(.01f);
 		Application.LoadLevel(sceneName);
 		
 #if UNITY_FLASH || UNITY_WEBPLAYER
@@ -55,13 +55,13 @@ public class Mz_LoadingScreen : MonoBehaviour
     void OnGUI()
     {
         GUI.depth = 0;
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GameWidth, Screen.height / Main.GameHeight, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
 
-        GUI.DrawTexture(new Rect(0, 0, Main.GameWidth, Main.GameHeight), background);
+        GUI.DrawTexture(new Rect(0, 0, Main.GAMEWIDTH, Main.GAMEHEIGHT), background);
 		
 		GUI.skin.box.fontSize = 32;
 		GUI.skin.box.alignment = TextAnchor.MiddleCenter;
 //        float process = async.progress * 100f;
-        GUI.Box(new Rect(Main.GameWidth / 2 - 200, Main.GameHeight / 2 - 40, 400, 80), "Loading..." /*+ process.ToString("F1") + " %"*/, GUI.skin.box);
+        GUI.Box(new Rect(Main.GAMEWIDTH / 2 - 200, Main.GAMEHEIGHT / 2 - 40, 400, 80), "Loading..." /*+ process.ToString("F1") + " %"*/, GUI.skin.box);
     }
 }

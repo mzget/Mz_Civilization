@@ -4,8 +4,26 @@ using System.Collections;
 public class BarrackBeh : Buildings
 {
 	//<!-- Static Data.
+    public static string BuildingName = "Barrack";
 	public static GameResource CreateResource = new GameResource(40, 180, 120, 80);
-    public static string Description = "ในค่ายทหารนี้คุณสามารถเกณฑ์ทหารราบได้ ยิ่งระดับค่ายทหารมากเท่าไร \n " + "กองกำลังก็จะเข็มแข็งมากขึ้น";
+
+    private static string Description_TH = "ในค่ายทหารนี้คุณสามารถเกณฑ์ทหารราบได้ ยิ่งระดับค่ายทหารมากเท่าไร \n " + "กองกำลังก็จะเข็มแข็งมากขึ้น";
+    private static string Description_EN = "Trains infantry units. Also researches technologies related to infantry units";
+	public static string CurrentDescription {
+        get
+        {
+            string temp = Description_EN;
+
+            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
+                temp = Description_EN;
+            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai)
+                temp = Description_TH;
+
+            return temp;
+        }
+//		set{}
+	}
+
 
 
 	public GUISkin mainBuildingSkin;
@@ -15,13 +33,45 @@ public class BarrackBeh : Buildings
 	public Texture2D ToxotesTex;
 
 	
+	
+
+    void Awake() {
+        base.sprite = this.gameObject.GetComponent<OTSprite>();
+    }
     
 	// Use this for initialization
 	void Start ()
 	{
-        name = "Barrack";
-        Debug.Log("BarrackBeh:: " + "Level ::" + level);
-	}
+        this.name = BuildingName;
+        base.buildingType = BuildingType.general;
+        base.buildingTimeData = new BuildingsTimeData(buildingType);
+
+        base.level = 1;
+        base.buildingStatus = BuildingStatus.onBuildingProcess;
+        base.OnBuildingProcess(this);
+    }
+
+    #region Building Processing.
+
+    public override void OnBuildingProcess(Buildings obj)
+    {
+        base.OnBuildingProcess(obj);
+    }
+    protected override void CreateProcessBar()
+    {
+        base.CreateProcessBar();
+    }
+    protected override void DestroyBuildingProcess(Buildings obj)
+    {
+        base.DestroyBuildingProcess(obj);
+
+        Destroy(base.processbar_Obj_parent);
+
+        if (this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
+            this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+    }
+
+    #endregion
 	
 	// Update is called once per frame
 	void Update ()
@@ -44,7 +94,7 @@ public class BarrackBeh : Buildings
             {
                 Rect headerContentRect = new Rect(5, 0 * height, background_Rect.width - 10, height);
                 GUI.Box(headerContentRect, GUIContent.none, standard_Skin.box);
-                GUI.Box(new Rect(200, 2, headerContentRect.width - 200, height - 4), Description, standard_Skin.textArea);
+                GUI.Box(new Rect(200, 2, headerContentRect.width - 200, height - 4), Description_TH, standard_Skin.textArea);
                 GUI.DrawTexture(buildingIcon_Rect, buildingIcon_Texture);
 			}
 			GUI.EndGroup ();

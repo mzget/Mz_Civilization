@@ -6,9 +6,30 @@ public class MargetBeh : Buildings {
     public static string BuildingName = "Market";
 	public static GameResource CreateResource = new GameResource(100, 120, 120, 60);
 
+    private static string Description_TH = "สร้างและฝึกฝนกองคาราวาน ซื้อขายและแลกเปลี่ยนสินค้า \n วิจัยและพัฒนากลไกการตลาด";
+    private static string Description_EN = "The Market can be built to buy and sell resources for gold. Upgrade market to train more Caravan.";
+    public static string CurrentDescription
+    {
+        get
+        {
+            string temp = Description_EN;
+
+            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
+                temp = Description_EN;
+            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai)
+                temp = Description_TH;
+
+            return temp;
+        }
+        //		set{}
+    }
 
     void Awake() {
         base.sprite = this.gameObject.GetComponent<OTSprite>();
+    }
+
+	// Use this for initialization
+	void Start () {
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 
@@ -17,14 +38,9 @@ public class MargetBeh : Buildings {
         base.OnBuildingProcess(this);
     }
 
-	// Use this for initialization
-	void Start () {
-
-    }
-
     #region Building Processing.
 
-    protected override void OnBuildingProcess(Buildings obj)
+    public override void OnBuildingProcess(Buildings obj)
     {
         base.OnBuildingProcess(obj);
     }

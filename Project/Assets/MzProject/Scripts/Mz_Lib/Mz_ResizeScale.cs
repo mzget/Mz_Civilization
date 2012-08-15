@@ -13,14 +13,14 @@ public class Mz_ResizeScale : MonoBehaviour {
 			obj.localScale = Vector3.one;
 		}
 		else {
-			obj.localScale = new Vector3((Screen.width / Main.GameWidth), obj.localScale.y, obj.localScale.z);
+			obj.localScale = new Vector3((Screen.width / Main.GAMEWIDTH), obj.localScale.y, obj.localScale.z);
 		}
 		
 		if(Screen.height == 768) {
 			obj.localScale = Vector3.one;
 		}
 		else {
-			obj.localScale = new Vector3(obj.localScale.x, (Screen.height / Main.GameHeight), obj.localScale.z);
+			obj.localScale = new Vector3(obj.localScale.x, (Screen.height / Main.GAMEHEIGHT), obj.localScale.z);
 		}
 	}
 }

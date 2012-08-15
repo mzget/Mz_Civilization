@@ -127,6 +127,7 @@ public class OTSprite : OTObject
         set
         {
             _image = value;
+			CheckSettings();
 			Clean();
         }
     }
@@ -247,7 +248,7 @@ public class OTSprite : OTObject
     int _frameIndex_ = 0;
     bool _flipHorizontal_ = false;
     bool _flipVertical_ = false;
-    Texture _image_ = null;
+    protected Texture _image_ = null;
     bool _transparent_ = true;
     Color _tintColor_ = Color.white;
     float _alpha_ = 1;
@@ -607,26 +608,28 @@ public class OTSprite : OTObject
             // adjust this sprites UV coords
             if (frame.uv != null && mesh != null)
             {
-                Vector2[] meshUV = frame.uv.Clone() as Vector2[];
-                if (flipHorizontal)
-                {
-                    Vector2 v;
-                    v = meshUV[0];
-                    meshUV[0] = meshUV[1]; meshUV[1] = v;
-                    v = meshUV[2];
-                    meshUV[2] = meshUV[3]; meshUV[3] = v;
-                }
-
-                if (flipVertical)
-                {
-                    Vector2 v;
-                    v = meshUV[0];
-                    meshUV[0] = meshUV[3]; meshUV[3] = v;
-                    v = meshUV[1];
-                    meshUV[1] = meshUV[2]; meshUV[2] = v;
-                }
-
-                mesh.uv = meshUV;
+                Vector2[] meshUV = frame.uv.Clone() as Vector2[];				
+				if (meshUV.Length == mesh.vertexCount)
+				{				
+	                if (flipHorizontal)
+	                {
+	                    Vector2 v;
+	                    v = meshUV[0];
+	                    meshUV[0] = meshUV[1]; meshUV[1] = v;
+	                    v = meshUV[2];
+	                    meshUV[2] = meshUV[3]; meshUV[3] = v;
+	                }
+	
+	                if (flipVertical)
+	                {
+	                    Vector2 v;
+	                    v = meshUV[0];
+	                    meshUV[0] = meshUV[3]; meshUV[3] = v;
+	                    v = meshUV[1];
+	                    meshUV[1] = meshUV[2]; meshUV[2] = v;
+	                }	
+	                mesh.uv = meshUV;
+				}
             }
         }
     }
@@ -646,6 +649,10 @@ public class OTSprite : OTObject
             return lastMat;
         }
 		
+		// correct _frameIndex
+		if (spriteContainer!=null && _frameIndex>spriteContainer.frameCount-1)
+			_frameIndex = spriteContainer.frameCount-1;
+				
 		// Get the new material base instance
         Material spMat = OT.GetMaterial(_materialReference, tintColor, alpha);
 		// If we couldn't generate the material lets take our 'default' transparent
@@ -755,20 +762,24 @@ public class OTSprite : OTObject
 	                        }
 	                        if (_frameIndex_ != frameIndex || _spriteContainer_ != spriteContainer)
 	                        {
-	                            Vector2 sc = new Vector2((size.x / oSize.x) * fr.size.x * OT.view.sizeFactor, (size.y / oSize.y) * fr.size.y * OT.view.sizeFactor);
+								float _sx = (size.x / oSize.x);
+								float _sy = (size.y / oSize.y);
+	                            Vector2 sc = new Vector2(_sx * fr.size.x * OT.view.sizeFactor, _sy * fr.size.y * OT.view.sizeFactor);
 	                            Vector3 sc3 = new Vector3(sc.x, sc.y, 1);
 	
 	                            _size = sc;
 	                            if (!Vector3.Equals(transform.localScale, sc3))
 	                               transform.localScale = sc3;
 	                            oSize = fr.size * OT.view.sizeFactor;
-	                            imageSize = fr.imageSize * OT.view.sizeFactor;
-	                            Vector2 nOffset = fr.offset * OT.view.sizeFactor;
-	                            if (_baseOffset.x != nOffset.x || _baseOffset.y != nOffset.y)
-	                            {
+								
+	                            imageSize = new Vector2(_sx * fr.imageSize.x * OT.view.sizeFactor, _sy * fr.imageSize.y * OT.view.sizeFactor);								
+	                            Vector2 nOffset = new Vector2(_sx * fr.offset.x * OT.view.sizeFactor, _sy * fr.offset.y * OT.view.sizeFactor);
+								
+	                            //if (_baseOffset.x != nOffset.x || _baseOffset.y != nOffset.y)
+	                            //{
 	                                offset = nOffset;
 	                                position = _position;
-	                            }
+	                            //}
 	                        }
 	                    }
 	                    else
@@ -787,6 +798,7 @@ public class OTSprite : OTObject
 	                    }
 					}
                 }
+				
             }
 			
 			// keep old and get new material name								
@@ -825,6 +837,8 @@ public class OTSprite : OTObject
 	        _tintColor_ = tintColor;
 	        _alpha_ = alpha;				
 		}
+		
+		
 
         isDirty = false;
         if (spriteContainer != null && !spriteContainer.isReady)
@@ -887,10 +901,17 @@ public class OTSprite : OTObject
             else
             {
 				if (_spriteContainer_ != null && _spriteContainer == null)
-					_containerName = "";
+					_containerName = "";				
 				
-                if (_image_ != image)
-                    size = new Vector2(image.width, image.height) * OT.view.sizeFactor;
+		        if (_image_ != image) 
+				{
+					if (!baseSize.Equals(Vector2.zero))							
+		               size =  new Vector2 (size.x * (image.width / baseSize.x) , size.y * (image.height / baseSize.y) ) * OT.view.sizeFactor;
+					else
+		            	size = new Vector2(image.width, image.height) * OT.view.sizeFactor;
+					baseSize = new Vector2(image.width, image.height);
+				}				
+				
             }
             if (alpha < 0) _alpha = 0;
             else
@@ -907,6 +928,9 @@ public class OTSprite : OTObject
     
     protected override void Awake()
     {
+		if (_frameIndex<0) 
+			_frameIndex = 0;
+		
         _spriteContainer_ = spriteContainer;
         _frameIndex_ = frameIndex;
         _image_ = image;
@@ -917,6 +941,10 @@ public class OTSprite : OTObject
         _tintColor_ = _tintColor;
         _alpha_ = _alpha;
         isDirty = true;
+		
+		if (image!=null)
+			baseSize = new Vector2(image.width, image.height);
+				
         base.Awake();
     }
 

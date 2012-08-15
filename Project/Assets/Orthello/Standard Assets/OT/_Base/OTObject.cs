@@ -1528,21 +1528,41 @@ public class OTObject : MonoBehaviour
     protected virtual void Clean()
     {
     }
-
     
+	/// <summary>
+	/// Overridable virtual method that will assign default properties 
+	/// from the prototype to the instanced new object after it is created
+	/// from the pool
+	/// </summary>
     public virtual void Assign(OTObject protoType)
     {
         rotation = protoType.rotation;
         position = protoType.position;
         size = protoType.size;
         oSize = protoType.oSize;
+		depth = protoType.depth;
+		registerInput = protoType.registerInput;
+		draggable = protoType.draggable;
+			
         if (pivot != protoType.pivot || pivotPoint != protoType.pivotPoint)
         {
             pivot = protoType.pivot;
             pivotPoint = protoType.pivotPoint;
             Update();
         }
-    }
+		
+		if (protoType.collider !=null && protoType.collider is BoxCollider)
+		{
+			(collider as BoxCollider).center = (protoType.collider as BoxCollider).center;
+			(collider as BoxCollider).size = (protoType.collider as BoxCollider).size;
+		}
+		else
+		if (protoType.collider !=null && protoType.collider is SphereCollider)
+		{
+			(collider as SphereCollider).center = (protoType.collider as SphereCollider).center;
+			(collider as SphereCollider).radius = (protoType.collider as SphereCollider).radius;
+		}
+	}
 
     /// <summary>
     /// Overridable virtual method that is called after create the object's mesh

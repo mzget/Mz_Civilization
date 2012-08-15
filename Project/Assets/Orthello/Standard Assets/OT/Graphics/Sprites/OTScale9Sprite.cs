@@ -55,8 +55,8 @@ public class OTScale9Sprite : OTSprite
 		int ix = 100;
 		if (image!=null) ix = image.width;
 				
-		float maLeft = (_meshsize_.x * ((margins.left>=1)?(margins.left/ix):margins.left)) * (ix/_size.x);
-		float maRight = (_meshsize_.x * ((margins.right>=1)?(margins.right/ix):margins.right)) * (ix/_size.x);
+		float maLeft = (_meshsize_.x * ((margins.left>=1)?(margins.left/ix):margins.left)) * (ix/_size.x) * OT.view.sizeFactor;
+		float maRight = (_meshsize_.x * ((margins.right>=1)?(margins.right/ix):margins.right)) * (ix/_size.x) * OT.view.sizeFactor;
 		
 		float uvLeft =  ((margins.left>=1)?(margins.left/ix):margins.left);
 		float uvRight = ((margins.right>=1)?(margins.right/ix):margins.right);
@@ -96,8 +96,8 @@ public class OTScale9Sprite : OTSprite
 		if (image!=null) iy = image.height;
 		
 		
-		float maTop = (_meshsize_.y * ((margins.top>=1)?(margins.top/iy):margins.top)) * (iy/_size.y);
-		float maBottom = (_meshsize_.y * ((margins.bottom>=1)?(margins.bottom/iy):margins.bottom)) * (iy/_size.y);
+		float maTop = (_meshsize_.y * ((margins.top>=1)?(margins.top/iy):margins.top)) * (iy/_size.y)* OT.view.sizeFactor;
+		float maBottom = (_meshsize_.y * ((margins.bottom>=1)?(margins.bottom/iy):margins.bottom)) * (iy/_size.y) * OT.view.sizeFactor;
 
 		float uvTop =  ((margins.top>=1)?(margins.top/iy):margins.top);
 		float uvBottom = ((margins.bottom>=1)?(margins.bottom/iy):margins.bottom);

@@ -11,11 +11,11 @@ public class FacebookManager : MonoBehaviour
     private Dictionary<string, string> friends; //All the users friends key = id, value = name
 	
 	
-	private Manager manager;
+	private MainMenu manager;
 	
 	
 	void Start() {
-		manager = this.gameObject.GetComponent<Manager>();
+		manager = this.gameObject.GetComponent<MainMenu>();
 	}
 	
 
@@ -25,7 +25,7 @@ public class FacebookManager : MonoBehaviour
         user_id = parts[0];
         user_name = parts[1];
 		
-		Manager.Username = this.user_name;
+		MainMenu.Username = this.user_name;
     }
 	
     public void GetFriendsComplete(string fbdata) //Called by js when the friends are retrieved. fbdata looks like 1234,name;5678,name;..
@@ -48,10 +48,11 @@ public class FacebookManager : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GameWidth, Screen.height / Main.GameHeight, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
 		
-		if(manager.newgameUIState == Manager.NewGameUIState.showTextField) {
-	        if (GUI.Button(new Rect(Main.GameWidth/2 - 150, 32, 300, 50), new GUIContent("", "FacebookConnect"), facebook_Skin.customStyles[0])) {
+		if(manager.newgameUIState == MainMenu.NewGameUIState.showTextField) {
+            if (GUI.Button(new Rect(Main.GAMEWIDTH / 2 - 150, 32, 300, 50), new GUIContent("", "FacebookConnect"), facebook_Skin.customStyles[0]))
+            {
 	            Application.ExternalCall("GetLoginStatus");
 			}
 		}

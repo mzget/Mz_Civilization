@@ -26,63 +26,88 @@ public class BuildingsTimeData {
 };
 
 public class Buildings : MonoBehaviour {
-	public const int MAX_LEVEL = 10;
-	
+	public const int MAX_LEVEL = 10;	
 	
     public Font showG;
     public GUISkin standard_Skin;
     public GUISkin building_Skin;
+    public GUISkin taskbar_Skin;
+    //<!-- Styles.
+    protected GUIStyle closeButton_Style;
     //<!-- Building Icon.
     public Texture2D buildingIcon_Texture;
+    protected Texture2D food_icon;
+    protected Texture2D wood_icon;
+    protected Texture2D stone_icon;
+    protected Texture2D copper_icon;
 
 	protected GameObject processbar_Obj_parent;
     protected OTSprite processBar_Scolling;
     [System.NonSerialized]    public OTSprite sprite;
 		
     public int level = 0;
+	protected int indexOfPosition;
+	public int IndexOfPosition  {get {return indexOfPosition; } set {indexOfPosition = value; }}
     protected bool _clicked = false;
     protected bool _CanDestruction = true;
 	
-	public static bool _CanCreateBuilding = false;
-    public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
-    public static List<Buildings> onBuilding_Obj = new List<Buildings>();
-	
-	public enum BuildingStatus { none = 0, onBuildingProcess = 1, buildingComplete, };
+	public enum BuildingStatus { none = 0, onBuildingProcess = 1, buildingComplete, onUpgradeProcess, };
 	public BuildingStatus buildingStatus;
 	public enum BuildingType { general = 0, resource, };
 	protected BuildingType buildingType;
 
     protected BuildingsTimeData buildingTimeData;
 
-    protected Rect windowRect;
-    protected Rect exitButton_Rect;
-    protected Vector2 scrollPosition = Vector2.zero;
+    /// <summary>
+    /// Static Data.
+    /// </summary>
+    protected static bool _CanUpgradeLevel = false;
+    public static bool _CanCreateBuilding = false;
+    public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
+    public static List<Buildings> onBuilding_Obj = new List<Buildings>();
+    public static List<Farm> FarmInstance = new List<Farm>();
+	public static Sawmill SawmillInstance;
+	public static MillStone MillStoneInstance;
+	public static Smelter SmelterInstance;
 
-    protected Rect background_Rect;
-    protected Rect upgradeButton_Rect;
-    protected Rect destructionButton_Rect;
-    protected Rect imgContent_Rect = new Rect(40, 60, 100, 100);
-    protected Rect buildingIcon_Rect = new Rect(40, 48, 80, 80);
-    protected Rect levelLable_Rect = new Rect(25, 132, 120, 32);
-    protected Rect discription_Rect;
-    protected Rect contentRect = new Rect(170, 20, 590, 160);
-    protected Rect warnningMessage_Rect = new Rect(Main.GameWidth / 2 - 150, Main.GameHeight / 2 - 120, 300, 240);
 
+
+
+    protected virtual void Awake()
+    {
+        closeButton_Style = building_Skin.customStyles[0];
+        food_icon = taskbar_Skin.customStyles[0].normal.background;
+        wood_icon = taskbar_Skin.customStyles[1].normal.background;
+        copper_icon = taskbar_Skin.customStyles[2].normal.background;
+        stone_icon = taskbar_Skin.customStyles[3].normal.background;
+    }
+
+    public static bool CheckingCanCreateBuilding()
+    {
+        if (onBuilding_Obj.Count < 2)
+            return true;
+        else
+            return false;
+    }
+    public bool CheckingCanUpgradeLevel()
+    {
+        if (this.buildingStatus == BuildingStatus.none)
+        {
+            if (onBuilding_Obj.Count < 2)
+                return true;
+            else
+                return false;
+        }
+        else return false;
+    }
 
     protected virtual void DestructionBuilding() { 
     
     }
 	
 	#region Building Process Section.
-
-	public static bool CheckingCanCreateBuilding() {
-		if(onBuilding_Obj.Count < 2)
-			return true;
-		else 
-			return false;
-	}
 	
-	protected virtual void OnBuildingProcess(Buildings obj) {
+	public virtual void OnBuildingProcess(Buildings obj) {
         Debug.Log("Class :: Building" + obj.name + ": OnBuildingProcess()");
 
         if (onBuilding_Obj.Count < 2)
@@ -97,7 +122,8 @@ public class Buildings : MonoBehaviour {
     {
         if (processbar_Obj_parent == null)
         {
-            processbar_Obj_parent = Instantiate(Resources.Load("Processbar_Group", typeof(GameObject)),
+            processbar_Obj_parent = Instantiate(
+                Resources.Load("Processbar_Group", typeof(GameObject)),
                 new Vector3(this.sprite.position.x, this.sprite.position.y + this.sprite.size.y, 0),
                 Quaternion.identity) as GameObject;
 
@@ -162,43 +188,37 @@ public class Buildings : MonoBehaviour {
 
     #endregion
 
-    protected virtual void CreateWindow(int windowID)
-    {
-        //<!-- Exit Button.
-        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), building_Skin.customStyles[0]))
-        {
-            _clicked = false;
-        }
-
-        if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), standard_Skin.button))
-        {
-
-        }
-
-        if (_CanDestruction)
-        {
-            if (GUI.Button(destructionButton_Rect, new GUIContent("Destruction"), standard_Skin.button))
-            {
-                //GUI.Box()
-            }
-        }
-    }
-
     protected virtual IEnumerator BuildingTimer()
     {
         yield return 0;
     }
+	
 
+    protected Rect windowRect;
+    protected Rect exitButton_Rect;
+    protected Vector2 scrollPosition = Vector2.zero;
+
+    protected Rect background_Rect;
+    protected Rect upgradeButton_Rect;
+    protected Rect destructionButton_Rect;
+    protected Rect imgContent_Rect = new Rect(40, 60, 100, 100);
+    protected Rect buildingIcon_Rect = new Rect(40, 48, 80, 80);
+    protected Rect levelLable_Rect = new Rect(25, 132, 120, 32);
+    protected Rect description_Rect;
+    protected Rect contentRect = new Rect(170, 20, 590, 160);
+    protected Rect warnningMessage_Rect = new Rect(Main.GAMEWIDTH / 2 - 150, Main.GAMEHEIGHT / 2 - 120, 300, 240);
+    protected Rect upgradeRequireResource_Rect = new Rect(10, 100, 400, 32);
+	
     protected void OnGUI()
     {
-        windowRect = new Rect(Main.GameWidth / 2 - 350, Main.GameHeight / 2 - 200, 700, 400);
+        windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
-        upgradeButton_Rect = new Rect (windowRect.width - 140, 32, 100, 32);
+        upgradeButton_Rect = new Rect(description_Rect.width - 100, 140, 100, 32);
         destructionButton_Rect = new Rect(windowRect.width - 250, 32, 100, 32);
         background_Rect = new Rect(0, 0, windowRect.width - 12, 320);
-        discription_Rect = new Rect(150, 48, 530, background_Rect.height - 96);
+        description_Rect = new Rect(150, 24, 520, background_Rect.height - 45);
 
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GameWidth, Screen.height / Main.GameHeight, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
 
         standard_Skin.window.font = showG; 
 
@@ -207,8 +227,29 @@ public class Buildings : MonoBehaviour {
         building_Skin.box.fontStyle = FontStyle.Normal;
         building_Skin.box.contentOffset = new Vector2(128, 38);
 
+        GUIStyle buildingWindowStyle = GUI.skin.window;
+        buildingWindowStyle.font = building_Skin.window.font;
+        buildingWindowStyle.fontSize = building_Skin.window.fontSize;
+
         if (_clicked) {
-            windowRect = GUI.Window(0, windowRect, CreateWindow, new GUIContent(name, "GUI window"), standard_Skin.window);
+            windowRect = GUI.Window(0, windowRect, CreateWindow, new GUIContent(name, "GUI window"), buildingWindowStyle);
+        }
+    }
+
+    protected virtual void CreateWindow(int windowID)
+    {
+        //<!-- Exit Button.
+        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), closeButton_Style))
+        {
+            _clicked = false;
+        }
+
+        if (_CanDestruction)
+        {
+            if (GUI.Button(destructionButton_Rect, new GUIContent("Destruction"), GUI.skin.button))
+            {
+                //GUI.Box()
+            }
         }
     }
 }

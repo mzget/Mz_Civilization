@@ -7,9 +7,9 @@ public class BuildingArea : MonoBehaviour {
     /// GUI : Texture && Skin.
     /// </summary>
     public GUISkin standard_skin;
-    public GUISkin mainBuildingSkin;
     public GUISkin buildingArea_Skin;
 	public GUISkin taskbarUI_Skin;
+    private GUIStyle tagname_Style;
     /// <summary>
     /// Static GameObject //Prefabs, Texture2D,
     /// </summary>
@@ -19,38 +19,31 @@ public class BuildingArea : MonoBehaviour {
     //<!-- Utility.
     public GameObject houseObj;
     public Texture2D house_Notation;
-
     public GameObject guardTower_Obj;
     public Texture2D guardTower_icon;
-
     public GameObject academy_Obj;
     public Texture2D academy_icon;
     //<!-- Economic.
     public GameObject marketObj;
     public Texture2D marketNotation;
-
     public GameObject storeHouse_Obj;
     public Texture2D storeHouse_Icon;
-
     public GameObject farm_Obj;
     public Texture2D farm_Icon;
-
     public GameObject sawmill_Obj;
     public Texture2D sawmill_Icon;
-
     public GameObject millStone_Obj;
     public Texture2D millStone_Icon;
-
     public GameObject smelter_Obj;
     public Texture2D smelter_icon;
     //<!-- Militaly.
     public GameObject barrackOBJ;
     public Texture2D barrackNotation;
-
-
+	
     private OTSprite sprite;
     private ObjectName objectname;
-    
+	private int indexOfArea;
+	public int IndexOfArea { get {return indexOfArea;} set {indexOfArea = value;}}
     private enum GUIState { none = 0, ShowMainUI, ShowUtiltyUI, ShowEconomyUI, ShowMilitaryUI };
     private GUIState guiState;
 	
@@ -69,7 +62,12 @@ public class BuildingArea : MonoBehaviour {
     private static DrawOrder smelter = new DrawOrder("smelter", 3);
     private static DrawOrder market = new DrawOrder("market", 4); 
 	private static DrawOrder storehouse = new DrawOrder("storehouse", 5);
-    
+
+
+    void Awake() {
+        tagname_Style = buildingArea_Skin.customStyles[1];
+    }
+
 	// Use this for initialization
 	void Start () {
         sprite = this.gameObject.GetComponent<OTSprite>();
@@ -107,9 +105,9 @@ public class BuildingArea : MonoBehaviour {
 
     #endregion
     
-    void DestroyManager() 
+    void ActiveManager() 
     {
-        Destroy(this.gameObject);
+        this.gameObject.SetActive(false);
     }
 	
 
@@ -121,17 +119,12 @@ public class BuildingArea : MonoBehaviour {
     private Rect tagName_Rect;
     private Rect contentRect;
     private Rect creatButton_Rect;
-	private Rect requireResource_Rect = new Rect(10, 100, 400, 32);
-	private Rect food_Rect = new Rect(0,1,100,30);
-	private Rect wood_Rect = new Rect(100,1,100,30);
-	private Rect gold_Rect = new Rect(200,1,100,30);
-	private Rect stone_Rect= new Rect(300,1,100,30);
     //<!-- Economy.
     //<!-- Military.
     //<!-- Utility.
     void OnGUI()
     {
-        windowRect = new Rect(Main.GameWidth / 2 - 350, Main.GameHeight / 2 - 200, 700, 400);
+        windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 320);
         imgRect = new Rect(40, 48, 80, 80);
@@ -139,7 +132,7 @@ public class BuildingArea : MonoBehaviour {
         contentRect = new Rect(140, 10, background_Rect.width - 160, 140);
         creatButton_Rect = new Rect(420, 100, 100, 32);
 
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GameWidth, Screen.height / Main.GameHeight, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
         		
         if(guiState != GUIState.none) {
             windowRect = GUI.Window(0, windowRect, this.CreateWindow, new GUIContent("Building Area", "GUI window"), standard_skin.window);
@@ -155,27 +148,27 @@ public class BuildingArea : MonoBehaviour {
 		
 		#region <!-- Mian Data flow.
 		
-        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), mainBuildingSkin.customStyles[0])) {
+        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), buildingArea_Skin.customStyles[0])) {
             if (guiState != GUIState.none) {
                 guiState = GUIState.none;
             }
         }
 
-        if(GUI.Button(utility_Rect, new GUIContent("Utility", utility_icon), mainBuildingSkin.button)) {
+        if(GUI.Button(utility_Rect, new GUIContent("Utility", utility_icon), buildingArea_Skin.button)) {
             if (guiState != GUIState.ShowUtiltyUI) {
                 guiState = GUIState.ShowUtiltyUI;
             }
 			
 			scrollPosition = Vector2.zero;
         }
-        else if (GUI.Button(economy_Rect, new GUIContent("Economy",economy_icon), mainBuildingSkin.button)) {
+        else if (GUI.Button(economy_Rect, new GUIContent("Economy",economy_icon), buildingArea_Skin.button)) {
             if (guiState != GUIState.ShowEconomyUI) {
                 guiState = GUIState.ShowEconomyUI;
             }
 			
 			scrollPosition = Vector2.zero;
         }
-        else if (GUI.Button(military_Rect, new GUIContent("Military", military_icon), mainBuildingSkin.button)) {
+        else if (GUI.Button(military_Rect, new GUIContent("Military", military_icon), buildingArea_Skin.button)) {
             if (guiState != GUIState.ShowMilitaryUI) {
                 guiState = GUIState.ShowMilitaryUI;
             }
@@ -187,13 +180,11 @@ public class BuildingArea : MonoBehaviour {
 
         // An absolute-positioned example: We make a scrollview that has a really large client
         // rect and put it in a small rect on the screen.
-        scrollPosition = GUI.BeginScrollView(
-            new Rect(0, 80, windowRect.width, background_Rect.height),
-            scrollPosition,
-            new Rect(0, 0, background_Rect.width, 1200), false, true); 
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, windowRect.width, background_Rect.height),
+            scrollPosition, new Rect(0, 0, background_Rect.width, 1200), false, true); 
         {
-            mainBuildingSkin.box.contentOffset = new Vector2(50, 20);
-            mainBuildingSkin.textArea.wordWrap = true;
+            buildingArea_Skin.box.contentOffset = new Vector2(50, 20);
+            buildingArea_Skin.textArea.wordWrap = true;
 
             //<!-- Utility.
             if (guiState == GUIState.ShowUtiltyUI)          
@@ -201,47 +192,47 @@ public class BuildingArea : MonoBehaviour {
 				#region Utility Sections.
 				
                 //<!-- House.
-                GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), new GUIContent("House", "Utility"), mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), new GUIContent("House", "Utility"), buildingArea_Skin.box);
                 {
                     GUI.Box(imgRect, new GUIContent(house_Notation, "Texture"));
-                    GUI.Box(contentRect, new GUIContent("The house can be built to increase your maximum population by 50.", "Utility"), mainBuildingSkin.textArea);
+                    GUI.Box(contentRect, new GUIContent("The house can be built to increase your maximum population by 50.", "Utility"), buildingArea_Skin.textArea);
                     if (GUI.Button(creatButton_Rect, "Build"))
                     {
                         GameObject house = Instantiate(houseObj) as GameObject;
                         house.transform.position = sprite.position;
-                        DestroyManager();
+                        ActiveManager();
                     }
                 }
                 GUI.EndGroup();
 
                 //<!-- Guard Tower.
-                GUI.BeginGroup(new Rect(0, 1 * frameHeight, background_Rect.width, frameHeight), new GUIContent("Guard Tower", "Utility"), mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 1 * frameHeight, background_Rect.width, frameHeight), new GUIContent("Guard Tower", "Utility"), buildingArea_Skin.box);
                 {
                     GUI.Box(imgRect, new GUIContent(guardTower_icon, "Texture"));
                     GUI.Box(contentRect, new GUIContent("The Guard Tower it is an offensive building \n " +
-                        "that provides Line of Sight and fires arrows at enemy units.", "content"), mainBuildingSkin.textArea);
+                        "that provides Line of Sight and fires arrows at enemy units.", "content"), buildingArea_Skin.textArea);
                     if (GUI.Button(creatButton_Rect, "Create"))
                     {
                         GameObject building = Instantiate(guardTower_Obj) as GameObject;
                         float posX = sprite.position.x;
                         float posY = sprite.position.y + sprite.size.y / 4; 
                         building.transform.position = new Vector2(posX, posY);
-                        DestroyManager();
+                        ActiveManager();
                     }
                 }
                 GUI.EndGroup();
 
                 //<!-- Academy(สถานศึกษา).
-                GUI.BeginGroup(new Rect(0, 2 * frameHeight, background_Rect.width, frameHeight), new GUIContent("Academy", "Utility"), mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 2 * frameHeight, background_Rect.width, frameHeight), new GUIContent("Academy", "Utility"), buildingArea_Skin.box);
                 {
                     GUI.Box(imgRect, new GUIContent(academy_icon, "Utility Texture"));
                     GUI.Box(contentRect, new GUIContent("The Academy is a building in which you can \n" +
-                        "research technologies to increase the power of your city and troops.", "content"), mainBuildingSkin.textArea);
+                        "research technologies to increase the power of your city and troops.", "content"), buildingArea_Skin.textArea);
                     if (GUI.Button(creatButton_Rect, "Create"))
                     {
                         GameObject building = Instantiate(academy_Obj) as GameObject;
                         building.transform.position = sprite.position;
-                        DestroyManager();
+                        ActiveManager();
                     }
                 }
                 GUI.EndGroup();
@@ -252,7 +243,7 @@ public class BuildingArea : MonoBehaviour {
             {
 				#region <!-- Economy Sections.
 				
-                GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
                     if (drawOrderList.Count >= 1)
                     {
@@ -261,7 +252,7 @@ public class BuildingArea : MonoBehaviour {
                 }
                 GUI.EndGroup();
 
-                GUI.BeginGroup(new Rect(0, 1 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 1 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
                     if (drawOrderList.Count >= 2)
                     {
@@ -270,7 +261,7 @@ public class BuildingArea : MonoBehaviour {
                 }
                 GUI.EndGroup();
 
-                GUI.BeginGroup(new Rect(0, 2 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 2 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
                     if (drawOrderList.Count >= 3)
                     {
@@ -279,7 +270,7 @@ public class BuildingArea : MonoBehaviour {
                 }
                 GUI.EndGroup();
 
-                GUI.BeginGroup(new Rect(0, 3 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 3 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
                     if (drawOrderList.Count >= 4)
                     {
@@ -288,7 +279,7 @@ public class BuildingArea : MonoBehaviour {
                 }
                 GUI.EndGroup();
 
-                GUI.BeginGroup(new Rect(0, 4 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 4 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
 					if(drawOrderList.Count >= 5) {
 						CalculationDrawOrderGUI(4);
@@ -296,7 +287,7 @@ public class BuildingArea : MonoBehaviour {
                 }
                 GUI.EndGroup();        
 				
-				GUI.BeginGroup(new Rect(0, 5 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, mainBuildingSkin.box);
+				GUI.BeginGroup(new Rect(0, 5 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
 		        {
 		            if(drawOrderList.Count >= 6)
 						CalculationDrawOrderGUI(5);
@@ -310,35 +301,37 @@ public class BuildingArea : MonoBehaviour {
 				#region Millitary Sections.
 				
                 //<!-- Barrack.
-                GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), new GUIContent("Barrack", "ค่ายทหาร"), mainBuildingSkin.box);
+                GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), new GUIContent(BarrackBeh.BuildingName, "ค่ายทหาร"), buildingArea_Skin.box);
                 {
                     GUI.DrawTexture(imgRect, barrackNotation, ScaleMode.ScaleToFit);
-                    GUI.BeginGroup(contentRect, new GUIContent("ในค่ายทหารแห่งนี้ คุณสามารถเกณฑ์กองทหารราบได้ \n ยิ่งระดับค่ายทหารมากเท่าไร ก็จะสร้างกองกำลังได้เร็วขึ้นเท่านั้น", "content"), mainBuildingSkin.textArea);
+                    GUI.BeginGroup(contentRect, new GUIContent(BarrackBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
 					{
 						//<!-- Requirements Resource.
-						GUI.BeginGroup(requireResource_Rect);
+                        GUI.BeginGroup(GameResource.RequireResource_Rect);
 						{
-							GUI.Label(food_Rect, new GUIContent(BarrackBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-							GUI.Label(wood_Rect, new GUIContent(BarrackBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-							GUI.Label(gold_Rect, new GUIContent(BarrackBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-							GUI.Label(stone_Rect, new GUIContent(BarrackBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                            GUI.Label(GameResource.Food_Rect, new GUIContent(BarrackBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                            GUI.Label(GameResource.Wood_Rect, new GUIContent(BarrackBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                            GUI.Label(GameResource.Copper_Rect, new GUIContent(BarrackBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                            GUI.Label(GameResource.Stone_Rect, new GUIContent(BarrackBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
 						}
 						GUI.EndGroup();
 						
 						//<!-- Build Button.
-						if(StoreHouse.sumOfFood >= BarrackBeh.CreateResource.Food &&
-							StoreHouse.sumOfWood >= BarrackBeh.CreateResource.Wood &&
-							StoreHouse.sumOfGold >= BarrackBeh.CreateResource.Gold &&
-							StoreHouse.sumOfStone >= BarrackBeh.CreateResource.Stone)
+						if(StoreHouse.sumOfFood >= BarrackBeh.CreateResource.Food && StoreHouse.sumOfWood >= BarrackBeh.CreateResource.Wood &&
+							StoreHouse.sumOfGold >= BarrackBeh.CreateResource.Gold && StoreHouse.sumOfStone >= BarrackBeh.CreateResource.Stone)
 						{
-		                    if (GUI.Button(creatButton_Rect, "Build"))
-		                    {
-								StoreHouse.UsedResource(BarrackBeh.CreateResource);
-								
-		                        GameObject barrack = Instantiate(barrackOBJ) as GameObject;
-		                        barrack.transform.position = sprite.position;
-		                        DestroyManager();
-		                    }
+                            Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+                            if (Buildings._CanCreateBuilding)
+                            {
+                                if (GUI.Button(creatButton_Rect, "Build"))
+                                {
+                                    StoreHouse.UsedResource(BarrackBeh.CreateResource);
+
+                                    GameObject barrack = Instantiate(barrackOBJ) as GameObject;
+                                    barrack.transform.position = sprite.position;
+                                    ActiveManager();
+                                }
+                            }
 						}
 					}
 					GUI.EndGroup();
@@ -390,17 +383,16 @@ public class BuildingArea : MonoBehaviour {
     void DrawIntroduceFarmGUI()
     {
         GUI.DrawTexture(imgRect, farm_Icon);
-        GUI.Label(tagName_Rect, new GUIContent(Farm.BuildingName), buildingArea_Skin.label);
-		
-        GUI.BeginGroup(contentRect, new GUIContent(Farm.Description, "content"), mainBuildingSkin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(Farm.BuildingName), tagname_Style);		
+        GUI.BeginGroup(contentRect, new GUIContent(Farm.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
-            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
+            GUI.BeginGroup(GameResource.RequireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                GUI.Label(food_Rect, new GUIContent(Farm.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(wood_Rect, new GUIContent(Farm.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(gold_Rect, new GUIContent(Farm.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(stone_Rect, new GUIContent(Farm.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(Farm.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(Farm.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(Farm.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(Farm.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
             //<!-- Create button.
@@ -414,31 +406,36 @@ public class BuildingArea : MonoBehaviour {
 	                    StoreHouse.UsedResource(Farm.CreateResource);
 	
 	                    GameObject building = Instantiate(farm_Obj) as GameObject;
-	                    building.transform.position = sprite.position;
+						building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+						
+						Farm newFarm = building.GetComponent<Farm>();
+						newFarm.level = 1;
+						newFarm.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+						newFarm.OnBuildingProcess((Buildings)newFarm);
+	                    newFarm.IndexOfPosition = this.indexOfArea;
+                        Buildings.FarmInstance.Add(newFarm);
 	
 	                    drawOrderList.RemoveAt(farm.order);
-	                    DestroyManager();
+	                    ActiveManager();
 	                }
 				}
             }
         }
         GUI.EndGroup();
     }
-	
 	void DrawIntroduceSawMill()
 	{
         GUI.Box(imgRect, new GUIContent(sawmill_Icon, "IconTexture"));
-        GUI.Label(tagName_Rect, new GUIContent(Sawmill.BuildingName), buildingArea_Skin.label);
-		
-        GUI.BeginGroup(contentRect, new GUIContent(Sawmill.Description, "content"), mainBuildingSkin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(Sawmill.BuildingName), tagname_Style);		
+        GUI.BeginGroup(contentRect, new GUIContent(Sawmill.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
-            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
+            GUI.BeginGroup(GameResource.RequireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                GUI.Label(food_Rect, new GUIContent(Sawmill.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(wood_Rect, new GUIContent(Sawmill.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(gold_Rect, new GUIContent(Sawmill.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(stone_Rect, new GUIContent(Sawmill.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(Sawmill.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(Sawmill.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(Sawmill.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(Sawmill.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
             //<!-- Create button.
@@ -451,10 +448,10 @@ public class BuildingArea : MonoBehaviour {
 	                    StoreHouse.UsedResource(Sawmill.CreateResource);
 	
 	                    GameObject building = Instantiate(sawmill_Obj) as GameObject;
-	                    building.transform.position = sprite.position;
+	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
 						
 	                    drawOrderList.RemoveAt(sawmill.order);
-	                    DestroyManager();
+	                    ActiveManager();
 	                }
 				}
             }
@@ -465,16 +462,16 @@ public class BuildingArea : MonoBehaviour {
 	void DrawIntroduceMillStone()
 	{
         GUI.Box(imgRect, new GUIContent(millStone_Icon, "IconTexture"));
-        GUI.Label(tagName_Rect, new GUIContent(MillStone.BuildingName), buildingArea_Skin.label);
-        GUI.BeginGroup(contentRect, new GUIContent(MillStone.Description, "content"), mainBuildingSkin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(MillStone.BuildingName), tagname_Style);
+        GUI.BeginGroup(contentRect, new GUIContent(MillStone.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
-            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
+            GUI.BeginGroup(GameResource.RequireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                GUI.Label(food_Rect, new GUIContent(MillStone.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(wood_Rect, new GUIContent(MillStone.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(gold_Rect, new GUIContent(MillStone.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(stone_Rect, new GUIContent(MillStone.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(MillStone.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(MillStone.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(MillStone.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(MillStone.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
             //<!-- Create button.
@@ -491,7 +488,7 @@ public class BuildingArea : MonoBehaviour {
 	                    building.transform.position = sprite.position;
 	
 	                    drawOrderList.RemoveAt(millstone.order);
-	                    DestroyManager();
+	                    ActiveManager();
 	                }
 				}
             }
@@ -502,16 +499,16 @@ public class BuildingArea : MonoBehaviour {
 	void DrawIntroduceSmelter() 
 	{
         GUI.Box(imgRect, new GUIContent(smelter_icon, "IconTexture"));
-        GUI.Label(tagName_Rect, new GUIContent(Smelter.BuildingName), buildingArea_Skin.label);
-        GUI.BeginGroup(contentRect, new GUIContent(Smelter.Description, "content"), mainBuildingSkin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(Smelter.BuildingName), tagname_Style);
+        GUI.BeginGroup(contentRect, new GUIContent(Smelter.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
-            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
+            GUI.BeginGroup(GameResource.RequireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                GUI.Label(food_Rect, new GUIContent(Smelter.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(wood_Rect, new GUIContent(Smelter.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(gold_Rect, new GUIContent(Smelter.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(stone_Rect, new GUIContent(Smelter.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(Smelter.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(Smelter.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(Smelter.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(Smelter.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
             //<!-- Create button.
@@ -529,7 +526,7 @@ public class BuildingArea : MonoBehaviour {
 	
 	                    //Buildings.SmelterInstance = building.GetComponent<Smelter>();
 	                    drawOrderList.RemoveAt(smelter.order);
-	                    DestroyManager();
+	                    ActiveManager();
 	                }
 				}
             }
@@ -540,16 +537,16 @@ public class BuildingArea : MonoBehaviour {
     private void DrawIntroMarKet()
     {
         GUI.Box(imgRect, new GUIContent(marketNotation, "Market Texture"));
-        GUI.Label(tagName_Rect, new GUIContent(MargetBeh.BuildingName), buildingArea_Skin.label);
-        GUI.BeginGroup(contentRect, new GUIContent("สร้างและฝึกฝนกองคาราวาน ซื้อขายและแลกเปลี่ยนสินค้า \n วิจัยและพัฒนากลไกการตลาด", "content"), mainBuildingSkin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(MargetBeh.BuildingName), tagname_Style);
+        GUI.BeginGroup(contentRect, new GUIContent(MargetBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
-            GUI.BeginGroup(requireResource_Rect);
+            GUI.BeginGroup(GameResource.RequireResource_Rect);
             {
-                GUI.Label(food_Rect, new GUIContent(MargetBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(wood_Rect, new GUIContent(MargetBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(gold_Rect, new GUIContent(MargetBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(stone_Rect, new GUIContent(MargetBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(MargetBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(MargetBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(MargetBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(MargetBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
             //<!-- Create Button.
@@ -564,51 +561,53 @@ public class BuildingArea : MonoBehaviour {
 		
 		                GameObject market = Instantiate(marketObj) as GameObject;
 		                market.transform.position = sprite.position;
-		                DestroyManager();
+		                ActiveManager();
 		            }
 				}
             }
         }
         GUI.EndGroup();
     }
-	
-	private void DrawIntroduceStoreHouse()
-	{
+
+    private void DrawIntroduceStoreHouse()
+    {
         GUI.Box(imgRect, new GUIContent(storeHouse_Icon, "Market Texture"));
-        GUI.Label(tagName_Rect, new GUIContent(StoreHouse.BuildingName), buildingArea_Skin.label);
-        GUI.BeginGroup(contentRect, new GUIContent(StoreHouse.Description, "content"), mainBuildingSkin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(StoreHouse.BuildingName), tagname_Style);
+        GUI.BeginGroup(contentRect, new GUIContent(StoreHouse.Description, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
-            GUI.BeginGroup(requireResource_Rect, GUIContent.none, GUIStyle.none);
+            GUI.BeginGroup(GameResource.RequireResource_Rect, GUIContent.none, GUIStyle.none);
             {
-                GUI.Label(food_Rect, new GUIContent(StoreHouse.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(wood_Rect, new GUIContent(StoreHouse.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(gold_Rect, new GUIContent(StoreHouse.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(stone_Rect, new GUIContent(StoreHouse.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(StoreHouse.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(StoreHouse.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(StoreHouse.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(StoreHouse.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
             //<!-- Create button.
             if (StoreHouse.sumOfFood >= StoreHouse.CreateResource.Food && StoreHouse.sumOfWood >= StoreHouse.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= StoreHouse.CreateResource.Gold && StoreHouse.sumOfStone >= StoreHouse.CreateResource.Stone)
             {
-				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) {
-	                if (GUI.Button(creatButton_Rect, "Build"))
-	                {
-	                    StoreHouse.UsedResource(StoreHouse.CreateResource);
-	
-	                    GameObject building = Instantiate(storeHouse_Obj) as GameObject;
-	                    building.transform.position = sprite.position;
-	                    DestroyManager();
-	
-	                    StoreHouse storeHouse = building.GetComponent<StoreHouse>();
-	                    Buildings.storeHouseId.Add(storeHouse);
-	                    storeHouse.ID = Buildings.storeHouseId.Count;
-	                }
-				}
+                Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+                if (Buildings._CanCreateBuilding)
+                {
+                    if (GUI.Button(creatButton_Rect, "Build"))
+                    {
+                        StoreHouse.UsedResource(StoreHouse.CreateResource);
+
+                        GameObject building = Instantiate(storeHouse_Obj) as GameObject;
+                        building.transform.position = sprite.position;
+
+                        StoreHouse storeHouse = building.GetComponent<StoreHouse>();
+                        Buildings.storeHouseId.Add(storeHouse);
+                        storeHouse.ID = Buildings.storeHouseId.Count;
+
+                        ActiveManager();
+                    }
+                }
             }
         }
         GUI.EndGroup();
-	}
+    }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            

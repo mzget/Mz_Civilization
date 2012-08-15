@@ -6,7 +6,24 @@ public class MillStone : Buildings {
     //<!-- Static Data.
     public static GameResource CreateResource = new GameResource(50, 80, 40, 40);
     public static string BuildingName = "MillStone";
-    public static string Description = "โรงโม่หิน มีช่างหินเป็นผู้เชี่ยวชาญในการตัดหิน ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้หินมากขึ้นไปด้วย";
+
+    private static string Description_TH = "โรงโม่หิน มีช่างหินเป็นผู้เชี่ยวชาญในการตัดหิน ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้หินมากขึ้นไปด้วย";
+    private static string Description_EN = "Stone block can be gathered from stone mining. Upgrade millstone to increase stone block production.";
+    public static string CurrentDescription
+    {
+        get
+        {
+            string temp = Description_EN;
+
+            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
+                temp = Description_EN;
+            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai)
+                temp = Description_TH;
+
+            return temp;
+        }
+        //		set{}
+    }
 
     private int productionRate = 1;        // produce food per second.
     private float timeInterval = 0;
@@ -27,11 +44,14 @@ public class MillStone : Buildings {
         this.level = 1;
         this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
+		
+		string position_Data = this.transform.position.x + "|" + this.transform.position.y + "|" + this.transform.position.z;
+		Debug.Log(position_Data);
     }
 
     #region Building Processing.
 
-    protected override void OnBuildingProcess(Buildings building)
+    public override void OnBuildingProcess(Buildings building)
     {
         base.OnBuildingProcess(building);
     }
@@ -77,7 +97,7 @@ public class MillStone : Buildings {
             {
                 GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
                 GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
-                GUI.TextArea(base.discription_Rect, Description, standard_Skin.textArea);
+                GUI.TextArea(base.description_Rect, CurrentDescription, standard_Skin.textArea);
             }
             GUI.EndGroup();
         }

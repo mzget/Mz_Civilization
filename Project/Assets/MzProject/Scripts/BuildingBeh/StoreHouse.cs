@@ -2,20 +2,6 @@ using UnityEngine;
 using System.Collections;
 
 
-public class GameResource {
-	public int Food;
-	public int Wood;
-	public int Gold;
-	public int Stone;
-	
-	public GameResource (int food, int wood, int gold, int stone) {
-		this.Food = food;
-		this.Wood = wood;
-		this.Gold = gold;
-		this.Stone = stone;
-	}
-};
-
 public class StoreHouse : Buildings {
 	
     private int food = 500;
@@ -82,14 +68,6 @@ public class StoreHouse : Buildings {
     void Awake()
     {
 		base.sprite = this.gameObject.GetComponent<OTSprite>();
-
-        this.name = StoreHouse.BuildingName;
-        base.buildingType = BuildingType.general;
-        base.buildingTimeData = new BuildingsTimeData(buildingType);
-		
-        this.level = 1;
-        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
-        this.OnBuildingProcess(this);
     }
 	
 	// Use this for initialization
@@ -120,20 +98,37 @@ public class StoreHouse : Buildings {
         //		CalculationSumofWood();
         //		CalculationSumofGold();
         //		CalculationSumofStone();
+
+        this.name = StoreHouse.BuildingName;
+        base.buildingType = BuildingType.general;
+        base.buildingTimeData = new BuildingsTimeData(buildingType);
+		
+        this.level = 1;
+        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+        this.OnBuildingProcess(this);
     }
 	
-	protected override void OnBuildingProcess (Buildings obj)
-	{
-		base.OnBuildingProcess (obj);
-	}
-	protected override void CreateProcessBar ()
-	{
-		base.CreateProcessBar ();
-	}
-	protected override void DestroyBuildingProcess (Buildings obj)
-	{
-		base.DestroyBuildingProcess (obj);
-	}
+    #region Building Processing.
+
+    public override void OnBuildingProcess(Buildings obj)
+    {
+        base.OnBuildingProcess(obj);
+    }
+    protected override void CreateProcessBar()
+    {
+        base.CreateProcessBar();
+    }
+    protected override void DestroyBuildingProcess(Buildings obj)
+    {
+        base.DestroyBuildingProcess(obj);
+
+        Destroy(base.processbar_Obj_parent);
+
+        if (this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
+            this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+    }
+
+    #endregion
 	
 	// Update is called once per frame
 	void Update () {

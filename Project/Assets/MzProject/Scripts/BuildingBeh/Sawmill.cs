@@ -4,21 +4,40 @@ using System.Collections;
 public class Sawmill : Buildings {
 	
 	//<!-- Static Data.
-	public static GameResource CreateResource = new GameResource(0,0,0,0);
+    public static GameResource CreateResource = new GameResource(80, 120, 80, 60);
 	public static string BuildingName = "Sawmill";
-    public static string Description = "โรงตัดไม้ ตัดต้นไม้เพื่อนำมาทำท่อนไม้ ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้ไม้มากขึ้นไปด้วย";
+
+    private static string Description_TH = "โรงตัดไม้ ตัดต้นไม้เพื่อนำมาทำท่อนไม้ ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้ไม้มากขึ้นไปด้วย";
+    private static string Description_EN = "Wood can only be gathered by cutting down trees. It is used to build almost all Structures.";
+    public static string CurrentDescription
+    {
+        get
+        {
+            string temp = Description_EN;
+
+            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
+                temp = Description_EN;
+            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai)
+                temp = Description_TH;
+
+            return temp;
+        }
+        //		set{}
+    }
 
     private int productionRate = 1;        // produce food per second.
     private float timeInterval = 0;
 
 	
 	
-	void Awake() {
+	protected override void Awake() {
+        base.Awake();
 		sprite = this.gameObject.GetComponent<OTSprite>();
 	}
 	
 	// Use this for initialization
-	void Start () {
+    void Start()
+    {
         this.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
@@ -26,11 +45,14 @@ public class Sawmill : Buildings {
         this.level = 1;
         this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
+		
+		string position_Data = this.transform.position.x + "|" + this.transform.position.y + "|" + this.transform.position.z;
+		Debug.Log(position_Data);
     }
 
     #region Building Processing.
 
-    protected override void OnBuildingProcess(Buildings obj)
+    public override void OnBuildingProcess(Buildings obj)
     {
         base.OnBuildingProcess(obj);
     }
@@ -77,7 +99,7 @@ public class Sawmill : Buildings {
             {
                 GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
                 GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
-                GUI.TextArea(base.discription_Rect, Description, standard_Skin.textArea);
+                GUI.TextArea(base.description_Rect, CurrentDescription, standard_Skin.textArea);
             }
             GUI.EndGroup();
         }

@@ -6,18 +6,37 @@ public class Smelter : Buildings {
     //<!-- Static Data.
     public static GameResource CreateResource = new GameResource(80, 120, 50, 60);
     public static string BuildingName = "Smelter";
-    public static string Description = "โรงหลอมแร่ แร่ทองแดงถูกหลอมขึ้นที่นี่ อาวุธและชุดเกราะในกองทัพของคุณจำเป็นต้องใช้มัน \n" + " อัพเกรดเพื่อเพิ่มกำลังการผลิต";
+
+    private static string Description_TH = "โรงหลอมแร่ แร่ทองแดงถูกหลอมขึ้นที่นี่ อาวุธและชุดเกราะในกองทัพของคุณจำเป็นต้องใช้มัน \n" + " อัพเกรดเพื่อเพิ่มกำลังการผลิต";
+    private static string Description_EN = "Copper can be gathered from mining. Upgrade Smelter to increase copper ingot production.";
+    public static string CurrentDescription
+    {
+        get
+        {
+            string temp = Description_EN;
+
+            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
+                temp = Description_EN;
+            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai)
+                temp = Description_TH;
+
+            return temp;
+        }
+        //		set{}
+    }
 
     private int productionRate = 1;        // produce food per second.
     private float timeInterval = 0;
 
-
+	
+	
+	void Awake() {
+        if (sprite == null)
+            sprite = this.GetComponent<OTSprite>();
+	}
 
 	// Use this for initialization
 	void Start () {
-        if (sprite == null)
-            sprite = this.GetComponent<OTSprite>();
-
         this.name = BuildingName;
         base.buildingType = Buildings.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
@@ -25,11 +44,14 @@ public class Smelter : Buildings {
         this.level = 1;
         this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
+		
+		string position_Data = this.transform.position.x + "|" + this.transform.position.y + "|" + this.transform.position.z;
+		Debug.Log(position_Data);
 	}
 
     #region Building Processing.
 
-    protected override void OnBuildingProcess(Buildings building)
+    public override void OnBuildingProcess(Buildings building)
     {
         base.OnBuildingProcess(building);
     }
@@ -80,7 +102,7 @@ public class Smelter : Buildings {
             {
                 GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
                 GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
-                GUI.TextArea(base.discription_Rect, Description, standard_Skin.textArea);
+                GUI.TextArea(base.description_Rect, CurrentDescription, standard_Skin.textArea);
             }
             GUI.EndGroup();
         }

@@ -678,7 +678,6 @@ public class OTAnimatingSprite : OTSprite
             onAnimationFinish(this);
         if (!CallBack("onAnimationFinish", callBackParams))
             CallBack("OnAnimationFinish", callBackParams);
-
         if (destroyWhenFinished)
             OT.DestroyObject(this);
     }
