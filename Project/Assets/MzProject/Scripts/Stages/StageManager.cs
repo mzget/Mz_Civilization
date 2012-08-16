@@ -33,40 +33,22 @@ public class StageManager : MonoBehaviour {
     private Rect buttonRect = new Rect(460, 200, 100, 30);
 	
     int amountFarmInstance = 0;
-    
-	void Awake() 
-	{
-        amountFarmInstance = PlayerPrefs.GetInt("amountFarmInstance");
-		if(amountFarmInstance != 0) {
-	        for (int i = 0; i < amountFarmInstance; i++)
-	        {
-				GameObject farm_instance = Instantiate(Resources.Load("Buildings/Economy/Farm", typeof(GameObject))) as GameObject;
-				Farm newFarm = farm_instance.GetComponent<Farm>();
-				newFarm.buildingStatus = Buildings.BuildingStatus.none;
-				
-				Buildings.FarmInstance.Add(newFarm);
-	            int temp_Level = PlayerPrefs.GetInt("farm_Level_" + i);
-                Buildings.FarmInstance[i].level = temp_Level;
-
-//                string temp_Position = PlayerPrefs.GetString("farm_Position_" + i);
-//                Buildings.FarmInstance[i].buildingPosition_Data = temp_Position;
-//				string[] arr_Pos = temp_Position.Split('|');
-//              	newFarm.transform.position = new Vector3(float.Parse(arr_Pos[0]), float.Parse(arr_Pos[1]), float.Parse(arr_Pos[2]));
-				int loadPos = PlayerPrefs.GetInt("farm_Position_" + i);
-				newFarm.transform.position = StageManager.buildingArea_Pos[loadPos];
-	        }
-		}
-		
-		Debug.Log("Loading...");
+	int amountSawmillInstance = 0;
+	int amountMillStoneInstance = 0;
+	int amountSmelterInstance = 0;
+   
+	
+	void Awake() {
+		this.CreateObjectsPool();
 	}
 	
 	// Use this for initialization
-	void Start () {
-		this.CreateObjectsPool();
-		
+	void Start () {	
 		this.GenerateBackground();		
 		this.CreateBuildingArea();
+		this.LoadingDataStore();
 	}
+	
 	private void CreateObjectsPool() {
 		OT.PreFabricate("Building_Area", 16);
 	}	
@@ -98,7 +80,31 @@ public class StageManager : MonoBehaviour {
 			}
 		}
 	}
-	
+	void LoadingDataStore() 
+	{
+        amountFarmInstance = PlayerPrefs.GetInt("amount_farm_instance");
+		amountSawmillInstance = PlayerPrefs.GetInt("amount_sawmill_instance");
+		amountMillStoneInstance = PlayerPrefs.GetInt("amount_millStone_instance");
+		amountSmelterInstance = PlayerPrefs.GetInt("amount_smelter_instance");
+		if(amountFarmInstance != 0) {
+	        for (int i = 0; i < amountFarmInstance; i++)
+	        {
+				GameObject farm_instance = Instantiate(Resources.Load("Buildings/Economy/Farm", typeof(GameObject))) as GameObject;
+				Farm newFarm = farm_instance.GetComponent<Farm>();	
+				
+	            int load_Level = PlayerPrefs.GetInt("farm_Level_" + i);
+				int loadPos = PlayerPrefs.GetInt("farm_Position_" + i);
+				Buildings.FarmInstance.Add(newFarm);
+				Buildings.FarmInstance[i].currentBuildingStatus = Buildings.BuildingStatus.none;				
+                Buildings.FarmInstance[i].level = load_Level;
+				Buildings.FarmInstance[i].transform.position = StageManager.buildingArea_Pos[loadPos];
+				
+				StageManager.buildingArea_Obj[loadPos].gameObject.SetActive(false);
+	        }
+		}
+		
+		Debug.Log("Loading...");
+	}
 	
 	// Update is called once per frame
     void Update()

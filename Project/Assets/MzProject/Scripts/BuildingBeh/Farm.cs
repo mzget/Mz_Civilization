@@ -64,9 +64,9 @@ public class Farm : Buildings
     {
         base.OnBuildingProcess(obj);
     }
-    protected override void CreateProcessBar()
+    protected override void CreateProcessBar(Buildings.BuildingStatus buildingState)
     {
-        base.CreateProcessBar();
+        base.CreateProcessBar(buildingState);
     }
     protected override void DestroyBuildingProcess(Buildings obj)
     {
@@ -74,8 +74,8 @@ public class Farm : Buildings
 
         Destroy(base.processbar_Obj_parent);
 
-        if (this.buildingStatus != Buildings.BuildingStatus.none)
-            this.buildingStatus = Buildings.BuildingStatus.none;
+        if (this.currentBuildingStatus != Buildings.BuildingStatus.none)
+            this.currentBuildingStatus = Buildings.BuildingStatus.none;
     }
 
     #endregion
@@ -83,7 +83,7 @@ public class Farm : Buildings
     // Update is called once per frame
     void Update()
     {		
-		if(buildingStatus == Buildings.BuildingStatus.none) {
+		if(currentBuildingStatus == Buildings.BuildingStatus.none) {
 	        timeInterval += Time.deltaTime;
 	        if (timeInterval >= 1f) {
 	            timeInterval = 0;
@@ -97,7 +97,7 @@ public class Farm : Buildings
     {
         base.CreateWindow(windowID);
 		
-		GUI.Box(new Rect(48, 24, 256, 48), base.buildingStatus.ToString(), standard_Skin.box);
+		GUI.Box(new Rect(48, 24, 256, 48), base.currentBuildingStatus.ToString(), standard_Skin.box);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
 			scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height), false, false);
@@ -138,8 +138,9 @@ public class Farm : Buildings
                         {
                             if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), GUI.skin.button))
                             {
-                                base.buildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
-                                base.OnBuildingProcess(this);
+                                base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+                                base.OnUpgradeProcess(this);
+								base._isShowInterface = false;
                             }
                         }
                     }

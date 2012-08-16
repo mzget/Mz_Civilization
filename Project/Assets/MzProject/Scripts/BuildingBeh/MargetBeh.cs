@@ -33,8 +33,7 @@ public class MargetBeh : Buildings {
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 
-        base.level = 1;
-        base.buildingStatus = BuildingStatus.onBuildingProcess;
+        base.currentBuildingStatus = BuildingStatus.onBuildingProcess;
         base.OnBuildingProcess(this);
     }
 
@@ -44,9 +43,9 @@ public class MargetBeh : Buildings {
     {
         base.OnBuildingProcess(obj);
     }
-    protected override void CreateProcessBar()
+    protected override void CreateProcessBar(Buildings.BuildingStatus buildingState)
     {
-        base.CreateProcessBar();
+        base.CreateProcessBar(buildingState);
     }
     protected override void DestroyBuildingProcess(Buildings obj)
     {
@@ -54,8 +53,8 @@ public class MargetBeh : Buildings {
 
         Destroy(base.processbar_Obj_parent);
 
-        if (this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
-            this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+        if (this.currentBuildingStatus != Buildings.BuildingStatus.buildingComplete)
+            this.currentBuildingStatus = Buildings.BuildingStatus.buildingComplete;
     }
 
     #endregion

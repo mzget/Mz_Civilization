@@ -17,7 +17,7 @@ public class GuardTower : Buildings {
     {
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
 
-        if (_clicked)
+        if (_isShowInterface)
         {
             windowRect = GUI.Window(0, windowRect, CreateWindow, new GUIContent("Guard Tower", "GUI window"), building_Skin.window);
         }
@@ -27,7 +27,7 @@ public class GuardTower : Buildings {
     {
         if (GUI.Button(new Rect(565, 5, 30, 30), new GUIContent(string.Empty, "Close Button"), building_Skin.customStyles[0]))
         {
-            _clicked = false;
+            _isShowInterface = false;
         }
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 40, 600, 380), scrollPosition, new Rect(0, 0, 580, 380));

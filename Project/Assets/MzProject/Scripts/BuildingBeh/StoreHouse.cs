@@ -103,8 +103,7 @@ public class StoreHouse : Buildings {
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 		
-        this.level = 1;
-        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+        this.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
     }
 	
@@ -114,9 +113,9 @@ public class StoreHouse : Buildings {
     {
         base.OnBuildingProcess(obj);
     }
-    protected override void CreateProcessBar()
+    protected override void CreateProcessBar(Buildings.BuildingStatus buildingState)
     {
-        base.CreateProcessBar();
+        base.CreateProcessBar(buildingState);
     }
     protected override void DestroyBuildingProcess(Buildings obj)
     {
@@ -124,8 +123,8 @@ public class StoreHouse : Buildings {
 
         Destroy(base.processbar_Obj_parent);
 
-        if (this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
-            this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+        if (this.currentBuildingStatus != Buildings.BuildingStatus.buildingComplete)
+            this.currentBuildingStatus = Buildings.BuildingStatus.buildingComplete;
     }
 
     #endregion
@@ -139,7 +138,7 @@ public class StoreHouse : Buildings {
     {
         if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), building_Skin.customStyles[0]))
         {
-            _clicked = false;
+            _isShowInterface = false;
         }
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 100, windowRect.width, windowRect.height - 40), scrollPosition, new Rect(0, 0, windowRect.width - 20, windowRect.height - 40));

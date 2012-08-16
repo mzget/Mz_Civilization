@@ -46,8 +46,7 @@ public class BarrackBeh : Buildings
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 
-        base.level = 1;
-        base.buildingStatus = BuildingStatus.onBuildingProcess;
+        base.currentBuildingStatus = BuildingStatus.onBuildingProcess;
         base.OnBuildingProcess(this);
     }
 
@@ -57,9 +56,9 @@ public class BarrackBeh : Buildings
     {
         base.OnBuildingProcess(obj);
     }
-    protected override void CreateProcessBar()
+    protected override void CreateProcessBar(Buildings.BuildingStatus buildingState)
     {
-        base.CreateProcessBar();
+        base.CreateProcessBar(buildingState);
     }
     protected override void DestroyBuildingProcess(Buildings obj)
     {
@@ -67,8 +66,8 @@ public class BarrackBeh : Buildings
 
         Destroy(base.processbar_Obj_parent);
 
-        if (this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
-            this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+        if (this.currentBuildingStatus != Buildings.BuildingStatus.buildingComplete)
+            this.currentBuildingStatus = Buildings.BuildingStatus.buildingComplete;
     }
 
     #endregion

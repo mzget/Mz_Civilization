@@ -48,11 +48,11 @@ public class Buildings : MonoBehaviour {
     public int level = 0;
 	protected int indexOfPosition;
 	public int IndexOfPosition  {get {return indexOfPosition; } set {indexOfPosition = value; }}
-    protected bool _clicked = false;
+    protected bool _isShowInterface = false;
     protected bool _CanDestruction = true;
 	
 	public enum BuildingStatus { none = 0, onBuildingProcess = 1, buildingComplete, onUpgradeProcess, };
-	public BuildingStatus buildingStatus;
+	public BuildingStatus currentBuildingStatus;
 	public enum BuildingType { general = 0, resource, };
 	protected BuildingType buildingType;
 
@@ -66,9 +66,9 @@ public class Buildings : MonoBehaviour {
     public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
     public static List<Buildings> onBuilding_Obj = new List<Buildings>();
     public static List<Farm> FarmInstance = new List<Farm>();
-	public static Sawmill SawmillInstance;
-	public static MillStone MillStoneInstance;
-	public static Smelter SmelterInstance;
+	public static List<Sawmill> SawmillInstance = new List<Sawmill>();
+	public static List<MillStone> MillStoneInstance = new List<MillStone>();
+	public static List<Smelter> SmelterInstance = new List<Smelter>();
 
 
 
@@ -91,7 +91,7 @@ public class Buildings : MonoBehaviour {
     }
     public bool CheckingCanUpgradeLevel()
     {
-        if (this.buildingStatus == BuildingStatus.none)
+        if (this.currentBuildingStatus == BuildingStatus.none)
         {
             if (onBuilding_Obj.Count < 2)
                 return true;
@@ -105,20 +105,28 @@ public class Buildings : MonoBehaviour {
     
     }
 	
-	#region Building Process Section.
+	#region Building, Upgrade Process Section.
 	
-	public virtual void OnBuildingProcess(Buildings obj) {
-        Debug.Log("Class :: Building" + obj.name + ": OnBuildingProcess()");
+	protected virtual void OnUpgradeProcess(Buildings L_building) {
+        Debug.Log("Class :: Building" + L_building.name + ": OnBuildingProcess()");
 
         if (onBuilding_Obj.Count < 2)
         {
-            onBuilding_Obj.Add(obj);
-			
-			for(int i = 0; i<onBuilding_Obj.Count; i++)
-				onBuilding_Obj[i].CreateProcessBar();
+            L_building.CreateProcessBar(this.currentBuildingStatus);
+            onBuilding_Obj.Add(L_building);
         }
 	}
-    protected virtual void CreateProcessBar()
+
+	public virtual void OnBuildingProcess(Buildings L_buildind) {
+        Debug.Log("Class :: Building" + L_buildind.name + ": OnBuildingProcess()");
+
+        if (onBuilding_Obj.Count < 2)
+        {
+            L_buildind.CreateProcessBar(this.currentBuildingStatus);
+            onBuilding_Obj.Add(L_buildind);
+        }
+	}
+    protected virtual void CreateProcessBar(BuildingStatus buildingState)
     {
         if (processbar_Obj_parent == null)
         {
@@ -141,16 +149,30 @@ public class Buildings : MonoBehaviour {
                 processBar_Scolling.size = new Vector2(12, 24);
             }
         }
-
+        
         Hashtable scaleData = new Hashtable();
-        scaleData.Add("from", new Vector2(12, 24));
-        scaleData.Add("to", new Vector2(124, 24));
-        scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level - 1]);
-        scaleData.Add("onupdate", "BuildingProcess");
-        scaleData.Add("easetype", iTween.EaseType.linear);
-        scaleData.Add("oncomplete", "DestroyBuildingProcess");
-        scaleData.Add("oncompleteparams", this);
-        scaleData.Add("oncompletetarget", this.gameObject);
+
+        if (buildingState == BuildingStatus.onBuildingProcess)
+        {
+            scaleData.Add("from", new Vector2(12, 24));
+            scaleData.Add("to", new Vector2(124, 24));
+            scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
+            scaleData.Add("onupdate", "BuildingProcess");
+            scaleData.Add("easetype", iTween.EaseType.linear);
+            scaleData.Add("oncomplete", "DestroyBuildingProcess");
+            scaleData.Add("oncompleteparams", this);
+            scaleData.Add("oncompletetarget", this.gameObject);
+        }
+        else if (buildingState == BuildingStatus.onUpgradeProcess) {
+            scaleData.Add("from", new Vector2(12, 24));
+            scaleData.Add("to", new Vector2(124, 24));
+            scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
+            scaleData.Add("onupdate", "BuildingProcess");
+            scaleData.Add("easetype", iTween.EaseType.linear);
+            scaleData.Add("oncomplete", "DestroyBuildingProcess");
+            scaleData.Add("oncompleteparams", this);
+            scaleData.Add("oncompletetarget", this.gameObject);
+        }
 
         iTween.ValueTo(this.gameObject, scaleData);
     }
@@ -164,6 +186,7 @@ public class Buildings : MonoBehaviour {
 	protected virtual void DestroyBuildingProcess(Buildings obj) {
         Debug.Log("Class :: Buildings" + obj.name + ": DestroyBuildingProcess");
 
+        this.level += 1;
         onBuilding_Obj.Remove(obj);
 	}
 	
@@ -178,7 +201,7 @@ public class Buildings : MonoBehaviour {
 
     protected void OnMouseDown()
     {
-        _clicked = true;
+        _isShowInterface = true;
     }
 
     protected void OnMouseExit()
@@ -231,7 +254,7 @@ public class Buildings : MonoBehaviour {
         buildingWindowStyle.font = building_Skin.window.font;
         buildingWindowStyle.fontSize = building_Skin.window.fontSize;
 
-        if (_clicked) {
+        if (_isShowInterface) {
             windowRect = GUI.Window(0, windowRect, CreateWindow, new GUIContent(name, "GUI window"), buildingWindowStyle);
         }
     }
@@ -241,7 +264,7 @@ public class Buildings : MonoBehaviour {
         //<!-- Exit Button.
         if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), closeButton_Style))
         {
-            _clicked = false;
+            _isShowInterface = false;
         }
 
         if (_CanDestruction)

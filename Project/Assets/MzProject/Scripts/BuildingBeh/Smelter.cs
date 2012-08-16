@@ -41,8 +41,7 @@ public class Smelter : Buildings {
         base.buildingType = Buildings.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 
-        this.level = 1;
-        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+        this.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
 		
 		string position_Data = this.transform.position.x + "|" + this.transform.position.y + "|" + this.transform.position.z;
@@ -55,9 +54,9 @@ public class Smelter : Buildings {
     {
         base.OnBuildingProcess(building);
     }
-    protected override void CreateProcessBar()
+    protected override void CreateProcessBar(Buildings.BuildingStatus buildingState)
     {
-        base.CreateProcessBar();
+        base.CreateProcessBar(buildingState);
     }
     protected override void DestroyBuildingProcess(Buildings building)
     {
@@ -65,8 +64,8 @@ public class Smelter : Buildings {
 
         Destroy(processbar_Obj_parent);
 		
-		if(this.buildingStatus != Buildings.BuildingStatus.buildingComplete)
-			this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+		if(this.currentBuildingStatus != Buildings.BuildingStatus.buildingComplete)
+			this.currentBuildingStatus = Buildings.BuildingStatus.buildingComplete;
     }
 
     #endregion
@@ -75,7 +74,7 @@ public class Smelter : Buildings {
     void Update()
     {
 
-        if (this.buildingStatus == Buildings.BuildingStatus.buildingComplete)
+        if (this.currentBuildingStatus == Buildings.BuildingStatus.buildingComplete)
         {
             timeInterval += Time.deltaTime;
             if (timeInterval >= 1f)

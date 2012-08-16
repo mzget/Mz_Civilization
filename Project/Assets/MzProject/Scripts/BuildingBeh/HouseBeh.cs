@@ -22,7 +22,7 @@ public class HouseBeh : Buildings {
     {
         if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), building_Skin.customStyles[0]))
         {
-            _clicked = false;
+            _isShowInterface = false;
         }
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 100, windowRect.width, windowRect.height - 40), scrollPosition, new Rect(0, 0, windowRect.width - 20, windowRect.height - 40));

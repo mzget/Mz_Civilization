@@ -29,11 +29,11 @@ public class MillStone : Buildings {
     private float timeInterval = 0;
 
 
-	
-	void Awake() {
-        sprite = this.GetComponent<OTSprite>();
-	}
-	
+
+    protected override void Awake()
+    {
+        base.Awake(); sprite = this.GetComponent<OTSprite>();
+    }
 	
 	// Use this for initialization
 	void Start () {		
@@ -42,7 +42,7 @@ public class MillStone : Buildings {
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 
         this.level = 1;
-        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+        this.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
         this.OnBuildingProcess(this);
 		
 		string position_Data = this.transform.position.x + "|" + this.transform.position.y + "|" + this.transform.position.z;
@@ -55,9 +55,9 @@ public class MillStone : Buildings {
     {
         base.OnBuildingProcess(building);
     }
-    protected override void CreateProcessBar()
+    protected override void CreateProcessBar(Buildings.BuildingStatus buildingState)
     {
-        base.CreateProcessBar();
+        base.CreateProcessBar(buildingState);
     }
     protected override void DestroyBuildingProcess(Buildings obj)
     {
@@ -65,8 +65,8 @@ public class MillStone : Buildings {
 
         Destroy(processbar_Obj_parent);
 		
-		if(this.buildingStatus == Buildings.BuildingStatus.buildingComplete)
-			this.buildingStatus = Buildings.BuildingStatus.buildingComplete;
+		if(this.currentBuildingStatus == Buildings.BuildingStatus.buildingComplete)
+			this.currentBuildingStatus = Buildings.BuildingStatus.buildingComplete;
     }
 
     #endregion
@@ -74,7 +74,7 @@ public class MillStone : Buildings {
 	// Update is called once per frame
 	void Update () {
 		
-		if(this.buildingStatus == Buildings.BuildingStatus.buildingComplete) {
+		if(this.currentBuildingStatus == Buildings.BuildingStatus.buildingComplete) {
 	        timeInterval += Time.deltaTime;
 	        if (timeInterval >= 1f)
 	        {

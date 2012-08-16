@@ -409,8 +409,7 @@ public class BuildingArea : MonoBehaviour {
 						building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
 						
 						Farm newFarm = building.GetComponent<Farm>();
-						newFarm.level = 1;
-						newFarm.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+						newFarm.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						newFarm.OnBuildingProcess((Buildings)newFarm);
 	                    newFarm.IndexOfPosition = this.indexOfArea;
                         Buildings.FarmInstance.Add(newFarm);
