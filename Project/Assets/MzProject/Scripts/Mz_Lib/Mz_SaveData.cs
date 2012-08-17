@@ -17,17 +17,18 @@ public class Mz_SaveData
 		PlayerPrefs.SetInt("sumofgold", StoreHouse.sumOfGold);
 		PlayerPrefs.SetInt("sumofstone", StoreHouse.sumOfStone);
 
-        PlayerPrefs.SetInt("amount_farm_instance", Buildings.FarmInstance.Count);
-		PlayerPrefs.SetInt("amount_sawmill_instance", Buildings.SawmillInstance.Count);
+        PlayerPrefs.SetInt("amount_farm_instance", Buildings.Farm_Instance.Count);
+		PlayerPrefs.SetInt("amount_sawmill_instance", Buildings.Sawmill_Instance.Count);
 		PlayerPrefs.SetInt("amount_millStone_instance", Buildings.MillStoneInstance.Count);
 		PlayerPrefs.SetInt("amount_smelter_instance", Buildings.SmelterInstance.Count);
-		for(int i = 0; i < Buildings.FarmInstance.Count; i++) {
-			PlayerPrefs.SetInt("farm_Position_" + i, Buildings.FarmInstance[i].IndexOfPosition);
-			PlayerPrefs.SetInt("farm_Level_" + i, Buildings.FarmInstance[i].level);
+		
+		for(int i = 0; i < Buildings.Farm_Instance.Count; i++) {
+			PlayerPrefs.SetInt("farm_Position_" + i, Buildings.Farm_Instance[i].IndexOfPosition);
+			PlayerPrefs.SetInt("farm_Level_" + i, Buildings.Farm_Instance[i].level);
 		}
-		for(int i = 0; i < Buildings.SawmillInstance.Count; i++) {
-			PlayerPrefs.SetInt("sawmill_Position_" + i, Buildings.SawmillInstance[i].IndexOfPosition);
-			PlayerPrefs.SetInt("sawmill_Level_" + i, Buildings.SawmillInstance[i].level);
+		for(int i = 0; i < Buildings.Sawmill_Instance.Count; i++) {
+			PlayerPrefs.SetInt("sawmill_Position_" + i, Buildings.Sawmill_Instance[i].IndexOfPosition);
+			PlayerPrefs.SetInt("sawmill_Level_" + i, Buildings.Sawmill_Instance[i].level);
 		}
 		for(int i = 0; i < Buildings.MillStoneInstance.Count; i++) {
 			PlayerPrefs.SetInt("millstone_Position_" + i, Buildings.MillStoneInstance[i].IndexOfPosition);

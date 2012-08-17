@@ -33,20 +33,16 @@ public class Sawmill : Buildings {
 	protected override void Awake() {
         base.Awake();
 		sprite = this.gameObject.GetComponent<OTSprite>();
+		
+        this.name = BuildingName;
+        base.buildingType = BuildingType.resource;
+        base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 	}
 	
 	// Use this for initialization
     void Start()
     {
-        this.name = BuildingName;
-        base.buildingType = BuildingType.resource;
-        base.buildingTimeData = new BuildingsTimeData(base.buildingType);
-
-        this.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
-        this.OnBuildingProcess(this);
 		
-		string position_Data = this.transform.position.x + "|" + this.transform.position.y + "|" + this.transform.position.z;
-		Debug.Log(position_Data);
     }
 
     #region Building Processing.

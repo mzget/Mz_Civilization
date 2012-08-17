@@ -4,9 +4,11 @@ using System.Collections;
 public class Farm : Buildings
 {
     //<!-- Static Data.
+	
     //<!-- Resource.
     public static GameResource CreateResource = new GameResource(50, 80, 80, 60);
     public static GameResource[] UpgradeResource = new GameResource[10];
+	
     //<!-- Data.
     public static string BuildingName = "Farm";
     private static string Description_TH = "อาหารเพื่อเลี้ยงประชากรของคุณผลิตขึ้นที่นี่ เพิ่มระดับฟาร์มเพื่อเพิ่มกำลังการผลิตธัญพืช";
@@ -53,9 +55,7 @@ public class Farm : Buildings
     // Use this for initialization
     void Start()
 	{		
-//        this.level = 1;
-//        this.buildingStatus = Buildings.BuildingStatus.onBuildingProcess;
-//        this.OnBuildingProcess(this);
+		
     }
 
     #region Building Processing.

@@ -1,0 +1,62 @@
+﻿Included is a package containing 2 C# classes: Program.cs and Matrix.cs
+
+Instructions:
+Given a matrix composed of integer values
+
+For example
+[0 0 0 2 2]
+|1 1 7 2 2|
+|2 2 7 2 1|
+|2 1 7 4 4|
+|2 7 7 4 4|
+|4 6 6 0 4|
+|4 4 6 4 4|
+[4 4 6 4 4]
+
+An area is defined when several identical value are connected together (either horizontally or vertically)
+
+For example with the above matrix, we can find the following areas:
+[0 0 0 * *]
+|* * * * *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+[* * * * *]
+
+[* * * 2 2]
+|* * * 2 2|
+|* * * 2 *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+[* * * * *]
+
+[* * * * *]
+|1 1 * * *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+|* * * * *|
+[* * * * *]
+
+And so on...
+
+The problem consists in implementing the function "FindCountElementOfBiggestArea" which find the biggest area (the area composed with the biggest number of elements), and return the number of elements from this area.
+For example with the above matrix, the biggest area is:
+[* * * * *]
+|* * * * *|
+|* * * * *|
+|* * * 4 4|
+|* * * 4 4|
+|* * * * 4|
+|* * * 4 4|
+[* * * 4 4]
+
+And so the function would return 9 (the area is composed of 9 elements)
+
+Requirements:
+Code must be structured, easily comprehensible and efficient.

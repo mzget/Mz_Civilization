@@ -33,7 +33,7 @@ public class StageManager : MonoBehaviour {
     private Rect buttonRect = new Rect(460, 200, 100, 30);
 	
     int amountFarmInstance = 0;
-	int amountSawmillInstance = 0;
+	int amountSawmill_Instance = 0;
 	int amountMillStoneInstance = 0;
 	int amountSmelterInstance = 0;
    
@@ -52,8 +52,7 @@ public class StageManager : MonoBehaviour {
 	private void CreateObjectsPool() {
 		OT.PreFabricate("Building_Area", 16);
 	}	
-    void GenerateBackground()
-    {
+    void GenerateBackground() {
         // To create the background lets create a filled sprite object
         background = OT.CreateObject(OTObjectType.FilledSprite).GetComponent<OTFilledSprite>();
         // Set the image to our wyrmtale tile
@@ -69,8 +68,7 @@ public class StageManager : MonoBehaviour {
 
         background.name = "Background";
     }
-	void CreateBuildingArea() 
-	{		
+	void CreateBuildingArea() {		
 		if(buildingArea_Obj.Count < buildingArea_Obj.Capacity) {			
 			for(int i = 0; i < buildingArea_Obj.Capacity; i++) {
 				GameObject Temp_obj = OT.CreateObject("Building_Area");
@@ -83,7 +81,7 @@ public class StageManager : MonoBehaviour {
 	void LoadingDataStore() 
 	{
         amountFarmInstance = PlayerPrefs.GetInt("amount_farm_instance");
-		amountSawmillInstance = PlayerPrefs.GetInt("amount_sawmill_instance");
+		amountSawmill_Instance = PlayerPrefs.GetInt("amount_sawmill_instance");
 		amountMillStoneInstance = PlayerPrefs.GetInt("amount_millStone_instance");
 		amountSmelterInstance = PlayerPrefs.GetInt("amount_smelter_instance");
 		if(amountFarmInstance != 0) {
@@ -92,14 +90,33 @@ public class StageManager : MonoBehaviour {
 				GameObject farm_instance = Instantiate(Resources.Load("Buildings/Economy/Farm", typeof(GameObject))) as GameObject;
 				Farm newFarm = farm_instance.GetComponent<Farm>();	
 				
-	            int load_Level = PlayerPrefs.GetInt("farm_Level_" + i);
-				int loadPos = PlayerPrefs.GetInt("farm_Position_" + i);
-				Buildings.FarmInstance.Add(newFarm);
-				Buildings.FarmInstance[i].currentBuildingStatus = Buildings.BuildingStatus.none;				
-                Buildings.FarmInstance[i].level = load_Level;
-				Buildings.FarmInstance[i].transform.position = StageManager.buildingArea_Pos[loadPos];
+	            int Level = PlayerPrefs.GetInt("farm_Level_" + i);
+				int Position = PlayerPrefs.GetInt("farm_Position_" + i);
 				
-				StageManager.buildingArea_Obj[loadPos].gameObject.SetActive(false);
+				newFarm.currentBuildingStatus = Buildings.BuildingStatus.none;				
+                newFarm.level = Level;				
+				newFarm.transform.position = StageManager.buildingArea_Pos[Position];	
+				
+				Buildings.Farm_Instance.Add(newFarm);	
+				StageManager.buildingArea_Obj[Position].gameObject.SetActive(false);
+	        }
+		}
+		
+		if(amountSawmill_Instance != 0) {
+	        for (int i = 0; i < amountSawmill_Instance; i++)
+	        {
+				GameObject new_Sawmill = Instantiate(Resources.Load("Buildings/Economy/Sawmill", typeof(GameObject))) as GameObject;
+				Sawmill sawmill = new_Sawmill.GetComponent<Sawmill>();	
+				
+	            int Level = PlayerPrefs.GetInt("sawmill_Level_" + i);
+				int Position = PlayerPrefs.GetInt("sawmill_Position_" + i);
+                
+				sawmill.currentBuildingStatus = Buildings.BuildingStatus.none;				
+                sawmill.level = Level;
+				sawmill.transform.position = StageManager.buildingArea_Pos[Position];
+				
+				Buildings.Sawmill_Instance.Add(sawmill);
+				StageManager.buildingArea_Obj[Position].gameObject.SetActive(false);
 	        }
 		}
 		

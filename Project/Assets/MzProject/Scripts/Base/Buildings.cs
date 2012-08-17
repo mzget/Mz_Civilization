@@ -65,8 +65,8 @@ public class Buildings : MonoBehaviour {
     public static bool _CanCreateBuilding = false;
     public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
     public static List<Buildings> onBuilding_Obj = new List<Buildings>();
-    public static List<Farm> FarmInstance = new List<Farm>();
-	public static List<Sawmill> SawmillInstance = new List<Sawmill>();
+    public static List<Farm> Farm_Instance = new List<Farm>();
+	public static List<Sawmill> Sawmill_Instance = new List<Sawmill>();
 	public static List<MillStone> MillStoneInstance = new List<MillStone>();
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
 

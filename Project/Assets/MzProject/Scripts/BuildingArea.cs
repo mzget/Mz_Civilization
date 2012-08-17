@@ -412,7 +412,7 @@ public class BuildingArea : MonoBehaviour {
 						newFarm.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						newFarm.OnBuildingProcess((Buildings)newFarm);
 	                    newFarm.IndexOfPosition = this.indexOfArea;
-                        Buildings.FarmInstance.Add(newFarm);
+                        Buildings.Farm_Instance.Add(newFarm);
 	
 	                    drawOrderList.RemoveAt(farm.order);
 	                    ActiveManager();
@@ -442,12 +442,20 @@ public class BuildingArea : MonoBehaviour {
                 StoreHouse.sumOfGold >= Sawmill.CreateResource.Gold && StoreHouse.sumOfStone >= Sawmill.CreateResource.Stone)
             {
 				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) {
-	                if (GUI.Button(creatButton_Rect, "Build")) {
+				if(Buildings._CanCreateBuilding)
+				{
+	                if (GUI.Button(creatButton_Rect, "Build")) 
+					{
 	                    StoreHouse.UsedResource(Sawmill.CreateResource);
 	
 	                    GameObject building = Instantiate(sawmill_Obj) as GameObject;
 	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+						
+						Sawmill new_sawmill = building.GetComponent<Sawmill>();
+						new_sawmill.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+						new_sawmill.OnBuildingProcess((Buildings)new_sawmill);
+	                    new_sawmill.IndexOfPosition = this.indexOfArea;
+                        Buildings.Sawmill_Instance.Add(new_sawmill);
 						
 	                    drawOrderList.RemoveAt(sawmill.order);
 	                    ActiveManager();

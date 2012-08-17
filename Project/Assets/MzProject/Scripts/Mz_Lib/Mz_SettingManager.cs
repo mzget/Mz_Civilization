@@ -73,7 +73,7 @@ public class Mz_SettingManager : MonoBehaviour {
             }
             else if (GUI.Button(new Rect(36, 4, 32, 25), this.language))
             {
-
+				MatrixProblem.Program.Main();
             }
         }
         GUI.EndGroup();
