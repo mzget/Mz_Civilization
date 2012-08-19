@@ -56,12 +56,12 @@ public class BuildingArea : MonoBehaviour {
 		}
 	};
 	private static List<DrawOrder> drawOrderList = new List<DrawOrder>();
-    private static DrawOrder farm = new DrawOrder("farm", 0);
-    private static DrawOrder sawmill = new DrawOrder("sawmill", 1);
-    private static DrawOrder millstone = new DrawOrder("millstone", 2);
-    private static DrawOrder smelter = new DrawOrder("smelter", 3);
-    private static DrawOrder market = new DrawOrder("market", 4); 
-	private static DrawOrder storehouse = new DrawOrder("storehouse", 5);
+    private static DrawOrder drawOrder_farm = new DrawOrder("farm", 0);
+    private static DrawOrder drawOrder_sawmill = new DrawOrder("sawmill", 1);
+    private static DrawOrder drawOrder_millstone = new DrawOrder("millstone", 2);
+    private static DrawOrder drawOrder_smelter = new DrawOrder("smelter", 3);
+    private static DrawOrder drawOrder_market = new DrawOrder("market", 4); 
+	private static DrawOrder drawOrder_storehouse = new DrawOrder("storehouse", 5);
 
 
     void Awake() {
@@ -74,12 +74,12 @@ public class BuildingArea : MonoBehaviour {
         objectname = this.gameObject.GetComponent<ObjectName>();
 
 		if(drawOrderList.Count == 0) {
-			drawOrderList.Add(farm);
-			drawOrderList.Add(sawmill);
-			drawOrderList.Add(millstone);
-			drawOrderList.Add(smelter);
-            drawOrderList.Add(market);
-			drawOrderList.Add(storehouse);
+			drawOrderList.Add(drawOrder_farm);
+			drawOrderList.Add(drawOrder_sawmill);
+			drawOrderList.Add(drawOrder_millstone);
+			drawOrderList.Add(drawOrder_smelter);
+            drawOrderList.Add(drawOrder_market);
+			drawOrderList.Add(drawOrder_storehouse);
 		}
 		Debug.Log("BuildingArea :: " + "OnStart");
 	}
@@ -352,29 +352,29 @@ public class BuildingArea : MonoBehaviour {
             if (drawOrderList[indexUIorder].nameofOrder == drawOrderList[i].nameofOrder)
             {
                 drawOrderList[i].order = i;
-                if (drawOrderList[i].nameofOrder == farm.nameofOrder) {
+                if (drawOrderList[i].nameofOrder == drawOrder_farm.nameofOrder) {
 					DrawIntroduceFarmGUI(); 
-					farm.order = i;
+					drawOrder_farm.order = i;
 				}
-                else if (drawOrderList[i].nameofOrder == sawmill.nameofOrder) {
+                else if (drawOrderList[i].nameofOrder == drawOrder_sawmill.nameofOrder) {
 					DrawIntroduceSawMill();
-					sawmill.order = i;
+					drawOrder_sawmill.order = i;
 				}
-                else if (drawOrderList[i].nameofOrder == millstone.nameofOrder) {
+                else if (drawOrderList[i].nameofOrder == drawOrder_millstone.nameofOrder) {
 					DrawIntroduceMillStone();
-					millstone.order = i;
+					drawOrder_millstone.order = i;
 				}
-                else if (drawOrderList[i].nameofOrder == smelter.nameofOrder) {
+                else if (drawOrderList[i].nameofOrder == drawOrder_smelter.nameofOrder) {
 					DrawIntroduceSmelter();
-					smelter.order = i;
+					drawOrder_smelter.order = i;
 				}
-                else if (drawOrderList[i].nameofOrder == market.nameofOrder) {
+                else if (drawOrderList[i].nameofOrder == drawOrder_market.nameofOrder) {
 					DrawIntroMarKet();
-					market.order = i;
+					drawOrder_market.order = i;
 				}
-                else if (drawOrderList[i].nameofOrder == storehouse.nameofOrder) {
+                else if (drawOrderList[i].nameofOrder == drawOrder_storehouse.nameofOrder) {
 					DrawIntroduceStoreHouse();
-					storehouse.order = i;
+					drawOrder_storehouse.order = i;
 				}
             }
         }
@@ -400,7 +400,8 @@ public class BuildingArea : MonoBehaviour {
                 StoreHouse.sumOfGold >= Farm.CreateResource.Gold && StoreHouse.sumOfStone >= Farm.CreateResource.Stone)
             {
 				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) {
+				if(Buildings._CanCreateBuilding) 
+                {
 	                if (GUI.Button(creatButton_Rect, "Build"))
 	                {
 	                    StoreHouse.UsedResource(Farm.CreateResource);
@@ -414,7 +415,7 @@ public class BuildingArea : MonoBehaviour {
 	                    newFarm.IndexOfPosition = this.indexOfArea;
                         Buildings.Farm_Instance.Add(newFarm);
 	
-	                    drawOrderList.RemoveAt(farm.order);
+	                    drawOrderList.RemoveAt(drawOrder_farm.order);
 	                    ActiveManager();
 	                }
 				}
@@ -457,7 +458,7 @@ public class BuildingArea : MonoBehaviour {
 	                    new_sawmill.IndexOfPosition = this.indexOfArea;
                         Buildings.Sawmill_Instance.Add(new_sawmill);
 						
-	                    drawOrderList.RemoveAt(sawmill.order);
+	                    drawOrderList.RemoveAt(drawOrder_sawmill.order);
 	                    ActiveManager();
 	                }
 				}
@@ -465,7 +466,6 @@ public class BuildingArea : MonoBehaviour {
         }
         GUI.EndGroup();
 	}
-	
 	void DrawIntroduceMillStone()
 	{
         GUI.Box(imgRect, new GUIContent(millStone_Icon, "IconTexture"));
@@ -492,9 +492,15 @@ public class BuildingArea : MonoBehaviour {
 	                    StoreHouse.UsedResource(MillStone.CreateResource);
 	
 	                    GameObject building = Instantiate(millStone_Obj) as GameObject;
-	                    building.transform.position = sprite.position;
+	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+						
+						MillStone millstone = building.GetComponent<MillStone>();
+						millstone.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+						millstone.OnBuildingProcess((Buildings)millstone);
+	                    millstone.IndexOfPosition = this.indexOfArea;
+                        Buildings.MillStoneInstance.Add(millstone);
 	
-	                    drawOrderList.RemoveAt(millstone.order);
+	                    drawOrderList.RemoveAt(drawOrder_millstone.order);
 	                    ActiveManager();
 	                }
 				}
@@ -502,7 +508,6 @@ public class BuildingArea : MonoBehaviour {
         }
         GUI.EndGroup();
 	}
-	
 	void DrawIntroduceSmelter() 
 	{
         GUI.Box(imgRect, new GUIContent(smelter_icon, "IconTexture"));
@@ -523,16 +528,22 @@ public class BuildingArea : MonoBehaviour {
                 StoreHouse.sumOfGold >= Smelter.CreateResource.Gold && StoreHouse.sumOfStone >= Smelter.CreateResource.Stone)
             {
 				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) {
+				if(Buildings._CanCreateBuilding) 
+				{
 	                if (GUI.Button(creatButton_Rect, "Build"))
 	                {
 	                    StoreHouse.UsedResource(Smelter.CreateResource);
 	
 	                    GameObject building = Instantiate(smelter_Obj) as GameObject;
-	                    building.transform.position = sprite.position;
+	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+						
+						Smelter smelter = building.GetComponent<Smelter>();
+						smelter.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+						smelter.OnBuildingProcess((Buildings)smelter);
+	                    smelter.IndexOfPosition = this.indexOfArea;
+                        Buildings.SmelterInstance.Add(smelter);
 	
-	                    //Buildings.SmelterInstance = building.GetComponent<Smelter>();
-	                    drawOrderList.RemoveAt(smelter.order);
+	                    drawOrderList.RemoveAt(drawOrder_smelter.order);
 	                    ActiveManager();
 	                }
 				}

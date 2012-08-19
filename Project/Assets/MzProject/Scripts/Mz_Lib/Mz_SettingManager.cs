@@ -6,7 +6,7 @@ public class Mz_SettingManager : MonoBehaviour {
     public enum SettingUIState { normal = 0, showSetting, };
     private SettingUIState CurrentUIState;
 	
-	private string language = "En"; 
+	private string language = "En";
     private Rect settingGroup_Rect;
     private Rect setting_Rect;
 
@@ -73,7 +73,7 @@ public class Mz_SettingManager : MonoBehaviour {
             }
             else if (GUI.Button(new Rect(36, 4, 32, 25), this.language))
             {
-				MatrixProblem.Program.Main();
+				
             }
         }
         GUI.EndGroup();

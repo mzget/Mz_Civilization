@@ -5,8 +5,10 @@ public class MillStone : Buildings {
 
     //<!-- Static Data.
     public static GameResource CreateResource = new GameResource(50, 80, 40, 40);
-    public static string BuildingName = "MillStone";
+    public GameResource[] UpgradeResource = new GameResource[10];
 
+    //<!-- Data.
+    public static string BuildingName = "MillStone";
     private static string Description_TH = "โรงโม่หิน มีช่างหินเป็นผู้เชี่ยวชาญในการตัดหิน ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้หินมากขึ้นไปด้วย";
     private static string Description_EN = "Stone block can be gathered from stone mining. Upgrade millstone to increase stone block production.";
     public static string CurrentDescription
@@ -25,28 +27,33 @@ public class MillStone : Buildings {
         //		set{}
     }
 
-    private int productionRate = 1;        // produce food per second.
+    private int[] productionRate = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };       // produce food per second.
     private float timeInterval = 0;
 
 
 
     protected override void Awake()
     {
-        base.Awake(); sprite = this.GetComponent<OTSprite>();
-    }
-	
-	// Use this for initialization
-	void Start () {		
+        base.Awake(); 
+		sprite = this.GetComponent<OTSprite>();
+		
         this.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
-
-        this.level = 1;
-        this.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
-        this.OnBuildingProcess(this);
-		
-		string position_Data = this.transform.position.x + "|" + this.transform.position.y + "|" + this.transform.position.z;
-		Debug.Log(position_Data);
+    }
+	
+	// Use this for initialization
+	void Start () {
+        UpgradeResource[0] = new GameResource(100, 100, 100, 100);
+        UpgradeResource[1] = new GameResource(200, 200, 200, 200);
+        UpgradeResource[2] = new GameResource(300, 300, 300, 300);
+        UpgradeResource[3] = new GameResource(200, 200, 200, 200);
+        UpgradeResource[4] = new GameResource(200, 200, 200, 200);
+        UpgradeResource[5] = new GameResource(200, 200, 200, 200);
+        UpgradeResource[6] = new GameResource(200, 200, 200, 200);
+        UpgradeResource[7] = new GameResource(200, 200, 200, 200);
+        UpgradeResource[8] = new GameResource(200, 200, 200, 200);
+        UpgradeResource[9] = new GameResource(200, 200, 200, 200);
     }
 
     #region Building Processing.
@@ -72,15 +79,14 @@ public class MillStone : Buildings {
     #endregion
 	
 	// Update is called once per frame
-	void Update () {
-		
-		if(this.currentBuildingStatus == Buildings.BuildingStatus.buildingComplete) {
+	void Update () 
+	{		
+		if(this.currentBuildingStatus == Buildings.BuildingStatus.none) {
 	        timeInterval += Time.deltaTime;
-	        if (timeInterval >= 1f)
-	        {
+	        if (timeInterval >= 1f) {
 	            timeInterval = 0;
 	
-	            StoreHouse.sumOfStone += productionRate;
+	            StoreHouse.sumOfStone += this.productionRate[this.level];
 	        }
 		}
 	}
@@ -97,7 +103,44 @@ public class MillStone : Buildings {
             {
                 GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
                 GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
-                GUI.TextArea(base.description_Rect, CurrentDescription, standard_Skin.textArea);
+                GUI.BeginGroup(base.description_Rect, CurrentDescription, building_Skin.textArea);
+                {   //<!-- group draw order.
+
+                    //<!-- Current Production rate.
+                    Rect currentProduction_Rect = new Rect(10, 64, 200, 32);
+                    Rect nextProduction_Rect = new Rect(10, 100, 200, 32);
+                    Rect update_requireResource_Rect = new Rect(10, 140, 400, 32);
+                    GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
+                    GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
+
+                    //<!-- Requirements Resource.
+                    GUI.BeginGroup(update_requireResource_Rect);
+                    {
+                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                    }
+                    GUI.EndGroup();
+
+                    //<!-- Upgrade Button.
+                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
+                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
+                    {
+                        Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
+
+                        if (Buildings._CanUpgradeLevel)
+                        {
+                            if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), GUI.skin.button))
+                            {
+                                base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+                                base.OnUpgradeProcess(this);
+                                base._isShowInterface = false;
+                            }
+                        }
+                    }
+                }
+                GUI.EndGroup();
             }
             GUI.EndGroup();
         }

@@ -7,7 +7,7 @@ public class Farm : Buildings
 	
     //<!-- Resource.
     public static GameResource CreateResource = new GameResource(50, 80, 80, 60);
-    public static GameResource[] UpgradeResource = new GameResource[10];
+    public GameResource[] UpgradeResource = new GameResource[10];
 	
     //<!-- Data.
     public static string BuildingName = "Farm";
@@ -39,7 +39,11 @@ public class Farm : Buildings
         this.name = BuildingName;
 		base.buildingType = Buildings.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+    }
 
+    // Use this for initialization
+    void Start()
+    {
         UpgradeResource[0] = new GameResource(100, 100, 100, 100);
         UpgradeResource[1] = new GameResource(200, 200, 200, 200);
         UpgradeResource[2] = new GameResource(300, 300, 300, 300);
@@ -50,12 +54,6 @@ public class Farm : Buildings
         UpgradeResource[7] = new GameResource(200, 200, 200, 200);
         UpgradeResource[8] = new GameResource(200, 200, 200, 200);
         UpgradeResource[9] = new GameResource(200, 200, 200, 200);
-    }
-
-    // Use this for initialization
-    void Start()
-	{		
-		
     }
 
     #region Building Processing.
@@ -104,7 +102,7 @@ public class Farm : Buildings
         {
             building_Skin.box.contentOffset = new Vector2(128, 38);
 
-            GUI.BeginGroup(base.background_Rect, new GUIContent(), building_Skin.box);
+            GUI.BeginGroup(base.background_Rect, GUIContent.none, building_Skin.box);
             {
                 GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
                 GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
@@ -121,16 +119,16 @@ public class Farm : Buildings
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Label(GameResource.Food_Rect, new GUIContent(Farm.UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Wood_Rect, new GUIContent(Farm.UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Copper_Rect, new GUIContent(Farm.UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Stone_Rect, new GUIContent(Farm.UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
 
                     //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= Farm.UpgradeResource[level].Food && StoreHouse.sumOfWood >= Farm.UpgradeResource[level].Wood &&
-                        StoreHouse.sumOfGold >= Farm.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= Farm.UpgradeResource[level].Stone)
+                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
+                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
                     {
                         Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
 

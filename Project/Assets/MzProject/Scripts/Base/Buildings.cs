@@ -26,6 +26,7 @@ public class BuildingsTimeData {
 };
 
 public class Buildings : MonoBehaviour {
+	
 	public const int MAX_LEVEL = 10;	
 	
     public Font showG;
@@ -69,8 +70,7 @@ public class Buildings : MonoBehaviour {
 	public static List<Sawmill> Sawmill_Instance = new List<Sawmill>();
 	public static List<MillStone> MillStoneInstance = new List<MillStone>();
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
-
-
+	
 
 
     protected virtual void Awake()
@@ -198,12 +198,10 @@ public class Buildings : MonoBehaviour {
     {
 		
     }
-
     protected void OnMouseDown()
     {
         _isShowInterface = true;
     }
-
     protected void OnMouseExit()
     {
 
@@ -216,11 +214,10 @@ public class Buildings : MonoBehaviour {
         yield return 0;
     }
 	
-
+	
+    protected Vector2 scrollPosition = Vector2.zero;
     protected Rect windowRect;
     protected Rect exitButton_Rect;
-    protected Vector2 scrollPosition = Vector2.zero;
-
     protected Rect background_Rect;
     protected Rect upgradeButton_Rect;
     protected Rect destructionButton_Rect;
