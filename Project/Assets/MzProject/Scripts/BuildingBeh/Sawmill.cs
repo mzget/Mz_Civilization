@@ -6,6 +6,7 @@ public class Sawmill : Buildings {
 	//<!-- Static Data.
     public static GameResource CreateResource = new GameResource(80, 120, 80, 60);
     public GameResource[] UpgradeResource = new GameResource[10];
+    public int Level { get { return base.level; } set { base.level = value; } }
 
     //<!-- Data.
 	public static string BuildingName = "Sawmill";
@@ -24,7 +25,6 @@ public class Sawmill : Buildings {
 
             return temp;
         }
-        //		set{}
     }
 
     private int[] productionRate = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };       // produce food per second.
@@ -72,8 +72,8 @@ public class Sawmill : Buildings {
 
         Destroy(processbar_Obj_parent);
 
-        if (this.currentBuildingStatus != Buildings.BuildingStatus.buildingComplete)
-            this.currentBuildingStatus = Buildings.BuildingStatus.buildingComplete;
+        if (this.currentBuildingStatus != Buildings.BuildingStatus.none)
+            this.currentBuildingStatus = Buildings.BuildingStatus.none;
     }
 
     #endregion
@@ -83,7 +83,8 @@ public class Sawmill : Buildings {
 	{		
 		if(this.currentBuildingStatus == Buildings.BuildingStatus.none) {
 	        timeInterval += Time.deltaTime;
-	        if (timeInterval >= 1f) {
+			
+	        if (timeInterval >= 1f && StoreHouse.sumOfWood < StoreHouse.SumOfCapacity) {
 	            timeInterval = 0;
 	
 	            StoreHouse.sumOfWood += this.productionRate[this.level];
@@ -106,9 +107,6 @@ public class Sawmill : Buildings {
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.
-                    Rect currentProduction_Rect = new Rect(10, 64, 200, 32);
-                    Rect nextProduction_Rect = new Rect(10, 100, 200, 32);
-                    Rect update_requireResource_Rect = new Rect(10, 140, 400, 32);
                     GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
                     GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
 

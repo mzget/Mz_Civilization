@@ -3,11 +3,9 @@ using System.Collections;
 
 public class Farm : Buildings
 {
-    //<!-- Static Data.
-	
-    //<!-- Resource.
     public static GameResource CreateResource = new GameResource(50, 80, 80, 60);
     public GameResource[] UpgradeResource = new GameResource[10];
+    public int Level { get { return base.level; } set { base.level = value; } }
 	
     //<!-- Data.
     public static string BuildingName = "Farm";
@@ -83,10 +81,10 @@ public class Farm : Buildings
     {		
 		if(currentBuildingStatus == Buildings.BuildingStatus.none) {
 	        timeInterval += Time.deltaTime;
-	        if (timeInterval >= 1f) {
-	            timeInterval = 0;
-	
-	            StoreHouse.sumOfFood += productionRate[level];
+			
+	        if (timeInterval >= 1f && StoreHouse.sumOfFood < StoreHouse.SumOfCapacity) {
+	            timeInterval = 0;	
+	            StoreHouse.sumOfFood += this.productionRate[this.level];
 	        }
 		}
     }
@@ -97,8 +95,8 @@ public class Farm : Buildings
 		
 		GUI.Box(new Rect(48, 24, 256, 48), base.currentBuildingStatus.ToString(), standard_Skin.box);
 
-        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
-			scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height), false, false);
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.background_Rect.width, base.background_Rect.height), 
+			scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height), false, false);
         {
             building_Skin.box.contentOffset = new Vector2(128, 38);
 
@@ -110,9 +108,6 @@ public class Farm : Buildings
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.
-                    Rect currentProduction_Rect = new Rect(10, 64, 200, 32);
-                    Rect nextProduction_Rect = new Rect(10, 100, 200, 32);
-                    Rect update_requireResource_Rect = new Rect(10, 140, 400, 32);
                     GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
                     GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
 
@@ -131,7 +126,6 @@ public class Farm : Buildings
                         StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
                     {
                         Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
-
                         if (Buildings._CanUpgradeLevel)
                         {
                             if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), GUI.skin.button))

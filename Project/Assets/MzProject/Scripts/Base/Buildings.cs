@@ -15,13 +15,16 @@ public class BuildingsTimeData {
 			
 			arrBuildingTimesData = time_generalType;
 		}
-		else if(r_buildingType == Buildings.BuildingType.resource) {
-			float[] time_resourceType = { 
+        else if (r_buildingType == Buildings.BuildingType.storehouse) {
+            return;
+        }
+        else if (r_buildingType == Buildings.BuildingType.resource) {
+            float[] time_resourceType = { 
 				30f, 90f, 300f, 600f, 1200f
 			};
-			
-			arrBuildingTimesData = time_resourceType;
-		}
+
+            arrBuildingTimesData = time_resourceType;
+        }
 	}
 };
 
@@ -46,7 +49,7 @@ public class Buildings : MonoBehaviour {
     protected OTSprite processBar_Scolling;
     [System.NonSerialized]    public OTSprite sprite;
 		
-    public int level = 0;
+    protected int level = 0;
 	protected int indexOfPosition;
 	public int IndexOfPosition  {get {return indexOfPosition; } set {indexOfPosition = value; }}
     protected bool _isShowInterface = false;
@@ -54,7 +57,7 @@ public class Buildings : MonoBehaviour {
 	
 	public enum BuildingStatus { none = 0, onBuildingProcess = 1, buildingComplete, onUpgradeProcess, };
 	public BuildingStatus currentBuildingStatus;
-	public enum BuildingType { general = 0, resource, };
+	public enum BuildingType { general = 0, resource, storehouse, };
 	protected BuildingType buildingType;
 
     protected BuildingsTimeData buildingTimeData;
@@ -64,12 +67,14 @@ public class Buildings : MonoBehaviour {
     /// </summary>
     protected static bool _CanUpgradeLevel = false;
     public static bool _CanCreateBuilding = false;
-    public static List<StoreHouse> storeHouseId = new List<StoreHouse>();
     public static List<Buildings> onBuilding_Obj = new List<Buildings>();
+	//<!-- Resource.
     public static List<Farm> Farm_Instance = new List<Farm>();
 	public static List<Sawmill> Sawmill_Instance = new List<Sawmill>();
 	public static List<MillStone> MillStoneInstance = new List<MillStone>();
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
+	//<!-- Economy.
+    public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
 	
 
 
@@ -130,9 +135,8 @@ public class Buildings : MonoBehaviour {
     {
         if (processbar_Obj_parent == null)
         {
-            processbar_Obj_parent = Instantiate(
-                Resources.Load("Processbar_Group", typeof(GameObject)),
-                new Vector3(this.sprite.position.x, this.sprite.position.y + this.sprite.size.y, 0),
+            processbar_Obj_parent = Instantiate(Resources.Load("Processbar_Group", typeof(GameObject)),
+                new Vector3(this.sprite.position.x, this.sprite.position.y - ((this.sprite.size.y/2)+12), 0),
                 Quaternion.identity) as GameObject;
 
             OTSprite backgroundSprite = processbar_Obj_parent.GetComponentInChildren<OTSprite>();
@@ -219,7 +223,6 @@ public class Buildings : MonoBehaviour {
     protected Rect windowRect;
     protected Rect exitButton_Rect;
     protected Rect background_Rect;
-    protected Rect upgradeButton_Rect;
     protected Rect destructionButton_Rect;
     protected Rect imgContent_Rect = new Rect(40, 60, 100, 100);
     protected Rect buildingIcon_Rect = new Rect(40, 48, 80, 80);
@@ -227,13 +230,19 @@ public class Buildings : MonoBehaviour {
     protected Rect description_Rect;
     protected Rect contentRect = new Rect(170, 20, 590, 160);
     protected Rect warnningMessage_Rect = new Rect(Main.GAMEWIDTH / 2 - 150, Main.GAMEHEIGHT / 2 - 120, 300, 240);
-    protected Rect upgradeRequireResource_Rect = new Rect(10, 100, 400, 32);
+
+    protected Rect upgradeButton_Rect;
+    protected Rect update_requireResource_Rect = new Rect(10, 240, 400, 32);
+    protected Rect currentProduction_Rect;
+    protected Rect nextProduction_Rect;
 	
     protected void OnGUI()
     {
         windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
-        upgradeButton_Rect = new Rect(description_Rect.width - 100, 140, 100, 32);
+        upgradeButton_Rect = new Rect(description_Rect.width - 100, update_requireResource_Rect.y, 100, 32);
+        currentProduction_Rect = new Rect(10, update_requireResource_Rect.y - 80, background_Rect.width, 32);
+        nextProduction_Rect = new Rect(10, update_requireResource_Rect.y - 40, background_Rect.width, 32);
         destructionButton_Rect = new Rect(windowRect.width - 250, 32, 100, 32);
         background_Rect = new Rect(0, 0, windowRect.width - 12, 320);
         description_Rect = new Rect(150, 24, 520, background_Rect.height - 45);

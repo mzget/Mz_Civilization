@@ -38,7 +38,7 @@ public class TaskbarManager : MonoBehaviour {
             GUI.BeginGroup(groupResourec_Rect, GUIContent.none, GUIStyle.none);
             {
                 if (GUI.Button(resource_Rect, 
-					new GUIContent(StoreHouse.sumOfFood + "/" +StoreHouse.SumOfCapacity, taskbarUI_Skin.customStyles[0].normal.background), taskbarUI_Skin.button))
+					new GUIContent(StoreHouse.sumOfFood + "/" + StoreHouse.SumOfCapacity, taskbarUI_Skin.customStyles[0].normal.background), taskbarUI_Skin.button))
                 {
 
                 }

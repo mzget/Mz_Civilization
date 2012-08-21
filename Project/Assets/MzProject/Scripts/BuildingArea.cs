@@ -101,12 +101,12 @@ public class BuildingArea : MonoBehaviour {
     }
 
     void OnMouseExit() { 
+		
     }
 
     #endregion
     
-    void ActiveManager() 
-    {
+    void ActiveManager() {
         this.gameObject.SetActive(false);
     }
 	
@@ -347,10 +347,10 @@ public class BuildingArea : MonoBehaviour {
 	
 	private void CalculationDrawOrderGUI(int indexUIorder) 
 	{		
-        for (int i = 0; i < drawOrderList.Count; i++)
-        {
-            if (drawOrderList[indexUIorder].nameofOrder == drawOrderList[i].nameofOrder)
-            {
+        for (int i = 0; i < drawOrderList.Count; i++) 
+		{
+            if (drawOrderList[indexUIorder].nameofOrder == drawOrderList[i].nameofOrder) 
+			{
                 drawOrderList[i].order = i;
                 if (drawOrderList[i].nameofOrder == drawOrder_farm.nameofOrder) {
 					DrawIntroduceFarmGUI(); 
@@ -541,6 +541,7 @@ public class BuildingArea : MonoBehaviour {
 						smelter.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						smelter.OnBuildingProcess((Buildings)smelter);
 	                    smelter.IndexOfPosition = this.indexOfArea;
+						
                         Buildings.SmelterInstance.Add(smelter);
 	
 	                    drawOrderList.RemoveAt(drawOrder_smelter.order);
@@ -589,9 +590,9 @@ public class BuildingArea : MonoBehaviour {
 
     private void DrawIntroduceStoreHouse()
     {
-        GUI.Box(imgRect, new GUIContent(storeHouse_Icon, "Market Texture"));
+        GUI.Box(imgRect, new GUIContent(storeHouse_Icon, "Texture"));
         GUI.Label(tagName_Rect, new GUIContent(StoreHouse.BuildingName), tagname_Style);
-        GUI.BeginGroup(contentRect, new GUIContent(StoreHouse.Description, "content"), buildingArea_Skin.textArea);
+        GUI.BeginGroup(contentRect, new GUIContent(StoreHouse.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
             GUI.BeginGroup(GameResource.RequireResource_Rect, GUIContent.none, GUIStyle.none);
@@ -614,11 +615,16 @@ public class BuildingArea : MonoBehaviour {
                         StoreHouse.UsedResource(StoreHouse.CreateResource);
 
                         GameObject building = Instantiate(storeHouse_Obj) as GameObject;
-                        building.transform.position = sprite.position;
+                        building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
 
                         StoreHouse storeHouse = building.GetComponent<StoreHouse>();
-                        Buildings.storeHouseId.Add(storeHouse);
-                        storeHouse.ID = Buildings.storeHouseId.Count;
+						storeHouse.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+						storeHouse.OnBuildingProcess(storeHouse);
+						storeHouse.IndexOfPosition = this.indexOfArea;
+						
+                        Buildings.StoreHouseInstance.Add(storeHouse);
+						
+                        storeHouse.ID = Buildings.StoreHouseInstance.Count;
 
                         ActiveManager();
                     }

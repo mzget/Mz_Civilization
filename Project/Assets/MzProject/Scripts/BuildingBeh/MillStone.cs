@@ -6,13 +6,13 @@ public class MillStone : Buildings {
     //<!-- Static Data.
     public static GameResource CreateResource = new GameResource(50, 80, 40, 40);
     public GameResource[] UpgradeResource = new GameResource[10];
+    public int Level { get { return base.level; } set { base.level = value; } }
 
     //<!-- Data.
     public static string BuildingName = "MillStone";
     private static string Description_TH = "โรงโม่หิน มีช่างหินเป็นผู้เชี่ยวชาญในการตัดหิน ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้หินมากขึ้นไปด้วย";
     private static string Description_EN = "Stone block can be gathered from stone mining. Upgrade millstone to increase stone block production.";
-    public static string CurrentDescription
-    {
+    public static string CurrentDescription {
         get
         {
             string temp = Description_EN;
@@ -24,7 +24,6 @@ public class MillStone : Buildings {
 
             return temp;
         }
-        //		set{}
     }
 
     private int[] productionRate = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };       // produce food per second.
@@ -72,8 +71,8 @@ public class MillStone : Buildings {
 
         Destroy(processbar_Obj_parent);
 		
-		if(this.currentBuildingStatus == Buildings.BuildingStatus.buildingComplete)
-			this.currentBuildingStatus = Buildings.BuildingStatus.buildingComplete;
+		if(this.currentBuildingStatus != Buildings.BuildingStatus.none)
+			this.currentBuildingStatus = Buildings.BuildingStatus.none;
     }
 
     #endregion
@@ -83,9 +82,9 @@ public class MillStone : Buildings {
 	{		
 		if(this.currentBuildingStatus == Buildings.BuildingStatus.none) {
 	        timeInterval += Time.deltaTime;
-	        if (timeInterval >= 1f) {
-	            timeInterval = 0;
-	
+			
+	        if (timeInterval >= 1f && StoreHouse.sumOfStone < StoreHouse.SumOfCapacity) {
+	            timeInterval = 0;	
 	            StoreHouse.sumOfStone += this.productionRate[this.level];
 	        }
 		}
@@ -95,7 +94,8 @@ public class MillStone : Buildings {
     {
         base.CreateWindow(windowID);
 
-        scrollPosition = GUI.BeginScrollView(new Rect(0, 100, 800, 480), scrollPosition, new Rect(0, 0, 800, 480));
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.background_Rect.width, base.background_Rect.height), 
+			scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height));
         {
             building_Skin.box.contentOffset = new Vector2(128, 38);
 
@@ -107,9 +107,6 @@ public class MillStone : Buildings {
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.
-                    Rect currentProduction_Rect = new Rect(10, 64, 200, 32);
-                    Rect nextProduction_Rect = new Rect(10, 100, 200, 32);
-                    Rect update_requireResource_Rect = new Rect(10, 140, 400, 32);
                     GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
                     GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
 
