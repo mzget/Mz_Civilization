@@ -17,17 +17,16 @@ public class StoreHouse : Buildings {
 		new GameResource(80, 120, 40, 60),
         new GameResource(200, 200, 200, 200),
         new GameResource(300, 300, 300, 300),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
+        new GameResource(400, 400, 400, 400),
+        new GameResource(500, 500, 500, 500),
+        new GameResource(600, 600, 600, 600),
+        new GameResource(700, 700, 700, 700),
+        new GameResource(800, 800, 800, 800),
+        new GameResource(900, 900, 900, 900),
+        new GameResource(1000, 1000, 1000, 1000),
 	};
     private int[] maxCapacities = new int[10] { 500, 800, 1200, 1800, 2500, 3500, 4800, 6000, 7800, 10000, };
 	private int currentMaxCapacity;
-//    public int MaxCapacity { get { return maxCapacity; } set { maxCapacity = value; } }
 	
     //<!-- Static Data.
 	public static int sumOfFood = 500;
@@ -111,11 +110,11 @@ public class StoreHouse : Buildings {
 
     void ReCalculationCapacityData()
     {
-        for (int i = 0; i < maxCapacities.Length; i++)
+        for (int i = 0; i <= maxCapacities.Length; i++)
         {
             if (base.level == i)
             {
-                this.currentMaxCapacity = this.maxCapacities[i];
+                this.currentMaxCapacity = this.maxCapacities[i - 1];
                 StoreHouse.CalculationSumOfMaxCapacity();
                 break;
             }
@@ -166,22 +165,28 @@ public class StoreHouse : Buildings {
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.
-                    GUI.Label(currentProduction_Rect, "Current Max Capacity : " + currentMaxCapacity, building_Skin.label);
-                    GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[this.level], building_Skin.label);
+					if(base.level < 10) {
+	                    GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, building_Skin.label);
+	                    GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[base.level], building_Skin.label);
+					}
+					else {
+	                    GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, building_Skin.label);
+	                    GUI.Label(nextProduction_Rect, "Max upgrade building.", building_Skin.label);
+					}
 
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level -1].Food.ToString(), base.food_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level -1].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level -1].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level -1].Stone.ToString(), base.stone_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
 
                     //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
-                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
+                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level -1].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level -1].Wood &&
+                        StoreHouse.sumOfGold >= this.UpgradeResource[level -1].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level -1].Stone)
                     {
                         Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
 

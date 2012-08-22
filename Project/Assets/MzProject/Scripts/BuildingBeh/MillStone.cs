@@ -5,7 +5,18 @@ public class MillStone : Buildings {
 
     //<!-- Static Data.
     public static GameResource CreateResource = new GameResource(50, 80, 40, 40);
-    public GameResource[] UpgradeResource = new GameResource[10];
+    public GameResource[] UpgradeResource = new GameResource[10] {
+        new GameResource(50, 80, 40, 40),
+        new GameResource(200, 200, 200, 200),
+        new GameResource(300, 300, 300, 300),
+        new GameResource(400, 400, 400, 400),
+        new GameResource(500, 500, 500, 500),
+        new GameResource(600, 600, 600, 600),
+        new GameResource(700, 700, 700, 700),
+        new GameResource(800, 800, 800, 800),
+        new GameResource(900, 900, 900, 900),
+        new GameResource(1000, 1000, 1000, 1000),
+    };
     public int Level { get { return base.level; } set { base.level = value; } }
 
     //<!-- Data.
@@ -43,16 +54,7 @@ public class MillStone : Buildings {
 	
 	// Use this for initialization
 	void Start () {
-        UpgradeResource[0] = new GameResource(100, 100, 100, 100);
-        UpgradeResource[1] = new GameResource(200, 200, 200, 200);
-        UpgradeResource[2] = new GameResource(300, 300, 300, 300);
-        UpgradeResource[3] = new GameResource(200, 200, 200, 200);
-        UpgradeResource[4] = new GameResource(200, 200, 200, 200);
-        UpgradeResource[5] = new GameResource(200, 200, 200, 200);
-        UpgradeResource[6] = new GameResource(200, 200, 200, 200);
-        UpgradeResource[7] = new GameResource(200, 200, 200, 200);
-        UpgradeResource[8] = new GameResource(200, 200, 200, 200);
-        UpgradeResource[9] = new GameResource(200, 200, 200, 200);
+
     }
 
     #region Building Processing.

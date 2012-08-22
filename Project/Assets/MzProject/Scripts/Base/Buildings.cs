@@ -9,9 +9,7 @@ public class BuildingsTimeData {
 	public BuildingsTimeData(Buildings.BuildingType r_buildingType) 
 	{
 		if(r_buildingType == Buildings.BuildingType.general) {
-            float[] time_generalType = {
-				30f, 90f, 300f, 600f, 1200f
-			};
+            float[] time_generalType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
 			
 			arrBuildingTimesData = time_generalType;
 		}
@@ -19,9 +17,7 @@ public class BuildingsTimeData {
             return;
         }
         else if (r_buildingType == Buildings.BuildingType.resource) {
-            float[] time_resourceType = { 
-				30f, 90f, 300f, 600f, 1200f
-			};
+            float[] time_resourceType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
 
             arrBuildingTimesData = time_resourceType;
         }

@@ -6,16 +6,16 @@ public class Smelter : Buildings {
     //<!-- Static Data.
     public static GameResource CreateResource = new GameResource(80, 120, 50, 60);
     public GameResource[] UpgradeResource = new GameResource[10] {
-        new GameResource(100, 100, 100, 100),
+        new GameResource(80, 120, 50, 60),
         new GameResource(200, 200, 200, 200),
         new GameResource(300, 300, 300, 300),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(200, 200, 200, 200),
+        new GameResource(400, 400, 400, 400),
+        new GameResource(500, 500, 500, 500),
+        new GameResource(600, 600, 600, 600),
+        new GameResource(700, 700, 700, 700),
+        new GameResource(800, 800, 800, 800),
+        new GameResource(900, 900, 900, 900),
+        new GameResource(1000, 1000, 1000, 1000),
 	};
     public int Level { get { return base.level; } set { base.level = value; } }
 
