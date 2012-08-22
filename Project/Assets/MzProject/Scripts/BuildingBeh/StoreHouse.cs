@@ -25,7 +25,7 @@ public class StoreHouse : Buildings {
         new GameResource(200, 200, 200, 200),
         new GameResource(200, 200, 200, 200),
 	};
-    private int[] maxCapacities = new int[] { 500, 800, 1200, 1700, 2300, };
+    private int[] maxCapacities = new int[10] { 500, 800, 1200, 1800, 2500, 3500, 4800, 6000, 7800, 10000, };
 	private int currentMaxCapacity;
 //    public int MaxCapacity { get { return maxCapacity; } set { maxCapacity = value; } }
 	

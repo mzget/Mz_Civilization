@@ -152,37 +152,37 @@ public class Buildings : MonoBehaviour {
                 processBar_Scolling.position = new Vector2((-backgroundSprite.size.x / 2) + 2, 0);
                 processBar_Scolling.size = new Vector2(12, 24);
             }
-        }
         
-        Hashtable scaleData = new Hashtable();
-
-        if (buildingState == BuildingStatus.onBuildingProcess)
-        {
-            scaleData.Add("from", new Vector2(12, 24));
-            scaleData.Add("to", new Vector2(124, 24));
-            scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
-            scaleData.Add("onupdate", "BuildingProcess");
-            scaleData.Add("easetype", iTween.EaseType.linear);
-            scaleData.Add("oncomplete", "DestroyBuildingProcess");
-            scaleData.Add("oncompleteparams", this);
-            scaleData.Add("oncompletetarget", this.gameObject);
+	        Hashtable scaleData = new Hashtable();
+	
+	        if (buildingState == BuildingStatus.onBuildingProcess)
+	        {
+	            scaleData.Add("from", new Vector2(12, 24));
+	            scaleData.Add("to", new Vector2(124, 24));
+	            scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
+	            scaleData.Add("onupdate", "BuildingProcess");
+	            scaleData.Add("easetype", iTween.EaseType.linear);
+	            scaleData.Add("oncomplete", "DestroyBuildingProcess");
+	            scaleData.Add("oncompleteparams", this);
+	            scaleData.Add("oncompletetarget", this.gameObject);
+	        }
+	        else if (buildingState == BuildingStatus.onUpgradeProcess) {
+	            scaleData.Add("from", new Vector2(12, 24));
+	            scaleData.Add("to", new Vector2(124, 24));
+	            scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
+	            scaleData.Add("onupdate", "BuildingProcess");
+	            scaleData.Add("easetype", iTween.EaseType.linear);
+	            scaleData.Add("oncomplete", "DestroyBuildingProcess");
+	            scaleData.Add("oncompleteparams", this);
+	            scaleData.Add("oncompletetarget", this.gameObject);
+	        }
+	
+	        iTween.ValueTo(this.gameObject, scaleData);
         }
-        else if (buildingState == BuildingStatus.onUpgradeProcess) {
-            scaleData.Add("from", new Vector2(12, 24));
-            scaleData.Add("to", new Vector2(124, 24));
-            scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
-            scaleData.Add("onupdate", "BuildingProcess");
-            scaleData.Add("easetype", iTween.EaseType.linear);
-            scaleData.Add("oncomplete", "DestroyBuildingProcess");
-            scaleData.Add("oncompleteparams", this);
-            scaleData.Add("oncompletetarget", this.gameObject);
-        }
-
-        iTween.ValueTo(this.gameObject, scaleData);
+		else 
+			return;
     }
-	private void BuildingProcess(Vector2 Rvalue) {
-		Debug.Log("Class :: Buildings" + ":: BuildingProcess");
-		
+	private void BuildingProcess(Vector2 Rvalue) {		
 		if(this.processBar_Scolling)
 			this.processBar_Scolling.size = Rvalue;
 	}
@@ -277,7 +277,7 @@ public class Buildings : MonoBehaviour {
         {
             if (GUI.Button(destructionButton_Rect, new GUIContent("Destruction"), GUI.skin.button))
             {
-                //GUI.Box()
+
             }
         }
     }
