@@ -168,38 +168,38 @@ public class StoreHouse : Buildings {
 					if(base.level < 10) {
 	                    GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, building_Skin.label);
 	                    GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[base.level], building_Skin.label);
+						
+	                    //<!-- Requirements Resource.
+	                    GUI.BeginGroup(update_requireResource_Rect);
+	                    {
+	                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level -1].Food.ToString(), base.food_icon), standard_Skin.box);
+	                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level -1].Wood.ToString(), base.wood_icon), standard_Skin.box);
+	                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level -1].Gold.ToString(), base.copper_icon), standard_Skin.box);
+	                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level -1].Stone.ToString(), base.stone_icon), standard_Skin.box);
+	                    }
+	                    GUI.EndGroup();
+
+	                    //<!-- Upgrade Button.
+	                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level -1].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level -1].Wood &&
+	                        StoreHouse.sumOfGold >= this.UpgradeResource[level -1].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level -1].Stone)
+	                    {
+	                        Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
+	
+	                        if (Buildings._CanUpgradeLevel)
+	                        {
+	                            if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
+	                            {
+	                                base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+	                                base.OnUpgradeProcess(this);
+	                                base._isShowInterface = false;
+	                            }
+	                        }
+	                    }
 					}
 					else {
 	                    GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, building_Skin.label);
 	                    GUI.Label(nextProduction_Rect, "Max upgrade building.", building_Skin.label);
 					}
-
-                    //<!-- Requirements Resource.
-                    GUI.BeginGroup(update_requireResource_Rect);
-                    {
-                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level -1].Food.ToString(), base.food_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level -1].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level -1].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level -1].Stone.ToString(), base.stone_icon), standard_Skin.box);
-                    }
-                    GUI.EndGroup();
-
-                    //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level -1].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level -1].Wood &&
-                        StoreHouse.sumOfGold >= this.UpgradeResource[level -1].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level -1].Stone)
-                    {
-                        Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
-
-                        if (Buildings._CanUpgradeLevel)
-                        {
-                            if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
-                            {
-                                base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
-                                base.OnUpgradeProcess(this);
-                                base._isShowInterface = false;
-                            }
-                        }
-                    }
                 }
                 GUI.EndGroup();
             }
