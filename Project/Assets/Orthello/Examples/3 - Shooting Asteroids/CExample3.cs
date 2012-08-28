@@ -91,9 +91,9 @@ public class CExample3 : MonoBehaviour {
     // Create objects for this application
     void CreateObjectPools()
     {
-		OT.PreFabricate("asteroid1", 150);
-		OT.PreFabricate("asteroid2", 150);
-		OT.PreFabricate("asteroid3", 150);		
+		OT.PreFabricate("asteroid1",150);
+		OT.PreFabricate("asteroid2",150);
+		OT.PreFabricate("asteroid3",150);		
     }
 
     // application initialization

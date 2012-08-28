@@ -64,12 +64,18 @@ public class BuildingArea : MonoBehaviour {
 	private static DrawOrder drawOrder_storehouse = new DrawOrder("storehouse", 5);
 
 
-    void Awake() {
-        tagname_Style = buildingArea_Skin.customStyles[1];
+    void Awake()
+	{
+        tagname_Style = new GUIStyle();
+		tagname_Style.alignment = TextAnchor.MiddleCenter;
+		tagname_Style.normal.textColor = Color.white;
+		tagname_Style.font = buildingArea_Skin.font;
+		tagname_Style.fontStyle = FontStyle.Bold;
     }
 
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
         sprite = this.gameObject.GetComponent<OTSprite>();
         objectname = this.gameObject.GetComponent<ObjectName>();
 
@@ -81,7 +87,6 @@ public class BuildingArea : MonoBehaviour {
             drawOrderList.Add(drawOrder_market);
 			drawOrderList.Add(drawOrder_storehouse);
 		}
-		Debug.Log("BuildingArea :: " + "OnStart");
 	}
 	
 	// Update is called once per frame
@@ -89,7 +94,7 @@ public class BuildingArea : MonoBehaviour {
 	
 	}
     
-    #region Incloud Mouse Event.
+    #region <!-- Incloud Mouse Event.
 
     void OnMouseOver() { 
     }
@@ -107,7 +112,7 @@ public class BuildingArea : MonoBehaviour {
     #endregion
     
     void ActiveManager() {
-        this.gameObject.SetActive(false);
+        this.gameObject.active = false;
     }
 	
 
@@ -320,8 +325,8 @@ public class BuildingArea : MonoBehaviour {
 						if(StoreHouse.sumOfFood >= BarrackBeh.CreateResource.Food && StoreHouse.sumOfWood >= BarrackBeh.CreateResource.Wood &&
 							StoreHouse.sumOfGold >= BarrackBeh.CreateResource.Gold && StoreHouse.sumOfStone >= BarrackBeh.CreateResource.Stone)
 						{
-                            Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-                            if (Buildings._CanCreateBuilding)
+//                            Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+                            if (Buildings.CheckingCanCreateBuilding())
                             {
                                 if (GUI.Button(creatButton_Rect, "Build"))
                                 {
@@ -395,27 +400,28 @@ public class BuildingArea : MonoBehaviour {
                 GUI.Label(GameResource.Stone_Rect, new GUIContent(Farm.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
+			
             //<!-- Create button.
             if (StoreHouse.sumOfFood >= Farm.CreateResource.Food && StoreHouse.sumOfWood >= Farm.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= Farm.CreateResource.Gold && StoreHouse.sumOfStone >= Farm.CreateResource.Stone)
             {
-				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) 
+				if(Buildings.CheckingCanCreateBuilding()) 
                 {
 	                if (GUI.Button(creatButton_Rect, "Build"))
 	                {
 	                    StoreHouse.UsedResource(Farm.CreateResource);
 	
 	                    GameObject building = Instantiate(farm_Obj) as GameObject;
-						building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+						building.GetComponent<OTSprite>().position = StageManager.buildingArea_Pos[this.indexOfArea];
 						
-						Farm newFarm = building.GetComponent<Farm>();
-						newFarm.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
-						newFarm.OnBuildingProcess((Buildings)newFarm);
-	                    newFarm.IndexOfPosition = this.indexOfArea;
-                        Buildings.Farm_Instance.Add(newFarm);
+						Farm new_Farm = building.GetComponent<Farm>();
+						new_Farm.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
+						new_Farm.OnBuildingProcess((Buildings)new_Farm);
+	                    new_Farm.IndexOfPosition = this.indexOfArea;
+						
+                        Buildings.Farm_Instance.Add(new_Farm);
 	
-	                    drawOrderList.RemoveAt(drawOrder_farm.order);
+//	                    drawOrderList.RemoveAt(drawOrder_farm.order);
 	                    ActiveManager();
 	                }
 				}
@@ -442,8 +448,8 @@ public class BuildingArea : MonoBehaviour {
             if (StoreHouse.sumOfFood >= Sawmill.CreateResource.Food && StoreHouse.sumOfWood >= Sawmill.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= Sawmill.CreateResource.Gold && StoreHouse.sumOfStone >= Sawmill.CreateResource.Stone)
             {
-				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding)
+//				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
+				if(Buildings.CheckingCanCreateBuilding())
 				{
 	                if (GUI.Button(creatButton_Rect, "Build")) 
 					{
@@ -456,9 +462,10 @@ public class BuildingArea : MonoBehaviour {
 						new_sawmill.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						new_sawmill.OnBuildingProcess((Buildings)new_sawmill);
 	                    new_sawmill.IndexOfPosition = this.indexOfArea;
+						
                         Buildings.Sawmill_Instance.Add(new_sawmill);
 						
-	                    drawOrderList.RemoveAt(drawOrder_sawmill.order);
+//	                    drawOrderList.RemoveAt(drawOrder_sawmill.order);
 	                    ActiveManager();
 	                }
 				}
@@ -485,8 +492,7 @@ public class BuildingArea : MonoBehaviour {
             if (StoreHouse.sumOfFood >= MillStone.CreateResource.Food && StoreHouse.sumOfWood >= MillStone.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= MillStone.CreateResource.Gold && StoreHouse.sumOfStone >= MillStone.CreateResource.Stone)
             {
-				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) {
+				if(Buildings.CheckingCanCreateBuilding()) {
 	                if (GUI.Button(creatButton_Rect, "Build"))
 	                {
 	                    StoreHouse.UsedResource(MillStone.CreateResource);
@@ -498,9 +504,10 @@ public class BuildingArea : MonoBehaviour {
 						millstone.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						millstone.OnBuildingProcess((Buildings)millstone);
 	                    millstone.IndexOfPosition = this.indexOfArea;
+						
                         Buildings.MillStoneInstance.Add(millstone);
 	
-	                    drawOrderList.RemoveAt(drawOrder_millstone.order);
+//	                    drawOrderList.RemoveAt(drawOrder_millstone.order);
 	                    ActiveManager();
 	                }
 				}
@@ -527,8 +534,7 @@ public class BuildingArea : MonoBehaviour {
             if (StoreHouse.sumOfFood >= Smelter.CreateResource.Food && StoreHouse.sumOfWood >= Smelter.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= Smelter.CreateResource.Gold && StoreHouse.sumOfStone >= Smelter.CreateResource.Stone)
             {
-				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) 
+				if(Buildings.CheckingCanCreateBuilding()) 
 				{
 	                if (GUI.Button(creatButton_Rect, "Build"))
 	                {
@@ -544,7 +550,7 @@ public class BuildingArea : MonoBehaviour {
 						
                         Buildings.SmelterInstance.Add(smelter);
 	
-	                    drawOrderList.RemoveAt(drawOrder_smelter.order);
+//	                    drawOrderList.RemoveAt(drawOrder_smelter.order);
 	                    ActiveManager();
 	                }
 				}
@@ -572,8 +578,7 @@ public class BuildingArea : MonoBehaviour {
             if (StoreHouse.sumOfFood >= MargetBeh.CreateResource.Food && StoreHouse.sumOfWood >= MargetBeh.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= MargetBeh.CreateResource.Gold && StoreHouse.sumOfStone >= MargetBeh.CreateResource.Stone)
             {
-				Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-				if(Buildings._CanCreateBuilding) {
+				if(Buildings.CheckingCanCreateBuilding()) {
 		            if (GUI.Button(creatButton_Rect, "Create"))
 		            {
 		                StoreHouse.UsedResource(MargetBeh.CreateResource);
@@ -587,7 +592,6 @@ public class BuildingArea : MonoBehaviour {
         }
         GUI.EndGroup();
     }
-
     private void DrawIntroduceStoreHouse()
     {
         GUI.Box(imgRect, new GUIContent(storeHouse_Icon, "Texture"));
@@ -607,8 +611,7 @@ public class BuildingArea : MonoBehaviour {
             if (StoreHouse.sumOfFood >= StoreHouse.CreateResource.Food && StoreHouse.sumOfWood >= StoreHouse.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= StoreHouse.CreateResource.Gold && StoreHouse.sumOfStone >= StoreHouse.CreateResource.Stone)
             {
-                Buildings._CanCreateBuilding = Buildings.CheckingCanCreateBuilding();
-                if (Buildings._CanCreateBuilding)
+                if (Buildings.CheckingCanCreateBuilding())
                 {
                     if (GUI.Button(creatButton_Rect, "Build"))
                     {

@@ -60,9 +60,9 @@ public class BarrackBeh : Buildings
     {
         base.CreateProcessBar(buildingState);
     }
-    protected override void DestroyBuildingProcess(Buildings obj)
+    protected override void BuildingProcessComplete(Buildings obj)
     {
-        base.DestroyBuildingProcess(obj);
+        base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
 
@@ -92,8 +92,8 @@ public class BarrackBeh : Buildings
             GUI.BeginGroup(new Rect (0, 0 * height, background_Rect.width, height), new GUIContent(string.Empty, "Barrack Header"), GUIStyle.none);
             {
                 Rect headerContentRect = new Rect(5, 0 * height, background_Rect.width - 10, height);
-                GUI.Box(headerContentRect, GUIContent.none, standard_Skin.box);
-                GUI.Box(new Rect(200, 2, headerContentRect.width - 200, height - 4), Description_TH, standard_Skin.textArea);
+                GUI.Box(headerContentRect, GUIContent.none, building_Skin.box);
+                GUI.Box(new Rect(200, 2, headerContentRect.width - 200, height - 4), Description_TH, building_Skin.textArea);
                 GUI.DrawTexture(buildingIcon_Rect, buildingIcon_Texture);
 			}
 			GUI.EndGroup ();

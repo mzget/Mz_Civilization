@@ -78,29 +78,4 @@ public class OTObjectType {
         }
     }
 
-    public static string GradientSprite
-    {
-        get
-        {
-            return "GradientSprite";
-        }
-    }
-	
-    public static string TextSprite
-    {
-        get
-        {
-            return "TextSprite";
-        }
-    }
-	
-    public static string Scale9Sprite
-    {
-        get
-        {
-            return "Scale9Sprite";
-        }
-    }
-	
-	
 }

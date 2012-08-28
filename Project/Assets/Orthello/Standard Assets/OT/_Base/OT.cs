@@ -498,50 +498,8 @@ public class OT : MonoBehaviour
 		if (!isValid) return;
 		instance._Reset();
 	}
-
-	/// <summary>
-	/// Find an animating sprite
-	/// </summary>
-	public static OTAnimatingSprite AnimatingSprite(string name)
-	{
-		return ObjectByName(name) as OTAnimatingSprite;
-	}
-	/// <summary>
-	/// Find a filled sprite
-	/// </summary>
-	public static OTFilledSprite FilledSprite(string name)
-	{
-		return ObjectByName(name) as OTFilledSprite;
-	}
-	/// <summary>
-	/// Find a scale9 sprite
-	/// </summary>
-	public static OTScale9Sprite Scale9Sprite(string name)
-	{
-		return ObjectByName(name) as OTScale9Sprite;
-	}
-	/// <summary>
-	/// Find a gradient sprite
-	/// </summary>
-	public static OTGradientSprite GradientSprite(string name)
-	{
-		return ObjectByName(name) as OTGradientSprite;
-	}
-	/// <summary>
-	/// Find a text sprite
-	/// </summary>
-	public static OTTextSprite TextSprite(string name)
-	{
-		return ObjectByName(name) as OTTextSprite;
-	}
-	/// <summary>
-	/// Find a sprite
-	/// </summary>
-	public static OTSprite Sprite(string name)
-	{
-		return ObjectByName(name) as OTSprite;
-	}
-		
+	
+	
     /// <summary>
     /// Checks if we are over a specific Orthello object
     /// </summary>
@@ -1256,8 +1214,6 @@ public class OT : MonoBehaviour
 					
 					if (OTDragObject.ByFinger(touch.fingerId)==null)
 						OTDragObject.New(touch.fingerId).position = touch.position;					
-					
-					
 				}
 				else
 				{
@@ -1485,18 +1441,13 @@ public class OT : MonoBehaviour
 						
 						if (mobile && multiDrag && OTDragObject.dragObjects.Count>0)
 						{
-							if (Input.touches.Length==0)
-								OTDragObject.Clear();
-							else
-							{								
-								int i=0;
-								while (i<OTDragObject.dragObjects.Count)
-								{
-									if (OTDragObject.dragObjects[i].dragging && !fingers.Contains(OTDragObject.dragObjects[i].finger))
-										EndDragObject(i);
-									else
-										i++;
-								}
+							int i=0;
+							while (i<OTDragObject.dragObjects.Count)
+							{
+								if (OTDragObject.dragObjects[i].dragging && !fingers.Contains(OTDragObject.dragObjects[i].finger))
+									EndDragObject(i);
+								else
+									i++;
 							}
 						}							
 					}
@@ -1506,11 +1457,10 @@ public class OT : MonoBehaviour
             }
 			else
 			{
-				if (mobile && Input.touchCount == 0)
-				{					
+				if (mobile && Input.touchCount == 0 && OTDragObject.isDragging)
+				{
 					while (OTDragObject.dragObjects.Count>0)
 						EndDragObject(0);
-					OTDragObject.Clear();
 				}
 			}
         }
@@ -2224,7 +2174,6 @@ public class OT : MonoBehaviour
 					_InputTo(obj);
 			}
 		}
-		_inputCameras = new Camera[] {};
 	}			
 	
 }
@@ -2349,10 +2298,6 @@ class OTDragObject {
 		
 		if (dragObjects.Contains(o))
 			dragObjects.Remove(o);
-		
-		if (dragObjects.Count == 0)
-			Clear();
-		
 	}
 	
 }
@@ -2577,13 +2522,6 @@ public class OTDebug
 		
 		if (OT.mobile)
 		{
-			if (Application.platform == RuntimePlatform.Android &&
-				Input.GetKey(KeyCode.Escape))
-			{
-				Application.Quit();
-				return;
-			}
-			
 			if (Input.touches.Length==touchCount && canTouch)
 			{
 				touchTimer += Time.deltaTime;

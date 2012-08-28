@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with TexturePacker http://texturepacker.com-->
-<!-- $TexturePacker:SmartUpdate:85d33a250738fa71cb6457c726411a9f$ -->
+<!-- $TexturePacker:SmartUpdate:73afecf630d58883196975abe0b80c33$ -->
 <TextureAtlas imagePath="UI_Sparrow.png">
     <SubTexture name="ProcessBar_bg" x="2" y="2" width="256" height="32"/>
     <SubTexture name="ProcessBar_scroll" x="2" y="36" width="256" height="32"/>
+    <SubTexture name="destruction_scroll" x="2" y="70" width="256" height="32"/>
 </TextureAtlas>

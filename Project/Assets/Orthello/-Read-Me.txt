@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------
-WyrmTale Orthello 2D framework v2.1
+WyrmTale Orthello 2D framework
 (C)opyright 2011 WyrmTale Games
 -------------------------------------------------------------------------
 

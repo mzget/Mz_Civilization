@@ -17,7 +17,6 @@ public class Sawmill : Buildings {
         new GameResource(900, 900, 900, 900),
         new GameResource(1000, 1000, 1000, 1000),
     };
-    public int Level { get { return base.level; } set { base.level = value; } }
 
     //<!-- Data.
 	public static string BuildingName = "Sawmill";
@@ -40,6 +39,7 @@ public class Sawmill : Buildings {
 
     private int[] productionRate = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };       // produce food per second.
     private float timeInterval = 0;
+    public int Level { get { return base.level; } set { base.level = value; } }
 
 	
 	
@@ -50,6 +50,8 @@ public class Sawmill : Buildings {
         this.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+		
+		buildingIcon_Texture = Resources.Load("Textures/Building_Icons/PinePlanks", typeof(Texture2D)) as Texture2D;
 	}
 	
 	// Use this for initialization
@@ -67,9 +69,9 @@ public class Sawmill : Buildings {
     {
         base.CreateProcessBar(buildingState);
     }
-    protected override void DestroyBuildingProcess(Buildings obj)
+    protected override void BuildingProcessComplete(Buildings obj)
     {
-        base.DestroyBuildingProcess(obj);
+        base.BuildingProcessComplete(obj);
 
         Destroy(processbar_Obj_parent);
 
@@ -97,19 +99,21 @@ public class Sawmill : Buildings {
     {
         base.CreateWindow(windowID);
 
-        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.background_Rect.width, base.background_Rect.height),
-            scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height));
+        GUI.Box(new Rect(48, 24, 256, 48), base.currentBuildingStatus.ToString(), standard_Skin.box);
+
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
+            scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height));
         {
-            GUI.BeginGroup(background_Rect, GUIContent.none, building_Skin.box);
+            GUI.BeginGroup(base.building_background_Rect, GUIContent.none, building_Skin.box);
             {
                 GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
-                GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
+                GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
                 GUI.BeginGroup(base.description_Rect, CurrentDescription, building_Skin.textArea);
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.
-                    GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
-                    GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
+                    GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], base.job_style);
+                    GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], base.job_style);
 
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
@@ -122,15 +126,17 @@ public class Sawmill : Buildings {
                     GUI.EndGroup();
 
                     //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
-                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
+                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && 
+                        StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
+                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && 
+                        StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
                     {
-                        Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
-
-                        if (Buildings._CanUpgradeLevel)
+                        if (base.CheckingCanUpgradeLevel()) 
                         {
                             if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), GUI.skin.button))
                             {
+                                StoreHouse.UsedResource(this.UpgradeResource[base.level]);
+
                                 base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
                                 base.OnUpgradeProcess(this);
 								base._isShowInterface = false;

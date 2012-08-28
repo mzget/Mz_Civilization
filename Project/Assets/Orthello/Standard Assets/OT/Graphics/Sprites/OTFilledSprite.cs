@@ -59,16 +59,7 @@ public class OTFilledSprite : OTSprite
     
     protected override void CheckSettings()
     {
-		Vector3 oldSize = size;
-
-		bool imageChanged = false;
-		if (image!=_image_)
-			imageChanged = true;
-				
-        base.CheckSettings();		
-		// if we changed the image, reset old size because it was set to dimensions of the new image
-		if (imageChanged) 
-			size = oldSize;
+        base.CheckSettings();
 
         if (fillSize != _fillSize_)
         {
@@ -94,25 +85,19 @@ public class OTFilledSprite : OTSprite
     
     public override string GetMatName()
     {
-       return base.GetMatName() + "-Size:"+size.ToString()+"-fill:" + fillSize.ToString();
+       return base.GetMatName() + "-fill:" + fillSize.ToString();
     }
 
     void SetTexture()
     {
         if (image != null)
-        {			
+        {
             Material mat = material;
-			Vector2  oldScale = mat.mainTextureScale;
-			Vector2  mainScale = Vector2.zero;
             if (fillSize.Equals(Vector2.zero) || Vector2.Equals(fillSize, size))
-                mainScale = Vector2.one;
+                mat.mainTextureScale = Vector2.one;
             else
-                mainScale = new Vector2(1 / (fillSize.x / size.x), 1 / (fillSize.y / size.y));
-			if (mainScale!=oldScale)
-			{
-            	mat.mainTextureScale = mainScale;
-            	mat.mainTextureOffset = new Vector2(0, mat.mainTextureScale.y * -1);
-			}
+                mat.mainTextureScale = new Vector2(1 / (fillSize.x / size.x), 1 / (fillSize.y / size.y));
+            mat.mainTextureOffset = new Vector2(0, mat.mainTextureScale.y * -1);
         }
     }
 

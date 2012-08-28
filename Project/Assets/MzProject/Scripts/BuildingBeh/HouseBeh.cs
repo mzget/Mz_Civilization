@@ -13,11 +13,6 @@ public class HouseBeh : Buildings {
 
 	}
 
-    protected override void DestructionBuilding()
-    {
-        base.DestructionBuilding();
-    }
-
     protected override void CreateWindow(int windowID) 
     {
         if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), building_Skin.customStyles[0]))

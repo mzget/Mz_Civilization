@@ -24,7 +24,7 @@ public class Smelter : Buildings {
     private static string Description_TH = "โรงหลอมแร่ แร่ทองแดงถูกหลอมขึ้นที่นี่ อาวุธและชุดเกราะในกองทัพของคุณจำเป็นต้องใช้มัน \n" + " อัพเกรดเพื่อเพิ่มกำลังการผลิต";
     private static string Description_EN = "Copper can be gathered from mining. Upgrade Smelter to increase copper ingot production.";
     public static string CurrentDescription {
-        get
+        get 
         {
             string temp = Description_EN;
 
@@ -46,9 +46,11 @@ public class Smelter : Buildings {
         if (sprite == null)
             sprite = this.GetComponent<OTSprite>();
 		
-        this.name = BuildingName;
+        this.name = Smelter.BuildingName;
         base.buildingType = Buildings.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+		
+		buildingIcon_Texture = Resources.Load("Textures/Building_Icons/CopperIngot", typeof(Texture2D)) as Texture2D;
 	}
 
 	// Use this for initialization
@@ -66,9 +68,9 @@ public class Smelter : Buildings {
     {
         base.CreateProcessBar(buildingState);
     }
-    protected override void DestroyBuildingProcess(Buildings building)
+    protected override void BuildingProcessComplete(Buildings building)
     {
-        base.DestroyBuildingProcess(building);
+        base.BuildingProcessComplete(building);
 
         Destroy(processbar_Obj_parent);
 		
@@ -95,21 +97,23 @@ public class Smelter : Buildings {
     {
         base.CreateWindow(windowID);
 
-        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.background_Rect.width, base.background_Rect.height),
-            scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height));
+        GUI.Box(new Rect(48, 24, 256, 48), base.currentBuildingStatus.ToString(), standard_Skin.box);
+
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
+            scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height));
         {
             building_Skin.box.contentOffset = new Vector2(128, 38);
 
-            GUI.BeginGroup(base.background_Rect, GUIContent.none, building_Skin.box);
+            GUI.BeginGroup(base.building_background_Rect, GUIContent.none, building_Skin.box);
             {
                 GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
-                GUI.Label(base.levelLable_Rect, "Level " + this.level, standard_Skin.box);
+                GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
                 GUI.BeginGroup(base.description_Rect, CurrentDescription, building_Skin.textArea);
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.
-                    GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
-                    GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
+                    GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], base.job_style);
+                    GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], base.job_style);
 
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
@@ -125,12 +129,13 @@ public class Smelter : Buildings {
                     if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
                         StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
                     {
-                        Buildings._CanUpgradeLevel = this.CheckingCanUpgradeLevel();
 
-                        if (Buildings._CanUpgradeLevel)
+                        if (base.CheckingCanUpgradeLevel())
                         {
                             if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), GUI.skin.button))
                             {
+                                StoreHouse.UsedResource(this.UpgradeResource[base.level]);
+
                                 base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
                                 base.OnUpgradeProcess(this);
                                 base._isShowInterface = false;
