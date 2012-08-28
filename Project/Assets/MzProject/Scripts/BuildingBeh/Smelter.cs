@@ -79,6 +79,13 @@ public class Smelter : Buildings {
     }
 
     #endregion
+	
+	protected override void ClearStorageData ()
+	{
+		base.ClearStorageData ();
+		
+		Buildings.SmelterInstance.Remove(this);
+	}
 
     // Update is called once per frame
     void Update()

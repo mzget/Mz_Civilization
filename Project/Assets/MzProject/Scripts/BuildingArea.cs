@@ -71,7 +71,13 @@ public class BuildingArea : MonoBehaviour {
 		tagname_Style.normal.textColor = Color.white;
 		tagname_Style.font = buildingArea_Skin.font;
 		tagname_Style.fontStyle = FontStyle.Bold;
+		
+		this.InitializeGUI();
     }
+	
+	private void InitializeGUI() {
+		storeHouse_Icon = Resources.Load("Textures/Building_Icons/Storehouse", typeof(Texture2D)) as Texture2D;
+	}
 
 	// Use this for initialization
 	void Start () 
@@ -124,9 +130,7 @@ public class BuildingArea : MonoBehaviour {
     private Rect tagName_Rect;
     private Rect contentRect;
     private Rect creatButton_Rect;
-    //<!-- Economy.
-    //<!-- Military.
-    //<!-- Utility.
+    //<!-- Economy, Military, Utility.
     void OnGUI()
     {
         windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
@@ -594,7 +598,7 @@ public class BuildingArea : MonoBehaviour {
     }
     private void DrawIntroduceStoreHouse()
     {
-        GUI.Box(imgRect, new GUIContent(storeHouse_Icon, "Texture"));
+        GUI.DrawTexture(imgRect, storeHouse_Icon);
         GUI.Label(tagName_Rect, new GUIContent(StoreHouse.BuildingName), tagname_Style);
         GUI.BeginGroup(contentRect, new GUIContent(StoreHouse.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {

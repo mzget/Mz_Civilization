@@ -5,23 +5,31 @@ using System.Collections.Generic;
 public class BuildingsTimeData {
 	
 	public float[] arrBuildingTimesData = new float[Buildings.MAX_LEVEL];
-	
-	public BuildingsTimeData(Buildings.BuildingType r_buildingType) 
-	{
-		if(r_buildingType == Buildings.BuildingType.general) {
+
+    public BuildingsTimeData(Buildings.BuildingType r_buildingType)
+    {
+        if (r_buildingType == Buildings.BuildingType.general)
+        {
             float[] time_generalType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
-			
-			arrBuildingTimesData = time_generalType;
-		}
-        else if (r_buildingType == Buildings.BuildingType.storehouse) {
-            return;
+
+            arrBuildingTimesData = time_generalType;
         }
-        else if (r_buildingType == Buildings.BuildingType.resource) {
+        else if (r_buildingType == Buildings.BuildingType.resource)
+        {
             float[] time_resourceType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
 
             arrBuildingTimesData = time_resourceType;
         }
-	}
+        else if (r_buildingType == Buildings.BuildingType.storehouse)
+        {
+            return;
+        }
+        else if (r_buildingType == Buildings.BuildingType.barrack) {
+            float[] time_resourceType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
+
+            arrBuildingTimesData = time_resourceType;
+        }
+    }
 };
 
 public class Buildings : MonoBehaviour {
@@ -61,7 +69,7 @@ public class Buildings : MonoBehaviour {
         OnDestructionComplete, 
     };
 	public BuildingStatus currentBuildingStatus;
-	public enum BuildingType { general = 0, resource, storehouse, };
+	public enum BuildingType { general = 0, resource, storehouse, barrack, };
 	protected BuildingType buildingType;
     protected BuildingsTimeData buildingTimeData;
 
@@ -78,6 +86,8 @@ public class Buildings : MonoBehaviour {
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
 	//<!-- Economy.
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
+    //<!-- Military.
+    public static List<BarrackBeh> barrack_Instances = new List<BarrackBeh>();
 	
     protected Vector2 scrollPosition = Vector2.zero;
     protected Rect windowRect;
@@ -85,7 +95,7 @@ public class Buildings : MonoBehaviour {
     protected Rect background_Rect;
     protected Rect destructionButton_Rect;
     protected Rect imgContent_Rect = new Rect(40, 60, 100, 100);
-    protected Rect buildingIcon_Rect = new Rect(40, 48, 80, 80);
+    protected Rect buildingIcon_Rect = new Rect(40, 40, 80, 80);
     protected Rect levelLable_Rect = new Rect(25, 132, 120, 32);
     protected Rect building_background_Rect;
     protected Rect description_Rect;

@@ -77,6 +77,13 @@ public class Farm : Buildings
     }
 
     #endregion
+	
+	protected override void ClearStorageData ()
+	{
+		base.ClearStorageData ();
+		
+		Buildings.Farm_Instance.Remove(this);
+	}
 
     // Update is called once per frame
     void Update()

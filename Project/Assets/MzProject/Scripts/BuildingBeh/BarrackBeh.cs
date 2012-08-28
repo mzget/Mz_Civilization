@@ -4,14 +4,24 @@ using System.Collections;
 public class BarrackBeh : Buildings
 {
 	//<!-- Static Data.
+    public static GameResource CreateResource = new GameResource(40, 180, 120, 80);
+    public static GameResource[] UpgradeResource = new GameResource[10] {
+		new GameResource(80, 120, 40, 60),
+        new GameResource(200, 200, 200, 200),
+        new GameResource(300, 300, 300, 300),
+        new GameResource(400, 400, 400, 400),
+        new GameResource(500, 500, 500, 500),
+        new GameResource(600, 600, 600, 600),
+        new GameResource(700, 700, 700, 700),
+        new GameResource(800, 800, 800, 800),
+        new GameResource(900, 900, 900, 900),
+        new GameResource(1000, 1000, 1000, 1000),
+	};
     public static string BuildingName = "Barrack";
-	public static GameResource CreateResource = new GameResource(40, 180, 120, 80);
-
     private static string Description_TH = "ในค่ายทหารนี้คุณสามารถเกณฑ์ทหารราบได้ ยิ่งระดับค่ายทหารมากเท่าไร \n " + "กองกำลังก็จะเข็มแข็งมากขึ้น";
     private static string Description_EN = "Trains infantry units. Also researches technologies related to infantry units";
 	public static string CurrentDescription {
-        get
-        {
+        get {
             string temp = Description_EN;
 
             if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
@@ -21,10 +31,7 @@ public class BarrackBeh : Buildings
 
             return temp;
         }
-//		set{}
 	}
-
-
 
 	public GUISkin mainBuildingSkin;
 	public Texture2D spearmanTex;
@@ -35,19 +42,20 @@ public class BarrackBeh : Buildings
 	
 	
 
-    void Awake() {
+    protected override void Awake() {
+        base.Awake();
         base.sprite = this.gameObject.GetComponent<OTSprite>();
-    }
-    
-	// Use this for initialization
-	void Start ()
-	{
+
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
-
-        base.currentBuildingStatus = BuildingStatus.onBuildingProcess;
-        base.OnBuildingProcess(this);
+		
+		buildingIcon_Texture = Resources.Load("Textures/Building_Icons/Barracks", typeof(Texture2D)) as Texture2D;
+    }
+    
+	// Use this for initialization
+	void Start () {
+		
     }
 
     #region Building Processing.
@@ -71,6 +79,13 @@ public class BarrackBeh : Buildings
     }
 
     #endregion
+
+    protected override void ClearStorageData()
+    {
+        base.ClearStorageData();
+
+        Buildings.barrack_Instances.Remove(this);
+    }
 	
 	// Update is called once per frame
 	void Update ()

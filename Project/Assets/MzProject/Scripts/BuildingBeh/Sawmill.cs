@@ -81,6 +81,13 @@ public class Sawmill : Buildings {
 
     #endregion
 	
+	protected override void ClearStorageData ()
+	{
+		base.ClearStorageData ();
+		
+		Buildings.Sawmill_Instance.Remove(this);
+	}
+	
 	// Update is called once per frame
 	void Update () 
 	{		

@@ -81,6 +81,13 @@ public class MillStone : Buildings {
 
     #endregion
 	
+	protected override void ClearStorageData ()
+	{
+		base.ClearStorageData ();
+		
+		Buildings.MillStoneInstance.Remove(this);
+	}
+	
 	// Update is called once per frame
 	void Update () 
 	{		

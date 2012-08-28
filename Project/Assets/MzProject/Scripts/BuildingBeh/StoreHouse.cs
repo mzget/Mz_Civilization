@@ -3,16 +3,10 @@ using System.Collections;
 
 
 public class StoreHouse : Buildings {
-	
-    private int food = 500;
-    private int wood = 500;
-    private int gold = 500;
-    private int stone = 500;
-    public int ID;
-    public int Level { get { return base.level; } set { base.level = value; } }
-    private int[] maxCapacities = new int[10] { 500, 800, 1200, 1800, 2500, 3500, 4800, 6000, 7800, 10000, };
-    private int currentMaxCapacity;
-    public GameResource[] UpgradeResource = new GameResource[10] {
+
+    //<!-- Requirements Resource.
+    public static GameResource CreateResource = new GameResource(80, 120, 40, 60);
+    public static GameResource[] UpgradeResource = new GameResource[10] {
 		new GameResource(80, 120, 40, 60),
         new GameResource(200, 200, 200, 200),
         new GameResource(300, 300, 300, 300),
@@ -47,8 +41,15 @@ public class StoreHouse : Buildings {
             return temp;
         }
     }
-    //<!-- Requirements Resource.
-    public static GameResource CreateResource = new GameResource(80, 120, 40, 60);
+
+    private int food = 500;
+    private int wood = 500;
+    private int gold = 500;
+    private int stone = 500;
+    public int ID;
+    public int Level { get { return base.level; } set { base.level = value; } }
+    private int[] maxCapacities = new int[10] { 500, 800, 1200, 1800, 2500, 3500, 4800, 6000, 7800, 10000, };
+    private int currentMaxCapacity;
 	
 	
 
@@ -147,8 +148,9 @@ public class StoreHouse : Buildings {
 	
 	protected override void ClearStorageData ()
 	{
-		Buildings.StoreHouseInstance.Remove(this);
 		base.ClearStorageData ();
+		
+		Buildings.StoreHouseInstance.Remove(this);
 	}
 	
 	// Update is called once per frame
@@ -181,23 +183,23 @@ public class StoreHouse : Buildings {
 	                    //<!-- Requirements Resource.
 	                    GUI.BeginGroup(update_requireResource_Rect);
 	                    {
-                            GUI.Box(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
 	                    }
 	                    GUI.EndGroup();
 
 	                    //<!-- Upgrade Button.
-	                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
-	                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
+	                    if (StoreHouse.sumOfFood >= UpgradeResource[level].Food && StoreHouse.sumOfWood >= UpgradeResource[level].Wood &&
+	                        StoreHouse.sumOfGold >= UpgradeResource[level].Gold && StoreHouse.sumOfStone >= UpgradeResource[level].Stone)
 	                    {	
                             bool enableUpgrade = base.CheckingCanUpgradeLevel();
 
                             GUI.enabled = enableUpgrade;
                             if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
                             {
-                                StoreHouse.UsedResource(this.UpgradeResource[level]);
+                                StoreHouse.UsedResource(UpgradeResource[level]);
 
                                 base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
                                 base.OnUpgradeProcess(this);
