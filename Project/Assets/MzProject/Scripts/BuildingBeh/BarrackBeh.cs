@@ -37,9 +37,7 @@ public class BarrackBeh : Buildings
 	public Texture2D spearmanTex;
 	public Texture2D hypaspistTex;
 	public Texture2D hoplistTex;
-	public Texture2D ToxotesTex;
-
-	
+	public Texture2D ToxotesTex;	
 	
 
     protected override void Awake() {
@@ -100,28 +98,71 @@ public class BarrackBeh : Buildings
         base.CreateWindow(windowID);
 
         float height = 160f;
+        GUI.Box(new Rect(48, 24, 256, 48), base.currentBuildingStatus.ToString(), standard_Skin.box);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
             scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height * 5));
-		{
-            GUI.BeginGroup(new Rect (0, 0 * height, background_Rect.width, height), new GUIContent(string.Empty, "Barrack Header"), GUIStyle.none);
+        {
+            GUI.BeginGroup(base.building_background_Rect, GUIContent.none, building_Skin.box);
             {
-                Rect headerContentRect = new Rect(5, 0 * height, background_Rect.width - 10, height);
-                GUI.Box(headerContentRect, GUIContent.none, building_Skin.box);
-                GUI.Box(new Rect(200, 2, headerContentRect.width - 200, height - 4), Description_TH, building_Skin.textArea);
-                GUI.DrawTexture(buildingIcon_Rect, buildingIcon_Texture);
-			}
-			GUI.EndGroup ();
+                GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
+                GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
+                GUI.BeginGroup(base.description_Rect, CurrentDescription, building_Skin.textArea);
+                {   //<!-- group draw order.
 
-			GUI.BeginGroup (new Rect (0, 1 * height, background_Rect.width, height), new GUIContent ("Spearman", "พลหอก"), mainBuildingSkin.box);
-			{
-				GUI.Box (imgContent_Rect, new GUIContent (spearmanTex, "Spearman Images"));
-				GUI.Box (contentRect, new GUIContent ("Spearman เป็นหน่วยที่มีพรสวรรค์และมีความชำนาญ \n ในการเอาชนะกองทหารม้า", "content"), mainBuildingSkin.textArea);
-				if (GUI.Button (buttonRect, "Create")) {
+                    //<!-- Current Production rate.
+                    if (base.level < 10)
+                    {
+                        //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
+                        //GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[base.level], base.job_style);
 
-				}
-			}
-			GUI.EndGroup ();
+                        //<!-- Requirements Resource.
+                        GUI.BeginGroup(update_requireResource_Rect);
+                        {
+                            GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                        }
+                        GUI.EndGroup();
+
+                        //<!-- Upgrade Button.
+                        if (StoreHouse.sumOfFood >= UpgradeResource[level].Food && StoreHouse.sumOfWood >= UpgradeResource[level].Wood &&
+                            StoreHouse.sumOfGold >= UpgradeResource[level].Gold && StoreHouse.sumOfStone >= UpgradeResource[level].Stone)
+                        {
+                            bool enableUpgrade = base.CheckingCanUpgradeLevel();
+
+                            GUI.enabled = enableUpgrade;
+                            if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
+                            {
+                                StoreHouse.UsedResource(UpgradeResource[level]);
+
+                                base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+                                base.OnUpgradeProcess(this);
+                                base._isShowInterface = false;
+                            }
+                            GUI.enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
+                        GUI.Label(nextProduction_Rect, "Max upgrade building.", base.job_style);
+                    }
+                }
+                GUI.EndGroup();
+            }
+            GUI.EndGroup();
+
+            //GUI.BeginGroup (new Rect (0, 1 * height, background_Rect.width, height), new GUIContent ("Spearman", "พลหอก"), mainBuildingSkin.box);
+            //{
+            //    GUI.Box (imgContent_Rect, new GUIContent (spearmanTex, "Spearman Images"));
+            //    GUI.Box (contentRect, new GUIContent ("Spearman เป็นหน่วยที่มีพรสวรรค์และมีความชำนาญ \n ในการเอาชนะกองทหารม้า", "content"), mainBuildingSkin.textArea);
+            //    if (GUI.Button (buttonRect, "Create")) {
+
+            //    }
+            //}
+            //GUI.EndGroup ();
 
 			GUI.BeginGroup (new Rect (0, 2 * height, background_Rect.width, height), new GUIContent ("Hypaspist", "พลถือโล่"), mainBuildingSkin.box);
 			{
@@ -138,6 +179,7 @@ public class BarrackBeh : Buildings
 				GUI.Box (imgContent_Rect, new GUIContent (hoplistTex, "Hoplist Images"));
 				GUI.Box (contentRect, new GUIContent ("Hoplist เป็นหน่วยทหารราบหุ้มเกราะ \n พวกเขามีความชำนาญในการผลักดันและบุกฝ่าทะลวงข้าศึก", "content"), mainBuildingSkin.textArea);
 				if (GUI.Button (buttonRect, "Create")) {
+
 				}
 			}
 			GUI.EndGroup ();
@@ -147,6 +189,7 @@ public class BarrackBeh : Buildings
 				GUI.Box (imgContent_Rect, new GUIContent (ToxotesTex, "Toxotes Images"));
 				GUI.Box (contentRect, new GUIContent ("Toxotes เป็นหน่วยจู่โจมด้วยธนู \n พวกเขามีความชำนาญในการโจมตีจากระยะไกล", "content"), mainBuildingSkin.textArea);
 				if (GUI.Button (buttonRect, "Create")) {
+
 				}
 			}
 			GUI.EndGroup ();    

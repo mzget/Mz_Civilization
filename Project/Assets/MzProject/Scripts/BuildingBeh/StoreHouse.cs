@@ -46,7 +46,6 @@ public class StoreHouse : Buildings {
     private int wood = 500;
     private int gold = 500;
     private int stone = 500;
-    public int ID;
     public int Level { get { return base.level; } set { base.level = value; } }
     private int[] maxCapacities = new int[10] { 500, 800, 1200, 1800, 2500, 3500, 4800, 6000, 7800, 10000, };
     private int currentMaxCapacity;

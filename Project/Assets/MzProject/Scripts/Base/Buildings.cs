@@ -167,7 +167,7 @@ public class Buildings : MonoBehaviour {
         status_style.alignment = TextAnchor.MiddleCenter;
 
         windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
-        background_Rect = new Rect(0, 0, windowRect.width - 12, 320);
+        background_Rect = new Rect(0, 0, windowRect.width - 16, 320);
         description_Rect = new Rect(150, 24, windowRect.width - 165, background_Rect.height - 45);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
         update_requireResource_Rect = new Rect(10, 240, 400, 32);
