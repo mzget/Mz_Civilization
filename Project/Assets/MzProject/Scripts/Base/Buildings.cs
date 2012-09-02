@@ -87,18 +87,18 @@ public class Buildings : MonoBehaviour {
 	//<!-- Economy.
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
     //<!-- Military.
-    public static List<BarrackBeh> barrack_Instances = new List<BarrackBeh>();
+    public static List<BarracksBeh> Barrack_Instances = new List<BarracksBeh>();
 	
     protected Vector2 scrollPosition = Vector2.zero;
     protected Rect windowRect;
     protected Rect exitButton_Rect;
     protected Rect background_Rect;
     protected Rect destructionButton_Rect;
-    protected Rect imgContent_Rect = new Rect(40, 60, 100, 100);
-    protected Rect buildingIcon_Rect = new Rect(40, 40, 80, 80);
+    protected Rect tagName_Rect = new Rect(20, 16, 120, 32);    //<!-- Tag name rect.
+    protected Rect imgIcon_Rect = new Rect(40, 40, 80, 80);     //<!-- Images Icon rect.
     protected Rect levelLable_Rect = new Rect(25, 132, 120, 32);
     protected Rect building_background_Rect;
-    protected Rect description_Rect;
+    protected Rect descriptionGroup_Rect;
     protected Rect contentRect = new Rect(170, 20, 590, 160);
     protected Rect warnningMessage_Rect = new Rect(Main.GAMEWIDTH / 2 - 150, Main.GAMEHEIGHT / 2 - 120, 300, 240);
     protected Rect update_requireResource_Rect;
@@ -168,12 +168,12 @@ public class Buildings : MonoBehaviour {
 
         windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 320);
-        description_Rect = new Rect(150, 24, windowRect.width - 165, background_Rect.height - 45);
+        descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 165, background_Rect.height - 45);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
         update_requireResource_Rect = new Rect(10, 240, 400, 32);
-        upgradeButton_Rect = new Rect(description_Rect.width - 110, update_requireResource_Rect.y, 100, 32);
-        currentProduction_Rect = new Rect(10, update_requireResource_Rect.y - 80, description_Rect.width - 20, 32);
-        nextProduction_Rect = new Rect(10, update_requireResource_Rect.y - 40, description_Rect.width - 20, 32);
+        upgradeButton_Rect = new Rect(descriptionGroup_Rect.width - 110, update_requireResource_Rect.y, 100, 32);
+        currentProduction_Rect = new Rect(10, update_requireResource_Rect.y - 80, descriptionGroup_Rect.width - 20, 32);
+        nextProduction_Rect = new Rect(10, update_requireResource_Rect.y - 40, descriptionGroup_Rect.width - 20, 32);
         destructionButton_Rect = new Rect(windowRect.width - 110, 40, 100, 32);
         building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
     }
@@ -267,7 +267,8 @@ public class Buildings : MonoBehaviour {
         }
 	}
 
-	public virtual void OnBuildingProcess(Buildings L_buildind) {
+	public virtual void OnBuildingProcess(Buildings L_buildind) 
+    {
         Debug.Log(L_buildind.name + ": OnBuildingProcess()");
 
         if (onBuilding_Obj.Count < 2)

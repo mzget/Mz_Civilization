@@ -3,16 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BuildingArea : MonoBehaviour {
-    /// <summary>
+
     /// GUI : Texture && Skin.
-    /// </summary>
     public GUISkin standard_skin;
     public GUISkin buildingArea_Skin;
 	public GUISkin taskbarUI_Skin;
     private GUIStyle tagname_Style;
-    /// <summary>
-    /// Static GameObject //Prefabs, Texture2D,
-    /// </summary>
+    /// Static GameObject, Prefabs, Texture2D,
     public Texture2D utility_icon;
     public Texture2D economy_icon;
     public Texture2D military_icon;
@@ -42,10 +39,11 @@ public class BuildingArea : MonoBehaviour {
 	
     private OTSprite sprite;
     private ObjectName objectname;
-	private int indexOfArea;
-	public int IndexOfArea { get {return indexOfArea;} set {indexOfArea = value;}}
+	private int indexOfAreaPosition;
+    public int IndexOfAreaPosition { get { return indexOfAreaPosition; } set { indexOfAreaPosition = value; } }
     private enum GUIState { none = 0, ShowMainUI, ShowUtiltyUI, ShowEconomyUI, ShowMilitaryUI };
     private GUIState guiState;
+    private StageManager stageManager;
 
     private Rect windowRect;
     protected Rect exitButton_Rect;
@@ -58,26 +56,12 @@ public class BuildingArea : MonoBehaviour {
     private Rect economy_Rect;
     private Rect utility_Rect;
     private Rect military_Rect;
-	
-//	public class DrawOrder {
-//		public string nameofOrder;
-//		public int order;
-//		
-//		public DrawOrder(string name, int order) {
-//			nameofOrder = name;
-//		}
-//	};
-//	private static List<DrawOrder> drawOrderList = new List<DrawOrder>();
-//  private static DrawOrder drawOrder_farm = new DrawOrder("farm", 0);
-//  private static DrawOrder drawOrder_sawmill = new DrawOrder("sawmill", 1);
-//  private static DrawOrder drawOrder_millstone = new DrawOrder("millstone", 2);
-//  private static DrawOrder drawOrder_smelter = new DrawOrder("smelter", 3);
-//  private static DrawOrder drawOrder_market = new DrawOrder("market", 4); 
-//	private static DrawOrder drawOrder_storehouse = new DrawOrder("storehouse", 5);
 
 
     void Awake()
 	{
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+
         tagname_Style = new GUIStyle();
 		tagname_Style.alignment = TextAnchor.MiddleCenter;
 		tagname_Style.normal.textColor = Color.white;
@@ -108,15 +92,6 @@ public class BuildingArea : MonoBehaviour {
 	{
         sprite = this.gameObject.GetComponent<OTSprite>();
         objectname = this.gameObject.GetComponent<ObjectName>();
-
-//		if(drawOrderList.Count == 0) {
-//			drawOrderList.Add(drawOrder_farm);
-//			drawOrderList.Add(drawOrder_sawmill);
-//			drawOrderList.Add(drawOrder_millstone);
-//			drawOrderList.Add(drawOrder_smelter);
-//            drawOrderList.Add(drawOrder_market);
-//			drawOrderList.Add(drawOrder_storehouse);
-//		}
 	}
 	
 	// Update is called once per frame
@@ -166,8 +141,7 @@ public class BuildingArea : MonoBehaviour {
                 guiState = GUIState.none;
             }
         }
-
-        if(GUI.Button(utility_Rect, new GUIContent("Utility", utility_icon), buildingArea_Skin.button)) {
+		else if(GUI.Button(utility_Rect, new GUIContent("Utility", utility_icon), buildingArea_Skin.button)) {
             if (guiState != GUIState.ShowUtiltyUI) {
                 guiState = GUIState.ShowUtiltyUI;
             }
@@ -258,48 +232,36 @@ public class BuildingArea : MonoBehaviour {
 				
                 GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
-//                    if (drawOrderList.Count >= 1)
-//						CalculationDrawOrderGUI(0);
 					this.DrawIntroduceFarmGUI();
                 }
                 GUI.EndGroup();
 
                 GUI.BeginGroup(new Rect(0, 1 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
-//                    if (drawOrderList.Count >= 2)
-//						CalculationDrawOrderGUI(1);
 					this.DrawIntroduceSawMill();
                 }
                 GUI.EndGroup();
 
                 GUI.BeginGroup(new Rect(0, 2 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
-//                    if (drawOrderList.Count >= 3)
-//						CalculationDrawOrderGUI(2);
 					this.DrawIntroduceMillStone();
                 }
                 GUI.EndGroup();
 
                 GUI.BeginGroup(new Rect(0, 3 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
-//                    if (drawOrderList.Count >= 4)
-//						CalculationDrawOrderGUI(3);
 					this.DrawIntroduceSmelter();
                 }
                 GUI.EndGroup();
 
                 GUI.BeginGroup(new Rect(0, 4 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
-//					if(drawOrderList.Count >= 5)
-//						CalculationDrawOrderGUI(4);
 					this.DrawIntroduceStoreHouse();
                 }
                 GUI.EndGroup();        
 				
 				GUI.BeginGroup(new Rect(0, 5 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
 		        {
-//		            if(drawOrderList.Count >= 6)
-//						CalculationDrawOrderGUI(5);
 					this.DrawIntroduceMarKet();
 		        }
 		        GUI.EndGroup();
@@ -322,43 +284,6 @@ public class BuildingArea : MonoBehaviour {
         // End the scroll view that we began above.
         GUI.EndScrollView();
     }
-	
-/*	
-	private void CalculationDrawOrderGUI(int indexUIorder) 
-	{		
-        for (int i = 0; i < drawOrderList.Count; i++) 
-		{
-            if (drawOrderList[indexUIorder].nameofOrder == drawOrderList[i].nameofOrder) 
-			{
-                drawOrderList[i].order = i;
-                if (drawOrderList[i].nameofOrder == drawOrder_farm.nameofOrder) {
-					DrawIntroduceFarmGUI(); 
-					drawOrder_farm.order = i;
-				}
-                else if (drawOrderList[i].nameofOrder == drawOrder_sawmill.nameofOrder) {
-					DrawIntroduceSawMill();
-					drawOrder_sawmill.order = i;
-				}
-                else if (drawOrderList[i].nameofOrder == drawOrder_millstone.nameofOrder) {
-					DrawIntroduceMillStone();
-					drawOrder_millstone.order = i;
-				}
-                else if (drawOrderList[i].nameofOrder == drawOrder_smelter.nameofOrder) {
-					DrawIntroduceSmelter();
-					drawOrder_smelter.order = i;
-				}
-                else if (drawOrderList[i].nameofOrder == drawOrder_market.nameofOrder) {
-					DrawIntroMarKet();
-					drawOrder_market.order = i;
-				}
-                else if (drawOrderList[i].nameofOrder == drawOrder_storehouse.nameofOrder) {
-					DrawIntroduceStoreHouse();
-					drawOrder_storehouse.order = i;
-				}
-            }
-        }
-	}
-*/
 	
     #region Economy group type.
 
@@ -389,12 +314,12 @@ public class BuildingArea : MonoBehaviour {
 	                    StoreHouse.UsedResource(Farm.CreateResource);
 	
 	                    GameObject building = Instantiate(farm_Obj) as GameObject;
-						building.GetComponent<OTSprite>().position = StageManager.buildingArea_Pos[this.indexOfArea];
+						building.GetComponent<OTSprite>().position = StageManager.buildingArea_Pos[this.indexOfAreaPosition];
 						
 						Farm new_Farm = building.GetComponent<Farm>();
 						new_Farm.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						new_Farm.OnBuildingProcess((Buildings)new_Farm);
-	                    new_Farm.IndexOfPosition = this.indexOfArea;
+	                    new_Farm.IndexOfPosition = this.indexOfAreaPosition;
 						
                         Buildings.Farm_Instance.Add(new_Farm);
 
@@ -432,12 +357,12 @@ public class BuildingArea : MonoBehaviour {
 	                    StoreHouse.UsedResource(Sawmill.CreateResource);
 	
 	                    GameObject building = Instantiate(sawmill_Obj) as GameObject;
-	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfAreaPosition];
 						
 						Sawmill new_sawmill = building.GetComponent<Sawmill>();
 						new_sawmill.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						new_sawmill.OnBuildingProcess((Buildings)new_sawmill);
-	                    new_sawmill.IndexOfPosition = this.indexOfArea;
+	                    new_sawmill.IndexOfPosition = this.indexOfAreaPosition;
 						
                         Buildings.Sawmill_Instance.Add(new_sawmill);
 						
@@ -474,12 +399,12 @@ public class BuildingArea : MonoBehaviour {
 	                    StoreHouse.UsedResource(MillStone.CreateResource);
 	
 	                    GameObject building = Instantiate(millStone_Obj) as GameObject;
-	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfAreaPosition];
 						
 						MillStone millstone = building.GetComponent<MillStone>();
 						millstone.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						millstone.OnBuildingProcess((Buildings)millstone);
-	                    millstone.IndexOfPosition = this.indexOfArea;
+	                    millstone.IndexOfPosition = this.indexOfAreaPosition;
 						
                         Buildings.MillStoneInstance.Add(millstone);
 	
@@ -516,12 +441,12 @@ public class BuildingArea : MonoBehaviour {
 	                    StoreHouse.UsedResource(Smelter.CreateResource);
 	
 	                    GameObject building = Instantiate(smelter_Obj) as GameObject;
-	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+	                    building.transform.position = StageManager.buildingArea_Pos[this.indexOfAreaPosition];
 						
 						Smelter smelter = building.GetComponent<Smelter>();
 						smelter.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						smelter.OnBuildingProcess((Buildings)smelter);
-	                    smelter.IndexOfPosition = this.indexOfArea;
+	                    smelter.IndexOfPosition = this.indexOfAreaPosition;
 						
                         Buildings.SmelterInstance.Add(smelter);
 	
@@ -590,12 +515,12 @@ public class BuildingArea : MonoBehaviour {
                         StoreHouse.UsedResource(StoreHouse.CreateResource);
 
                         GameObject building = Instantiate(storeHouse_Obj) as GameObject;
-                        building.transform.position = StageManager.buildingArea_Pos[this.indexOfArea];
+                        building.transform.position = StageManager.buildingArea_Pos[this.indexOfAreaPosition];
 
                         StoreHouse storeHouse = building.GetComponent<StoreHouse>();
 						storeHouse.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
 						storeHouse.OnBuildingProcess(storeHouse);
-						storeHouse.IndexOfPosition = this.indexOfArea;
+						storeHouse.IndexOfPosition = this.indexOfAreaPosition;
 						
                         Buildings.StoreHouseInstance.Add(storeHouse);
 
@@ -615,38 +540,33 @@ public class BuildingArea : MonoBehaviour {
     {
         //<!-- Barrack.
         GUI.DrawTexture(imgRect, barrackNotation);
-        GUI.Label(tagName_Rect, new GUIContent(BarrackBeh.BuildingName), tagname_Style);
-        GUI.BeginGroup(contentRect, new GUIContent(BarrackBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(BarracksBeh.BuildingName), tagname_Style);
+        GUI.BeginGroup(contentRect, new GUIContent(BarracksBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
             GUI.BeginGroup(GameResource.RequireResource_Rect);
             {
-                GUI.Label(GameResource.Food_Rect, new GUIContent(BarrackBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(GameResource.Wood_Rect, new GUIContent(BarrackBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(GameResource.Copper_Rect, new GUIContent(BarrackBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(GameResource.Stone_Rect, new GUIContent(BarrackBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(BarracksBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(BarracksBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(BarracksBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(BarracksBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
 
             //<!-- Build Button.
-            if (StoreHouse.sumOfFood >= BarrackBeh.CreateResource.Food && StoreHouse.sumOfWood >= BarrackBeh.CreateResource.Wood &&
-                StoreHouse.sumOfGold >= BarrackBeh.CreateResource.Gold && StoreHouse.sumOfStone >= BarrackBeh.CreateResource.Stone)
+            if (StoreHouse.sumOfFood >= BarracksBeh.CreateResource.Food && StoreHouse.sumOfWood >= BarracksBeh.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= BarracksBeh.CreateResource.Gold && StoreHouse.sumOfStone >= BarracksBeh.CreateResource.Stone)
             {
                 if (Buildings.CheckingCanCreateBuilding())
                 {
                     if (GUI.Button(creatButton_Rect, "Build"))
                     {
-                        StoreHouse.UsedResource(BarrackBeh.CreateResource);
+                        StoreHouse.UsedResource(BarracksBeh.CreateResource);
 
-                        GameObject building = Instantiate(barrackOBJ) as GameObject;
-                        building.GetComponent<OTSprite>().position = StageManager.buildingArea_Pos[this.indexOfArea];
-
-                        BarrackBeh barracks = building.GetComponent<BarrackBeh>();
-                        barracks.currentBuildingStatus = Buildings.BuildingStatus.onBuildingProcess;
-                        barracks.OnBuildingProcess(barracks);
-                        barracks.IndexOfPosition = this.indexOfArea;
-
-                        Buildings.barrack_Instances.Add(barracks);
+                        GameObject barracks_obj = Instantiate(stageManager.barracks_prefab) as GameObject;
+                        BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
+                        barracks.InitializeData(Buildings.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
+						barracks.OnBuildingProcess(barracks);
 
                         ActiveManager();
                     }

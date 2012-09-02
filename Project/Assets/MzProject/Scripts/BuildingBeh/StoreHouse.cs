@@ -42,11 +42,12 @@ public class StoreHouse : Buildings {
         }
     }
 
+    public int Level { get { return base.level; } set { base.level = value; } }
+
     private int food = 500;
     private int wood = 500;
     private int gold = 500;
     private int stone = 500;
-    public int Level { get { return base.level; } set { base.level = value; } }
     private int[] maxCapacities = new int[10] { 500, 800, 1200, 1800, 2500, 3500, 4800, 6000, 7800, 10000, };
     private int currentMaxCapacity;
 	
@@ -137,8 +138,10 @@ public class StoreHouse : Buildings {
 
         Destroy(base.processbar_Obj_parent);
 
-        if (this.currentBuildingStatus != Buildings.BuildingStatus.none) {
+        if (this.currentBuildingStatus != Buildings.BuildingStatus.none) 
+		{
             this.ReCalculationCapacityData();
+			
             this.currentBuildingStatus = Buildings.BuildingStatus.none;
         }
     }
@@ -168,9 +171,9 @@ public class StoreHouse : Buildings {
         {
             GUI.BeginGroup(base.building_background_Rect, GUIContent.none, building_Skin.box);
             {
-                GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture);
+                GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture);
                 GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
-                GUI.BeginGroup(base.description_Rect, CurrentDescription, building_Skin.textArea);
+                GUI.BeginGroup(base.descriptionGroup_Rect, CurrentDescription, building_Skin.textArea);
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.

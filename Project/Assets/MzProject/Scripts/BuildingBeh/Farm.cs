@@ -111,9 +111,9 @@ public class Farm : Buildings
 
             GUI.BeginGroup(base.building_background_Rect, GUIContent.none, building_Skin.box);
             {
-                GUI.DrawTexture(base.buildingIcon_Rect, buildingIcon_Texture, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture, ScaleMode.ScaleToFit);
                 GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
-                GUI.BeginGroup(base.description_Rect, CurrentDescription, building_Skin.textArea);
+                GUI.BeginGroup(base.descriptionGroup_Rect, CurrentDescription, building_Skin.textArea);
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.

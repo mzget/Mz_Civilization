@@ -10,7 +10,7 @@ public class Mz_SaveData
 	public const string sumofstone = "sumofstone";
 	
 	public const string amount_farm_instance = "amount_farm_instance";
-	public const string amount_sawmill_instance = "amount_sawmill_instance"; 
+	public const string amount_sawmill_instance = "amount_sawmill_instance";
 	public const string amount_millstone_instance = "amount_millstone_instance";
 	public const string amount_smelter_instance = "amount_smelter_instance";
 	public const string farm_position_ = "farm_position_";
@@ -25,11 +25,17 @@ public class Mz_SaveData
 	public const string numberOfStorehouseInstance = "numberOfStorehouseInstance";
 	public const string storehouse_position_ = "storehouse_position_";
 	public const string storehouse_level_ = "storehouse_level_";
+	
+	public const string numberOf_BarracksInstancs = "numberOf_BarracksInstancs";
+	public const string barracks_position_ = "barracks_position_";
+	public const string barracks_level_ = "barracks_level_";
 
 
 
-    public static void Save() 
-	{
+    public static void Save()
+    {
+        Debug.Log("Saving...");
+
         PlayerPrefs.SetString(username, StorageManage.Username);
         PlayerPrefs.SetInt(sumoffood, StoreHouse.sumOfFood);
 		PlayerPrefs.SetInt(sumofwood, StoreHouse.sumOfWood);
@@ -70,7 +76,14 @@ public class Mz_SaveData
 			PlayerPrefs.SetInt(storehouse_position_ + i, Buildings.StoreHouseInstance[i].IndexOfPosition);
 			PlayerPrefs.SetInt(storehouse_level_ + i, Buildings.StoreHouseInstance[i].Level);
 		}
-		
-		Debug.Log("Saving...");
+
+        //<!-- Save Barracks data.
+        PlayerPrefs.SetInt(numberOf_BarracksInstancs, Buildings.Barrack_Instances.Count);
+        for (int i = 0; i < Buildings.Barrack_Instances.Count; i++) {
+            PlayerPrefs.SetInt(barracks_position_ + i, Buildings.Barrack_Instances[i].IndexOfPosition);
+            PlayerPrefs.SetInt(barracks_level_ + i, Buildings.Barrack_Instances[i].Level);
+        }
+
+        Debug.Log("Saving complete...");
     }
 }
