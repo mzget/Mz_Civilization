@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class MargetBeh : Buildings {
+public class MarketBeh : Buildings {
 
     public static GameResource CreateResource = new GameResource(100, 120, 120, 60);
     public GameResource[] UpgradeResource = new GameResource[10] {
@@ -38,9 +38,12 @@ public class MargetBeh : Buildings {
         base.Awake();
         base.sprite = this.gameObject.GetComponent<OTSprite>();
 
-        this.name = MargetBeh.BuildingName;
+        this.name = MarketBeh.BuildingName;
         base.buildingType = Buildings.BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
+		
+		//<!-- Load textures.
+        buildingIcon_Texture = Resources.Load(Buildings.PathOf_BuildingIcons + "Market", typeof(Texture2D)) as Texture2D;
     }
 
 	// Use this for initialization
@@ -52,7 +55,7 @@ public class MargetBeh : Buildings {
     {
         base.InitializeData(p_buildingState, p_indexPosition, p_level);
 
-        Buildings.MarketInstance.Add(this);
+        Buildings.MarketInstances.Add(this);
     }
 
     #region Building Processing.
@@ -96,7 +99,7 @@ public class MargetBeh : Buildings {
             GUI.BeginGroup(base.background_Rect, GUIContent.none, building_Skin.box);
             {
                 GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture, ScaleMode.ScaleToFit);
-                GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
+                GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
                 GUI.BeginGroup(base.descriptionGroup_Rect, CurrentDescription, building_Skin.textArea);
                 {   //<!-- group draw order.
 
@@ -107,22 +110,22 @@ public class MargetBeh : Buildings {
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level].Food.ToString(), base.food_icon), building_Skin.label);
-                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level].Wood.ToString(), base.wood_icon), building_Skin.label);
-                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level].Gold.ToString(), base.copper_icon), building_Skin.label);
-                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level].Stone.ToString(), base.stone_icon), building_Skin.label);
+                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[Level].Food.ToString(), base.food_icon), building_Skin.label);
+                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[Level].Wood.ToString(), base.wood_icon), building_Skin.label);
+                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[Level].Gold.ToString(), base.copper_icon), building_Skin.label);
+                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[Level].Stone.ToString(), base.stone_icon), building_Skin.label);
                     }
                     GUI.EndGroup();
 
                     //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
-                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
+                    if (StoreHouse.sumOfFood >= this.UpgradeResource[Level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[Level].Wood &&
+                        StoreHouse.sumOfGold >= this.UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[Level].Stone)
                     {
                         if (base.CheckingCanUpgradeLevel())
                         {
-                            if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), GUI.skin.button))
+                            if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade")))
                             {
-                                StoreHouse.UsedResource(this.UpgradeResource[base.level]);
+                                StoreHouse.UsedResource(this.UpgradeResource[base.Level]);
 
                                 base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
                                 base.OnUpgradeProcess(this);

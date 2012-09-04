@@ -34,6 +34,7 @@ public class BuildingsTimeData {
 
 public class Buildings : MonoBehaviour {
 	
+    public const string PathOf_BuildingIcons = "Textures/Building_Icons/";
 	public const int MAX_LEVEL = 10;	
 	//<!-- Font, Skin, Styles.
     public Font showG_font;
@@ -54,8 +55,9 @@ public class Buildings : MonoBehaviour {
 	protected GameObject processbar_Obj_parent;
     protected OTSprite processBar_Scolling;
     [System.NonSerialized]    public OTSprite sprite;
-		
-    protected int level = 0;
+
+    private int level = 0;
+    public int Level { get { return level; } set { level = value; } }
 	protected int indexOfPosition;
 	public int IndexOfPosition  {get {return indexOfPosition; } set {indexOfPosition = value; }}
     protected bool _isShowInterface = false;
@@ -86,7 +88,7 @@ public class Buildings : MonoBehaviour {
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
 	//<!-- Economy.
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
-    public static List<MargetBeh> MarketInstance = new List<MargetBeh>();
+    public static List<MarketBeh> MarketInstances = new List<MarketBeh>();
     //<!-- Military.
     public static List<BarracksBeh> Barrack_Instances = new List<BarracksBeh>();
 	
@@ -184,7 +186,7 @@ public class Buildings : MonoBehaviour {
 
         currentBuildingStatus = p_buildingState;
         indexOfPosition = p_indexPosition;
-        level = p_level;
+        Level = p_level;
 
         this.sprite.position = StageManager.buildingArea_Pos[indexOfPosition];
         StageManager.buildingArea_Obj[indexOfPosition].gameObject.active = false;
@@ -231,7 +233,7 @@ public class Buildings : MonoBehaviour {
             {
                 scaleData.Add("from", new Vector2(12, 24));
                 scaleData.Add("to", new Vector2(124, 24));
-                scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
+                scaleData.Add("time", buildingTimeData.arrBuildingTimesData[Level]);
                 scaleData.Add("onupdate", "BuildingProcess");
                 scaleData.Add("easetype", iTween.EaseType.linear);
                 scaleData.Add("oncomplete", "BuildingProcessComplete");
@@ -242,7 +244,7 @@ public class Buildings : MonoBehaviour {
             {
                 scaleData.Add("from", new Vector2(12, 24));
                 scaleData.Add("to", new Vector2(124, 24));
-                scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
+                scaleData.Add("time", buildingTimeData.arrBuildingTimesData[Level]);
                 scaleData.Add("onupdate", "BuildingProcess");
                 scaleData.Add("easetype", iTween.EaseType.linear);
                 scaleData.Add("oncomplete", "BuildingProcessComplete");
@@ -253,7 +255,7 @@ public class Buildings : MonoBehaviour {
             {
                 scaleData.Add("from", new Vector2(12, 24));
                 scaleData.Add("to", new Vector2(124, 24));
-                scaleData.Add("time", buildingTimeData.arrBuildingTimesData[level]);
+                scaleData.Add("time", buildingTimeData.arrBuildingTimesData[Level]);
                 scaleData.Add("onupdate", "BuildingProcess");
                 scaleData.Add("easetype", iTween.EaseType.linear);
                 scaleData.Add("oncomplete", "DestructionBuildingComplete");
@@ -296,7 +298,7 @@ public class Buildings : MonoBehaviour {
 	protected virtual void BuildingProcessComplete(Buildings obj) {
         Debug.Log(obj.name + ": BuildingProcessComplete");
 
-        this.level += 1;
+        this.Level += 1;
         onBuilding_Obj.Remove(obj);
 	}
 
@@ -316,9 +318,9 @@ public class Buildings : MonoBehaviour {
     {
         Debug.Log("DestructionBuildingComplete");
 
-        if (level > 1)
-            this.level -= 1;
-        else if (level <= 1)
+        if (Level > 1)
+            this.Level -= 1;
+        else if (Level <= 1)
         {
 			ClearStorageData();
         }

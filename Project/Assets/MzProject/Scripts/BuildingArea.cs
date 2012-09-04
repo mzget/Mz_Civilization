@@ -485,30 +485,30 @@ public class BuildingArea : MonoBehaviour {
 	}
     private void DrawIntroduceMarKet() {
         GUI.DrawTexture(imgRect, marketNotation_Texture);     ///Market icon texture.
-        GUI.Label(tagName_Rect, new GUIContent(MargetBeh.BuildingName), tagname_Style);     /// Market label tagname.
-        GUI.BeginGroup(contentRect, new GUIContent(MargetBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
+        GUI.Label(tagName_Rect, new GUIContent(MarketBeh.BuildingName), tagname_Style);     /// Market label tagname.
+        GUI.BeginGroup(contentRect, new GUIContent(MarketBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
             GUI.BeginGroup(GameResource.RequireResource_Rect);
             {
-                GUI.Label(GameResource.Food_Rect, new GUIContent(MargetBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
-                GUI.Label(GameResource.Wood_Rect, new GUIContent(MargetBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
-                GUI.Label(GameResource.Copper_Rect, new GUIContent(MargetBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
-                GUI.Label(GameResource.Stone_Rect, new GUIContent(MargetBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Food_Rect, new GUIContent(MarketBeh.CreateResource.Food.ToString(), taskbarUI_Skin.customStyles[0].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Wood_Rect, new GUIContent(MarketBeh.CreateResource.Wood.ToString(), taskbarUI_Skin.customStyles[1].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Copper_Rect, new GUIContent(MarketBeh.CreateResource.Gold.ToString(), taskbarUI_Skin.customStyles[2].normal.background), standard_skin.box);
+                GUI.Label(GameResource.Stone_Rect, new GUIContent(MarketBeh.CreateResource.Stone.ToString(), taskbarUI_Skin.customStyles[3].normal.background), standard_skin.box);
             }
             GUI.EndGroup();
             //<!-- Create Button.
-            if (StoreHouse.sumOfFood >= MargetBeh.CreateResource.Food && StoreHouse.sumOfWood >= MargetBeh.CreateResource.Wood &&
-                StoreHouse.sumOfGold >= MargetBeh.CreateResource.Gold && StoreHouse.sumOfStone >= MargetBeh.CreateResource.Stone)
+            if (StoreHouse.sumOfFood >= MarketBeh.CreateResource.Food && StoreHouse.sumOfWood >= MarketBeh.CreateResource.Wood &&
+                StoreHouse.sumOfGold >= MarketBeh.CreateResource.Gold && StoreHouse.sumOfStone >= MarketBeh.CreateResource.Stone)
             {
                 if (Buildings.CheckingCanCreateBuilding())
                 {
                     if (GUI.Button(creatButton_Rect, "Create"))
                     {
-                        StoreHouse.UsedResource(MargetBeh.CreateResource);
+                        StoreHouse.UsedResource(MarketBeh.CreateResource);
 
                         GameObject market_obj = Instantiate(marketObj) as GameObject;
-                        MargetBeh market = market_obj.GetComponent<MargetBeh>();
+                        MarketBeh market = market_obj.GetComponent<MarketBeh>();
                         market.InitializeData(Buildings.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
                         market.OnBuildingProcess(market);
 

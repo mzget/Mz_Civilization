@@ -17,7 +17,6 @@ public class Smelter : Buildings {
         new GameResource(900, 900, 900, 900),
         new GameResource(1000, 1000, 1000, 1000),
 	};
-    public int Level { get { return base.level; } set { base.level = value; } }
 
     //<!-- Data.
     public static string BuildingName = "Smelter";
@@ -50,6 +49,7 @@ public class Smelter : Buildings {
         base.buildingType = Buildings.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 		
+        //<!-- Load textures resource.
 		buildingIcon_Texture = Resources.Load("Textures/Building_Icons/CopperIngot", typeof(Texture2D)) as Texture2D;
 	}
 
@@ -57,6 +57,13 @@ public class Smelter : Buildings {
     void Start() {
 		
 	}
+
+    public override void InitializeData(Buildings.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    {
+        base.InitializeData(p_buildingState, p_indexPosition, p_level);
+
+        Buildings.SmelterInstance.Add(this);
+    }
 
     #region Building Processing.
 
@@ -95,7 +102,7 @@ public class Smelter : Buildings {
 			
             if (timeInterval >= 1f && StoreHouse.sumOfGold < StoreHouse.SumOfCapacity) {
                 timeInterval = 0;
-                StoreHouse.sumOfGold += this.productionRate[this.level];
+                StoreHouse.sumOfGold += this.productionRate[this.Level];
             }
         }
     }
@@ -114,34 +121,34 @@ public class Smelter : Buildings {
             GUI.BeginGroup(base.building_background_Rect, GUIContent.none, building_Skin.box);
             {
                 GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture);
-                GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
+                GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
                 GUI.BeginGroup(base.descriptionGroup_Rect, CurrentDescription, building_Skin.textArea);
                 {   //<!-- group draw order.
 
                     //<!-- Current Production rate.
-                    GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], base.job_style);
-                    GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], base.job_style);
+                    GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[Level], base.job_style);
+                    GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[Level + 1], base.job_style);
 
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                        GUI.Label(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
 
                     //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= this.UpgradeResource[level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[level].Wood &&
-                        StoreHouse.sumOfGold >= this.UpgradeResource[level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[level].Stone)
+                    if (StoreHouse.sumOfFood >= this.UpgradeResource[Level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[Level].Wood &&
+                        StoreHouse.sumOfGold >= this.UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[Level].Stone)
                     {
 
                         if (base.CheckingCanUpgradeLevel())
                         {
                             if (GUI.Button(upgradeButton_Rect, new GUIContent("Upgrade"), GUI.skin.button))
                             {
-                                StoreHouse.UsedResource(this.UpgradeResource[base.level]);
+                                StoreHouse.UsedResource(this.UpgradeResource[base.Level]);
 
                                 base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
                                 base.OnUpgradeProcess(this);

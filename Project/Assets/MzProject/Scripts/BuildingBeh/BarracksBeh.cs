@@ -3,7 +3,6 @@ using System.Collections;
 
 public class BarracksBeh : Buildings
 {
-    public const string PathOf_BuildingIcons = "Textures/Building_Icons/";
     public const string PathOf_TroopIcons = "Textures/Troop_Icons/";
 
 	//<!-- Static Data.
@@ -36,7 +35,7 @@ public class BarracksBeh : Buildings
         }
 	}
 
-    public int Level { get { return base.level; } set { base.level = value; } }
+    public int Level { get { return base.Level; } set { base.Level = value; } }
 
 	public GUISkin mainBuildingSkin;
 	public Texture2D spearmanTex;
@@ -136,12 +135,12 @@ public class BarracksBeh : Buildings
                 //<!-- building icon.
                 GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture);
                 //<!-- building level.
-                GUI.Label(base.levelLable_Rect, "Level " + this.level, base.status_style);
+                GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
                 //<!-- description group rect.
                 //<!-- group draw order.
                 GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
                 {   
-                    if (base.level < 10)
+                    if (base.Level < 10)
                     {
                         //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
                         //GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[base.level], base.job_style);
@@ -149,23 +148,23 @@ public class BarracksBeh : Buildings
                         //<!-- Requirements Resource.
                         GUI.BeginGroup(update_requireResource_Rect);
                         {
-                            GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[level].Food.ToString(), base.food_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
                         }
                         GUI.EndGroup();
 
                         //<!-- Upgrade Button.
-                        if (StoreHouse.sumOfFood >= UpgradeResource[level].Food && StoreHouse.sumOfWood >= UpgradeResource[level].Wood &&
-                            StoreHouse.sumOfGold >= UpgradeResource[level].Gold && StoreHouse.sumOfStone >= UpgradeResource[level].Stone)
+                        if (StoreHouse.sumOfFood >= UpgradeResource[Level].Food && StoreHouse.sumOfWood >= UpgradeResource[Level].Wood &&
+                            StoreHouse.sumOfGold >= UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= UpgradeResource[Level].Stone)
                         {
                             bool enableUpgrade = base.CheckingCanUpgradeLevel();
 
                             GUI.enabled = enableUpgrade;
                             if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
                             {
-                                StoreHouse.UsedResource(UpgradeResource[level]);
+                                StoreHouse.UsedResource(UpgradeResource[Level]);
 
                                 base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
                                 base.OnUpgradeProcess(this);
