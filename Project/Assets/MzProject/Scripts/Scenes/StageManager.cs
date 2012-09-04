@@ -88,7 +88,7 @@ public class StageManager : MonoBehaviour {
 				Temp_obj.transform.parent = building_area_group.transform;
 				
 				buildingArea_Obj.Add(Temp_obj.GetComponent<BuildingArea>());
-				buildingArea_Obj[i].transform.position = buildingArea_Pos[i];
+				buildingArea_Obj[i].Sprite.position = buildingArea_Pos[i];
 				buildingArea_Obj[i].IndexOfAreaPosition = i;
 			}
 		}

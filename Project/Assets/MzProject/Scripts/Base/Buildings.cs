@@ -86,6 +86,7 @@ public class Buildings : MonoBehaviour {
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
 	//<!-- Economy.
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
+    public static List<MargetBeh> MarketInstance = new List<MargetBeh>();
     //<!-- Military.
     public static List<BarracksBeh> Barrack_Instances = new List<BarracksBeh>();
 	
@@ -178,7 +179,16 @@ public class Buildings : MonoBehaviour {
         building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
     }
 
-    #region Building, Upgrade, Destruction Process Section.
+    public virtual void InitializeData(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
+        Debug.Log("Class :: Building.InitializeData");
+
+        currentBuildingStatus = p_buildingState;
+        indexOfPosition = p_indexPosition;
+        level = p_level;
+
+        this.sprite.position = StageManager.buildingArea_Pos[indexOfPosition];
+        StageManager.buildingArea_Obj[indexOfPosition].gameObject.active = false;
+    }
 
     protected virtual void CreateProcessBar(BuildingStatus buildingStatus)
     {
@@ -323,9 +333,7 @@ public class Buildings : MonoBehaviour {
         Destroy(this.processbar_Obj_parent.gameObject);
 	}
 
-	#endregion
-
-    #region Incloud Mouse Event.
+    #region On Mouse Event.
 
     protected void OnMouseOver()
     {

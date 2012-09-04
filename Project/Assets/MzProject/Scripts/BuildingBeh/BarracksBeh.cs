@@ -70,15 +70,10 @@ public class BarracksBeh : Buildings
 		
     }
 
-    public void InitializeData(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
-        currentBuildingStatus = p_buildingState;
-        indexOfPosition = p_indexPosition;
-        level = p_level;
-
-        this.sprite.position = StageManager.buildingArea_Pos[indexOfPosition];
+    public override void InitializeData(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
+        base.InitializeData(p_buildingState, p_indexPosition, p_level);
 
         Buildings.Barrack_Instances.Add(this);
-        StageManager.buildingArea_Obj[indexOfPosition].gameObject.active = false;
     }
 
     #region Building Processing.

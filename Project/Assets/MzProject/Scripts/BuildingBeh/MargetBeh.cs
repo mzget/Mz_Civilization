@@ -48,6 +48,13 @@ public class MargetBeh : Buildings {
 
     }
 
+    public override void InitializeData(Buildings.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    {
+        base.InitializeData(p_buildingState, p_indexPosition, p_level);
+
+        Buildings.MarketInstance.Add(this);
+    }
+
     #region Building Processing.
 
     public override void OnBuildingProcess(Buildings obj)

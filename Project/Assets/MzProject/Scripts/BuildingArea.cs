@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class BuildingArea : MonoBehaviour {
 
+    public const string PathOf_Notation_Texture = "Textures/Building_Icons/";
+
     /// GUI : Texture && Skin.
     public GUISkin standard_skin;
     public GUISkin buildingArea_Skin;
@@ -22,7 +24,7 @@ public class BuildingArea : MonoBehaviour {
     public Texture2D academy_icon;
     //<!-- Economic.
     public GameObject marketObj;
-    public Texture2D marketNotation;
+    public Texture2D marketNotation_Texture;
     public GameObject storeHouse_Obj;
     public Texture2D storeHouse_Icon;
     public GameObject farm_Obj;
@@ -36,8 +38,21 @@ public class BuildingArea : MonoBehaviour {
     //<!-- Militaly.
     public GameObject barrackOBJ;
     public Texture2D barrackNotation;
-	
+
     private OTSprite sprite;
+    public OTSprite Sprite
+    {
+        get {
+            if (sprite == null) {
+                sprite = this.gameObject.GetComponent<OTSprite>();
+                return sprite;
+            }
+            else 
+                return sprite;
+        }
+        set { sprite = value; }
+    }
+
     private ObjectName objectname;
 	private int indexOfAreaPosition;
     public int IndexOfAreaPosition { get { return indexOfAreaPosition; } set { indexOfAreaPosition = value; } }
@@ -61,18 +76,20 @@ public class BuildingArea : MonoBehaviour {
     void Awake()
 	{
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-
-        tagname_Style = new GUIStyle();
-		tagname_Style.alignment = TextAnchor.MiddleCenter;
-		tagname_Style.normal.textColor = Color.white;
-		tagname_Style.font = buildingArea_Skin.font;
-		tagname_Style.fontStyle = FontStyle.Bold;
+        sprite = this.gameObject.GetComponent<OTSprite>();
+        objectname = this.gameObject.GetComponent<ObjectName>();
 		
 		this.InitializeGUI();
     }
 
     private void InitializeGUI()
     {
+        tagname_Style = new GUIStyle();
+        tagname_Style.alignment = TextAnchor.MiddleCenter;
+        tagname_Style.normal.textColor = Color.white;
+        tagname_Style.font = buildingArea_Skin.font;
+        tagname_Style.fontStyle = FontStyle.Bold;
+
         windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 320);
@@ -84,15 +101,23 @@ public class BuildingArea : MonoBehaviour {
         utility_Rect = new Rect(economy_Rect.x - 200, economy_Rect.y, economy_Rect.width, economy_Rect.height);
         military_Rect = new Rect((economy_Rect.x + economy_Rect.width) + 20, economy_Rect.y, economy_Rect.width, economy_Rect.height);
 
-		storeHouse_Icon = Resources.Load("Textures/Building_Icons/Storehouse", typeof(Texture2D)) as Texture2D;
 	}
 
 	// Use this for initialization
-	void Start () 
+	IEnumerator Start () 
 	{
-        sprite = this.gameObject.GetComponent<OTSprite>();
-        objectname = this.gameObject.GetComponent<ObjectName>();
+        StartCoroutine(this.LoadTextureResource());
+
+        yield return null;
 	}
+
+    private IEnumerator LoadTextureResource()
+    {
+        storeHouse_Icon = Resources.Load(PathOf_Notation_Texture + "Storehouse", typeof(Texture2D)) as Texture2D;
+        marketNotation_Texture = Resources.Load(PathOf_Notation_Texture + "Market", typeof(Texture2D)) as Texture2D;
+
+        yield return null;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -176,7 +201,7 @@ public class BuildingArea : MonoBehaviour {
             //<!-- Utility.
             if (guiState == GUIState.ShowUtiltyUI)          
             {
-				#region Utility Sections.
+				#region <!-- Utility Sections.
 				
                 //<!-- House.
                 GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), new GUIContent("House", "Utility"), buildingArea_Skin.box);
@@ -270,7 +295,7 @@ public class BuildingArea : MonoBehaviour {
             }
             else if (guiState == GUIState.ShowMilitaryUI)
             {
-				#region Millitary Sections.
+				#region <!-- Millitary Sections.
 
                 GUI.BeginGroup(new Rect(0, 0 * frameHeight, background_Rect.width, frameHeight), GUIContent.none, buildingArea_Skin.box);
                 {
@@ -459,8 +484,8 @@ public class BuildingArea : MonoBehaviour {
         GUI.EndGroup();
 	}
     private void DrawIntroduceMarKet() {
-        GUI.Box(imgRect, new GUIContent(marketNotation, "Market Texture"));
-        GUI.Label(tagName_Rect, new GUIContent(MargetBeh.BuildingName), tagname_Style);
+        GUI.DrawTexture(imgRect, marketNotation_Texture);     ///Market icon texture.
+        GUI.Label(tagName_Rect, new GUIContent(MargetBeh.BuildingName), tagname_Style);     /// Market label tagname.
         GUI.BeginGroup(contentRect, new GUIContent(MargetBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
@@ -476,16 +501,20 @@ public class BuildingArea : MonoBehaviour {
             if (StoreHouse.sumOfFood >= MargetBeh.CreateResource.Food && StoreHouse.sumOfWood >= MargetBeh.CreateResource.Wood &&
                 StoreHouse.sumOfGold >= MargetBeh.CreateResource.Gold && StoreHouse.sumOfStone >= MargetBeh.CreateResource.Stone)
             {
-				if(Buildings.CheckingCanCreateBuilding()) {
-		            if (GUI.Button(creatButton_Rect, "Create"))
-		            {
-		                StoreHouse.UsedResource(MargetBeh.CreateResource);
-		
-		                GameObject market = Instantiate(marketObj) as GameObject;
-		                market.transform.position = sprite.position;
-		                ActiveManager();
-		            }
-				}
+                if (Buildings.CheckingCanCreateBuilding())
+                {
+                    if (GUI.Button(creatButton_Rect, "Create"))
+                    {
+                        StoreHouse.UsedResource(MargetBeh.CreateResource);
+
+                        GameObject market_obj = Instantiate(marketObj) as GameObject;
+                        MargetBeh market = market_obj.GetComponent<MargetBeh>();
+                        market.InitializeData(Buildings.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
+                        market.OnBuildingProcess(market);
+
+                        ActiveManager();
+                    }
+                }
             }
         }
         GUI.EndGroup();
