@@ -171,6 +171,7 @@ public class Buildings : MonoBehaviour {
 
         windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 320);
+        building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
         descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 165, background_Rect.height - 45);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
         update_requireResource_Rect = new Rect(10, 240, 400, 32);
@@ -178,7 +179,6 @@ public class Buildings : MonoBehaviour {
         currentProduction_Rect = new Rect(10, update_requireResource_Rect.y - 80, descriptionGroup_Rect.width - 20, 32);
         nextProduction_Rect = new Rect(10, update_requireResource_Rect.y - 40, descriptionGroup_Rect.width - 20, 32);
         destructionButton_Rect = new Rect(windowRect.width - 110, 40, 100, 32);
-        building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
     }
 
     public virtual void InitializeData(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
