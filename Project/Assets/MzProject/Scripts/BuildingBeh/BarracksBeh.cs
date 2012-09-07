@@ -112,16 +112,16 @@ public class BarracksBeh : Buildings
 
     private Rect buttonRect = new Rect(460, 140, 100, 30);
     float height = 160f;
+    Rect new_background_Rect;
+    Rect new_descriptionGroupRect;
 	Rect soldierDescriptionRect;
     
 	protected override void CreateWindow (int windowID)
 	{
         base.CreateWindow(windowID);
-		
-		Rect new_background_Rect =
-		    new Rect(base.building_background_Rect.x, base.building_background_Rect.y, base.building_background_Rect.width - 16, base.building_background_Rect.height);
-		Rect new_descriptionGroupRect =
-		    new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
+
+        new_background_Rect = new Rect(base.building_background_Rect.x, base.building_background_Rect.y, base.building_background_Rect.width - 16, base.building_background_Rect.height);
+        new_descriptionGroupRect = new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
 		soldierDescriptionRect = new Rect(new_descriptionGroupRect.x, 10, new_descriptionGroupRect.width, 140);
 		
 		
@@ -130,59 +130,7 @@ public class BarracksBeh : Buildings
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
             scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height * 3));
         {
-            GUI.BeginGroup(new_background_Rect, new GUIContent("", "content background"), building_Skin.box);
-            {
-                //<!-- building icon.
-                GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture);
-                //<!-- building level.
-                GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
-                //<!-- description group rect.
-                //<!-- group draw order.
-                GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
-                {   
-                    if (base.Level < 10)
-                    {
-                        //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
-                        //GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[base.level], base.job_style);
-
-                        //<!-- Requirements Resource.
-                        GUI.BeginGroup(update_requireResource_Rect);
-                        {
-                            GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
-                        }
-                        GUI.EndGroup();
-
-                        //<!-- Upgrade Button.
-                        if (StoreHouse.sumOfFood >= UpgradeResource[Level].Food && StoreHouse.sumOfWood >= UpgradeResource[Level].Wood &&
-                            StoreHouse.sumOfGold >= UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= UpgradeResource[Level].Stone)
-                        {
-                            bool enableUpgrade = base.CheckingCanUpgradeLevel();
-
-                            GUI.enabled = enableUpgrade;
-                            if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
-                            {
-                                StoreHouse.UsedResource(UpgradeResource[Level]);
-
-                                base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
-                                base.OnUpgradeProcess(this);
-                                base._isShowInterface = false;
-                            }
-                            GUI.enabled = true;
-                        }
-                    }
-                    else
-                    {
-                        //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
-                        GUI.Label(nextProduction_Rect, "Max upgrade building.", base.job_style);
-                    }
-                }
-                GUI.EndGroup();
-            }
-            GUI.EndGroup();
-
+            this.DrawMainBuildingContent();         
             this.DrawGroupOfSpearman();
             this.DrawGroupOfHypasist();
             this.DrawGroupOfHoplist();
@@ -192,6 +140,61 @@ public class BarracksBeh : Buildings
 		GUI.EndScrollView ();
 	}
 
+    private void DrawMainBuildingContent()
+    {     
+        GUI.BeginGroup(new_background_Rect, new GUIContent("", "content background"), building_Skin.box);
+        {
+            //<!-- building icon.
+            GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture);
+            //<!-- building level.
+            GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
+            //<!-- description group rect.
+            //<!-- group draw order.
+            GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
+            {
+                if (base.Level < 10)
+                {
+                    //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
+                    //GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[base.level], base.job_style);
+
+                    //<!-- Requirements Resource.
+                    GUI.BeginGroup(update_requireResource_Rect);
+                    {
+                        GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                    }
+                    GUI.EndGroup();
+
+                    //<!-- Upgrade Button.
+                    if (StoreHouse.sumOfFood >= UpgradeResource[Level].Food && StoreHouse.sumOfWood >= UpgradeResource[Level].Wood &&
+                        StoreHouse.sumOfGold >= UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= UpgradeResource[Level].Stone)
+                    {
+                        bool enableUpgrade = base.CheckingCanUpgradeLevel();
+
+                        GUI.enabled = enableUpgrade;
+                        if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
+                        {
+                            StoreHouse.UsedResource(UpgradeResource[Level]);
+
+                            base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+                            base.OnUpgradeProcess(this);
+                            base._isShowInterface = false;
+                        }
+                        GUI.enabled = true;
+                    }
+                }
+                else
+                {
+                    //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
+                    GUI.Label(nextProduction_Rect, "Max upgrade building.", base.job_style);
+                }
+            }
+            GUI.EndGroup();
+        }
+        GUI.EndGroup();
+    }
     private void DrawGroupOfSpearman()
     {
         GUI.BeginGroup(new Rect(0, 2 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);

@@ -92,64 +92,118 @@ public class MarketBeh : Buildings {
 	
 	}
 
+    private Rect new_descriptionGroupRect;
+
     protected override void CreateWindow(int windowID)
     {
-        base.CreateWindow(windowID); 
-        
-        Rect new_descriptionGroupRect =
-            new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
+        base.CreateWindow(windowID);
+
+        new_descriptionGroupRect = new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
 
         GUI.Box(new Rect(48, 24, 256, 48), base.currentBuildingStatus.ToString(), standard_Skin.box);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
-            scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height), false, false);
+            scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height * 4), false, false);
         {
             building_Skin.box.contentOffset = new Vector2(128, 38);
+			
+			this.DrawMainBuildingContent();
+            this.DrawGreekTradeUI();
+        }
+        GUI.EndScrollView();
+    }
 
-            GUI.BeginGroup(base.background_Rect, GUIContent.none, building_Skin.box);
-            {
-                GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture, ScaleMode.ScaleToFit);
-                GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
-                //<!-- description group rect.
-                GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
-                {   //<!-- group draw order.
+    private void DrawMainBuildingContent()
+    {
+        GUI.BeginGroup(base.background_Rect, GUIContent.none, building_Skin.box);
+        {
+            GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture, ScaleMode.ScaleToFit);
+            GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
+            //<!-- description group rect.
+            GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
+            {   //<!-- group draw order.
 
-                    //<!-- Current Production rate.
-                    //GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
-                    //GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
+                //<!-- Current Production rate.
+                //GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
+                //GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
 
-                    //<!-- Requirements Resource.
-                    GUI.BeginGroup(update_requireResource_Rect);
-                    {
-                        GUI.Box(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
-                    }
-                    GUI.EndGroup();
-
-                    //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= this.UpgradeResource[Level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[Level].Wood &&
-                        StoreHouse.sumOfGold >= this.UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[Level].Stone)
-                    {
-                        bool enableUpgrade = base.CheckingCanUpgradeLevel();
-
-                        GUI.enabled = enableUpgrade;
-                        if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
-                        {
-                            StoreHouse.UsedResource(UpgradeResource[Level]);
-
-                            base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
-                            base.OnUpgradeProcess(this);
-                            base._isShowInterface = false;
-                        }
-                        GUI.enabled = true;
-                    }
+                //<!-- Requirements Resource.
+                GUI.BeginGroup(update_requireResource_Rect);
+                {
+                    GUI.Box(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
                 }
                 GUI.EndGroup();
+
+                //<!-- Upgrade Button.
+                if (StoreHouse.sumOfFood >= this.UpgradeResource[Level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[Level].Wood &&
+                    StoreHouse.sumOfGold >= this.UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[Level].Stone)
+                {
+                    bool enableUpgrade = base.CheckingCanUpgradeLevel();
+
+                    GUI.enabled = enableUpgrade;
+                    if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
+                    {
+                        StoreHouse.UsedResource(UpgradeResource[Level]);
+
+                        base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+                        base.OnUpgradeProcess(this);
+                        base._isShowInterface = false;
+                    }
+                    GUI.enabled = true;
+                }
             }
             GUI.EndGroup();
         }
-        GUI.EndScrollView();
+        GUI.EndGroup();
+    }
+
+    private void DrawGreekTradeUI()
+    {
+        GUI.BeginGroup(new Rect(0, 1 * base.background_Rect.height, background_Rect.width, base.background_Rect.height), GUIContent.none, building_Skin.box);
+        {
+            GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture, ScaleMode.ScaleToFit);
+            GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
+            //<!-- description group rect.
+            GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
+            {   //<!-- group draw order.
+
+                //<!-- Current Production rate.
+                //GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
+                //GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
+
+                //<!-- Requirements Resource.
+                GUI.BeginGroup(update_requireResource_Rect);
+                {
+                    GUI.Box(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                }
+                GUI.EndGroup();
+
+                //<!-- Upgrade Button.
+                if (StoreHouse.sumOfFood >= this.UpgradeResource[Level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[Level].Wood &&
+                    StoreHouse.sumOfGold >= this.UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[Level].Stone)
+                {
+                    bool enableUpgrade = base.CheckingCanUpgradeLevel();
+
+                    GUI.enabled = enableUpgrade;
+                    if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
+                    {
+                        StoreHouse.UsedResource(UpgradeResource[Level]);
+
+                        base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+                        base.OnUpgradeProcess(this);
+                        base._isShowInterface = false;
+                    }
+                    GUI.enabled = true;
+                }
+            }
+            GUI.EndGroup();
+        }
+        GUI.EndGroup();
     }
 }
