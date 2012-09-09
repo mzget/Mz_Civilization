@@ -3,6 +3,8 @@ using System.Collections;
 
 public class MarketBeh : Buildings {
 
+    public const string PathOfTribes_Texture = "Textures/Tribes_Icons/";
+
     public static GameResource CreateResource = new GameResource(100, 120, 120, 60);
     public GameResource[] UpgradeResource = new GameResource[10] {
         new GameResource(80, 120, 50, 60),
@@ -17,23 +19,42 @@ public class MarketBeh : Buildings {
         new GameResource(1000, 1000, 1000, 1000),
 	};
 
-    public static string BuildingName = "Market";
-    private static string Description_TH = "สร้างและฝึกฝนกองคาราวาน ซื้อขายและแลกเปลี่ยนสินค้า \n วิจัยและพัฒนากลไกการตลาด";
-    private static string Description_EN = "The Market can be built to buy and sell resources for gold. Upgrade market to train more Caravan.";
+    public const string BuildingName = "Market";
+
+    private const string Description_TH = "สร้างและฝึกฝนกองคาราวาน ซื้อขายและแลกเปลี่ยนสินค้า \n วิจัยและพัฒนากลไกการตลาด";
+    private const string Description_EN = "The Market can be built to buy and sell resources for gold. Upgrade market to train more Caravan.";
     public static string CurrentDescription {
-        get 
-        {
+        get {
             string temp = Description_EN;
 
-            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
-                temp = Description_EN;
-            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai)
-                temp = Description_TH;
+            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En) temp = Description_EN;
+            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai) temp = Description_TH;
 
             return temp;
         }
     }
 
+    private const string GreekDescription_TH = "";
+    private const string GreekDescription_EN = "Greece: ancient land of beauty, reason, passion ... and war.";
+    private static string CurrentGreekDescription {
+        get {
+            string temp = "";
+
+            if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En) temp = GreekDescription_EN;
+            else if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.Thai) temp = GreekDescription_TH;
+
+            return temp;
+        }
+    }
+
+    public Texture2D GreekIcon_Texture;
+    public Texture2D EgyptianIcon_Texture;
+    public Texture2D PersianIcon_Texture;
+    public Texture2D CelticIcon_Texture;
+
+	/// <summary>
+	/// Awake this instance.
+	/// </summary>
     protected override void Awake() {
         base.Awake();
         base.sprite = this.gameObject.GetComponent<OTSprite>();
@@ -42,13 +63,21 @@ public class MarketBeh : Buildings {
         base.buildingType = Buildings.BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 		
-		//<!-- Load textures.
-        buildingIcon_Texture = Resources.Load(Buildings.PathOf_BuildingIcons + "Market", typeof(Texture2D)) as Texture2D;
     }
 
 	// Use this for initialization
-	void Start () {
+	IEnumerator Start () {
+        StartCoroutine(LoadtexturesResources());
+        yield return 0;
+    }
 
+    IEnumerator LoadtexturesResources()
+    {
+        //<!-- Load textures.
+        buildingIcon_Texture = Resources.Load(Buildings.PathOf_BuildingIcons + "Market", typeof(Texture2D)) as Texture2D;
+        GreekIcon_Texture = Resources.Load(PathOfTribes_Texture + "Greek", typeof(Texture2D)) as Texture2D;
+
+        yield return 0;
     }
 
     public override void InitializeData(Buildings.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
@@ -159,48 +188,56 @@ public class MarketBeh : Buildings {
         }
         GUI.EndGroup();
     }
-
+    //<<!-- Greek trade.
+    int numberOfMeats = 0;
+    int numberOfOliveOil = 0;
     private void DrawGreekTradeUI()
     {
         GUI.BeginGroup(new Rect(0, 1 * base.background_Rect.height, background_Rect.width, base.background_Rect.height), GUIContent.none, building_Skin.box);
         {
-            GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture, ScaleMode.ScaleToFit);
-            GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
+            GUI.DrawTexture(base.imgIcon_Rect, GreekIcon_Texture);
+            GUI.Label(base.levelLable_Rect, "Greek", base.status_style);
             //<!-- description group rect.
-            GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
+            GUI.BeginGroup(new_descriptionGroupRect, MarketBeh.CurrentGreekDescription, building_Skin.textArea);
             {   //<!-- group draw order.
-
-                //<!-- Current Production rate.
-                //GUI.Label(currentProduction_Rect, "Current production rate : " + productionRate[level], building_Skin.label);
-                //GUI.Label(nextProduction_Rect, "Next production rate : " + productionRate[level + 1], building_Skin.label);
-
-                //<!-- Requirements Resource.
-                GUI.BeginGroup(update_requireResource_Rect);
+                //<<!-- purchase  group.
+                Rect importGroupRect = new Rect(10, 40, new_descriptionGroupRect.width - 20, 110);
+                GUI.BeginGroup(importGroupRect, GUIContent.none, standard_Skin.textArea);
                 {
-                    GUI.Box(GameResource.Food_Rect, new GUIContent(this.UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Wood_Rect, new GUIContent(this.UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Copper_Rect, new GUIContent(this.UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Stone_Rect, new GUIContent(this.UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                    GUI.Label(new Rect(0, 0, 100, 30), "Purchase");
+                    GUI.Box(new Rect(20, 35, 100, 30), new GUIContent("Weapon"), standard_Skin.textField);
+                    GUI.Box(new Rect(20, 70, 100, 30), new GUIContent("Armor"), standard_Skin.textField);
                 }
                 GUI.EndGroup();
-
-                //<!-- Upgrade Button.
-                if (StoreHouse.sumOfFood >= this.UpgradeResource[Level].Food && StoreHouse.sumOfWood >= this.UpgradeResource[Level].Wood &&
-                    StoreHouse.sumOfGold >= this.UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= this.UpgradeResource[Level].Stone)
+                //<<!-- sell group.
+                Rect exportGroupRect = new Rect(10, 160, new_descriptionGroupRect.width - 20, 110);
+                GUI.BeginGroup(exportGroupRect, GUIContent.none, standard_Skin.textArea);
                 {
-                    bool enableUpgrade = base.CheckingCanUpgradeLevel();
-
-                    GUI.enabled = enableUpgrade;
-                    if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
-                    {
-                        StoreHouse.UsedResource(UpgradeResource[Level]);
-
-                        base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
-                        base.OnUpgradeProcess(this);
-                        base._isShowInterface = false;
+                    GUI.Label(new Rect(0, 0, 100, 30), "Sell");
+                    //<!-- "Meats".
+                    GUI.Box(new Rect(20, 35, 100, 30), new GUIContent("Meats"), standard_Skin.textField);
+                    GUI.Box(new Rect(160, 35, 50, 30), numberOfMeats.ToString(), GUI.skin.textField);
+                    if (GUI.Button(new Rect(130, 42, 16, 16), GUIContent.none, base.stageManager.taskbarManager.left_button_Style)) {
+                        if (numberOfMeats > 0)
+                            numberOfMeats -= 8;
                     }
-                    GUI.enabled = true;
+                    else if (GUI.Button(new Rect(225, 42, 16, 16), GUIContent.none, base.stageManager.taskbarManager.right_button_Style)) {
+                        if (numberOfMeats < 64)
+                            numberOfMeats += 8;
+                    }
+                    //<!-- "Olive Oil".
+                    GUI.Box(new Rect(20, 70, 100, 30), new GUIContent("Olive Oil"), standard_Skin.textField);
+                    GUI.Box(new Rect(160, 70, 50, 30), numberOfOliveOil.ToString(), GUI.skin.textField);
+                    if (GUI.Button(new Rect(130, 77, 16, 16), GUIContent.none, base.stageManager.taskbarManager.left_button_Style)) {
+                        if (numberOfOliveOil > 0)
+                            numberOfOliveOil -= 8;
+                    }
+                    else if (GUI.Button(new Rect(225, 77, 16, 16), GUIContent.none, base.stageManager.taskbarManager.right_button_Style)) {
+                        if (numberOfOliveOil < 64)
+                            numberOfOliveOil += 8;
+                    }
                 }
+                GUI.EndGroup();
             }
             GUI.EndGroup();
         }

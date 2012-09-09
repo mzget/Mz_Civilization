@@ -35,7 +35,8 @@ public class BuildingsTimeData {
 public class Buildings : MonoBehaviour {
 	
     public const string PathOf_BuildingIcons = "Textures/Building_Icons/";
-	public const int MAX_LEVEL = 10;	
+	public const int MAX_LEVEL = 10;
+
 	//<!-- Font, Skin, Styles.
     public Font showG_font;
     protected Font ubuntu_font;
@@ -55,6 +56,7 @@ public class Buildings : MonoBehaviour {
 	protected GameObject processbar_Obj_parent;
     protected OTSprite processBar_Scolling;
     [System.NonSerialized]    public OTSprite sprite;
+    public StageManager stageManager;
 
     private int level = 0;
     public int Level { get { return level; } set { level = value; } }
@@ -144,6 +146,9 @@ public class Buildings : MonoBehaviour {
 
     protected virtual void Awake()
     {
+        if (stageManager == null)
+            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+
         if (standard_Skin == null)
             standard_Skin = Resources.Load("GUISkins/Standard_Skin", typeof(GUISkin)) as GUISkin;
         if (taskbar_Skin == null)
@@ -172,10 +177,10 @@ public class Buildings : MonoBehaviour {
         windowRect = new Rect(Main.GAMEWIDTH / 2 - 350, Main.GAMEHEIGHT / 2 - 200, 700, 400);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 320);
         building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
-        descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 165, background_Rect.height - 45);
+        descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 155, background_Rect.height - 45);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
         update_requireResource_Rect = new Rect(10, 240, 400, 32);
-        upgradeButton_Rect = new Rect(descriptionGroup_Rect.width - 110, update_requireResource_Rect.y, 100, 32);
+        upgradeButton_Rect = new Rect(descriptionGroup_Rect.width - 120, update_requireResource_Rect.y, 100, 32);
         currentProduction_Rect = new Rect(10, update_requireResource_Rect.y - 80, descriptionGroup_Rect.width - 20, 32);
         nextProduction_Rect = new Rect(10, update_requireResource_Rect.y - 40, descriptionGroup_Rect.width - 20, 32);
         destructionButton_Rect = new Rect(windowRect.width - 110, 40, 100, 32);

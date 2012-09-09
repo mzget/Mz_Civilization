@@ -7,7 +7,8 @@ public class StageManager : MonoBehaviour {
 	public const string PathOfEconomyBuilding = "Buildings/Economy/";
 	public const string PathOfUtilityBuilding =  "Buildings/Utility/";
 	public const string PathOfMilitaryBuilding = "Buildings/Military/";
-	
+
+    public TaskbarManager taskbarManager;
     public GUISkin mainBuildingSkin;
     public GUISkin mainInterface;
     /// Texture. 
@@ -43,6 +44,9 @@ public class StageManager : MonoBehaviour {
 
     public GameObject barracks_prefab;
 	
+
+
+
 	void Awake() {
         this.CreateObjectsPool();
         this.GenerateBackground();
@@ -91,6 +95,9 @@ public class StageManager : MonoBehaviour {
         StartCoroutine(this.CreateStoreResourceObject());
         StartCoroutine(this.LoadingNumberOfBuildingInstance());
         StartCoroutine(this.LoadingDataStore());
+
+        taskbarManager = this.gameObject.GetComponent<TaskbarManager>();
+
         yield return null;
     }
 

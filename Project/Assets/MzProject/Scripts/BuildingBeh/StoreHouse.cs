@@ -4,6 +4,8 @@ using System.Collections;
 
 public class StoreHouse : Buildings {
 
+    public const string PathOfResourcesTexture_Icon = "Textures/Resource_icons/";
+
     //<!-- Requirements Resource.
     public static GameResource CreateResource = new GameResource(80, 120, 40, 60);
     public static GameResource[] UpgradeResource = new GameResource[10] {
@@ -42,7 +44,7 @@ public class StoreHouse : Buildings {
         }
     }
 
-    public int Level { get { return base.Level; } set { base.Level = value; } }
+    //public int Level { get { return base.Level; } set { base.Level = value; } }
 
     private int food = 500;
     private int wood = 500;
