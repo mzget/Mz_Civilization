@@ -17,8 +17,8 @@ public class Mz_SettingManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        settingIcon_Style = guiSkin.customStyles[0];
-        toggleScreen_Style = guiSkin.customStyles[1];
+        settingIcon_Style = guiSkin.customStyles[4];
+        toggleScreen_Style = guiSkin.customStyles[5];
 		
 		InitializeLanguage();
 	}
@@ -43,7 +43,7 @@ public class Mz_SettingManager : MonoBehaviour {
         setting_Rect = new Rect(Main.GAMEWIDTH - 35, 1, 32, 32);
 
 
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
 
         #region Setting Button and relative mechanism.
 

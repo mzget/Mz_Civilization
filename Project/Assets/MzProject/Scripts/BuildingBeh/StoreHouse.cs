@@ -6,22 +6,21 @@ public class StoreHouse : Buildings {
 
     public const string PathOfResourcesTexture_Icon = "Textures/Resource_icons/";
 
-    //<!-- Requirements Resource.
-    public static GameResource CreateResource = new GameResource(80, 120, 40, 60);
-    public static GameResource[] UpgradeResource = new GameResource[10] {
-		new GameResource(80, 120, 40, 60),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(300, 300, 300, 300),
-        new GameResource(400, 400, 400, 400),
-        new GameResource(500, 500, 500, 500),
-        new GameResource(600, 600, 600, 600),
-        new GameResource(700, 700, 700, 700),
-        new GameResource(800, 800, 800, 800),
-        new GameResource(900, 900, 900, 900),
-        new GameResource(1000, 1000, 1000, 1000),
+    //<!--- Requirements Resource.
+    public static GameResource[] RequireResource = new GameResource[10] {
+		new GameResource(80, 120, 40, 60, 5),
+        new GameResource(200, 200, 200, 200, 10),
+        new GameResource(300, 300, 300, 300, 15),
+        new GameResource(400, 400, 400, 400, 20),
+        new GameResource(500, 500, 500, 500, 25),
+        new GameResource(600, 600, 600, 600, 30),
+        new GameResource(700, 700, 700, 700, 35),
+        new GameResource(800, 800, 800, 800, 40),
+        new GameResource(900, 900, 900, 900, 45),
+        new GameResource(1000, 1000, 1000, 1000, 50),
 	};
 	
-    //<!-- Static Data.
+    //<!--- Static Data.
 	public static int sumOfFood = 500;
 	public static int sumOfWood = 500;
 	public static int sumOfGold = 500;
@@ -31,8 +30,7 @@ public class StoreHouse : Buildings {
     private static string Description_TH = "โรงหลอมแร่ แร่ทองแดงถูกหลอมขึ้นที่นี่ อาวุธและชุดเกราะในกองทัพของคุณจำเป็นต้องใช้มัน \n" + " อัพเกรดเพื่อเพิ่มกำลังการผลิต";
     private static string Description_EN = "The Storehouse functions as a resource drop site \n " + "It is also the place where resource Gathering technologies are researched";
     public static string CurrentDescription {
-        get
-        {
+        get {
             string temp = Description_EN;
 
             if (MainMenu.CurrentAppLanguage == MainMenu.AppLanguage.defualt_En)
@@ -44,17 +42,14 @@ public class StoreHouse : Buildings {
         }
     }
 
-    //public int Level { get { return base.Level; } set { base.Level = value; } }
-
     private int food = 500;
     private int wood = 500;
     private int gold = 500;
     private int stone = 500;
-    private int[] maxCapacities = new int[10] { 500, 800, 1200, 1800, 2500, 3500, 4800, 6000, 7800, 10000, };
+    private int[] maxCapacities = new int[10] { 800, 1200, 1800, 2500, 3500, 4800, 6000, 8000, 12000, 15000, };
     private int currentMaxCapacity;
 	
 	
-
 	public static void CalculationSumofFood() {
 		sumOfFood = 0;
         foreach (StoreHouse obj in Buildings.StoreHouseInstance) {
@@ -92,24 +87,51 @@ public class StoreHouse : Buildings {
 		sumOfStone -= usedResource.Stone;
 	}
 
-
+    public static void ReachDayCycle(object sender, System.EventArgs e) {
+        if (Buildings.Farm_Instance.Count == 0 && sumOfFood < SumOfCapacity)
+            sumOfFood += 2;
+        if (Buildings.Sawmill_Instance.Count == 0 && sumOfWood < SumOfCapacity)
+            sumOfWood += 2;
+        if (Buildings.SmelterInstance.Count == 0 && sumOfGold < SumOfCapacity)
+            sumOfGold += 2;
+        if (Buildings.MillStoneInstance.Count == 0 && sumOfStone < SumOfCapacity)
+            sumOfStone += 2;
+		
+		//<!--- Check capacity.
+		if(sumOfFood > SumOfCapacity) sumOfFood = SumOfCapacity;
+		if(sumOfWood > SumOfCapacity) sumOfWood = SumOfCapacity;
+		if(sumOfStone > SumOfCapacity) sumOfStone = SumOfCapacity;
+		if(sumOfGold > SumOfCapacity) sumOfGold = SumOfCapacity;
+    }
+	
+	
+	
+	/// <summary>
+	/// Awake this instance.
+	/// </summary>
     protected override void Awake()
     {
 		base.Awake();
 		base.sprite = this.gameObject.GetComponent<OTSprite>();
 		
-        this.name = StoreHouse.BuildingName;
+        this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
-
-        //<!-- Load textures resources.
-        buildingIcon_Texture = Resources.Load(Buildings.PathOf_BuildingIcons + "Storehouse", typeof(Texture2D)) as Texture2D;
     }
 	
 	// Use this for initialization
     void Start()
     {
+		this.LoadTextureResource();
         this.ReCalculationCapacityData();
+    }
+
+    protected override void LoadTextureResource()
+    {
+        base.LoadTextureResource();
+
+        //<!-- Load textures resources.
+        buildingIcon_Texture = Resources.Load(Buildings.PathOf_BuildingIcons + "Storehouse", typeof(Texture2D)) as Texture2D;
     }
 
     void ReCalculationCapacityData()
@@ -123,6 +145,13 @@ public class StoreHouse : Buildings {
                 break;
             }
         }
+    }
+
+    public override void InitializeData(Buildings.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    {
+        base.InitializeData(p_buildingState, p_indexPosition, p_level);
+
+        Buildings.StoreHouseInstance.Add(this);
     }
 	
     #region Building Processing.
@@ -154,13 +183,14 @@ public class StoreHouse : Buildings {
 	protected override void ClearStorageData ()
 	{
 		base.ClearStorageData ();
-		
+
+        base.stageManager.dayCycle -= ReachDayCycle;
 		Buildings.StoreHouseInstance.Remove(this);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	    
+
 	}
 
     protected override void CreateWindow(int windowID)
@@ -176,9 +206,11 @@ public class StoreHouse : Buildings {
             {
                 GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture);
                 GUI.Label(base.levelLable_Rect, "Level " + this.Level, base.status_style);
-                GUI.BeginGroup(base.descriptionGroup_Rect, CurrentDescription, building_Skin.textArea);
-                {   //<!-- group draw order.
 
+                #region <!--- Contents Group.
+
+                GUI.BeginGroup(base.descriptionGroup_Rect, CurrentDescription, building_Skin.textArea);
+                {   
                     //<!-- Current Production rate.
 					if(base.Level < 10)
                     {
@@ -187,31 +219,14 @@ public class StoreHouse : Buildings {
 						
 	                    //<!-- Requirements Resource.
 	                    GUI.BeginGroup(update_requireResource_Rect);
-	                    {
-                            GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                        {
+                            GUI.Label(GameResource.Food_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.stageManager.taskbarManager.food_icon), GUI.skin.box);
+                            GUI.Label(GameResource.Wood_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.stageManager.taskbarManager.wood_icon), GUI.skin.box);
+                            GUI.Label(GameResource.Stone_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), base.stageManager.taskbarManager.stone_icon), GUI.skin.box);
+                            GUI.Label(GameResource.Gold_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.stageManager.taskbarManager.gold_icon), GUI.skin.box);
+                            GUI.Label(GameResource.Employee_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), base.stageManager.taskbarManager.employee_icon), GUI.skin.box);
 	                    }
 	                    GUI.EndGroup();
-
-	                    //<!-- Upgrade Button.
-	                    if (StoreHouse.sumOfFood >= UpgradeResource[Level].Food && StoreHouse.sumOfWood >= UpgradeResource[Level].Wood &&
-	                        StoreHouse.sumOfGold >= UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= UpgradeResource[Level].Stone)
-	                    {	
-                            bool enableUpgrade = base.CheckingCanUpgradeLevel();
-
-                            GUI.enabled = enableUpgrade;
-                            if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
-                            {
-                                StoreHouse.UsedResource(UpgradeResource[Level]);
-
-                                base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
-                                base.OnUpgradeProcess(this);
-                                base._isShowInterface = false;
-                            }
-                            GUI.enabled = true;
-	                    }
 					}
 					else {
                         GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
@@ -219,6 +234,40 @@ public class StoreHouse : Buildings {
 					}
                 }
                 GUI.EndGroup();
+
+                #endregion
+
+                #region <!--- Upgrade Button mechanichm.
+
+                bool enableUpgrade = false;
+                if (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]))
+                    enableUpgrade = true;
+
+                GUI.enabled = enableUpgrade;
+                if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
+                {
+                    StoreHouse.UsedResource(RequireResource[Level]);
+
+                    base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
+                    base.OnUpgradeProcess(this);
+                    base.CloseGUIWindow();
+                }
+                GUI.enabled = true;
+
+                #endregion
+
+                #region <!--- Destruction button.
+
+                GUI.enabled = this.CheckingCanDestructionBuilding();
+                if (GUI.Button(destruction_Button_Rect, new GUIContent("Destruct")))
+                {
+                    this.currentBuildingStatus = BuildingStatus.OnDestructionProcess;
+                    this.DestructionBuilding();
+                    base.CloseGUIWindow();
+                }
+                GUI.enabled = true;
+
+                #endregion
             }
             GUI.EndGroup();
         }

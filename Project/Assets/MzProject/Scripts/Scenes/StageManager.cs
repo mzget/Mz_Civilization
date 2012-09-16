@@ -10,12 +10,10 @@ public class StageManager : MonoBehaviour {
 
     public TaskbarManager taskbarManager;
     public GUISkin mainBuildingSkin;
-    public GUISkin mainInterface;
-    /// Texture. 
+    /// <summary>
+    /// Map and building area.
+    /// </summary>
     public Texture2D mapTex;
-    public enum _clickedName { building = 0, none };
-//    private _clickedName clickState = _clickedName.none;
-
     private OTFilledSprite background;
 	public static List<Vector2> buildingArea_Pos = new List<Vector2>(12)
     {
@@ -25,26 +23,32 @@ public class StageManager : MonoBehaviour {
 		new Vector2(-300, 180), new Vector2(-300, 0), new Vector2(-300, -180),
 	};
 	public static List<BuildingArea> buildingArea_Obj = new List<BuildingArea>(12);
-    //<!-- Private Data Fields.
 
-//    private bool _Clicked = false;
-//    private bool _preBuild = false;
+    //<!--- Private Data Fields.
     private Vector2 scrollPosition = Vector2.zero;
     private Rect mainGUIRect = new Rect(Main.GAMEWIDTH / 2 - 300, Main.GAMEHEIGHT - 100, 600, 100);
     private Rect windowRect = new Rect(Main.GAMEWIDTH / 2 - 300, Main.GAMEHEIGHT / 2 - 150, 600, 320);
     private Rect imgRect = new Rect(30, 80, 100, 100);
     private Rect contentRect = new Rect(160, 40, 400, 200);
     private Rect buttonRect = new Rect(460, 200, 100, 30);
+	
+    /// <summary>
+    /// Building prefab objects.
+    /// </summary>
+    public GameObject house_prefab;
 
+    public GameObject farm_prefab;
     public GameObject sawmill_prefab;
     public GameObject millstone_prefab;
     public GameObject smelter_prefab;
-
+    public GameObject storehouse_prefab;
     public GameObject market_prefab;
 
     public GameObject barracks_prefab;
-	
 
+
+    public float gameTime = 0;
+    public event System.EventHandler dayCycle;
 
 
 	void Awake() {
@@ -92,54 +96,80 @@ public class StageManager : MonoBehaviour {
 	// Use this for initialization
     IEnumerator Start()
     {
-        StartCoroutine(this.CreateStoreResourceObject());
+        yield return StartCoroutine(this.CreateResourceBuildingPrefabs());
         StartCoroutine(this.LoadingNumberOfBuildingInstance());
-        StartCoroutine(this.LoadingDataStore());
+        StartCoroutine(this.LoadingDataStorage());
 
         taskbarManager = this.gameObject.GetComponent<TaskbarManager>();
 
-        yield return null;
+        yield return 0;
+		
+		if(Buildings.StoreHouseInstance.Count == 0)
+			dayCycle += StoreHouse.ReachDayCycle;
     }
 
-    private IEnumerator CreateStoreResourceObject()
+    private IEnumerator CreateResourceBuildingPrefabs()
     {
+        house_prefab = Resources.Load(PathOfUtilityBuilding + "House", typeof(GameObject)) as GameObject;
+
+        farm_prefab = Resources.Load(PathOfEconomyBuilding + "Farm", typeof(GameObject)) as GameObject;
         sawmill_prefab = Resources.Load(PathOfEconomyBuilding + "Sawmill", typeof(GameObject)) as GameObject;
         millstone_prefab = Resources.Load(PathOfEconomyBuilding + "MillStone", typeof(GameObject)) as GameObject;
         smelter_prefab = Resources.Load(PathOfEconomyBuilding + "Smelter", typeof(GameObject)) as GameObject;
-
+        storehouse_prefab = Resources.Load(PathOfEconomyBuilding + "Storehouse", typeof(GameObject)) as GameObject;
         market_prefab = Resources.Load(PathOfEconomyBuilding + "Market", typeof(GameObject)) as GameObject;
 
         barracks_prefab = Resources.Load(PathOfMilitaryBuilding + "Barracks", typeof(GameObject)) as GameObject;
 
-        yield return null;
+        yield return 0;
     }
-	
+
+    int numberOfHouse_Instance = 0;
+
     int amount_Farm_Instance = 0;
     int amount_Sawmill_Instance = 0;
     int amount_MillStone_Instance = 0;
-    int amount_Smelter_Instance = 0;
-    
+    int amount_Smelter_Instance = 0;    
 	int numberOfStoreHouseInstances = 0;
 	int numberOfMarketInstances = 0;
 	
 	int numberOf_BarracksInstance = 0;
 
     IEnumerator LoadingNumberOfBuildingInstance() {
-        amount_Farm_Instance = PlayerPrefs.GetInt(Mz_SaveData.amount_farm_instance);
-        amount_Sawmill_Instance = PlayerPrefs.GetInt(Mz_SaveData.amount_sawmill_instance);
-        amount_MillStone_Instance = PlayerPrefs.GetInt(Mz_SaveData.amount_millstone_instance);
-        amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_SaveData.amount_smelter_instance);
+        //<!--- Utility --->>
+        numberOfHouse_Instance = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.numberOfHouse_Instance);
+        //<!--- Resource --->>
+        amount_Farm_Instance = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.amount_farm_instance);
+        amount_Sawmill_Instance = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.amount_sawmill_instance);
+        amount_MillStone_Instance = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.amount_millstone_instance);
+        amount_Smelter_Instance = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.amount_smelter_instance);
+        //<!--- Economy --->>
+        numberOfStoreHouseInstances = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.numberOfStorehouseInstance);
+        numberOfMarketInstances = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.numberOfMarketInstance);
+        //<!--- Millitary --->>
+        numberOf_BarracksInstance = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.numberOf_BarracksInstancs);
 
-        numberOfStoreHouseInstances = PlayerPrefs.GetInt(Mz_SaveData.numberOfStorehouseInstance);
-        numberOfMarketInstances = PlayerPrefs.GetInt(Mz_SaveData.numberOfMarketInstance);
-
-        numberOf_BarracksInstance = PlayerPrefs.GetInt(Mz_SaveData.numberOf_BarracksInstancs);
-
-        yield return null;
+        yield return 0;
     }
-	IEnumerator LoadingDataStore() 
-	{
-        #region <!-- Farm_Data.
+	IEnumerator LoadingDataStorage()
+    {
+        #region <!--- House instance data.
+		
+        if (numberOfHouse_Instance != 0) {
+            for (int i = 0; i < numberOfHouse_Instance; i++)
+            {
+                int temp_level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.house_level_ + i);
+                int temp_pos = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.house_position_ + i);
+
+                GameObject tempHouse = Instantiate(house_prefab) as GameObject;
+                HouseBeh house = tempHouse.GetComponent<HouseBeh>();
+                house.InitializeData(Buildings.BuildingStatus.none, temp_pos, temp_level);
+            }
+        }
+		
+        #endregion
+
+        #region <!--- Farm_Data.
 
         if (amount_Farm_Instance != 0) 
         {
@@ -148,8 +178,8 @@ public class StageManager : MonoBehaviour {
 				GameObject new_Obj = Instantiate(Resources.Load("Buildings/Economy/Farm", typeof(GameObject))) as GameObject;
 				Farm farm = new_Obj.GetComponent<Farm>();	
 				
-	            int Level = PlayerPrefs.GetInt(Mz_SaveData.farm_level_ + i);
-				int Position = PlayerPrefs.GetInt(Mz_SaveData.farm_position_ + i);
+	            int Level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.farm_level_ + i);
+				int Position = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.farm_position_ + i);
 				
 				farm.currentBuildingStatus = Buildings.BuildingStatus.none;				
                 farm.Level = Level;	
@@ -164,14 +194,14 @@ public class StageManager : MonoBehaviour {
         }
 
         #endregion
-        #region <!-- Sawmill Data.
+        #region <!--- Sawmill Data.
 
         if (amount_Sawmill_Instance != 0)
         {
             for (int i = 0; i < amount_Sawmill_Instance; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.sawmill_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.sawmill_position_ + i);
+                int Level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.sawmill_level_ + i);
+                int Position = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.sawmill_position_ + i);
 
                 GameObject new_Sawmill = Instantiate(sawmill_prefab) as GameObject;
                 Sawmill sawmill = new_Sawmill.GetComponent<Sawmill>();
@@ -182,14 +212,14 @@ public class StageManager : MonoBehaviour {
         }
 
         #endregion
-        #region <!-- MillStone Data.
+        #region <!--- MillStone Data.
 
         if (amount_MillStone_Instance != 0)
         {
             for (int i = 0; i < amount_MillStone_Instance; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.millstone_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.millstone_position_ + i);
+                int Level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.millstone_level_ + i);
+                int Position = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.millstone_position_ + i);
 
                 GameObject new_millstone = Instantiate(millstone_prefab) as GameObject;
                 MillStone millstone = new_millstone.GetComponent<MillStone>();
@@ -200,14 +230,14 @@ public class StageManager : MonoBehaviour {
         }
 
         #endregion
-        #region <!-- Smelter Data.
+        #region <!--- Smelter Data.
 
         if (amount_Smelter_Instance != 0)
         {
             for (int i = 0; i < amount_Smelter_Instance; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.smelter_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.smelter_position_ + i);
+                int Level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.smelter_level_ + i);
+                int Position = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.smelter_position_ + i);
 
                 GameObject new_smelter = Instantiate(smelter_prefab) as GameObject;
                 Smelter smelter = new_smelter.GetComponent<Smelter>();
@@ -219,14 +249,14 @@ public class StageManager : MonoBehaviour {
 
         #endregion
 
-        #region <!-- StoreHouse Data.
+        #region <!--- StoreHouse Data.
 
         if (numberOfStoreHouseInstances != 0)
         {
             for (int i = 0; i < numberOfStoreHouseInstances; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.storehouse_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.storehouse_position_ + i);
+                int Level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.storehouse_level_ + i);
+                int Position = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.storehouse_position_ + i);
 				
                 GameObject storehouse_obj = Instantiate(Resources.Load(PathOfEconomyBuilding + "Storehouse", typeof(GameObject))) as GameObject;
                 StoreHouse new_storehouse = storehouse_obj.GetComponent<StoreHouse>();
@@ -244,12 +274,12 @@ public class StageManager : MonoBehaviour {
         }
 
         #endregion
-		#region <<!-- Market data.
+		#region <!--- Market data.
 		
 		if(numberOfMarketInstances != 0) {
 			for (int i = 0; i < numberOfMarketInstances; i++) {
-                int position = PlayerPrefs.GetInt(Mz_SaveData.positionOfMarket_ + i);
-                int level = PlayerPrefs.GetInt(Mz_SaveData.levelOfMarket_ + i);
+                int position = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.positionOfMarket_ + i);
+                int level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.levelOfMarket_ + i);
 				
 				GameObject market_Obj = Instantiate(market_prefab) as GameObject;
 				MarketBeh marketBehav = market_Obj.GetComponent<MarketBeh>();
@@ -259,24 +289,21 @@ public class StageManager : MonoBehaviour {
 		
 		#endregion
 
-        #region <!-- Barracks Data.
-
+        #region <!--- Barracks Data.
         if (numberOf_BarracksInstance != 0) {
-            for (int i = 0; i < numberOf_BarracksInstance; i++) { 
-				int level = PlayerPrefs.GetInt(Mz_SaveData.barracks_level_ + i);
-				int position = PlayerPrefs.GetInt(Mz_SaveData.barracks_position_ + i);
+            for (int i = 0; i < numberOf_BarracksInstance; i++) 
+            {
+                int level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.barracks_level_ + i);
+                int position = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.barracks_position_ + i);
 				
                 GameObject barracks_obj = Instantiate(barracks_prefab) as GameObject;
 				BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
                 barracks.InitializeData(Buildings.BuildingStatus.none, position, level);
-
-                Debug.Log("Loading barracks instance.");
             }
         }
-
         #endregion
 
-        yield return null;
+        yield return 0;
     }
 	
 	// Update is called once per frame
@@ -285,10 +312,31 @@ public class StageManager : MonoBehaviour {
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
             Mz_SmartDeviceInput.IOS_GUITouch();
+
+            //<!--- Check escape key down.
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+                return;
+            }
+        }
+
+        gameTime += Time.deltaTime;
+        if (gameTime >= 10) {
+            gameTime = 0;
+            if (dayCycle != null)
+                dayCycle(this, System.EventArgs.Empty);
         }
     }
 
     void OnApplicationQuit() {
         Mz_SaveData.Save();
+        Debug.LogWarning("Saving complete...");
+    }
+
+    void OnApplicationPause()
+    {
+        Mz_SaveData.Save();
+        Debug.LogWarning("Saving complete...");
     }
 }

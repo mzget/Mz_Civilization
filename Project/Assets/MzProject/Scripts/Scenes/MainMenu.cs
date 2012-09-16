@@ -33,7 +33,7 @@ public class MainMenu : MonoBehaviour
     private bool _showNotification = false;
     private bool _duplicateName = false;
     private bool _hitEnter = false;
-    private static string username = "";  
+    private static string username = string.Empty;
 	public static string Username { get {return username;} set {username = value;}}
 
 
@@ -41,8 +41,8 @@ public class MainMenu : MonoBehaviour
     // Use this for initialization
     void Start() 
 	{
-		if(PlayerPrefs.HasKey("username")) {
-			username = PlayerPrefs.GetString("username");				
+		if(PlayerPrefs.HasKey(Mz_SaveData.usernameKey)) {
+            username = PlayerPrefs.GetString(Mz_SaveData.usernameKey);				
 			if(username == "") {
 				guiState = GUIState.showNewGame;
 				
@@ -78,7 +78,7 @@ public class MainMenu : MonoBehaviour
 
     void OnGUI() 
     {
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
 
         if (guiState == GUIState.none)
         {
@@ -229,34 +229,26 @@ public class MainMenu : MonoBehaviour
 
     void SaveNewPlayer()
     {
-        PlayerPrefs.SetString("username", username);
-        PlayerPrefs.SetInt("sumoffood", 500);
-		PlayerPrefs.SetInt("sumofwood", 500);
-		PlayerPrefs.SetInt("sumofgold", 500);
-		PlayerPrefs.SetInt("sumofstone", 500);
-        PlayerPrefs.SetInt("farm_Level", 0);
-        PlayerPrefs.SetInt("sawmill_Level", 0);
-		PlayerPrefs.SetInt("millstone_Level", 0);
-		PlayerPrefs.SetInt("smelter_Level", 0);
+        PlayerPrefs.SetString(Mz_SaveData.usernameKey, username);
+        PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumoffood, 500);
+		PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumofwood, 500);
+		PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumofgold, 500);
+		PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumofstone, 500);
+        PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumOfPupulation, 5);
 
         this.LoadNewDataToSaveStorage();
     }
 
     private void LoadNewDataToSaveStorage() 
     {
-        StorageManage.Username = PlayerPrefs.GetString("username");
-        StoreHouse.sumOfFood = PlayerPrefs.GetInt("sumoffood");
-        StoreHouse.sumOfWood = PlayerPrefs.GetInt("sumofwood");
-        StoreHouse.sumOfGold = PlayerPrefs.GetInt("sumofgold");
-        StoreHouse.sumOfStone = PlayerPrefs.GetInt("sumofstone");
-		
-//        Buildings.FarmInstance.level = PlayerPrefs.GetInt("farm_Level");
-//        Buildings.SawmillInstance.level = PlayerPrefs.GetInt("sawmill_Level");
-//		Buildings.MillStoneInstance.level = PlayerPrefs.GetInt("millstone_Level");
-//		Buildings.SmelterInstance.level = PlayerPrefs.GetInt("smelter_Level");
-        
-        if(!Application.isLoadingLevel) 
-		{
+        StorageManage.Username = PlayerPrefs.GetString(Mz_SaveData.usernameKey);
+        StoreHouse.sumOfFood = PlayerPrefs.GetInt(username + ":" + Mz_SaveData.sumoffood);
+        StoreHouse.sumOfWood = PlayerPrefs.GetInt(username + ":" + Mz_SaveData.sumofwood);
+        StoreHouse.sumOfGold = PlayerPrefs.GetInt(username + ":" + Mz_SaveData.sumofgold);
+        StoreHouse.sumOfStone = PlayerPrefs.GetInt(username + ":" + Mz_SaveData.sumofstone);
+        HouseBeh.SumOfPopulation = PlayerPrefs.GetInt(username + ":" + Mz_SaveData.sumOfPupulation);
+
+        if(!Application.isLoadingLevel) {
             Mz_LoadingScreen.SceneName = Scenes.ScenesInstance.Town.ToString();
             Application.LoadLevel(Scenes.ScenesInstance.LoadingScreen.ToString());
         }

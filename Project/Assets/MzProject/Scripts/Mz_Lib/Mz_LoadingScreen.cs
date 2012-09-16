@@ -55,7 +55,7 @@ public class Mz_LoadingScreen : MonoBehaviour
     void OnGUI()
     {
         GUI.depth = 0;
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Main.FixedWidthRatio, Main.FixedHeightRatio, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
 
         GUI.DrawTexture(new Rect(0, 0, Main.GAMEWIDTH, Main.GAMEHEIGHT), background);
 		

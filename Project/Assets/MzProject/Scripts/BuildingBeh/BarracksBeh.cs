@@ -6,18 +6,17 @@ public class BarracksBeh : Buildings
     public const string PathOf_TroopIcons = "Textures/Troop_Icons/";
 
 	//<!-- Static Data.
-    public static GameResource CreateResource = new GameResource(40, 180, 120, 80);
-    public static GameResource[] UpgradeResource = new GameResource[10] {
-		new GameResource(80, 120, 40, 60),
-        new GameResource(200, 200, 200, 200),
-        new GameResource(300, 300, 300, 300),
-        new GameResource(400, 400, 400, 400),
-        new GameResource(500, 500, 500, 500),
-        new GameResource(600, 600, 600, 600),
-        new GameResource(700, 700, 700, 700),
-        new GameResource(800, 800, 800, 800),
-        new GameResource(900, 900, 900, 900),
-        new GameResource(1000, 1000, 1000, 1000),
+    public static GameResource[] RequireResource = new GameResource[10] {
+		new GameResource(80, 120, 40, 60, 10),
+        new GameResource(200, 200, 200, 200, 20),
+        new GameResource(300, 300, 300, 300, 30),
+        new GameResource(400, 400, 400, 400, 40),
+        new GameResource(500, 500, 500, 500, 50),
+        new GameResource(600, 600, 600, 600, 60),
+        new GameResource(700, 700, 700, 700, 70),
+        new GameResource(800, 800, 800, 800, 80),
+        new GameResource(900, 900, 900, 900, 90),
+        new GameResource(1000, 1000, 1000, 1000, 100),
 	};
     public static string BuildingName = "Barrack";
     private static string Description_TH = "ในค่ายทหารนี้คุณสามารถเกณฑ์ทหารราบได้ ยิ่งระดับค่ายทหารมากเท่าไร \n " + "กองกำลังก็จะเข็มแข็งมากขึ้น";
@@ -35,8 +34,6 @@ public class BarracksBeh : Buildings
         }
 	}
 
-    public int Level { get { return base.Level; } set { base.Level = value; } }
-
 	public GUISkin mainBuildingSkin;
 	public Texture2D spearmanTex;
 	public Texture2D hypaspistTex;
@@ -44,9 +41,10 @@ public class BarracksBeh : Buildings
 	public Texture2D ToxotesTex;
 
     private Rect troopsIcon_Rect;
-	
 
-    protected override void Awake() {
+
+    protected override void Awake()
+    {
         base.Awake();
         base.sprite = this.gameObject.GetComponent<OTSprite>();
 
@@ -54,20 +52,25 @@ public class BarracksBeh : Buildings
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 
+        troopsIcon_Rect = new Rect(base.imgIcon_Rect.x, base.imgIcon_Rect.y + 16, base.imgIcon_Rect.width, base.imgIcon_Rect.height);
+    }
+    
+	// Use this for initialization
+	void Start () {
+		this.LoadTextureResource();
+    }
+	
+	protected override void LoadTextureResource ()
+	{
+		base.LoadTextureResource ();
+
         buildingIcon_Texture = Resources.Load(PathOf_BuildingIcons + "Barracks", typeof(Texture2D)) as Texture2D;
         //<!-- Load troop icon.
         spearmanTex = Resources.Load(PathOf_TroopIcons + "Spearman", typeof(Texture2D)) as Texture2D;
         hypaspistTex = Resources.Load(PathOf_TroopIcons + "Hypaspist", typeof(Texture2D)) as Texture2D;
         hopliteTex = Resources.Load(PathOf_TroopIcons + "Hoplite", typeof(Texture2D)) as Texture2D;
         ToxotesTex = Resources.Load(PathOf_TroopIcons + "Toxotai", typeof(Texture2D)) as Texture2D;
-
-        troopsIcon_Rect = new Rect(base.imgIcon_Rect.x, base.imgIcon_Rect.y + 16, base.imgIcon_Rect.width, base.imgIcon_Rect.height);
-    }
-    
-	// Use this for initialization
-	void Start () {
-		
-    }
+	}
 
     public override void InitializeData(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
         base.InitializeData(p_buildingState, p_indexPosition, p_level);
@@ -160,27 +163,27 @@ public class BarracksBeh : Buildings
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Box(GameResource.Food_Rect, new GUIContent(UpgradeResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Wood_Rect, new GUIContent(UpgradeResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Copper_Rect, new GUIContent(UpgradeResource[Level].Gold.ToString(), base.copper_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Stone_Rect, new GUIContent(UpgradeResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Food_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.food_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Wood_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.wood_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Gold_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.gold_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Stone_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), base.stone_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
 
                     //<!-- Upgrade Button.
-                    if (StoreHouse.sumOfFood >= UpgradeResource[Level].Food && StoreHouse.sumOfWood >= UpgradeResource[Level].Wood &&
-                        StoreHouse.sumOfGold >= UpgradeResource[Level].Gold && StoreHouse.sumOfStone >= UpgradeResource[Level].Stone)
+                    if (StoreHouse.sumOfFood >= RequireResource[Level].Food && StoreHouse.sumOfWood >= RequireResource[Level].Wood &&
+                        StoreHouse.sumOfGold >= RequireResource[Level].Gold && StoreHouse.sumOfStone >= RequireResource[Level].Stone)
                     {
                         bool enableUpgrade = base.CheckingCanUpgradeLevel();
 
                         GUI.enabled = enableUpgrade;
-                        if (GUI.Button(base.upgradeButton_Rect, new GUIContent("Upgrade")))
+                        if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                         {
-                            StoreHouse.UsedResource(UpgradeResource[Level]);
+                            StoreHouse.UsedResource(RequireResource[Level]);
 
                             base.currentBuildingStatus = Buildings.BuildingStatus.onUpgradeProcess;
                             base.OnUpgradeProcess(this);
-                            base._isShowInterface = false;
+                            base.CloseGUIWindow();
                         }
                         GUI.enabled = true;
                     }
