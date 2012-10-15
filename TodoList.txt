@@ -1,0 +1,9 @@
+//<!--- persia trade machanism.
+		- persia purchase => food, wood,
+		- persia sell => 
+		
+//<!--- buy building area to create more construction.
+
+//<!--- Hall of frame.
+
+//<!--- Release population when destruc building. (recalculation when game starting)
