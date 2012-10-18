@@ -79,6 +79,7 @@ public class BuildingBeh : MonoBehaviour {
 //    protected bool _CanDestruction = true;
     public static List<BuildingBeh> onBuilding_Obj = new List<BuildingBeh>();
     public static BuildingBeh OnDestruction_Obj = null;
+    public static TownCenter TownCenter;
     //<!--- Utility.
     public static List<HouseBeh> House_Instances = new List<HouseBeh>();
 	//<!-- Resource.
@@ -209,8 +210,8 @@ public class BuildingBeh : MonoBehaviour {
         status_style.font = ubuntu_font;
         status_style.alignment = TextAnchor.MiddleCenter;
 
-        windowRect = new Rect((Main.GAMEWIDTH * 3 / 4) / 2 - 300, Main.GAMEHEIGHT / 2 - 200, 600, 400);
-        background_Rect = new Rect(0, 0, windowRect.width - 16, 320);
+        windowRect = new Rect((Main.GAMEWIDTH * 3 / 4) / 2 - 350, Main.GAMEHEIGHT / 2 - 250, 700, 500);
+        background_Rect = new Rect(0, 0, windowRect.width - 16, 420);
         building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
         descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 155, background_Rect.height - 45);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
@@ -241,7 +242,7 @@ public class BuildingBeh : MonoBehaviour {
 
     protected virtual void OnUpgradeProcess(BuildingBeh p_building) 
     {
-        Debug.Log(p_building.name + ": OnBuildingProcess()");
+        Debug.Log(p_building.name + ": OnUpgradeProcess()");
 
         if (onBuilding_Obj.Count < 2)
         {

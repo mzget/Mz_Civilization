@@ -103,8 +103,7 @@ public class StoreHouse : BuildingBeh {
 			sumOfCopper = SumOfMaxCapacity;
     }
 	
-	
-	
+
 	/// <summary>
 	/// Awake this instance.
 	/// </summary>
@@ -165,7 +164,7 @@ public class StoreHouse : BuildingBeh {
         BuildingBeh.StoreHouseInstance.Add(this);
     }
 	
-    #region Building Processing.
+    #region <!-- Building Processing.
 
     public override void OnBuildingProcess(BuildingBeh obj)
     {

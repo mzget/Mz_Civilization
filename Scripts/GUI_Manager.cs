@@ -6,6 +6,7 @@ public class GUI_Manager : MonoBehaviour {
 	public const string PathOfGUISprite = "UI_Sprites/";
     public const string PathOfMainGUIResource = "Textures/MainGUI/";
     public const string PathOfGameItemTextures = "Textures/GameItems/";
+    public const string Advisor_ResourcePath = "Textures/Advisors/";
 
     public static bool IsShowInteruptGUI = false;
 //	public static bool IsShowSidebarGUI = false;
@@ -31,6 +32,8 @@ public class GUI_Manager : MonoBehaviour {
 	public Texture2D commerce_icon;
 	public Texture2D military_icon;
     public Texture2D map_icon;
+
+    public Texture2D elder_advisor;
 
     protected Rect header_group_rect;
     protected Rect header_button_rect;
@@ -105,6 +108,8 @@ public class GUI_Manager : MonoBehaviour {
 		commerce_icon = Resources.Load(PathOfMainGUIResource + "Commerce", typeof(Texture2D)) as Texture2D;
 		military_icon = Resources.Load(PathOfMainGUIResource + "Military", typeof(Texture2D)) as Texture2D;
         map_icon = Resources.Load(PathOfMainGUIResource + "Map_Texture", typeof(Texture2D)) as Texture2D;
+
+        elder_advisor = Resources.Load(Advisor_ResourcePath + "VillageElder", typeof(Texture2D)) as Texture2D;
 
         yield return 0;
     }

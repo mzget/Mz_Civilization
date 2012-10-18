@@ -23,6 +23,9 @@ public class Mz_SaveData
     public const string smelter_position_ = "smelter_position_";
     public const string smelter_level_ = "smelter_level_";
 	
+	public const string BuildingAreaState = "BuildingAreaState";
+	public const string TownCenter_level = "TownCenter_level";
+	
 	/// <summary>
 	/// Utility Section.
 	/// </summary>
@@ -32,7 +35,7 @@ public class Mz_SaveData
 	
     /// <summary>
     /// Economy Section.
-    /// </summary
+    /// </summary>
    
     //<!-- Storehouse key. 
 	public const string numberOfStorehouseInstance = "numberOfStorehouseInstance";
@@ -64,7 +67,8 @@ public class Mz_SaveData
 	        PlayerPrefs.SetInt(StorageManage.Username + ":" + sumofgold, StoreHouse.sumOfGold);
 	        //<!--- Store amount employee. 
 	        PlayerPrefs.SetInt(StorageManage.Username + ":" + sumOfEmployee, HouseBeh.SumOfEmployee);
-			
+			//<!-- TownCenter.
+			PlayerPrefs.SetInt(StorageManage.Username + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
 			
 			#region <<!--- Utility Section.
 			

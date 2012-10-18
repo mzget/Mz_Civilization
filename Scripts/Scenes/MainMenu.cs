@@ -223,6 +223,8 @@ public class MainMenu : Mz_BaseScene
         PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumofwood, 500);
         PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumofstone, 500);
         PlayerPrefs.SetInt(username + ":" + Mz_SaveData.sumofgold, 2000);
+		
+		PlayerPrefs.SetInt(username + ":" + Mz_SaveData.TownCenter_level, 1);
 
         this.LoadDataToSaveStorage();
     }

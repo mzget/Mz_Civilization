@@ -8,7 +8,6 @@ public class BuildingArea : MonoBehaviour
     private GUIStyle tagname_Style;
     public GUISkin standard_skin;
     public GUISkin buildingArea_Skin;
-	public GUISkin taskbarUI_Skin;
     //<!--- Static GameObject, Prefabs, Texture2D,
     public Texture2D utility_icon;
     public Texture2D economy_icon;
@@ -42,15 +41,14 @@ public class BuildingArea : MonoBehaviour
 	private int indexOfAreaPosition;
     public int IndexOfAreaPosition { get { return indexOfAreaPosition; } set { indexOfAreaPosition = value; } }
     private enum GUIState { none = 0, ShowMainUI, ShowUtiltyUI, ShowEconomyUI, ShowMilitaryUI, ShowBuyArea, };
-    public enum AreaState { In_Active = 0, De_Active, };
+    public enum AreaState { In_Active = 1, De_Active = 0, };
     public AreaState areaState; 
     private GUIState guiState;
     private StageManager stageManager;
-	private static BuildingBeh building;
+	private static BuildingBeh buildingBeh;
 
     private Rect window_rect;
-	Rect buyArea_rect;
-    private Rect exitButton_rect;
+    private Rect closeBuildingArea_rect;
     private Vector2 scrollPosition = Vector2.zero;
     private Rect background_Rect;
     private Rect image_rect;
@@ -60,6 +58,11 @@ public class BuildingArea : MonoBehaviour
     private Rect economy_rect;
     private Rect utility_rect;
     private Rect military_rect;
+
+    private Rect buyArea_rect;
+    private Rect closeBuyArea_rect;
+    private Rect advisor_drawRect;
+    private Rect buyAreaDescription_rect;
 	
 	Rect positionOfScrolling;
 	Rect viewRectOfScrolling;
@@ -72,25 +75,33 @@ public class BuildingArea : MonoBehaviour
 	Rect fifthBuilding_rect;
 	Rect sixthBuilding_rect;
 
+    private Rect requirementGroup_rect;
+    private GUIStyle requirementGroup_style;
+    private GUIStyle requirementBox_style;
+
 
 	// Use this for initialization
 	void Start () 
 	{
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         sprite = this.gameObject.GetComponent<OTSprite>();
-		//<!--- Static building type.
-		GameObject towncenter = GameObject.Find("TownCenter");
-        building = towncenter.GetComponent<BuildingBeh>();
 
         this.InitializeGUI();
         StartCoroutine(this.LoadTextureResource());
 
-        if(areaState == AreaState.De_Active) {            
-		    sprite = this.gameObject.GetComponent<OTSprite>();
+        if(areaState == AreaState.De_Active) {
+            sprite.frameIndex = 4;
 		    sprite.materialReference = "tint";
 		    sprite.tintColor = Color.gray;
 			
             return;
+        }
+
+        //<!--- Static building type.
+        if (buildingBeh == null)
+        {
+            GameObject towncenter = GameObject.Find(TownCenter.BuildingName);
+            buildingBeh = towncenter.GetComponent<BuildingBeh>();
         }
 	}
 	
@@ -102,11 +113,16 @@ public class BuildingArea : MonoBehaviour
         tagname_Style.font = buildingArea_Skin.font;
         tagname_Style.fontStyle = FontStyle.Bold;
 
+        requirementGroup_style = new GUIStyle(standard_skin.box);
+        requirementGroup_style.alignment = TextAnchor.UpperCenter;
+        requirementBox_style = new GUIStyle(standard_skin.box);
+        requirementBox_style.alignment = TextAnchor.MiddleLeft;
+
+
 //        window_rect = new Rect((Main.GAMEWIDTH * 3 / 8) - 300, Main.GAMEHEIGHT / 2 - 200, 600, 400);
 		window_rect = new Rect((Main.GAMEWIDTH * 3 / 8) - 350, Main.GAMEHEIGHT / 2 - 250, 700, 500);
-        buyArea_rect = new Rect((Main.GAMEWIDTH * 3 / 8) - 350, Main.GAMEHEIGHT / 2 - 250, 700, 500);
+        closeBuildingArea_rect = new Rect(window_rect.width - 34, 2, 32, 32);
         background_Rect = new Rect(0, 0, 580, 320);
-        exitButton_rect = new Rect(window_rect.width - 34, 2, 32, 32);
         image_rect = new Rect(40, 48, 80, 80);
         tagName_rect = new Rect(0, 12, 160, 30);
         content_rect = new Rect(140, 15, background_Rect.width - 160, 140);
@@ -124,6 +140,13 @@ public class BuildingArea : MonoBehaviour
         fourthBuilding_rect = new Rect(0, 3 * frameHeight, background_Rect.width, frameHeight);
         fifthBuilding_rect = new Rect(0, 4 * frameHeight, background_Rect.width, frameHeight);
         sixthBuilding_rect = new Rect(0, 5 * frameHeight, background_Rect.width, frameHeight);
+        
+        buyArea_rect = new Rect((Main.GAMEWIDTH * 3 / 8) - 300, Main.GAMEHEIGHT / 2 - 300, 600, 600);
+        closeBuyArea_rect = new Rect(buyArea_rect.width - 34, 32, 32, 32);
+        advisor_drawRect = new Rect(10, (buyArea_rect.height / 2) - (stageManager.gui_Manager.elder_advisor.height/2), stageManager.gui_Manager.elder_advisor.width, stageManager.gui_Manager.elder_advisor.height);
+        float descriptionPosX = (advisor_drawRect.x + advisor_drawRect.width) + 10;
+        buyAreaDescription_rect = new Rect(descriptionPosX, 50, buyArea_rect.width - descriptionPosX, 500);
+        
         
         //if(Screen.height != Main.GAMEHEIGHT) {
         //    window_rect.height *= MzCalculateScaleRectGUI.ScaleHeightRatio;
@@ -194,6 +217,28 @@ public class BuildingArea : MonoBehaviour
         this.gameObject.active = false;
         GUI_Manager.IsShowInteruptGUI = false;
     }
+
+    private bool CheckBasicRequire()
+    {
+        if (BuildingBeh.TownCenter.Level >= 3 && StoreHouse.sumOfGold >= 500)
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    private void buyArea()
+    {
+        StoreHouse.sumOfGold -= 500;
+
+        this.areaState = AreaState.In_Active;
+        sprite.materialReference = "transparent";
+        sprite.frameIndex = 3;
+		
+		PlayerPrefs.SetInt(Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
+		PlayerPrefs.Save();
+    }
 	
     //<!--- Economy, Military, Utility.
     void OnGUI()
@@ -210,9 +255,31 @@ public class BuildingArea : MonoBehaviour
 
     void DrawShowBuyArea()
     {
-        GUI.BeginGroup(buyArea_rect, "Extend your empire.", GUI.skin.window);
+        GUI.BeginGroup(buyArea_rect);
         {
-            if (GUI.Button(exitButton_rect, new GUIContent(string.Empty, "Close Button"), buildingArea_Skin.customStyles[0]))
+            //<!--- Draw advisor.
+            GUI.DrawTexture(advisor_drawRect, stageManager.gui_Manager.elder_advisor);
+            //<!--- Draw Description.
+            GUI.BeginGroup(buyAreaDescription_rect, "Expand empire.", GUI.skin.window);
+            {           
+                requirementGroup_rect = new Rect(5, buyAreaDescription_rect.height / 2, buyAreaDescription_rect.width - 10, (buyAreaDescription_rect.height / 2) -5);
+                GUI.BeginGroup(requirementGroup_rect, "Requirement", requirementGroup_style);
+                {
+                    GUI.Box(new Rect(5, 50, requirementGroup_rect.width - 10, 30), "Town center level 3.", requirementBox_style);
+                    GUI.Box(new Rect(5, 85, requirementGroup_rect.width - 10, 30), "Gold :: 500", requirementBox_style);
+
+                    GUI.enabled = CheckBasicRequire();
+                    if (GUI.Button(new Rect(requirementGroup_rect.width / 2 - 60, requirementGroup_rect.height - 38, 120, 35), "Expand !"))
+                    { 
+						buyArea();
+                    }
+                    GUI.enabled = true;
+                }
+                GUI.EndGroup();
+            }
+            GUI.EndGroup();
+            //<!-- Close button.
+            if (GUI.Button(closeBuyArea_rect, new GUIContent(string.Empty, "Close Button"), buildingArea_Skin.customStyles[0]))
             {
                 if (guiState != GUIState.none)
                 {
@@ -228,7 +295,7 @@ public class BuildingArea : MonoBehaviour
     {
 		#region <!--- Main Data flow.
 		
-        if (GUI.Button(exitButton_rect, new GUIContent(string.Empty, "Close Button"), buildingArea_Skin.customStyles[0])) {
+        if (GUI.Button(closeBuildingArea_rect, new GUIContent(string.Empty, "Close Button"), buildingArea_Skin.customStyles[0])) {
             if (guiState != GUIState.none) {
                 guiState = GUIState.none;
                 GUI_Manager.IsShowInteruptGUI = false;
@@ -382,7 +449,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(HouseBeh.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(HouseBeh.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;
@@ -427,7 +494,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(AcademyBeh.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(AcademyBeh.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;
@@ -478,7 +545,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(Farm.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(Farm.RequireResource[0]))
                 enableUpgrade = true;
 			
 			GUI.enabled = enableUpgrade;
@@ -525,7 +592,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(Sawmill.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(Sawmill.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;
@@ -572,7 +639,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(MillStone.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(MillStone.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;
@@ -619,7 +686,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(Smelter.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(Smelter.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;
@@ -666,7 +733,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(MarketBeh.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(MarketBeh.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;
@@ -713,7 +780,7 @@ public class BuildingArea : MonoBehaviour
             #region <!--- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(StoreHouse.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(StoreHouse.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;
@@ -758,7 +825,7 @@ public class BuildingArea : MonoBehaviour
             #region <!-- Build Button mechanichm.
 
             bool enableUpgrade = false;
-            if (BuildingBeh.CheckingCanCreateBuilding() && building.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]))
+            if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]))
                 enableUpgrade = true;
 
             GUI.enabled = enableUpgrade;

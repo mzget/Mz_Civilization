@@ -73,7 +73,6 @@ public class StageManager : Mz_BaseScene {
 
     void CreateObjectsPool() {
         OT.PreFabricate("Building_Area", 16);
-        OT.PreFabricate("Disable_Building_Area", 16);
     }
     void GenerateBackground() {
         // To create the background lets create a filled sprite object
@@ -107,7 +106,7 @@ public class StageManager : Mz_BaseScene {
         }
 		
 		for (int i = 8; i < buildingArea_Pos.Count; i++) {
-            GameObject Temp_obj = OT.CreateObject("Disable_Building_Area");
+            GameObject Temp_obj = OT.CreateObject("Building_Area");
 			Temp_obj.transform.parent = building_area_group.transform;
 
             buildingArea_Obj.Add(Temp_obj.GetComponent<BuildingArea>());
@@ -115,7 +114,12 @@ public class StageManager : Mz_BaseScene {
             buildingArea_Obj[i].Sprite.size = new Vector2(128, 128);
             buildingArea_Obj[i].IndexOfAreaPosition = i;
             buildingArea_Obj[i].Sprite.rotation = 45f;
-            buildingArea_Obj[i].areaState = BuildingArea.AreaState.De_Active;
+			
+			int state = PlayerPrefs.GetInt(Mz_SaveData.BuildingAreaState + i);
+			if(state == 0)
+				buildingArea_Obj[i].areaState = BuildingArea.AreaState.De_Active;
+			else if(state == 1)
+				buildingArea_Obj[i].areaState = BuildingArea.AreaState.In_Active;
 		}
     }
 
@@ -181,6 +185,9 @@ public class StageManager : Mz_BaseScene {
     }
 	IEnumerator LoadingDataStorage()
     {
+		//<!--- Load level of towncenter.
+		BuildingBeh.TownCenter.Level = PlayerPrefs.GetInt(StorageManage.Username + ":" + Mz_SaveData.TownCenter_level);
+		
         #region <!--- House instance data.
 		
         if (numberOfHouse_Instance != 0) {
