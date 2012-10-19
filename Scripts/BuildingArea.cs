@@ -238,6 +238,8 @@ public class BuildingArea : MonoBehaviour
 		
 		PlayerPrefs.SetInt(Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
 		PlayerPrefs.Save();
+
+        this.CloseGUIWindow();
     }
 	
     //<!--- Economy, Military, Utility.
@@ -290,16 +292,22 @@ public class BuildingArea : MonoBehaviour
         }
         GUI.EndGroup();
     }
-	
+
+    void CloseGUIWindow()
+    {
+        if (guiState != GUIState.none)
+        {
+            guiState = GUIState.none;
+            GUI_Manager.IsShowInteruptGUI = false;
+        }
+    }
+
     void CreateWindow(int windowID)
     {
 		#region <!--- Main Data flow.
 		
         if (GUI.Button(closeBuildingArea_rect, new GUIContent(string.Empty, "Close Button"), buildingArea_Skin.customStyles[0])) {
-            if (guiState != GUIState.none) {
-                guiState = GUIState.none;
-                GUI_Manager.IsShowInteruptGUI = false;
-            }
+            this.CloseGUIWindow();
         }
 		else if(GUI.Button(utility_rect, new GUIContent("Utility", utility_icon), buildingArea_Skin.button)) {
             if (guiState != GUIState.ShowUtiltyUI) {

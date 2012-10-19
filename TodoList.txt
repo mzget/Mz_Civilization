@@ -1,9 +1,17 @@
 //<!--- persia trade machanism.
 		- persia purchase => food, wood,
 		- persia sell => 
-		
+
+## Building area ##		
 //<!--- buy building area to create more construction.
+//<!-- 
+## end
 
 //<!--- Hall of frame.
 
 //<!--- Release population when destruc building. (recalculation when game starting)
+
+
+//<!-- Town stage. >>>  menu bar < back to main menu, options, pause, resume >
+
+<!-- BuildingBeh should alway show building level.

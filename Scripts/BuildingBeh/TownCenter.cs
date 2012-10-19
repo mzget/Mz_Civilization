@@ -6,7 +6,7 @@ public class TownCenter : BuildingBeh {
 
     public static string BuildingName = "Town center";
     private static string Description_TH = "";
-    private static string Description_EN = "The Storehouse functions as a resource drop site \n " + "It is also the place where resource Gathering technologies are researched";
+    private static string Description_EN = "Town center is the only building in your village at the start. It is always located just above the village centre, and can't destruction it.";
     public static string CurrentDescription
     {
         get
@@ -128,7 +128,7 @@ public class TownCenter : BuildingBeh {
                     if (base.Level < 10)
                     {
                         GUI.Label(currentJob_Rect, "Current Max Capacity : " + this.currentIncreaseBuildingSpeed, base.job_style);
-                        GUI.Label(nextJob_Rect, "Next Max Capacity : " + this.increaseBuildingSpeed_arr[base.Level], base.job_style);
+                        GUI.Label(nextJob_Rect, "Next level: " + this.increaseBuildingSpeed_arr[base.Level], base.job_style);
 
                         //<!-- Requirements Resource.
                         GUI.BeginGroup(update_requireResource_Rect);
