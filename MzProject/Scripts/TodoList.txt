@@ -7,7 +7,7 @@
 //<!--- Release population when destruc building. (recalculation when game starting)
 
 //<!-- Town stage. >>>  menu bar < back to main menu, options, pause, resume >
-
+<!-- DeActive building area want to reactive object went player buy area.
 
 
 
