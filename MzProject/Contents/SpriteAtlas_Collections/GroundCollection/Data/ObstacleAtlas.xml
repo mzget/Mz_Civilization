@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://texturepacker.com-->
+<!-- $TexturePacker:SmartUpdate:8d19b005f5801e217941cc91401b1144$ -->
+<TextureAtlas imagePath="ObstacleAtlas.png">
+    <SubTexture name="Desert_Map" x="2" y="2" width="64" height="64"/>
+    <SubTexture name="Obstacle_0001" x="68" y="2" width="96" height="95"/>
+    <SubTexture name="Obstacle_0002" x="166" y="2" width="152" height="96"/>
+    <SubTexture name="area_0001" x="320" y="2" width="128" height="128"/>
+    <SubTexture name="area_0002" x="2" y="132" width="128" height="128"/>
+    <SubTexture name="ground_0001" x="132" y="132" width="128" height="128"/>
+</TextureAtlas>
