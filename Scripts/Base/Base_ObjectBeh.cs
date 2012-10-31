@@ -3,6 +3,9 @@ using System.Collections;
 
 public class Base_ObjectBeh : MonoBehaviour {
 
+    protected bool _OnTouchBegin = false;
+    protected bool _OnTouchRelease = false;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -29,13 +32,11 @@ public class Base_ObjectBeh : MonoBehaviour {
 		yield return new WaitForFixedUpdate();
 	}
 
-	#region <!-- On Mouse Events.
-
-    protected bool _OnTouchBegin = false;
-	protected bool _OnTouchRelease = false;
-
+	#region <!-- OnInput Events.
+    
 	protected virtual void OnTouchBegan() {
-        _OnTouchBegin = true;
+        if(_OnTouchBegin == false)
+            _OnTouchBegin = true;
 	}
     protected virtual void OnMouseDown()
     {
@@ -43,11 +44,10 @@ public class Base_ObjectBeh : MonoBehaviour {
 		
         _OnTouchBegin = false;
         _OnTouchRelease = false;
-		
-		StartCoroutine(WaitForEndUpdate());
     }
     protected virtual void OnMouseExit() {
-		_OnTouchRelease = true;
+        if(_OnTouchRelease == false)
+            _OnTouchRelease = true;
     }
 
     #endregion

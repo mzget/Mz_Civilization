@@ -66,12 +66,17 @@ public class StageManager : Mz_BaseScene {
     public event System.EventHandler dayCycle_Event;
     public event System.EventHandler resourceCycle_Event;
 
+
+    void Awake() {
+        buildingArea_Objs.Clear();
+    }
+
 	// Use this for initialization
     IEnumerator Start()
     {				
         this.GenerateBackground();
         this.CreateBuildingArea();
-        this.CreateBuildingPrefabsFromResource();
+        this.PrepareBuildingPrefabsFromResource();
         this.LoadingAmountOfBuildingInstance();
         StartCoroutine(this.LoadingDataStorage());
 
@@ -119,7 +124,7 @@ public class StageManager : Mz_BaseScene {
     }
     void CreateBuildingArea()
     {
-        var building_area_group = GameObject.Find("Building_Area_Group");
+        GameObject building_area_group = GameObject.Find("Building_Area_Group");
 		buildingArea_prefab = Resources.Load(PrototypeObjects_ResourcePath + "Building_Area", typeof(GameObject)) as GameObject;
 
         for (int i = 0; i < 8; i++)
@@ -132,7 +137,7 @@ public class StageManager : Mz_BaseScene {
             buildingArea_Objs[i].Sprite.size = new Vector2(128, 128);
             buildingArea_Objs[i].IndexOfAreaPosition = i;
             buildingArea_Objs[i].Sprite.rotation = 45f;
-            buildingArea_Objs[i].areaState = BuildingArea.AreaState.In_Active;
+            buildingArea_Objs[i].areaState = BuildingArea.AreaState.Active;
         }
 
         for (int i = 8; i < buildingArea_Pos.Count; i++)
@@ -146,14 +151,14 @@ public class StageManager : Mz_BaseScene {
             buildingArea_Objs[i].IndexOfAreaPosition = i;
             buildingArea_Objs[i].Sprite.rotation = 45f;
 
-            int state = PlayerPrefs.GetInt(Mz_SaveData.BuildingAreaState + i);
+            int state = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot +":"+ Mz_SaveData.BuildingAreaState + i);
             if (state == 0)
-                buildingArea_Objs[i].areaState = BuildingArea.AreaState.De_Active;
+                buildingArea_Objs[i].areaState = BuildingArea.AreaState.UnActive;
             else if (state == 1)
-                buildingArea_Objs[i].areaState = BuildingArea.AreaState.In_Active;
+                buildingArea_Objs[i].areaState = BuildingArea.AreaState.Active;
         }
     }
-    void CreateBuildingPrefabsFromResource()
+    void PrepareBuildingPrefabsFromResource()
     {
         //<!--- Utility.
         house_prefab = Resources.Load(PathOfUtilityBuilding + "House", typeof(GameObject)) as GameObject;
@@ -342,7 +347,8 @@ public class StageManager : Mz_BaseScene {
     protected override void Update()
     {
         base.Update();
-        base.ImplementTouchPostion();
+        if(TaskManager.IsShowInteruptGUI == false) 
+            base.ImplementTouchPostion();
         if (Camera.main.transform.position.x > 512)
             Camera.main.transform.position = new Vector3(512, Camera.main.transform.position.y, Camera.main.transform.position.z); 	//Vector3.left * Time.deltaTime;
         if (Camera.main.transform.position.x < -512)
@@ -373,37 +379,14 @@ public class StageManager : Mz_BaseScene {
 
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            float speed = Time.deltaTime * 200f;
+            float speed = Time.deltaTime * 60f;
             // Get movement of the finger since last frame   
             Vector2 touchDeltaPosition = touch.deltaPosition;
             // Move object across XY plane       
             //transform.Translate(-touchDeltaPosition.x * speed, -touchDeltaPosition.y * speed, 0);
             Camera.main.transform.Translate(-touchDeltaPosition.x * speed, -touchDeltaPosition.y * speed, 0);
         }
-        else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor)
-        {
-            if (_isDragMove)
-            {
-                float vectorX = currentPos.x - originalPos.x;
-                float vectorY = currentPos.y - originalPos.x;
-                float speed = Time.deltaTime * 360;
-                if (vectorX < 0)
-                    Camera.main.transform.position += Vector3.right * speed;
-                else if (vectorX > 0)
-                    Camera.main.transform.position += Vector3.left * speed;
-
-                if (vectorY < 0)
-                    Camera.main.transform.position += Vector3.up * speed;
-                else if (vectorY > 0)
-                    Camera.main.transform.position += Vector3.down * speed;
-            }
-        }
     }
-	
-	protected override void OnGUI ()
-	{
-		base.OnGUI ();
-	}
 
     void OnApplicationQuit() {
         Mz_SaveData.Save();

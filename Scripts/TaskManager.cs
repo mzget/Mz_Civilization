@@ -10,7 +10,7 @@ public class TaskManager : MonoBehaviour {
 
     public static bool IsShowInteruptGUI = false;
 //	public static bool IsShowSidebarGUI = false;
-	private enum RightSideState { none = 0, show_domination, show_agriculture, show_industry, show_commerce, show_military, show_map, };
+    private enum RightSideState { none = 0, show_domination, show_agriculture, show_industry, show_commerce, show_military, show_map, show_setting, };
     private RightSideState currentRightSideState = RightSideState.show_domination;
     private StageManager stageManager;
 
@@ -32,6 +32,7 @@ public class TaskManager : MonoBehaviour {
 	public Texture2D commerce_icon;
 	public Texture2D military_icon;
     public Texture2D map_icon;
+	public Texture2D setting_icon;
 
     public Texture2D marketTradingIcon;
 
@@ -50,6 +51,7 @@ public class TaskManager : MonoBehaviour {
     Rect fourth_button_rect = new Rect(1, 180, 48, 56);
     Rect fifth_button_rect = new Rect(1, 240, 48, 56);
     Rect sixth_button_rect = new Rect(1, 300, 48, 56);
+	Rect seventh_button_rect;
 
 
 	// Use this for initialization
@@ -60,7 +62,10 @@ public class TaskManager : MonoBehaviour {
 
         this.InitializeOnGUIData();
         StartCoroutine(InitializeTextureResource());
-        //StartCoroutine(InitializeJoystick());
+
+#if UNITY_WEBPLAYER || UNITY_EDITOR
+        StartCoroutine(InitializeJoystick());
+#endif
 		
         yield return 0;
     }
@@ -69,7 +74,9 @@ public class TaskManager : MonoBehaviour {
     {
         taskbarUI_Skin.button.alignment = TextAnchor.MiddleCenter;
 		taskbarUI_Skin.box.alignment = TextAnchor.MiddleCenter;
-
+		
+		seventh_button_rect = new Rect(1 * Mz_GUIManager.Extend_heightScale, 360, 48 * Mz_GUIManager.Extend_heightScale, 56);
+		
         if (Screen.height != Main.GAMEHEIGHT) {			
 		    first_button_rect =  MzReCalculateScaleRectGUI.ReCalulateWidth(first_button_rect);
             second_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(second_button_rect);
@@ -110,6 +117,7 @@ public class TaskManager : MonoBehaviour {
 		commerce_icon = Resources.Load(PathOfMainGUIResource + "Commerce", typeof(Texture2D)) as Texture2D;
 		military_icon = Resources.Load(PathOfMainGUIResource + "Military", typeof(Texture2D)) as Texture2D;
         map_icon = Resources.Load(PathOfMainGUIResource + "Map_Texture", typeof(Texture2D)) as Texture2D;
+		setting_icon = Resources.Load(PathOfMainGUIResource + "Setting", typeof(Texture2D)) as Texture2D;
 
         marketTradingIcon = Resources.Load(PathOfMainGUIResource + "Market", typeof(Texture2D)) as Texture2D;
 
@@ -272,6 +280,11 @@ public class TaskManager : MonoBehaviour {
 						currentRightSideState = RightSideState.show_map;
                     }
                 }
+				else if(GUI.Button(seventh_button_rect, new GUIContent(setting_icon))) {
+                    if (currentRightSideState != RightSideState.show_setting) {
+                        currentRightSideState = RightSideState.show_setting;
+                    }
+				}
             }
             GUI.EndGroup();
 			
@@ -282,6 +295,9 @@ public class TaskManager : MonoBehaviour {
 			else if(currentRightSideState == RightSideState.show_commerce) {
 				DrawCommerce_tab();
 			}
+            else if (currentRightSideState == RightSideState.show_setting) {
+                this.DrawSettingTab();
+            }
 
             #region <!--- show_Map.
 
@@ -302,6 +318,29 @@ public class TaskManager : MonoBehaviour {
         }
 		GUI.EndGroup();
 	}
+
+    private void DrawSettingTab()
+    {
+		GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
+		{
+			float label_width = sidebarContentGroup_rect.width - 10;
+            GUI.Box(new Rect(5, 2, label_width, 32), "Options", taskbarUI_Skin.textField);
+
+            if (GUI.Button(new Rect(5, 100, label_width, 32), "Main Menu")) {
+                Mz_SaveData.Save();
+                if (Application.isLoadingLevel == false) {
+                    Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.MainMenu.ToString();
+                    Application.LoadLevel(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
+                }
+            }
+            if (GUI.Button(new Rect(5, 145, label_width, 32), "Quit")) {
+                Mz_SaveData.Save();
+                stageManager._hasQuitCommand = true;
+            }
+            //GUI.Box(new Rect(5, 190, label_width, 32), "Unemployed : " + HouseBeh.SumOfUnemployed, taskbarUI_Skin.box);
+		}
+		GUI.EndGroup();		
+    }
 	
 	private void DrawDomination_tab() {
 		GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);

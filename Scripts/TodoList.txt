@@ -6,7 +6,8 @@
 
 //<!--- Release population when destruc building. (recalculation when game starting)
 
-//<!-- Town stage. >>>  menu bar < back to main menu, options, pause, resume >
+<!-- Town stage. >>>  Setting button ==> back to main menu, options, pause, resume, quit,
+<!-- Automatic re calculation sum of employee from each building.
 
 
 

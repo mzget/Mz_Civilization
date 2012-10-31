@@ -13,10 +13,7 @@ public class MainMenu : Mz_BaseScene
     public enum SceneState { none = 0, showOption, showNewGame, showLoadGame, };
     private SceneState sceneState;
     public enum NewGameUIState { none = 0, showTextField, showDuplicateName, showSaveGameSlot, };
-    private NewGameUIState newgameUIState;
-    public NewGameUIState NewGameGUIState { get { return newgameUIState; } }
-	
-    private string hoverName = string.Empty;        //<!-- name of gui tooltip.
+    public NewGameUIState newgameUIState;
 
     public string username = string.Empty;
     private bool _isNullUsernameNotification = false;
@@ -57,12 +54,6 @@ public class MainMenu : Mz_BaseScene
         //        newgameUIState = NewGameUIState.showTextField;
         //    }
         //}
-    }
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
     }
 
     public bool _showSkinLayout;
@@ -157,6 +148,7 @@ public class MainMenu : Mz_BaseScene
         Rect usernameTextfield_rect = new Rect((newGameGroup_rect.width / 2) - ((250 * Mz_GUIManager.Extend_heightScale) / 2), newGameGroup_rect.height / 2 - 50, 250 * Mz_GUIManager.Extend_heightScale, 50);
         Rect startButton_rect = new Rect(50 * Mz_GUIManager.Extend_heightScale, 300, 150 * Mz_GUIManager.Extend_heightScale, 40);
         Rect cancelButton_rect = new Rect(300 * Mz_GUIManager.Extend_heightScale, 300, 150 * Mz_GUIManager.Extend_heightScale, 40);
+		
         GUI.BeginGroup(newGameGroup_rect, "New Player", GUI.skin.window);
         {
             if (Event.current.isKey && Event.current.keyCode == KeyCode.Return)
@@ -234,6 +226,7 @@ public class MainMenu : Mz_BaseScene
         {
             Mz_StorageManage.SaveSlot = 0;
             _isFullSaveGameSlot = true;
+			sceneState = SceneState.showLoadGame;
 
             Debug.LogWarning("<!-- Full Slot Call Showsavegameslot method.");
         }
@@ -273,21 +266,21 @@ public class MainMenu : Mz_BaseScene
                 // Display To Save Username.
                 GUI.Box(textbox_header_rect, username);
                 /// Choose SaveGame Slot for replace new data.
-                if (GUI.Button(slot_1Rect, new GUIContent(PlayerPrefs.GetString(1 + "username"), "button")))
+                if (GUI.Button(slot_1Rect, new GUIContent(player_1, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
                     Mz_StorageManage.SaveSlot = 1;
                     SaveNewPlayer();
                 }
-                else if (GUI.Button(slot_2Rect, new GUIContent(PlayerPrefs.GetString(2 + "username"), "button")))
+                else if (GUI.Button(slot_2Rect, new GUIContent(player_2, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
                     Mz_StorageManage.SaveSlot = 2;
                     SaveNewPlayer();
                 }
-                else if (GUI.Button(slot_3Rect, new GUIContent(PlayerPrefs.GetString(3 + "username"), "button")))
+                else if (GUI.Button(slot_3Rect, new GUIContent(player_3, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 

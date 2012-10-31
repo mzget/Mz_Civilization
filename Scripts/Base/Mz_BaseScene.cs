@@ -15,7 +15,7 @@ public class Mz_BaseScene : MonoBehaviour {
         Town,
     }
     public static ScenesInstance SceneInstance;
-    protected bool _hasQuitCommand = false;
+    public bool _hasQuitCommand = false;
     /// Detect Touch and Input
     public Touch touch;
     public Vector3 mousePos;
@@ -73,7 +73,8 @@ public class Mz_BaseScene : MonoBehaviour {
     // Update is called once per frame
     protected virtual void Update()
     {
-        Mz_SmartDeviceInput.IOS_INPUT();
+        if(TaskManager.IsShowInteruptGUI == false)
+            Mz_SmartDeviceInput.IOS_INPUT();
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Menu))
         {
@@ -133,7 +134,9 @@ public class Mz_BaseScene : MonoBehaviour {
 	            }
             }
         }
-		else if(Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor) {
+/*		else if(Application.platform == RuntimePlatform.WindowsEditor || 
+            Application.platform == RuntimePlatform.OSXEditor)
+        {
 			mousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 				
 			if(Input.GetMouseButtonDown(0)) {
@@ -154,7 +157,7 @@ public class Mz_BaseScene : MonoBehaviour {
                 originalPos = Vector3.zero;
                 currentPos = Vector3.zero;
             }
-		}
+		}*/
     }
 	protected virtual void MovingCameraTransform ()
 	{
@@ -188,24 +191,27 @@ public class Mz_BaseScene : MonoBehaviour {
         //<-- to do asking for quit game.
 #endif
     }
-	
 
-    protected virtual void OnGUI() {
-		GUI.depth = 0;
+
+    protected virtual void OnGUI()
+    {
+        GUI.depth = 0;
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
 
-        if(_hasQuitCommand) {
-            GUI.BeginGroup(new Rect(Main.GAMEWIDTH / 2 - 150, Main.GAMEHEIGHT / 2 - 100, 300, 200), "Do you want to quit ?", GUI.skin.window);
+        if (_hasQuitCommand)
+        {
+            GUI.BeginGroup(new Rect(Screen.width / 2 - (200 * Mz_GUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 100, 400 * Mz_GUIManager.Extend_heightScale, 200), "Do you want to quit ?", GUI.skin.window);
             {
-                if (GUI.Button(new Rect(40, 120, 100, 32), "Yes"))
+                if (GUI.Button(new Rect(60 * Mz_GUIManager.Extend_heightScale, 155, 100 * Mz_GUIManager.Extend_heightScale, 40), "Yes"))
                     Application.Quit();
-                else if (GUI.Button(new Rect(160, 120, 100, 32), "No"))
+                else if (GUI.Button(new Rect(240 * Mz_GUIManager.Extend_heightScale, 155, 100 * Mz_GUIManager.Extend_heightScale, 40), "No"))
                     _hasQuitCommand = false;
             }
             GUI.EndGroup();
         }
     }
 
+    #region <!-- Unity Log Callback.
 
     public string output = "";
     public string stack = "";
@@ -222,4 +228,6 @@ public class Mz_BaseScene : MonoBehaviour {
         output = logString;
         stack = stackTrace;
     }
+
+    #endregion
 }

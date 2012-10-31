@@ -28,22 +28,22 @@ public class BuildingArea : Base_ObjectBeh
     //<!--- Militaly.
     public Texture2D barrackNotation;
 
-    private OTSprite sprite;
-    public OTSprite Sprite {
-        get {
-            if (sprite == null) {
-                sprite = this.gameObject.GetComponent<OTSprite>();
-                return sprite;
-            }
-            else 
-                return sprite;
-        }
-        set { sprite = value; }
-    }
+    public OTSprite Sprite;
+//    public OTSprite Sprite {
+//        get {
+//            if (sprite == null) {
+//                sprite = this.gameObject.GetComponent<OTSprite>();
+//                return sprite;
+//            }
+//            else 
+//                return sprite;
+//        }
+//        set { sprite = value; }
+//    }
 	private int indexOfAreaPosition;
     public int IndexOfAreaPosition { get { return indexOfAreaPosition; } set { indexOfAreaPosition = value; } }
     private enum GUIState { none = 0, ShowMainUI, ShowUtiltyUI, ShowEconomyUI, ShowMilitaryUI, ShowBuyArea, };
-    public enum AreaState { In_Active = 1, De_Active = 0, };
+    public enum AreaState { Active = 1, UnActive = 0, };
     public AreaState areaState; 
     private GUIState guiState;
     private StageManager stageManager;
@@ -81,20 +81,22 @@ public class BuildingArea : Base_ObjectBeh
     private GUIStyle requirementGroup_style;
     private GUIStyle requirementBox_style;
 
-
+	
+	void Awake() {		
+        Sprite = this.gameObject.GetComponent<OTSprite>();
+	}
+	
 	// Use this for initialization
 	void Start () 
 	{
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
-        sprite = this.gameObject.GetComponent<OTSprite>();
-
-        this.InitializeGUI();
         StartCoroutine(this.LoadTextureResource());
+        this.InitializeGUI();
 
-        if(areaState == AreaState.De_Active) {
-            sprite.frameIndex = 4;
-		    sprite.materialReference = "tint";
-		    sprite.tintColor = Color.gray;
+        if(areaState == AreaState.UnActive) {
+            Sprite.frameIndex = 4;
+		    Sprite.materialReference = "tint";
+		    Sprite.tintColor = Color.gray;
 			
             return;
         }
@@ -202,13 +204,13 @@ public class BuildingArea : Base_ObjectBeh
 	}
     protected override void OnMouseDown()
     {
-        if(areaState == AreaState.In_Active) {
+        if(areaState == AreaState.Active) {
 		    if(TaskManager.IsShowInteruptGUI == false) {
                 guiState = GUIState.ShowUtiltyUI;
                 TaskManager.IsShowInteruptGUI = true;
             }
         }
-        else if(areaState == AreaState.De_Active) {
+        else if(areaState == AreaState.UnActive) {
             if (TaskManager.IsShowInteruptGUI == false) {
                 guiState = GUIState.ShowBuyArea;
                 TaskManager.IsShowInteruptGUI = true;
@@ -244,11 +246,11 @@ public class BuildingArea : Base_ObjectBeh
     {
         StoreHouse.sumOfGold -= 500;
 
-        this.areaState = AreaState.In_Active;
-        sprite.materialReference = "transparent";
-        sprite.frameIndex = 3;
+        this.areaState = AreaState.Active;
+        Sprite.materialReference = "transparent";
+        Sprite.frameIndex = 3;
 		
-		PlayerPrefs.SetInt(Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
 		PlayerPrefs.Save();
 
         this.CloseGUIWindow();
