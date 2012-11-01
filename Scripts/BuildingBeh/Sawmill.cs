@@ -79,7 +79,17 @@ public class Sawmill : BuildingBeh {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
         BuildingBeh.Sawmill_Instance.Add(this);
+		this.CalculateNumberOfEmployed(p_level);
     }
+	protected override void CalculateNumberOfEmployed (int p_level)
+	{
+		int sumOfEmployed = 0;
+		for (int i = 0; i < p_level; i++) {
+			sumOfEmployed += RequireResource[i].Employee;
+		}
+		
+		HouseBeh.SumOfEmployee += sumOfEmployed;
+	}
 
     #region <!--- Building Processing.
 
@@ -112,12 +122,6 @@ public class Sawmill : BuildingBeh {
 
 		BuildingBeh.Sawmill_Instance.Remove(this);
 	}
-	
-	// Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     protected override void CreateWindow(int windowID)
     {

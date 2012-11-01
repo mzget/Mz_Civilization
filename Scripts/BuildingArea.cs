@@ -29,17 +29,6 @@ public class BuildingArea : Base_ObjectBeh
     public Texture2D barrackNotation;
 
     public OTSprite Sprite;
-//    public OTSprite Sprite {
-//        get {
-//            if (sprite == null) {
-//                sprite = this.gameObject.GetComponent<OTSprite>();
-//                return sprite;
-//            }
-//            else 
-//                return sprite;
-//        }
-//        set { sprite = value; }
-//    }
 	private int indexOfAreaPosition;
     public int IndexOfAreaPosition { get { return indexOfAreaPosition; } set { indexOfAreaPosition = value; } }
     private enum GUIState { none = 0, ShowMainUI, ShowUtiltyUI, ShowEconomyUI, ShowMilitaryUI, ShowBuyArea, };
@@ -191,10 +180,10 @@ public class BuildingArea : Base_ObjectBeh
     }
 	
 	// Update is called once per frame
-	protected override void Update ()
-	{
-		base.Update ();
-	}
+//	protected override void Update ()
+//	{
+//		base.Update ();
+//	}
     
     #region <!-- OnMouse Event.
 	
@@ -745,11 +734,13 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(MarketBeh.RequireResource[0]))
-            enableUpgrade = true;
+        bool enableBuild = false;
+        if (BuildingBeh.CheckingCanCreateBuilding() && 
+		    buildingBeh.CheckingEnoughUpgradeResource(MarketBeh.RequireResource[0]) &&
+		    BuildingBeh.MarketInstances == null)
+			enableBuild = true;
 
-        GUI.enabled = enableUpgrade;
+        GUI.enabled = enableBuild;
         if (GUI.Button(createButton_rect, "Create"))
         {
             GameResource.UsedResource(MarketBeh.RequireResource[0]);

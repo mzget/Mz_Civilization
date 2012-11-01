@@ -76,15 +76,24 @@ public class MillStone : BuildingBeh {
 
         buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "StoneBlock", typeof(Texture2D)) as Texture2D;
     }
-
     public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
         BuildingBeh.MillStoneInstance.Add(this);
+		this.CalculateNumberOfEmployed(p_level);
     }
+	protected override void CalculateNumberOfEmployed (int p_level)
+	{
+		int sumOfEmployed = 0;
+		for (int i = 0; i < p_level; i++) {
+			sumOfEmployed += RequireResource[i].Employee;
+		}
+		
+		HouseBeh.SumOfEmployee += sumOfEmployed;
+	}
 
-    #region Building Processing.
+    #region <!-- Building Processing.
 
     public override void OnBuildingProcess(BuildingBeh building)
     {
@@ -113,12 +122,6 @@ public class MillStone : BuildingBeh {
         stageManager.resourceCycle_Event -= HaveResourceCycle_Event;
 		BuildingBeh.MillStoneInstance.Remove(this);
 	}
-	
-	// Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     protected override void CreateWindow(int windowID)
     {

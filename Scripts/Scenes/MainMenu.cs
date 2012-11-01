@@ -360,9 +360,29 @@ public class MainMenu : Mz_BaseScene
         PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumoffood, 500);
         PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumofwood, 500);
         PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumofstone, 500);
-        PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumofgold, 2000);
+        PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumofgold, 2500);
 
-        PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);		
+		
+		//<!--- House instance data. --->>
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance, 0);
+		//<!-- Farm Data.
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.amount_farm_instance, 0);
+		//<!-- Sawmill Data.
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.amount_sawmill_instance, 0);
+		//<!-- MillStone Data.
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.amount_millstone_instance, 0);	
+		//<!-- Smelter Data.
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance, 0);
+		
+		//<!-- Save Storehouse data.
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.numberOfStorehouseInstance, 0);
+		//<!-- Set default value of "MarketInstance".
+		PlayerPrefsX.SetBool(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.MarketInstance, false);
+		
+		//<!-- Save Barracks data.
+		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs, 0);
+
 
         this.LoadDataToSaveStorage();
 
@@ -384,7 +404,6 @@ public class MainMenu : Mz_BaseScene
         StoreHouse.sumOfWood = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumofwood);
         StoreHouse.sumOfGold = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumofgold);
         StoreHouse.sumOfStone = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumofstone);
-        HouseBeh.SumOfEmployee = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.sumOfEmployee);
 
         Debug.Log("Load storage data to static variable complete.");
 

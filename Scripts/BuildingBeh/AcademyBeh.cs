@@ -53,12 +53,7 @@ public class AcademyBeh : BuildingBeh {
         base.InitializeTexturesResource();
         base.buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Academy", typeof(Texture2D)) as Texture2D;
     }
-	
-	// Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
+
 	
     protected override void CreateWindow(int windowID)
     {

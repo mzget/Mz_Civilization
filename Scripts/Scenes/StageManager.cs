@@ -69,6 +69,13 @@ public class StageManager : Mz_BaseScene {
 
     void Awake() {
         buildingArea_Objs.Clear();
+		BuildingBeh.ClearStaticData();
+
+		HouseBeh.SumOfPopulation = 0;
+		HouseBeh.SumOfEmployee = 0;
+		HouseBeh.SumOfUnemployed = 0;
+		
+		StoreHouse.SumOfMaxCapacity = 500;
     }
 
 	// Use this for initialization
@@ -181,7 +188,7 @@ public class StageManager : Mz_BaseScene {
     int amount_MillStone_Instance = 0;
     int amount_Smelter_Instance = 0;    
 	int numberOfStoreHouseInstances = 0;
-	int numberOfMarketInstances = 0;
+	bool marketInstance = false;
 	
 	int numberOf_BarracksInstance = 0;
 
@@ -195,7 +202,7 @@ public class StageManager : Mz_BaseScene {
         amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance);
         //<!--- Economy --->>
         numberOfStoreHouseInstances = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.numberOfStorehouseInstance);
-        numberOfMarketInstances = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.numberOfMarketInstance);
+        marketInstance = PlayerPrefsX.GetBool(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.MarketInstance);
         //<!--- Millitary --->>
         numberOf_BarracksInstance = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs);
     }
@@ -313,15 +320,13 @@ public class StageManager : Mz_BaseScene {
         #endregion
 		#region <!--- Market data.
 		
-		if(numberOfMarketInstances != 0) {
-			for (int i = 0; i < numberOfMarketInstances; i++) {
-                int position = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.positionOfMarket_ + i);
-                int level = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.levelOfMarket_ + i);
-				
-				GameObject market_Obj = Instantiate(market_prefab) as GameObject;
-				MarketBeh marketBeh = market_Obj.GetComponent<MarketBeh>();
-                marketBeh.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, position, level);
-			}	
+		if(marketInstance) {
+        	int position = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.positionOfMarket);
+        	int level = PlayerPrefs.GetInt(Mz_StorageManage.SaveSlot + ":" + Mz_SaveData.levelOfMarket);
+			
+			GameObject market_Obj = Instantiate(market_prefab) as GameObject;
+			MarketBeh marketBeh = market_Obj.GetComponent<MarketBeh>();
+        	marketBeh.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, position, level);
 		}
 		
 		#endregion

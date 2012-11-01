@@ -159,12 +159,24 @@ public class MarketBeh : BuildingBeh {
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
-        BuildingBeh.MarketInstances.Add(this);
+        BuildingBeh.MarketInstances = this;
+		this.CalculateNumberOfEmployed(p_level);
+
         for (int i = 0; i < base.Level; i++) {
             caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
 //            caravanList.Add(new CaravanBeh());
         }
     }
+	protected override void CalculateNumberOfEmployed (int p_level)
+	{
+		//		base.CalculateNumberOfEmployed (p_level);
+		int sumOfEmployed = 0;
+		for (int i = 0; i < p_level; i++) {
+			sumOfEmployed += RequireResource[i].Employee;
+		}
+		
+		HouseBeh.SumOfEmployee += sumOfEmployed;
+	}
 
     #region <!--- Building Processing.
 
@@ -199,7 +211,7 @@ public class MarketBeh : BuildingBeh {
 		stageManager.dayCycle_Event -= this.ReachDayCycle;
         base.NotEnoughResource_Notification_event -= this.MarketBeh_NotEnoughResourceNotification_event;
 
-        BuildingBeh.MarketInstances.Remove(this);
+        BuildingBeh.MarketInstances = null;
 		caravanList.Clear();
     }
 
@@ -332,12 +344,6 @@ public class MarketBeh : BuildingBeh {
 			
 			#endregion
 		}
-    }
-	
-	// Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
     }
 
     protected override void CreateWindow(int windowID)

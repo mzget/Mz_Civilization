@@ -53,7 +53,7 @@ public class HouseBeh : BuildingBeh {
 
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
-        base.buildingTimeData = new BuildingsTimeData(buildingType);
+		base.buildingTimeData = new BuildingsTimeData(buildingType);
     }
 
 	// Use this for initialization
@@ -101,6 +101,17 @@ public class HouseBeh : BuildingBeh {
 		base.InitializingBuildingBeh (p_buildingState, p_indexPosition, p_level);
 
         BuildingBeh.House_Instances.Add(this);
+		this.CalculateNumberOfEmployed(p_level);
+	}
+	protected override void CalculateNumberOfEmployed (int p_level)
+	{
+//		base.CalculateNumberOfEmployed (p_level);
+		int sumOfEmployed = 0;
+		for (int i = 0; i < p_level; i++) {
+			sumOfEmployed += RequireResource[i].Employee;
+		}
+		
+		HouseBeh.SumOfEmployee += sumOfEmployed;
 	}
 
     #region <!--- Building Processing.
@@ -136,12 +147,6 @@ public class HouseBeh : BuildingBeh {
 		base.NotEnoughResource_Notification_event -= HandleBaseNotEnoughResourceNotification_event;
 		BuildingBeh.House_Instances.Remove(this);
 	}
-	
-	// Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     protected override void CreateWindow(int windowID)
     {

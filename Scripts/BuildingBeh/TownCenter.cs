@@ -97,12 +97,6 @@ public class TownCenter : BuildingBeh {
 	}
 	
 	#endregion
-	
-	// Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     protected override void CreateWindow(int windowID)
     {

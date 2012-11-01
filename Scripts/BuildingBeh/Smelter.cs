@@ -71,9 +71,19 @@ public class Smelter : BuildingBeh {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
         BuildingBeh.SmelterInstance.Add(this);
+		this.CalculateNumberOfEmployed(p_level);
     }
+	protected override void CalculateNumberOfEmployed (int p_level)
+	{
+		int sumOfEmployed = 0;
+		for (int i = 0; i < p_level; i++) {
+			sumOfEmployed += RequireResource[i].Employee;
+		}
+		
+		HouseBeh.SumOfEmployee += sumOfEmployed;
+	}
 
-    #region Building Processing.
+    #region <-- Building Processing.
 
     public override void OnBuildingProcess(BuildingBeh building)
     {
@@ -102,12 +112,6 @@ public class Smelter : BuildingBeh {
 		stageManager.resourceCycle_Event -= HaveResourceCycle_Event;
 		BuildingBeh.SmelterInstance.Remove(this);
 	}
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-    }
 
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {

@@ -53,20 +53,7 @@ public class Farm : BuildingBeh
         base.stageManager.resourceCycle_Event += HaveResourceCycle_Event;
         base.NotEnoughResource_Notification_event += Farm_NotEnoughResource_Notification_event;
     }
-    
-    void HaveResourceCycle_Event(object sender, System.EventArgs e)
-    {
-        if (currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
-            if (StoreHouse.sumOfFood < StoreHouse.SumOfMaxCapacity)
-                StoreHouse.sumOfFood += this.productionRate[this.Level];
-        }
-    }
-
-    void Farm_NotEnoughResource_Notification_event(object sender, NoEnoughResourceNotificationArg e)
-    {
-        base.notificationText = e.notification_args;
-    }
-
+  
     protected override void InitializeTexturesResource()
     {
         base.InitializeTexturesResource();
@@ -79,7 +66,18 @@ public class Farm : BuildingBeh
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
         BuildingBeh.Farm_Instance.Add(this);
+		
+		CalculateNumberOfEmployed(p_level);
     }
+	
+	protected override void CalculateNumberOfEmployed(int p_level) {		
+		int sumOfEmployed = 0;
+		for (int i = 0; i < p_level; i++) {
+			 sumOfEmployed += RequireResource[i].Employee;
+		}
+		
+		HouseBeh.SumOfEmployee += sumOfEmployed;
+	}
 
     #region <!--- Building Processing.
 
@@ -112,13 +110,24 @@ public class Farm : BuildingBeh
 
 		BuildingBeh.Farm_Instance.Remove(this);
 	}
-
-    // Update is called once per frame
-    protected override void Update()
+	
+	#region <!-- Events handle.
+	
+    void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
-        base.Update();
+        if (currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
+            if (StoreHouse.sumOfFood < StoreHouse.SumOfMaxCapacity)
+                StoreHouse.sumOfFood += this.productionRate[this.Level];
+        }
+    }
+
+    void Farm_NotEnoughResource_Notification_event(object sender, NoEnoughResourceNotificationArg e)
+    {
+        base.notificationText = e.notification_args;
     }
 	
+	#endregion
+
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);

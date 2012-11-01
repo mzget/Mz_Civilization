@@ -4,10 +4,11 @@
 	- persia purchase => food, wood,
 	- persia sell => 
 
-//<!--- Release population when destruc building. (recalculation when game starting)
+<!-- Release population when destruction building. (recalculation when game starting) 
+	- call calculationNumberOfEmployed() when destuction method called.
 
 <!-- Town stage. >>>  Setting button ==> back to main menu, options, pause, resume, quit,
-<!-- Automatic re calculation sum of employee from each building.
+<!-- Market can be built only once instance in city. 
 
 
 
@@ -27,3 +28,4 @@
 <!-- BuildingBeh should alway show building level.		
 <!-- buy building area to create more construction.
 <!-- Can create smelter when player has towncenter level 5.
+<!-- Automatic re calculation sum of employee from each building.

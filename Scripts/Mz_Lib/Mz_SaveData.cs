@@ -8,7 +8,7 @@ public class Mz_SaveData
 	public const string sumofwood = "sumofwood";
 	public const string sumofgold = "sumofgold";
 	public const string sumofstone = "sumofstone";
-	public const string sumOfEmployee = "sumOfEmployee" ;
+//	public const string sumOfEmployee = "sumOfEmployee" ;
 	
 	public const string amount_farm_instance = "amount_farm_instance";
 	public const string amount_sawmill_instance = "amount_sawmill_instance";
@@ -42,9 +42,9 @@ public class Mz_SaveData
 	public const string storehouse_position_ = "storehouse_position_";
 	public const string storehouse_level_ = "storehouse_level_";
 	//<!-- Market key.
-    public const string numberOfMarketInstance = "numberOfMarketInstance";
-    public const string positionOfMarket_ = "positionOfMarket_";
-    public const string levelOfMarket_ = "levelOfMarket_";
+    public const string MarketInstance = "MarketInstance";
+    public const string positionOfMarket = "positionOfMarket";
+    public const string levelOfMarket = "levelOfMarket";
 
     /// <summary>
     /// Military Section.
@@ -64,8 +64,6 @@ public class Mz_SaveData
             PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumofwood, StoreHouse.sumOfWood);
             PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumofstone, StoreHouse.sumOfStone);
             PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumofgold, StoreHouse.sumOfGold);
-	        //<!-- Store amount employee. 
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumOfEmployee, HouseBeh.SumOfEmployee);
 			//<!-- TownCenter.
             PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
 			
@@ -123,12 +121,12 @@ public class Mz_SaveData
 	        }
 	
 	        //<!-- Market data.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + numberOfMarketInstance, BuildingBeh.MarketInstances.Count);
-	        for (int i = 0; i < BuildingBeh.MarketInstances.Count; i++) {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + positionOfMarket_ + i, BuildingBeh.MarketInstances[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + levelOfMarket_ + i, BuildingBeh.MarketInstances[i].Level);
-	        }
-	
+			if(BuildingBeh.MarketInstances) {
+            	PlayerPrefsX.SetBool(Mz_StorageManage.SaveSlot + ":" + MarketInstance, BuildingBeh.MarketInstances);
+        		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + positionOfMarket , BuildingBeh.MarketInstances.IndexOfPosition);
+        		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + levelOfMarket, BuildingBeh.MarketInstances.Level);
+			}
+
 	        #endregion
 			
 			#region <<!--- Military Section.

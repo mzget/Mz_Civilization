@@ -87,7 +87,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
 	//<!-- Economy.
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
-    public static List<MarketBeh> MarketInstances = new List<MarketBeh>();
+	public static MarketBeh MarketInstances;
     //<!-- Military.
     public static List<BarracksBeh> Barrack_Instances = new List<BarracksBeh>();
 	
@@ -246,6 +246,7 @@ public class BuildingBeh : Base_ObjectBeh {
         this.sprite.position = StageManager.buildingArea_Pos[indexOfPosition];
         StageManager.buildingArea_Objs[indexOfPosition].gameObject.active = false;
     }
+	protected virtual void CalculateNumberOfEmployed(int p_level) {	}
 
     protected virtual void OnUpgradeProcess(BuildingBeh p_building) 
     {
@@ -407,12 +408,7 @@ public class BuildingBeh : Base_ObjectBeh {
     {
         Debug.Log("Building.ReachDayCycle event");
     }
-
-    protected override void Update()
-    {
-        base.Update();
-    }
-
+	
     #region <!-- Mouse Events.
 
 	protected override void OnTouchBegan ()
@@ -434,7 +430,9 @@ public class BuildingBeh : Base_ObjectBeh {
     }
 
     #endregion
-
+	
+	#region <!-- OnGUI Section.
+	
     protected void OnGUI()
     {
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
@@ -468,4 +466,19 @@ public class BuildingBeh : Base_ObjectBeh {
         _IsShowInterface = false;
         TaskManager.IsShowInteruptGUI = false;
     }
+	
+	#endregion
+	
+	internal static void ClearStaticData() {
+		House_Instances.Clear();
+		Farm_Instance.Clear();
+		Sawmill_Instance.Clear();
+		MillStoneInstance.Clear();
+		SmelterInstance.Clear();
+
+		StoreHouseInstance.Clear();
+		MarketInstances = null;
+
+		Barrack_Instances.Clear();
+	}
 }

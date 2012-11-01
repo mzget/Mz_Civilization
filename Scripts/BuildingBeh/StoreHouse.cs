@@ -83,8 +83,7 @@ public class StoreHouse : BuildingBeh {
             SumOfMaxCapacity += obj.currentMaxCapacity;
         }
     }	
-
-    public static void ReachDayCycle(object sender, System.EventArgs e) {
+    public static new void ReachDayCycle(object sender, System.EventArgs e) {
         if (BuildingBeh.Farm_Instance.Count == 0 && sumOfFood < SumOfMaxCapacity)
             sumOfFood += 2;
         if (BuildingBeh.Sawmill_Instance.Count == 0 && sumOfWood < SumOfMaxCapacity)
@@ -164,7 +163,17 @@ public class StoreHouse : BuildingBeh {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
         BuildingBeh.StoreHouseInstance.Add(this);
+		this.CalculateNumberOfEmployed(p_level);
     }
+	protected override void CalculateNumberOfEmployed (int p_level)
+	{
+		int sumOfEmployed = 0;
+		for (int i = 0; i < p_level; i++) {
+			sumOfEmployed += RequireResource[i].Employee;
+		}
+		
+		HouseBeh.SumOfEmployee += sumOfEmployed;
+	}
 	
     #region <!-- Building Processing.
 
@@ -198,12 +207,6 @@ public class StoreHouse : BuildingBeh {
 
         base.stageManager.dayCycle_Event -= StoreHouse.ReachDayCycle;
 		BuildingBeh.StoreHouseInstance.Remove(this);
-	}
-	
-	// Update is called once per frame
-	protected override void Update ()
-	{
-		base.Update ();
 	}
 
     protected override void CreateWindow(int windowID)
