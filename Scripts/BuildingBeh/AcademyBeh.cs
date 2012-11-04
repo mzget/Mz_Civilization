@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
 public class AcademyBeh : BuildingBeh {
@@ -17,9 +18,10 @@ public class AcademyBeh : BuildingBeh {
     };
 	
     //<!-- Data.
-    public static string BuildingName = "Academy";
-    private static string Description_TH = "ʶҺѹ����֡�� ���Ҥ�÷��س����ö�Ԩ��෤����� ���������ӹҨ��Сͧ���ѧ�ͧ���ͧ";
-    private static string Description_EN = "The Academy is a building in which you can research technologies to increase the power of your city and troops.";
+    public const string BuildingName = "Academy";
+	public const string RequireDescription = "Require :: Towncenter level 5.";
+    public const string Description_TH = "ʶҺѹ����֡�� ���Ҥ�÷��س����ö�Ԩ��෤����� ���������ӹҨ��Сͧ���ѧ�ͧ���ͧ";
+    public const string Description_EN = "The Academy is a building in which you can research technologies to increase the power of your city and troops.";
     public static string CurrentDescription {
         get {
             string temp = "";
@@ -31,21 +33,21 @@ public class AcademyBeh : BuildingBeh {
         }
     }
 
-
-    protected override void Awake()
-    {
+	
+	protected override void Awake() {
         base.Awake();
-    }
 
-	// Use this for initialization
-	void Start () {	
         sprite = this.gameObject.GetComponent<OTSprite>();
-
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
-
+	}
+	
+	// Use this for initialization
+	void Start () {	
         this.InitializeTexturesResource();
+
+        base.NotEnoughResource_Notification_event += new EventHandler<NoEnoughResourceNotificationArg>(AcademyBeh_NotEnoughResource_Notification_event);
 	}
 
     protected override void InitializeTexturesResource()
@@ -54,11 +56,50 @@ public class AcademyBeh : BuildingBeh {
         base.buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Academy", typeof(Texture2D)) as Texture2D;
     }
 
-	
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    {
+        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+
+        BuildingBeh.AcademyInstance = this;
+
+        this.CalculateNumberOfEmployed(p_level);
+    }
+    protected override void CalculateNumberOfEmployed(int p_level)
+    {
+        //base.CalculateNumberOfEmployed(p_level);
+        int sumOfEmployed = 0;
+        for (int i = 0; i < p_level; i++)
+        {
+            sumOfEmployed += RequireResource[i].Employee;
+        }
+
+        HouseBeh.SumOfEmployee += sumOfEmployed;
+    }
+
+    protected override void BuildingProcessComplete(BuildingBeh obj)
+    {
+        base.BuildingProcessComplete(obj);
+
+        Destroy(base.processbar_Obj_parent);
+
+        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
+            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
+    }
+
+    #region <!-- Events Handle.
+
+    void AcademyBeh_NotEnoughResource_Notification_event(object sender, NoEnoughResourceNotificationArg e) {
+        notificationText = e.notification_args;
+    }
+
+    #endregion
+
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);
 
+        if (base.notificationText == "")
+            base.notificationText = base.currentBuildingStatus.ToString();
         GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 

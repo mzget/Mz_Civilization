@@ -20,17 +20,15 @@ public class StoreHouse : BuildingBeh {
         new GameResource() {Food = 40960, Wood = 61440, Gold = 30720, Employee = 50},
 	};
 
-
-//    private int gold = 500;	
-	public static int sumOfGold = 500;
     //<!--- Static Data.
-	public static int sumOfFood = 500;
-	public static int sumOfWood = 500;
-	public static int sumOfStone = 500;
+	public static int sumOfGold = 0;
+	public static int sumOfFood = 0;
+	public static int sumOfWood = 0;
+	public static int sumOfStone = 0;
     public static int sumOfCopper = 0;
     public static int sumOfWeapon = 0;
     public static int sumOfArmor = 0;
-    public static int SumOfMaxCapacity = 500;
+    public static int SumOfMaxCapacity = 0;
     public static string BuildingName = "Store House";
     private static string Description_TH = "";
     private static string Description_EN = "The Storehouse functions as a resource drop site \n " + "It is also the place where resource Gathering technologies are researched";
@@ -78,7 +76,7 @@ public class StoreHouse : BuildingBeh {
         }
 	}
     public static void CalculationSumOfMaxCapacity() {
-        SumOfMaxCapacity = 500;
+        SumOfMaxCapacity = 800;
         foreach (StoreHouse obj in BuildingBeh.StoreHouseInstance) {
             SumOfMaxCapacity += obj.currentMaxCapacity;
         }

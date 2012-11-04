@@ -3,12 +3,21 @@ using System.Collections;
 
 public class Mz_SaveData
 {	
-	public const string username = "username";
-	public const string sumoffood = "sumoffood";
-	public const string sumofwood = "sumofwood";
-	public const string sumofgold = "sumofgold";
-	public const string sumofstone = "sumofstone";
-//	public const string sumOfEmployee = "sumOfEmployee" ;
+	#region Standard storage game data.
+	
+	//<!-- Save Game Slot.
+	public static int SaveSlot = 0;
+	//<!-- User Name.
+	public static string Username = string.Empty;
+	
+	#endregion
+
+
+	public const string KEY_username = "username";
+	public const string KEY_sumoffood = "sumoffood";
+	public const string KEY_sumofwood = "sumofwood";
+	public const string KEY_sumofgold = "sumofgold";
+	public const string KEY_sumofstone = "sumofstone";
 	
 	public const string amount_farm_instance = "amount_farm_instance";
 	public const string amount_sawmill_instance = "amount_sawmill_instance";
@@ -32,6 +41,10 @@ public class Mz_SaveData
 	public const string numberOfHouse_Instance = "numberOfHouse_Instance";
 	public const string house_position_ = "house_position_";
 	public const string house_level_ = "house_level_";
+	//<!-- Academy key data.
+	public const string KEY_AcademyInstance = "AcademyInstance";
+	public const string KEY_AcademyPosition = "AcademyPosition";
+	public const string KEY_AcademyLevel = "AcademyLevel";
 	
     /// <summary>
     /// Economy Section.
@@ -42,9 +55,9 @@ public class Mz_SaveData
 	public const string storehouse_position_ = "storehouse_position_";
 	public const string storehouse_level_ = "storehouse_level_";
 	//<!-- Market key.
-    public const string MarketInstance = "MarketInstance";
-    public const string positionOfMarket = "positionOfMarket";
-    public const string levelOfMarket = "levelOfMarket";
+    public const string KEY_MarketInstance = "MarketInstance";
+    public const string KEY_MarketPosition = "positionOfMarket";
+    public const string KEY_MarketLevel = "levelOfMarket";
 
     /// <summary>
     /// Military Section.
@@ -58,55 +71,60 @@ public class Mz_SaveData
     {
         Debug.LogWarning("Starting Saving...");
 		
-		if(Mz_StorageManage.Username != "") {
-            PlayerPrefs.SetString(Mz_StorageManage.SaveSlot + ":" + username, Mz_StorageManage.Username);
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumoffood, StoreHouse.sumOfFood);
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumofwood, StoreHouse.sumOfWood);
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumofstone, StoreHouse.sumOfStone);
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sumofgold, StoreHouse.sumOfGold);
+		if(Mz_SaveData.Username != "") {
+			PlayerPrefs.SetString(Mz_SaveData.SaveSlot + ":" + KEY_username, Mz_SaveData.Username);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumoffood, StoreHouse.sumOfFood);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofwood, StoreHouse.sumOfWood);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofstone, StoreHouse.sumOfStone);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofgold, StoreHouse.sumOfGold);
 			//<!-- TownCenter.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
 			
 			#region <<!--- Utility Section.
 			
 			//<!--- House instance data. --->>
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + numberOfHouse_Instance, BuildingBeh.House_Instances.Count);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + numberOfHouse_Instance, BuildingBeh.House_Instances.Count);
 			for (int i = 0; i < BuildingBeh.House_Instances.Count; i++) {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + house_position_ + i, BuildingBeh.House_Instances[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + house_level_ + i, BuildingBeh.House_Instances[i].Level);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + house_position_ + i, BuildingBeh.House_Instances[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + house_level_ + i, BuildingBeh.House_Instances[i].Level);
 			}
-			
+			//<!-- Academy.
+			if(BuildingBeh.AcademyInstance) {
+				PlayerPrefsX.SetBool(Mz_SaveData.SaveSlot + ":" + KEY_AcademyInstance, BuildingBeh.AcademyInstance);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_AcademyPosition , BuildingBeh.AcademyInstance.IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_AcademyLevel, BuildingBeh.AcademyInstance.Level);
+			}
 			
 			#endregion
 	
 	        #region <<!--- Resource Section.
 	
 	        //<!-- Farm Data.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + amount_farm_instance, BuildingBeh.Farm_Instance.Count);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + amount_farm_instance, BuildingBeh.Farm_Instance.Count);
 			for(int i = 0; i < BuildingBeh.Farm_Instance.Count; i++) {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + farm_position_ + i, BuildingBeh.Farm_Instance[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + farm_level_ + i, BuildingBeh.Farm_Instance[i].Level);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + farm_position_ + i, BuildingBeh.Farm_Instance[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + farm_level_ + i, BuildingBeh.Farm_Instance[i].Level);
 			}
 			
 			//<!-- Sawmill Data.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + amount_sawmill_instance, BuildingBeh.Sawmill_Instance.Count);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + amount_sawmill_instance, BuildingBeh.Sawmill_Instance.Count);
 			for(int i = 0; i < BuildingBeh.Sawmill_Instance.Count; i++) {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sawmill_position_ + i, BuildingBeh.Sawmill_Instance[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + sawmill_level_ + i, BuildingBeh.Sawmill_Instance[i].Level);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + sawmill_position_ + i, BuildingBeh.Sawmill_Instance[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + sawmill_level_ + i, BuildingBeh.Sawmill_Instance[i].Level);
 			}
 			
 			//<!-- MillStone Data.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + amount_millstone_instance, BuildingBeh.MillStoneInstance.Count);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + amount_millstone_instance, BuildingBeh.MillStoneInstance.Count);
 			for(int i = 0; i < BuildingBeh.MillStoneInstance.Count; i++) {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + millstone_position_ + i, BuildingBeh.MillStoneInstance[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + millstone_level_ + i, BuildingBeh.MillStoneInstance[i].Level);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + millstone_position_ + i, BuildingBeh.MillStoneInstance[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + millstone_level_ + i, BuildingBeh.MillStoneInstance[i].Level);
 			}
 			
 			//<!-- Smelter Data.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + amount_smelter_instance, BuildingBeh.SmelterInstance.Count);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + amount_smelter_instance, BuildingBeh.SmelterInstance.Count);
 			for(int i = 0; i < BuildingBeh.SmelterInstance.Count; i++) {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + smelter_position_ + i, BuildingBeh.SmelterInstance[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + smelter_level_ + i, BuildingBeh.SmelterInstance[i].Level);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + smelter_position_ + i, BuildingBeh.SmelterInstance[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + smelter_level_ + i, BuildingBeh.SmelterInstance[i].Level);
 	        }
 	
 	        #endregion
@@ -114,17 +132,17 @@ public class Mz_SaveData
 	        #region <<!--- Economy Section.
 	
 	        //<!-- Save Storehouse data.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + numberOfStorehouseInstance, BuildingBeh.StoreHouseInstance.Count);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + numberOfStorehouseInstance, BuildingBeh.StoreHouseInstance.Count);
 			for (int i = 0; i < BuildingBeh.StoreHouseInstance.Count; i++) {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + storehouse_position_ + i, BuildingBeh.StoreHouseInstance[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + storehouse_level_ + i, BuildingBeh.StoreHouseInstance[i].Level);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + storehouse_position_ + i, BuildingBeh.StoreHouseInstance[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + storehouse_level_ + i, BuildingBeh.StoreHouseInstance[i].Level);
 	        }
 	
 	        //<!-- Market data.
-			if(BuildingBeh.MarketInstances) {
-            	PlayerPrefsX.SetBool(Mz_StorageManage.SaveSlot + ":" + MarketInstance, BuildingBeh.MarketInstances);
-        		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + positionOfMarket , BuildingBeh.MarketInstances.IndexOfPosition);
-        		PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + levelOfMarket, BuildingBeh.MarketInstances.Level);
+			if(BuildingBeh.MarketInstance) {
+				PlayerPrefsX.SetBool(Mz_SaveData.SaveSlot + ":" + KEY_MarketInstance, BuildingBeh.MarketInstance);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_MarketPosition , BuildingBeh.MarketInstance.IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_MarketLevel, BuildingBeh.MarketInstance.Level);
 			}
 
 	        #endregion
@@ -132,11 +150,11 @@ public class Mz_SaveData
 			#region <<!--- Military Section.
 	
 	        //<!-- Save Barracks data.
-            PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + numberOf_BarracksInstancs, BuildingBeh.Barrack_Instances.Count);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + numberOf_BarracksInstancs, BuildingBeh.Barrack_Instances.Count);
 	        for (int i = 0; i < BuildingBeh.Barrack_Instances.Count; i++)
 	        {
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + barracks_position_ + i, BuildingBeh.Barrack_Instances[i].IndexOfPosition);
-                PlayerPrefs.SetInt(Mz_StorageManage.SaveSlot + ":" + barracks_level_ + i, BuildingBeh.Barrack_Instances[i].Level);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + barracks_position_ + i, BuildingBeh.Barrack_Instances[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + barracks_level_ + i, BuildingBeh.Barrack_Instances[i].Level);
 	        }
 			
 			#endregion

@@ -152,6 +152,8 @@ public class HouseBeh : BuildingBeh {
     {
         base.CreateWindow(windowID);
 
+        stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
+
         if(base.notificationText == "") {
             base.notificationText = base.currentBuildingStatus.ToString();
         }

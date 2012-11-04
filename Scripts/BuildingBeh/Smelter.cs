@@ -19,9 +19,9 @@ public class Smelter : BuildingBeh {
 
     //<!-- Data.
     public static string BuildingName = "Smelter";
+	public const string RequireDescription = "Require :: Towncenter level 5.";
     private static string Description_TH = "โรงหลอมแร่ แร่ทองแดงถูกหลอมขึ้นที่นี่ อาวุธและชุดเกราะในกองทัพของคุณจำเป็นต้องใช้มัน \n" + " อัพเกรดเพื่อเพิ่มกำลังการผลิต";
-    private static string Description_EN = "Copper, Iron can be gathered from mining. Upgrade Smelter to increase ingot production." +
-		"\n\n" + "Require :: Towncenter level 5.";
+    private static string Description_EN = "Copper, Iron can be gathered from mining. Upgrade Smelter to increase ingot production.";
     public static string CurrentDescription {
         get {
             string temp = Description_EN;
@@ -112,7 +112,9 @@ public class Smelter : BuildingBeh {
 		stageManager.resourceCycle_Event -= HaveResourceCycle_Event;
 		BuildingBeh.SmelterInstance.Remove(this);
 	}
-
+	
+	#region <!-- Events handle.
+	
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
         if (this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
@@ -120,6 +122,8 @@ public class Smelter : BuildingBeh {
                 StoreHouse.sumOfCopper += this.productionRate[this.Level];
         }
     }
+	
+	#endregion
 
     protected override void CreateWindow(int windowID)
     {

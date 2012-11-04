@@ -200,12 +200,16 @@ public class Mz_BaseScene : MonoBehaviour {
 
         if (_hasQuitCommand)
         {
+			TaskManager.IsShowInteruptGUI = true;
+			
             GUI.BeginGroup(new Rect(Screen.width / 2 - (200 * Mz_GUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 100, 400 * Mz_GUIManager.Extend_heightScale, 200), "Do you want to quit ?", GUI.skin.window);
             {
                 if (GUI.Button(new Rect(60 * Mz_GUIManager.Extend_heightScale, 155, 100 * Mz_GUIManager.Extend_heightScale, 40), "Yes"))
                     Application.Quit();
-                else if (GUI.Button(new Rect(240 * Mz_GUIManager.Extend_heightScale, 155, 100 * Mz_GUIManager.Extend_heightScale, 40), "No"))
-                    _hasQuitCommand = false;
+                else if (GUI.Button(new Rect(240 * Mz_GUIManager.Extend_heightScale, 155, 100 * Mz_GUIManager.Extend_heightScale, 40), "No")) {
+                    _hasQuitCommand = false; 
+					TaskManager.IsShowInteruptGUI = false;
+				}
             }
             GUI.EndGroup();
         }

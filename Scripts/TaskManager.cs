@@ -10,8 +10,8 @@ public class TaskManager : MonoBehaviour {
 
     public static bool IsShowInteruptGUI = false;
 //	public static bool IsShowSidebarGUI = false;
-    private enum RightSideState { none = 0, show_domination, show_agriculture, show_industry, show_commerce, show_military, show_map, show_setting, };
-    private RightSideState currentRightSideState = RightSideState.show_domination;
+    public enum RightSideState { none = 0, show_domination, show_agriculture, show_industry, show_commerce, show_military, show_map, show_setting, };
+    public RightSideState currentRightSideState = RightSideState.show_domination;
     private StageManager stageManager;
 
     public GUISkin taskbarUI_Skin;
@@ -215,9 +215,7 @@ public class TaskManager : MonoBehaviour {
     }
 
     void OnGUI()
-    {
-        //this.DrawTopLayerOfJoystick();
-		
+    {		
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
 		
 		#region <!-- Header group.
@@ -292,10 +290,15 @@ public class TaskManager : MonoBehaviour {
 			if(currentRightSideState == RightSideState.show_domination) {
 				DrawDomination_tab();
 			}
-			else if(currentRightSideState == RightSideState.show_commerce) {
-				DrawCommerce_tab();
-			}
-            else if (currentRightSideState == RightSideState.show_setting) {
+            else if (currentRightSideState == RightSideState.show_military) {
+                DrawMilitaryTab();
+            }
+            else if (currentRightSideState == RightSideState.show_commerce)
+            {
+                DrawCommerce_tab();
+            }
+            else if (currentRightSideState == RightSideState.show_setting)
+            {
                 this.DrawSettingTab();
             }
 
@@ -341,7 +344,6 @@ public class TaskManager : MonoBehaviour {
 		}
 		GUI.EndGroup();		
     }
-	
 	private void DrawDomination_tab() {
 		GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
 		{
@@ -354,7 +356,18 @@ public class TaskManager : MonoBehaviour {
 		}
 		GUI.EndGroup();		
 	}
-	
+    void DrawMilitaryTab() {
+        GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
+        {
+            float label_width = sidebarContentGroup_rect.width - 10;
+            GUI.Box(new Rect(5, 2, label_width, 32), "troops", taskbarUI_Skin.box);
+
+            GUI.Box(new Rect(5, 100, label_width, 32), UnitDataStore.GreekUnitData.Spearman + " : ", taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 145, label_width, 32), UnitDataStore.GreekUnitData.Hapaspist + " : ", taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 190, label_width, 32), UnitDataStore.GreekUnitData.Hoplite + " : ", taskbarUI_Skin.box);
+        }
+        GUI.EndGroup();	
+    }
 	private void DrawCommerce_tab() {
 		GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
 		{

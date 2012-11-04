@@ -12,6 +12,8 @@ public class GameResource
     public int Stone { get; set; }
     public int Copper { get; set; }
     public int Iron { get; set; }
+    public int Armor { get; set; }
+    public int Weapon { get; set; }
     public int Employee { get; set; }
     public int Gold { get; set; }
 

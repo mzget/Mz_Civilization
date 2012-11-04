@@ -3,35 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BuildingsTimeData {
-	
-	public float[] arrBuildingTimesData = new float[BuildingBeh.MAX_LEVEL];
-
-    public BuildingsTimeData(BuildingBeh.BuildingType r_buildingType)
-    {
-        if (r_buildingType == BuildingBeh.BuildingType.general)
-        {
-            float[] time_generalType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
-
-            arrBuildingTimesData = time_generalType;
-        }
-        else if (r_buildingType == BuildingBeh.BuildingType.resource)
-        {
-            float[] time_resourceType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
-
-            arrBuildingTimesData = time_resourceType;
-        }
-        else if (r_buildingType == BuildingBeh.BuildingType.storehouse)
-        {
-            return;
-        }
-        else if (r_buildingType == BuildingBeh.BuildingType.barrack) {
-            float[] time_resourceType = { 30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f, };
-
-            arrBuildingTimesData = time_resourceType;
-        }
-    }
-};
 
 public class BuildingBeh : Base_ObjectBeh {
 	
@@ -80,6 +51,7 @@ public class BuildingBeh : Base_ObjectBeh {
     public static TownCenter TownCenter;
     //<!--- Utility.
     public static List<HouseBeh> House_Instances = new List<HouseBeh>();
+	public static AcademyBeh AcademyInstance;
 	//<!-- Resource.
     public static List<Farm> Farm_Instance = new List<Farm>();
 	public static List<Sawmill> Sawmill_Instance = new List<Sawmill>();
@@ -87,7 +59,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
 	//<!-- Economy.
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
-	public static MarketBeh MarketInstances;
+	public static MarketBeh MarketInstance;
     //<!-- Military.
     public static List<BarracksBeh> Barrack_Instances = new List<BarracksBeh>();
 	
@@ -130,7 +102,7 @@ public class BuildingBeh : Base_ObjectBeh {
 			return false;
     }
 	
-	#region <!-- Checking Resource pre construction.
+	#region <!-- Checking Resource pre construction Event.
 	
 	public class NoEnoughResourceNotificationArg : EventArgs {
 		public string notification_args { get; set; }
@@ -258,7 +230,6 @@ public class BuildingBeh : Base_ObjectBeh {
             onBuilding_Obj.Add(p_building);
         }
 	}
-
 	public virtual void OnBuildingProcess(BuildingBeh p_buildind) 
     {
         Debug.Log(p_buildind.name + ": OnBuildingProcess()");
@@ -269,7 +240,6 @@ public class BuildingBeh : Base_ObjectBeh {
             onBuilding_Obj.Add(p_buildind);
         }
 	}
-
     protected virtual void CreateProcessBar(BuildingStatus buildingStatus)
     {
         if (processbar_Obj_parent == null)
@@ -349,12 +319,10 @@ public class BuildingBeh : Base_ObjectBeh {
         else
             return;
     }
-
 	private void BuildingProcess(Vector2 Rvalue) {		
 		if(this.processBar_Scolling)
 			this.processBar_Scolling.size = Rvalue;
 	}
-
 	protected virtual void BuildingProcessComplete(BuildingBeh obj) {
         Debug.Log(obj.name + ": BuildingProcessComplete");
 
@@ -471,13 +439,15 @@ public class BuildingBeh : Base_ObjectBeh {
 	
 	internal static void ClearStaticData() {
 		House_Instances.Clear();
+		AcademyInstance = null;
+
 		Farm_Instance.Clear();
 		Sawmill_Instance.Clear();
 		MillStoneInstance.Clear();
 		SmelterInstance.Clear();
 
 		StoreHouseInstance.Clear();
-		MarketInstances = null;
+		MarketInstance = null;
 
 		Barrack_Instances.Clear();
 	}

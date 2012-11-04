@@ -67,9 +67,8 @@ public class Farm : BuildingBeh
 
         BuildingBeh.Farm_Instance.Add(this);
 		
-		CalculateNumberOfEmployed(p_level);
-    }
-	
+		this.CalculateNumberOfEmployed(p_level);
+    }	
 	protected override void CalculateNumberOfEmployed(int p_level) {		
 		int sumOfEmployed = 0;
 		for (int i = 0; i < p_level; i++) {

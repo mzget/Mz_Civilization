@@ -20,6 +20,7 @@ public class BarracksBeh : BuildingBeh
     };
 	
     public static string BuildingName = "Barrack";
+	public const string RequireDescription = "Require :: Academy level 3.";
     private static string Description_TH = "ในค่ายทหารนี้คุณสามารถเกณฑ์ทหารราบได้ ยิ่งระดับค่ายทหารมากเท่าไร \n " + "กองกำลังก็จะเข็มแข็งมากขึ้น";
     private static string Description_EN = "Trains infantry units. Also researches technologies related to infantry units";
 	public static string CurrentDescription {
@@ -43,6 +44,16 @@ public class BarracksBeh : BuildingBeh
 	public Texture2D ToxotesTex;
 
     private Rect troopsIcon_Rect;
+
+    float height = 210f;
+    Rect new_background_Rect;
+    Rect new_descriptionGroupRect;
+    Rect soldierDescriptionRect;
+    Rect requireResource_rect;
+    Rect createButton_rect;
+    private Rect amountLabel_rect;
+    private Rect amountTextbox_rect;
+    public string numberOfSpearman;
 
 
     protected override void Awake()
@@ -83,7 +94,16 @@ public class BarracksBeh : BuildingBeh
         spearman_describe = UnitDataStore.GreekUnitData.Get_Spearman_describe;
         hypaspist_describe = UnitDataStore.GreekUnitData.Get_Hypaspist_describe;
         hoplite_describe = UnitDataStore.GreekUnitData.Get_Hoplite_describe;
+
+        new_background_Rect = new Rect(base.building_background_Rect.x, base.building_background_Rect.y, base.building_background_Rect.width - 16, base.building_background_Rect.height);
+        new_descriptionGroupRect = new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
+        soldierDescriptionRect = new Rect(new_descriptionGroupRect.x, 10, new_descriptionGroupRect.width, 190);
+        requireResource_rect = new Rect(5, soldierDescriptionRect.height - 45, soldierDescriptionRect.width - 10, 40);
+        amountLabel_rect = new Rect(5, soldierDescriptionRect.height - 90, 100, 40);
+        amountTextbox_rect = new Rect(amountLabel_rect.x + amountLabel_rect.width, amountLabel_rect.y, 60, 40);
+        createButton_rect = new Rect(30, 150, 100, 35);
     }
+
     public override void InitializingBuildingBeh(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
@@ -141,20 +161,9 @@ public class BarracksBeh : BuildingBeh
 
 	#endregion
 
-    private Rect buttonRect = new Rect(460, 140, 100, 30);
-    float height = 160f;
-    Rect new_background_Rect;
-    Rect new_descriptionGroupRect;
-	Rect soldierDescriptionRect;
-    Rect requireResource_rect;
 	protected override void CreateWindow (int windowID)
 	{
         base.CreateWindow(windowID);
-
-        new_background_Rect = new Rect(base.building_background_Rect.x, base.building_background_Rect.y, base.building_background_Rect.width - 16, base.building_background_Rect.height);
-        new_descriptionGroupRect = new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
-		soldierDescriptionRect = new Rect(new_descriptionGroupRect.x, 10, new_descriptionGroupRect.width, 140);
-        requireResource_rect = new Rect(5, soldierDescriptionRect.height - 32, 240, 30);
 		
         GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
 
@@ -253,17 +262,27 @@ public class BarracksBeh : BuildingBeh
 
             GUI.BeginGroup(soldierDescriptionRect, new GUIContent(spearman_describe, "content"), mainBuildingSkin.textArea);
             {
+                GUI.Label(amountLabel_rect, "Amount", standard_Skin.box);
+                numberOfSpearman = GUI.TextField(amountTextbox_rect, numberOfSpearman, 3, standard_Skin.textField);
+//				GUI
+
                 GUI.BeginGroup(requireResource_rect, GUIContent.none, standard_Skin.box);
                 {
                     GUI.Box(GameResource.First_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Food.ToString(), stageManager.taskManager.food_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Third_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Gold.ToString(), stageManager.taskManager.gold_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Second_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Armor.ToString(), stageManager.taskManager.armor_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Third_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Weapon.ToString(), stageManager.taskManager.weapon_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Fourth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Gold.ToString(), stageManager.taskManager.gold_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Fifth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanTraining_timer.ToString("mm:ss")), standard_Skin.box);
                 }
                 GUI.EndGroup();
             }
             GUI.EndGroup();
 
-            if (GUI.Button(buttonRect, "Create"))
+            if (GUI.Button(createButton_rect, "Train"))
             {
+                if(int.Parse(numberOfSpearman) > 0) {
+					
+				}
             }
         }
         GUI.EndGroup();
@@ -275,7 +294,7 @@ public class BarracksBeh : BuildingBeh
             GUI.Label(base.tagName_Rect, new GUIContent("Hypaspist", "พลดาบสองมือ"), standard_Skin.label);
             GUI.DrawTexture(this.troopsIcon_Rect, hypaspistTex);    //<!-- Hypaspist Images.
             GUI.Box(soldierDescriptionRect, new GUIContent(hypaspist_describe, "content"), mainBuildingSkin.textArea);
-            if (GUI.Button(buttonRect, "Create"))
+            if (GUI.Button(createButton_rect, "Create"))
             {
 
             }
@@ -289,7 +308,7 @@ public class BarracksBeh : BuildingBeh
             GUI.Label(base.tagName_Rect, new GUIContent("Hoplite", "พลหุ้มเกราะ"), standard_Skin.label);
             GUI.DrawTexture(this.troopsIcon_Rect, hopliteTex);      //<!-- Hoplite Images.
             GUI.Box(soldierDescriptionRect, new GUIContent(hoplite_describe, "content"), mainBuildingSkin.textArea);
-            if (GUI.Button(buttonRect, "Create"))
+            if (GUI.Button(createButton_rect, "Create"))
             {
 
             }
@@ -303,7 +322,7 @@ public class BarracksBeh : BuildingBeh
             GUI.Label(tagName_Rect, new GUIContent("Toxotes", "พลธนู"), standard_Skin.label);
             GUI.DrawTexture(this.troopsIcon_Rect, ToxotesTex);    //<!-- Toxotes images icons.
             GUI.Box(soldierDescriptionRect, new GUIContent("Toxotes เป็นหน่วยจู่โจมด้วยธนู \n พวกเขามีความชำนาญในการโจมตีจากระยะไกล", "content"), mainBuildingSkin.textArea);
-            if (GUI.Button(buttonRect, "Create"))
+            if (GUI.Button(createButton_rect, "Create"))
             {
 
             }

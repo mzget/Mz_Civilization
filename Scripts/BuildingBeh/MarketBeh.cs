@@ -159,7 +159,7 @@ public class MarketBeh : BuildingBeh {
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
-        BuildingBeh.MarketInstances = this;
+        BuildingBeh.MarketInstance = this;
 		this.CalculateNumberOfEmployed(p_level);
 
         for (int i = 0; i < base.Level; i++) {
@@ -211,7 +211,7 @@ public class MarketBeh : BuildingBeh {
 		stageManager.dayCycle_Event -= this.ReachDayCycle;
         base.NotEnoughResource_Notification_event -= this.MarketBeh_NotEnoughResourceNotification_event;
 
-        BuildingBeh.MarketInstances = null;
+        BuildingBeh.MarketInstance = null;
 		caravanList.Clear();
     }
 
@@ -349,6 +349,8 @@ public class MarketBeh : BuildingBeh {
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);
+
+        stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
 
         GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
 
