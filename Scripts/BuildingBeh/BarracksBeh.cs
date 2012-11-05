@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BarracksBeh : BuildingBeh
 {
@@ -53,6 +54,7 @@ public class BarracksBeh : BuildingBeh
     Rect createButton_rect;
     private Rect amountLabel_rect;
     private Rect amountTextbox_rect;
+	Rect maxAmountLabel_rect;
     public string numberOfSpearman;
 
 
@@ -100,7 +102,8 @@ public class BarracksBeh : BuildingBeh
         soldierDescriptionRect = new Rect(new_descriptionGroupRect.x, 10, new_descriptionGroupRect.width, 190);
         requireResource_rect = new Rect(5, soldierDescriptionRect.height - 45, soldierDescriptionRect.width - 10, 40);
         amountLabel_rect = new Rect(5, soldierDescriptionRect.height - 90, 100, 40);
-        amountTextbox_rect = new Rect(amountLabel_rect.x + amountLabel_rect.width, amountLabel_rect.y, 60, 40);
+        amountTextbox_rect = new Rect(amountLabel_rect.x + amountLabel_rect.width, amountLabel_rect.y, 50, 40);
+		maxAmountLabel_rect = new Rect(amountTextbox_rect.x + amountTextbox_rect.width, amountTextbox_rect.y, 50, 40);
         createButton_rect = new Rect(30, 150, 100, 35);
     }
 
@@ -253,6 +256,7 @@ public class BarracksBeh : BuildingBeh
         GUI.EndGroup();
     }
 
+    private int amountOfSpearman = 0;
     private void DrawGroupOfSpearman()
     {
         GUI.BeginGroup(new Rect(0, 2 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);
@@ -264,7 +268,9 @@ public class BarracksBeh : BuildingBeh
             {
                 GUI.Label(amountLabel_rect, "Amount", standard_Skin.box);
                 numberOfSpearman = GUI.TextField(amountTextbox_rect, numberOfSpearman, 3, standard_Skin.textField);
-//				GUI
+				if(GUI.Button(maxAmountLabel_rect, "Max", standard_Skin.button)) {
+                    amountOfSpearman = CalculationCanCreateSpearman();
+				}
 
                 GUI.BeginGroup(requireResource_rect, GUIContent.none, standard_Skin.box);
                 {
@@ -287,6 +293,45 @@ public class BarracksBeh : BuildingBeh
         }
         GUI.EndGroup();
     }
+
+    private int CalculationCanCreateSpearman()
+    {
+        int maximumCanCreate = 0;
+        if (StoreHouse.sumOfFood >= UnitDataStore.GreekUnitData.SpearmanResource.Food &&
+            StoreHouse.sumOfArmor >= UnitDataStore.GreekUnitData.SpearmanResource.Armor &&
+            StoreHouse.sumOfWeapon >= UnitDataStore.GreekUnitData.SpearmanResource.Weapon &&
+            StoreHouse.sumOfGold >= UnitDataStore.GreekUnitData.SpearmanResource.Gold)
+        {
+            List<int> spearmanRequireResource = new List<int>()
+            { 
+                UnitDataStore.GreekUnitData.SpearmanResource.Food, 
+                UnitDataStore.GreekUnitData.SpearmanResource.Armor, 
+                UnitDataStore.GreekUnitData.SpearmanResource.Weapon, 
+                UnitDataStore.GreekUnitData.SpearmanResource.Gold,
+            };
+            spearmanRequireResource.Sort();
+            int minimumRequireResource = spearmanRequireResource[0];
+            if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Food) { 
+                maximumCanCreate = StoreHouse.sumOfFood / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Armor) {
+                maximumCanCreate = StoreHouse.sumOfArmor / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Weapon) {
+                maximumCanCreate = StoreHouse.sumOfWeapon / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Gold) {
+                maximumCanCreate = StoreHouse.sumOfGold / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else return 0;
+        }
+        else return 0;
+    }
+
     private void DrawGroupOfHypasist()
     {
         GUI.BeginGroup(new Rect(0, 3 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);

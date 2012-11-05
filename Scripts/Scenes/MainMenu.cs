@@ -360,6 +360,8 @@ public class MainMenu : Mz_BaseScene
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood, 800);
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood, 800);
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone, 800);
+        PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfArmor, 10);
+        PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfWeapon, 10);
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold, 3000);
 
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);		
@@ -410,6 +412,8 @@ public class MainMenu : Mz_BaseScene
 		StoreHouse.sumOfWood = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood);
 		StoreHouse.sumOfGold = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold);
 		StoreHouse.sumOfStone = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone);
+        StoreHouse.sumOfArmor = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfArmor);
+        StoreHouse.sumOfWeapon = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfWeapon);
 
         Debug.Log("Load storage data to static variable complete.");
 

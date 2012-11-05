@@ -18,6 +18,8 @@ public class Mz_SaveData
 	public const string KEY_sumofwood = "sumofwood";
 	public const string KEY_sumofgold = "sumofgold";
 	public const string KEY_sumofstone = "sumofstone";
+    public const string KEY_sumOfArmor = "sumofarmor";
+    public const string KEY_sumOfWeapon = "sumofweapon";
 	
 	public const string amount_farm_instance = "amount_farm_instance";
 	public const string amount_sawmill_instance = "amount_sawmill_instance";
@@ -76,6 +78,8 @@ public class Mz_SaveData
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumoffood, StoreHouse.sumOfFood);
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofwood, StoreHouse.sumOfWood);
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofstone, StoreHouse.sumOfStone);
+            PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_sumOfArmor, StoreHouse.sumOfArmor);
+            PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_sumOfWeapon, StoreHouse.sumOfWeapon);
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofgold, StoreHouse.sumOfGold);
 			//<!-- TownCenter.
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
