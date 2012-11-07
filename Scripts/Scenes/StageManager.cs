@@ -85,18 +85,20 @@ public class StageManager : Mz_BaseScene {
         this.LoadingAmountOfBuildingInstance();
         StartCoroutine(this.LoadingDataStorage());
 
-        GameMaterial food = ScriptableObject.CreateInstance<GameMaterial>();
-        food.name = "food";
-        GameMaterial wood = ScriptableObject.CreateInstance<GameMaterial>();
-        wood.name = "wood";
-        GameMaterial stone = ScriptableObject.CreateInstance<GameMaterial>();
-        stone.name = "stone";
-        GameMaterial copper = ScriptableObject.CreateInstance<GameMaterial>();
-        copper.name = "copper";
-        gameMaterials.Add(food);
-        gameMaterials.Add(wood);
-        gameMaterials.Add(stone);
-        gameMaterials.Add(copper);
+//        GameMaterial food = ScriptableObject.CreateInstance<GameMaterial>();
+//        food.name = "food";
+//        GameMaterial wood = ScriptableObject.CreateInstance<GameMaterial>();
+//        wood.name = "wood";
+//        GameMaterial stone = ScriptableObject.CreateInstance<GameMaterial>();
+//        stone.name = "stone";
+//        GameMaterial copper = ScriptableObject.CreateInstance<GameMaterial>();
+//        copper.name = "copper";
+		gameMaterials.Add(new GameMaterial() { name = "food" });	/// 0.
+		gameMaterials.Add(new GameMaterial() { name = "wood" });	// 1.
+		gameMaterials.Add(new GameMaterial() { name = "stone" });	// 2.
+		gameMaterials.Add(new GameMaterial() { name = "copper" });	// 3.
+		gameMaterials.Add(new GameMaterial() { name = "armor" });	// 4.
+		gameMaterials.Add(new GameMaterial() { name = "weapon" });	// 5.
 
         if (taskManager == null) 
             taskManager = this.gameObject.GetComponent<TaskManager>();

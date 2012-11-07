@@ -265,9 +265,7 @@ public class MarketBeh : BuildingBeh {
 	
 	public event System.EventHandler SendingCaravanEvent;
     public void TradingMechanism()
-    {        
-		Debug.Log("TradingMechanism");
-		
+    {        		
 		if(caravanList.Count != 0) 
 		{
 			#region <!-- greek trading mechanism.
@@ -303,8 +301,36 @@ public class MarketBeh : BuildingBeh {
                     else
                         _IsGreekTrading = false;
 				}
+
+				if(numberOf_Armor > 0 || numberOf_Weapon > 0) {
+					///<!-- Cash advance.
+					int collectGold = (numberOf_Armor * pricePerUnitOf_Armor) + (numberOf_Weapon * pricePerUnitOf_Weapon);
+					///<! Checking availabel gold.
+					if(StoreHouse.sumOfGold >= collectGold) {
+						///<!-- Paying.
+						StoreHouse.sumOfGold -= collectGold;
+			
+						/// Create Greek caraven  traveling to this town.
+						GreekCaravanBeh greekCaravan = new GreekCaravanBeh() { 
+							marketInstance = this,
+							goods = new GameResource() { Weapon = numberOf_Weapon, Armor = numberOf_Armor },
+						};
+						greekCaravan.Traveling();
+						
+						///<!-- Add material to trading list.
+						tradingMaterial_List.Add(stageManager.gameMaterials[4]);
+						tradingMaterial_List.Add(stageManager.gameMaterials[5]);
+						
+						Debug.Log("TradingMechanism :: " + "Paying GreekCaravan = " + collectGold);
+					}
+					else {
+						Debug.Log("TradingMechanism :: " + "Not enough gold! : collectGold = " + collectGold);
+					}
+				}
 				else
 					_IsGreekTrading = false;
+				
+				Debug.Log("TradingMechanism :: return _IsGreekTrading == " + _IsGreekTrading);
 			}
 			
 			#endregion
@@ -467,6 +493,10 @@ public class MarketBeh : BuildingBeh {
                 _IsGreekTrading = false;
 				tradingMaterial_List.Remove(stageManager.gameMaterials[2]);
 				tradingMaterial_List.Remove(stageManager.gameMaterials[3]);
+				if(tradingMaterial_List.Contains(stageManager.gameMaterials[4]))
+					tradingMaterial_List.Remove(stageManager.gameMaterials[4]);
+				if(tradingMaterial_List.Contains(stageManager.gameMaterials[5]))
+					tradingMaterial_List.Remove(stageManager.gameMaterials[5]);
             }
             GUI.enabled = true;
 			
@@ -475,12 +505,12 @@ public class MarketBeh : BuildingBeh {
             //<!-- description group rect.
             GUI.BeginGroup(new_descriptionGroupRect, MarketBeh.CurrentGreekDescription, building_Skin.textArea);
             { 
-                //<<!-- Import  group.
+                ///<<!-- Import  group.
                 GUI.BeginGroup(importGroupRect, GUIContent.none, standard_Skin.textArea);
                 {
                     GUI.Label(new Rect(0, 0, 100, 24), "Purchase");
 					
-                    #region <!--- Copper ingots.
+                    #region <!-- Copper ingots.
 					
                     GUI.Box(displayGoods_rect, new GUIContent("Copper ingots", stageManager.taskManager.copper_icon), goods_Label_style); 
                     GUI.Box(displayPrice_rect, new GUIContent(pricePerUnitOf_CopperIngots.ToString(), stageManager.taskManager.gold_icon), goods_Label_style); 					
@@ -502,7 +532,7 @@ public class MarketBeh : BuildingBeh {
 					GUI.EndGroup();
 					
                     #endregion					
-                    #region <!--- Stone blocks.
+                    #region <!-- Stone blocks.
 					
                     GUI.Box(displayGoods_rect2, new GUIContent("Stone blocks", stageManager.taskManager.stone_icon), goods_Label_style); 
                     GUI.Box(displayPrice_rect2, new GUIContent(pricePerUnitOf_StoneBlocks.ToString(), stageManager.taskManager.gold_icon), goods_Label_style); 
@@ -526,7 +556,8 @@ public class MarketBeh : BuildingBeh {
                     #endregion
                 }
                 GUI.EndGroup();
-                //<<!-- Export group.
+
+                ///<<!-- Export group.
                 GUI.BeginGroup(exportGroupRect, GUIContent.none, standard_Skin.textArea);
                 {
                     GUI.Label(new Rect(0, 0, 100, 24), "Sell");
@@ -544,7 +575,7 @@ public class MarketBeh : BuildingBeh {
                                 numberOf_Armor -= 8;
                         }
                         else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style)) {
-                            if (numberOf_Armor < 64)
+                            if (numberOf_Armor < 32)
                                 numberOf_Armor += 8;
                         }
                     }
@@ -564,7 +595,7 @@ public class MarketBeh : BuildingBeh {
                                 numberOf_Weapon -= 8;
                         }
                         else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style)) {
-                            if (numberOf_Weapon < 64)
+                            if (numberOf_Weapon < 32)
                                 numberOf_Weapon += 8;
                         }
                     }
