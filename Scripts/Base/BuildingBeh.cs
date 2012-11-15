@@ -18,14 +18,15 @@ public class BuildingBeh : Base_ObjectBeh {
     protected GUIStyle job_style;
     protected GUIStyle status_style;
     protected GUIStyle closeButton_Style;
+	protected GUIStyle buildingWindowStyle;
     //<!-- Building Icon.
     protected Texture2D buildingIcon_Texture;
-
+	
+    public StageManager stageManager;
 	protected GameObject processbar_Obj_parent;
     protected OTSprite processBar_Scolling;
-    public OTSprite sprite;
-    public StageManager stageManager;
-    public TextMesh buildingLevel_textmesh;
+    protected OTSprite sprite;
+    protected TextMesh buildingLevel_textmesh;
 
     private int level = 0;
     public int Level { get { return level; } set { level = value; } }
@@ -179,6 +180,15 @@ public class BuildingBeh : Base_ObjectBeh {
         status_style = standard_Skin.box;
         status_style.font = ubuntu_font;
         status_style.alignment = TextAnchor.MiddleCenter;
+		
+		building_Skin.box.wordWrap = true;
+		building_Skin.box.fontSize = 16;
+		building_Skin.box.fontStyle = FontStyle.Normal;
+		building_Skin.box.contentOffset = new Vector2(128, 38);
+		
+		buildingWindowStyle = new GUIStyle(standard_Skin.box);
+		buildingWindowStyle.font = building_Skin.window.font;
+		buildingWindowStyle.fontSize = building_Skin.window.fontSize;
 
         windowRect = new Rect((Main.GAMEWIDTH * 3 / 4) / 2 - 350, Main.GAMEHEIGHT / 2 - 250, 700, 500);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 420);
@@ -186,7 +196,7 @@ public class BuildingBeh : Base_ObjectBeh {
         descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 160, background_Rect.height - 45);
         exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
 		notificationBox_rect = new Rect(50, 32, windowRect.width - 100, 32);
-        update_requireResource_Rect = new Rect(10, 240, 500, 40);
+        update_requireResource_Rect = new Rect(10, 320, 500, 40);
 //        upgradeButton_Rect = new Rect(descriptionGroup_Rect.width - 120, update_requireResource_Rect.y, 100, 32);
         currentJob_Rect = new Rect(10, update_requireResource_Rect.y - 80, descriptionGroup_Rect.width - 20, 32);
         nextJob_Rect = new Rect(10, update_requireResource_Rect.y - 40, descriptionGroup_Rect.width - 20, 32);
@@ -379,10 +389,6 @@ public class BuildingBeh : Base_ObjectBeh {
 	
     #region <!-- Mouse Events.
 
-	protected override void OnTouchBegan ()
-	{
-		base.OnTouchBegan ();
-	}
     protected override void OnMouseDown()
     {
 		if(TaskManager.IsShowInteruptGUI == false) {
@@ -392,10 +398,6 @@ public class BuildingBeh : Base_ObjectBeh {
 
         base.OnMouseDown();
     }
-    protected override void OnMouseExit()
-    {
-        base.OnMouseExit();
-    }
 
     #endregion
 	
@@ -404,18 +406,7 @@ public class BuildingBeh : Base_ObjectBeh {
     protected void OnGUI()
     {
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
-
-//        standard_Skin.window.font = showG; 
-
-        building_Skin.box.wordWrap = true;
-        building_Skin.box.fontSize = 16;
-        building_Skin.box.fontStyle = FontStyle.Normal;
-        building_Skin.box.contentOffset = new Vector2(128, 38);
-
-        GUIStyle buildingWindowStyle = GUI.skin.window;
-        buildingWindowStyle.font = building_Skin.window.font;
-        buildingWindowStyle.fontSize = building_Skin.window.fontSize;
-
+		
         if (_IsShowInterface) {
             windowRect = GUI.Window(0, windowRect, CreateWindow, new GUIContent(this.name, "GUI window"), buildingWindowStyle);
         }

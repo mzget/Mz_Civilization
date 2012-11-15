@@ -264,7 +264,16 @@ public class MarketBeh : BuildingBeh {
     }
 	
 	public event System.EventHandler SendingCaravanEvent;
-    public void TradingMechanism()
+    internal void Checking_HaveSendCaravanEvent()
+    {
+        if (SendingCaravanEvent == null)
+        {
+            TradingMechanism();
+        }
+        else return;
+    }
+
+    private void TradingMechanism()
     {        		
 		if(caravanList.Count != 0) 
 		{
@@ -272,6 +281,8 @@ public class MarketBeh : BuildingBeh {
 			
 			if(_IsGreekTrading == true)
 			{
+				#region <!-- Sell Copper, Stoneblock.
+				
 				if(numberOf_CopperIngots > 0 || numberOf_StoneBlocks > 0)
 				{
 					int UsedCaravan = Mathf.CeilToInt(this.CheckUsedCaravan(numberOf_CopperIngots, numberOf_StoneBlocks));
@@ -279,8 +290,8 @@ public class MarketBeh : BuildingBeh {
 					
                     if (idleCaravanList.Count >= UsedCaravan)
                     {
-						caravan_group = new GroupCaravan() { MarketInstance = this };
-						
+						caravan_group = new GroupCaravan() { MarketInstance = this, };
+
                         for (int i = 0; i < UsedCaravan; i++) {
                             caravan_group.GroupList.Add(idleCaravanList[0]);
                             idleCaravanList.RemoveAt(0);
@@ -291,17 +302,24 @@ public class MarketBeh : BuildingBeh {
 						//<!-- Sending caravan.
 						caravan_group.TravelingCaravan(3, getGold);
                         //<!-- Add material to trading list.
-                        if (numberOf_CopperIngots > 0)
-                            tradingMaterial_List.Add(stageManager.gameMaterials[3]);
-                        if (numberOf_StoneBlocks > 0)
+                        if (numberOf_StoneBlocks > 0) {
                             tradingMaterial_List.Add(stageManager.gameMaterials[2]);
+							caravan_group.tradingMaterial.Add(stageManager.gameMaterials[2]);
+						}
+                        if (numberOf_CopperIngots > 0) {
+                            tradingMaterial_List.Add(stageManager.gameMaterials[3]);
+							caravan_group.tradingMaterial.Add(stageManager.gameMaterials[3]);
+						}
 						
                         Debug.Log("Sending " + UsedCaravan + " Cavavan, " + "collect gold = " + getGold);
                     }
                     else
                         _IsGreekTrading = false;
 				}
-
+				
+				#endregion
+				#region <@-- Buy Armor, Weapon.
+				
 				if(numberOf_Armor > 0 || numberOf_Weapon > 0) {
 					///<!-- Cash advance.
 					int collectGold = (numberOf_Armor * pricePerUnitOf_Armor) + (numberOf_Weapon * pricePerUnitOf_Weapon);
@@ -327,11 +345,13 @@ public class MarketBeh : BuildingBeh {
 						Debug.Log("TradingMechanism :: " + "Not enough gold! : collectGold = " + collectGold);
 					}
 				}
-				else
-					_IsGreekTrading = false;
 				
-				Debug.Log("TradingMechanism :: return _IsGreekTrading == " + _IsGreekTrading);
+				#endregion
+
+				if(numberOf_StoneBlocks == 0 && numberOf_CopperIngots == 0 && numberOf_Armor == 0 && numberOf_Weapon == 0)
+					_IsGreekTrading = false;
 			}
+			Debug.Log("TradingMechanism :: return _IsGreekTrading == " + _IsGreekTrading);
 			
 			#endregion
 			
@@ -372,11 +392,16 @@ public class MarketBeh : BuildingBeh {
 		}
     }
 
+	protected override void OnMouseDown ()
+	{
+		base.OnMouseDown ();
+		
+		stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
+	}
+
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);
-
-        stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
 
         GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
 

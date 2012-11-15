@@ -63,9 +63,12 @@ public class GameResource
     {
         StoreHouse.sumOfFood -= usedResource.Food;
         StoreHouse.sumOfWood -= usedResource.Wood;
-        StoreHouse.sumOfGold -= usedResource.Gold;
         StoreHouse.sumOfStone -= usedResource.Stone;
         StoreHouse.sumOfCopper -= usedResource.Copper;
+        StoreHouse.sumOfGold -= usedResource.Gold;
+		
+		StoreHouse.sumOfArmor -= usedResource.Armor;
+		StoreHouse.sumOfWeapon -= usedResource.Weapon;
         //<!--- Population.
         HouseBeh.SumOfEmployee += usedResource.Employee;
         HouseBeh.SumOfUnemployed = HouseBeh.SumOfPopulation - HouseBeh.SumOfEmployee;

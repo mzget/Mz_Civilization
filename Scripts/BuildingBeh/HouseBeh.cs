@@ -148,11 +148,16 @@ public class HouseBeh : BuildingBeh {
 		BuildingBeh.House_Instances.Remove(this);
 	}
 
+	protected override void OnMouseDown ()
+	{
+		base.OnMouseDown ();
+		
+		stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
+	}
+
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);
-
-        stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
 
         if(base.notificationText == "") {
             base.notificationText = base.currentBuildingStatus.ToString();

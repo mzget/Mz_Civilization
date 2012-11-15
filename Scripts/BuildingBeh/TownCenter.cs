@@ -36,10 +36,10 @@ public class TownCenter : BuildingBeh {
     // Technology Point.
     private int[] increaseBuildingSpeed_arr = new int[10] { 800, 1200, 1800, 2500, 3500, 4800, 6000, 8000, 12000, 15000, };
     private int currentIncreaseBuildingSpeed;
-
-
-    protected override void Awake()
-    {
+	
+	
+	protected override void Awake ()
+	{
         base.Awake();
 		
         BuildingBeh.TownCenter = this;
@@ -49,13 +49,11 @@ public class TownCenter : BuildingBeh {
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
-    }
-
+	}
 	// Use this for initialization
 	void Start () {
         InitializeTexturesResource();
-        base.buildingLevel_textmesh.text = Level.ToString();
-		
+        buildingLevel_textmesh.text = Level.ToString();
 		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResource_Notification_event;;
 	}
 	

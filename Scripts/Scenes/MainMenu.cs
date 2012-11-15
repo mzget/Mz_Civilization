@@ -414,6 +414,9 @@ public class MainMenu : Mz_BaseScene
 		StoreHouse.sumOfStone = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone);
         StoreHouse.sumOfArmor = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfArmor);
         StoreHouse.sumOfWeapon = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfWeapon);
+		BarracksBeh.AmountOfSpearman = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_SPEARMAN, 0);
+		BarracksBeh.AmountOfHapaspist = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HAPASPIST, 0);
+		BarracksBeh.AmountOfHoplite = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HOPLITE, 0);
 
         Debug.Log("Load storage data to static variable complete.");
 

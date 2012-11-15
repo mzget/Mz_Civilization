@@ -8,6 +8,7 @@ public class GroupCaravan : ScriptableObject {
     
     public MarketBeh MarketInstance { get; set; }
     public List<CaravanBeh> GroupList = new List<CaravanBeh>();
+	public List<GameMaterial> tradingMaterial = new List<GameMaterial>();
 	
     private int travelingDay = 0;
     private int travelDayCounter = 0;
@@ -28,31 +29,35 @@ public class GroupCaravan : ScriptableObject {
 			caravan.currentCaravanState = CaravanBeh.CaravanBehState.traveling;
 	}
 
-	public void HandleMarketSendingCaravanEvent (object sender, System.EventArgs e) {
+	void HandleMarketSendingCaravanEvent (object sender, System.EventArgs e) {
 		travelDayCounter += 1;
 		
 		//<!-- reach to target.
 		if(travelDayCounter == travelingDay) 
 		{
 			StoreHouse.sumOfGold += collectGold;
-			
-			MarketInstance.SendingCaravanEvent -= HandleMarketSendingCaravanEvent;
 		
 			foreach(CaravanBeh caravan in GroupList) {
 				caravan.currentCaravanState = CaravanBeh.CaravanBehState.idle;
 				MarketInstance.CheckingIdleCaravan();
-			}
-		
-			Dispose();
-			MarketInstance.TradingMechanism();
+			}		
 			
 			Debug.Log("Group caravan reach to target.");
+			
+			Destroy(this);
         }
 	}
 	
-	private void Dispose() {
+	void OnDestroy ()
+	{
 		collectGold = 0;
 		travelingDay = 0;
 		travelDayCounter = 0;
+	
+		foreach (GameMaterial material in tradingMaterial) {			
+			MarketBeh.tradingMaterial_List.Remove(material);
+		}
+		MarketInstance.SendingCaravanEvent -= HandleMarketSendingCaravanEvent;
+        MarketInstance.Checking_HaveSendCaravanEvent();
 	}
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -35,6 +36,15 @@ public class BarracksBeh : BuildingBeh
         }
 	}
 
+    public static int AmountOfSpearman = 0;
+	public static int AmountOfHapaspist = 0;
+	public static int AmountOfHoplite = 0;
+    private List<TrainingQueue> list_trainingUnit = new List<TrainingQueue>();
+    private DateTime counterTimer;
+	private DateTime startingCounterTimer;
+    public enum BarracksStatus { None = 0, TrainingUnit, };
+    public BarracksStatus currentBarracksStatus;
+
 	public GUISkin mainBuildingSkin;
 	public Texture2D spearmanTex;
     private string spearman_describe;
@@ -45,6 +55,7 @@ public class BarracksBeh : BuildingBeh
 	public Texture2D ToxotesTex;
 
     private Rect troopsIcon_Rect;
+    Rect training_group_rect;
 
     float height = 210f;
     Rect new_background_Rect;
@@ -55,7 +66,7 @@ public class BarracksBeh : BuildingBeh
     private Rect amountLabel_rect;
     private Rect amountTextbox_rect;
 	Rect maxAmountLabel_rect;
-    public string numberOfSpearman;
+    public string numberOfSpearman_input;
 
 
     protected override void Awake()
@@ -105,14 +116,16 @@ public class BarracksBeh : BuildingBeh
         amountTextbox_rect = new Rect(amountLabel_rect.x + amountLabel_rect.width, amountLabel_rect.y, 50, 40);
 		maxAmountLabel_rect = new Rect(amountTextbox_rect.x + amountTextbox_rect.width, amountTextbox_rect.y, 50, 40);
         createButton_rect = new Rect(30, 150, 100, 35);
+		training_group_rect = new Rect(5,80,base.currentJob_Rect.width - 10, 200);
     }
 
-    public override void InitializingBuildingBeh(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
         BuildingBeh.Barrack_Instances.Add(this);
 
-		this.CalculateNumberOfEmployed(p_level);
+        this.CalculateNumberOfEmployed(p_level);
     }
 	protected override void CalculateNumberOfEmployed (int p_level)
 	{
@@ -155,14 +168,57 @@ public class BarracksBeh : BuildingBeh
         BuildingBeh.Barrack_Instances.Remove(this);
     }
 
-	#region <!-- Events Handle.
-
+    /// <summary>
+    /// Handle not enough resource for upgrade building.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
 	void HandleBaseNotEnoughResourceNotification_event (object sender, BuildingBeh.NoEnoughResourceNotificationArg e)
 	{
 		base.notificationText = e.notification_args;
 	}
 
-	#endregion
+    private void TrainingUnitMechanism()
+    {
+        if (list_trainingUnit.Count > 0) {
+            currentBarracksStatus = BarracksStatus.TrainingUnit;
+        }
+		else
+			currentBarracksStatus = BarracksStatus.None;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (currentBarracksStatus == BarracksStatus.TrainingUnit) {
+			TimeSpan elapsedTime = DateTime.UtcNow - list_trainingUnit[0].startTime;
+			TimeSpan remainTime = list_trainingUnit[0].ToTalQueueTime - elapsedTime;
+            
+			list_trainingUnit[0].RemainingTime = remainTime;
+
+            counterTimer = DateTime.UtcNow;
+			TimeSpan counter = counterTimer - startingCounterTimer;
+            if (counter.TotalSeconds >= list_trainingUnit[0].Unit.TimeTraining.TotalSeconds) {
+				startingCounterTimer = DateTime.UtcNow;
+
+                AmountOfSpearman += 1;
+				list_trainingUnit[0].Number -= 1;
+            }
+			
+			if(list_trainingUnit[0].Number == 0) { 
+				list_trainingUnit.RemoveAt(0); 
+				this.TrainingUnitMechanism();
+			}
+        }
+    }
+	
+	protected override void OnMouseDown ()
+	{
+		base.OnMouseDown ();
+		
+        stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_military;
+	}
 
 	protected override void CreateWindow (int windowID)
 	{
@@ -194,11 +250,26 @@ public class BarracksBeh : BuildingBeh
             #region <!--- Contents Group.
 
             GUI.BeginGroup(new_descriptionGroupRect, CurrentDescription, building_Skin.textArea);
-            {
+			{
                 if (base.Level < RequireResource.Length)
                 {
-                    //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
-                    //GUI.Label(nextProduction_Rect, "Next Max Capacity : " + this.maxCapacities[base.level], base.job_style);
+                    if (list_trainingUnit.Count > 0)
+                    {
+						if(list_trainingUnit[0].RemainingTime.Ticks > 0) {
+							GUI.BeginGroup(training_group_rect, GUIContent.none, GUI.skin.textArea);
+							{
+								string queueTime = new DateTime(list_trainingUnit[0].RemainingTime.Ticks).ToString("HH:mm:ss");
+		                        GUI.Label(new Rect(2, 2, training_group_rect.width - 4, 40), "Training : " + list_trainingUnit[0].Unit.name + "\t\t\t Units : " +
+							          list_trainingUnit[0].Number + "\t\t\t Time : " + queueTime, base.job_style);
+		
+		                        //GUI.Label(base.nextJob_Rect, "Next Max Capacity : ", base.job_style);
+							}
+	                        GUI.EndGroup();
+						}
+                    }
+                    else {
+						GUI.Box(training_group_rect, "No training.", base.job_style);
+                    }
 
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
@@ -216,7 +287,7 @@ public class BarracksBeh : BuildingBeh
                     //GUI.Label(currentProduction_Rect, "Current Max Capacity : " + this.currentMaxCapacity, base.job_style);
                     GUI.Label(nextJob_Rect, "Max upgrade building.", base.job_style);
                 }
-            }
+			}
             GUI.EndGroup();
 
             #endregion
@@ -245,7 +316,7 @@ public class BarracksBeh : BuildingBeh
             GUI.enabled = this.CheckingCanDestructionBuilding();
             if (GUI.Button(destruction_Button_Rect, new GUIContent("Destruct")))
             {
-                this.currentBuildingStatus = BuildingStatus.OnDestructionProcess;
+                base.currentBuildingStatus = BuildingBeh.BuildingStatus.OnDestructionProcess;
                 this.DestructionBuilding();
                 base.CloseGUIWindow();
             }
@@ -256,7 +327,6 @@ public class BarracksBeh : BuildingBeh
         GUI.EndGroup();
     }
 
-    private int amountOfSpearman = 0;
     private void DrawGroupOfSpearman()
     {
         GUI.BeginGroup(new Rect(0, 2 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);
@@ -267,9 +337,10 @@ public class BarracksBeh : BuildingBeh
             GUI.BeginGroup(soldierDescriptionRect, new GUIContent(spearman_describe, "content"), mainBuildingSkin.textArea);
             {
                 GUI.Label(amountLabel_rect, "Amount", standard_Skin.box);
-                numberOfSpearman = GUI.TextField(amountTextbox_rect, numberOfSpearman, 3, standard_Skin.textField);
+                numberOfSpearman_input = GUI.TextField(amountTextbox_rect, numberOfSpearman_input, 3, standard_Skin.textField);
+                ///<!-- Max button use to get max unit user can create.
 				if(GUI.Button(maxAmountLabel_rect, "Max", standard_Skin.button)) {
-                    amountOfSpearman = CalculationCanCreateSpearman();
+                    numberOfSpearman_input = CalculationCanCreateSpearman().ToString();
 				}
 
                 GUI.BeginGroup(requireResource_rect, GUIContent.none, standard_Skin.box);
@@ -278,7 +349,7 @@ public class BarracksBeh : BuildingBeh
                     GUI.Box(GameResource.Second_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Armor.ToString(), stageManager.taskManager.armor_icon), standard_Skin.box);
                     GUI.Box(GameResource.Third_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Weapon.ToString(), stageManager.taskManager.weapon_icon), standard_Skin.box);
                     GUI.Box(GameResource.Fourth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Gold.ToString(), stageManager.taskManager.gold_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Fifth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanTraining_timer.ToString("mm:ss")), standard_Skin.box);
+                    GUI.Box(GameResource.Fifth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanTraining_timer.ToString()), standard_Skin.box);
                 }
                 GUI.EndGroup();
             }
@@ -286,51 +357,50 @@ public class BarracksBeh : BuildingBeh
 
             if (GUI.Button(createButton_rect, "Train"))
             {
-                if(int.Parse(numberOfSpearman) > 0) {
-					
-				}
+				this.TrainSpearmanUnit();
             }
         }
         GUI.EndGroup();
     }
-
-    private int CalculationCanCreateSpearman()
-    {
-        int maximumCanCreate = 0;
-        if (StoreHouse.sumOfFood >= UnitDataStore.GreekUnitData.SpearmanResource.Food &&
-            StoreHouse.sumOfArmor >= UnitDataStore.GreekUnitData.SpearmanResource.Armor &&
-            StoreHouse.sumOfWeapon >= UnitDataStore.GreekUnitData.SpearmanResource.Weapon &&
-            StoreHouse.sumOfGold >= UnitDataStore.GreekUnitData.SpearmanResource.Gold)
-        {
-            List<int> spearmanRequireResource = new List<int>()
-            { 
-                UnitDataStore.GreekUnitData.SpearmanResource.Food, 
-                UnitDataStore.GreekUnitData.SpearmanResource.Armor, 
-                UnitDataStore.GreekUnitData.SpearmanResource.Weapon, 
-                UnitDataStore.GreekUnitData.SpearmanResource.Gold,
-            };
-            spearmanRequireResource.Sort();
-            int minimumRequireResource = spearmanRequireResource[0];
-            if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Food) { 
-                maximumCanCreate = StoreHouse.sumOfFood / minimumRequireResource;
-                return maximumCanCreate;
-            }
-            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Armor) {
-                maximumCanCreate = StoreHouse.sumOfArmor / minimumRequireResource;
-                return maximumCanCreate;
-            }
-            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Weapon) {
-                maximumCanCreate = StoreHouse.sumOfWeapon / minimumRequireResource;
-                return maximumCanCreate;
-            }
-            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Gold) {
-                maximumCanCreate = StoreHouse.sumOfGold / minimumRequireResource;
-                return maximumCanCreate;
-            }
-            else return 0;
-        }
-        else return 0;
-    }
+	private void TrainSpearmanUnit ()
+	{
+		try {
+			int amount = int.Parse(numberOfSpearman_input);
+			
+			if (amount > 0 && amount < CalculationCanCreateSpearman())
+			{
+				TimeSpan timePerUnit = UnitDataStore.GreekUnitData.SpearmanTraining_timer;
+				TimeSpan total = TimeSpan.FromSeconds(timePerUnit.TotalSeconds * amount);
+				
+				TrainingQueue queue = new TrainingQueue() {
+					Unit = new UnitBeh() { name = "Spearman", TimeTraining = timePerUnit, }, 
+					Number = amount,
+					RemainingTime = total,
+					ToTalQueueTime = total,
+					startTime = DateTime.UtcNow,
+				};
+				list_trainingUnit.Add(queue);
+				this.TrainingUnitMechanism();
+				startingCounterTimer = DateTime.UtcNow;
+				
+				GameResource temp =  UnitDataStore.GreekUnitData.SpearmanResource;
+				GameResource.UsedResource(new GameResource() { 
+					Food = temp.Food * amount, 
+					Armor = temp.Armor * amount, 
+					Weapon = temp.Weapon * amount,
+					Gold = temp.Gold * amount,
+				});
+			}
+			else
+				Debug.Log("numberOfSpearman == " + amount);
+		}
+		catch{
+			
+		}
+		finally {
+			numberOfSpearman_input = string.Empty;
+		}
+	}
 
     private void DrawGroupOfHypasist()
     {
@@ -373,5 +443,47 @@ public class BarracksBeh : BuildingBeh
             }
         }
         GUI.EndGroup();
+    }
+
+    private int CalculationCanCreateSpearman()
+    {
+        int maximumCanCreate = 0;
+        if (StoreHouse.sumOfFood >= UnitDataStore.GreekUnitData.SpearmanResource.Food &&
+            StoreHouse.sumOfArmor >= UnitDataStore.GreekUnitData.SpearmanResource.Armor &&
+            StoreHouse.sumOfWeapon >= UnitDataStore.GreekUnitData.SpearmanResource.Weapon &&
+            StoreHouse.sumOfGold >= UnitDataStore.GreekUnitData.SpearmanResource.Gold)
+        {
+            List<int> spearmanRequireResource = new List<int>()
+            { 
+                UnitDataStore.GreekUnitData.SpearmanResource.Food, 
+                UnitDataStore.GreekUnitData.SpearmanResource.Armor, 
+                UnitDataStore.GreekUnitData.SpearmanResource.Weapon, 
+                UnitDataStore.GreekUnitData.SpearmanResource.Gold,
+            };
+            spearmanRequireResource.Sort();
+            int minimumRequireResource = spearmanRequireResource[0];
+            if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Food)
+            {
+                maximumCanCreate = StoreHouse.sumOfFood / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Armor)
+            {
+                maximumCanCreate = StoreHouse.sumOfArmor / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Weapon)
+            {
+                maximumCanCreate = StoreHouse.sumOfWeapon / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Gold)
+            {
+                maximumCanCreate = StoreHouse.sumOfGold / minimumRequireResource;
+                return maximumCanCreate;
+            }
+            else return 0;
+        }
+        else return 0;
     }
 }

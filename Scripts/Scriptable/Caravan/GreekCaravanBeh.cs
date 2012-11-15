@@ -25,6 +25,8 @@ public class GreekCaravanBeh : ScriptableObject {
 		dayTravalCounter += 1;
 
 		if (dayTravalCounter == timeToTravel) {
+            Debug.Log("GreekCaravanBeh reach to this town.");
+
 			StoreHouse.sumOfArmor += goods.Armor;
 			StoreHouse.sumOfWeapon += goods.Weapon;
 			Destroy(this);
@@ -33,5 +35,6 @@ public class GreekCaravanBeh : ScriptableObject {
 
 	void OnDestroy () {
 		marketInstance.SendingCaravanEvent -= Handle_SendingCaravanEvent;
+        marketInstance.Checking_HaveSendCaravanEvent();
 	}
 }

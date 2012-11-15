@@ -4,8 +4,6 @@ using System.Collections;
 
 public class UnitDataStore {
 
-    public static DateTime now = DateTime.Today;
-
 	public struct GreekUnitData {		
         //<!--- Spearman.
         public const string Spearman = "Spearman";
@@ -22,7 +20,7 @@ public class UnitDataStore {
 	        }
 	    }
         public static GameResource SpearmanResource = new GameResource() { Food = 40, Armor = 1, Weapon = 1, Gold = 15 };
-        public static DateTime SpearmanTraining_timer = new DateTime(now.Year, now.Month, now.Day, 0, 1, 0);
+        public static TimeSpan SpearmanTraining_timer = new TimeSpan(0, 1, 0);
 
         //<!--- Hapaspist.
         public const string Hapaspist = "Hapaspist";
@@ -38,7 +36,6 @@ public class UnitDataStore {
                 return temp_data;
             }
         }
-        public static DateTime HapaspistTraining_time = new DateTime(now.Year, now.Month, now.Day, 0, 2, 0);
 
         //<!--- Hoplite.
         public const string Hoplite = "Hoplite";

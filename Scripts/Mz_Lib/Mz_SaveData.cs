@@ -20,6 +20,9 @@ public class Mz_SaveData
 	public const string KEY_sumofstone = "sumofstone";
     public const string KEY_sumOfArmor = "sumofarmor";
     public const string KEY_sumOfWeapon = "sumofweapon";
+	public const string KEY_AMOUNT_OF_SPEARMAN = "AMOUNT_OF_SPEARMAN";
+	public const string KEY_AMOUNT_OF_HAPASPIST = "AMOUNT_OF_HAPASPIST";
+	public const string KEY_AMOUNT_OF_HOPLITE = "AMOUNT_OF_HOPLITE";
 	
 	public const string amount_farm_instance = "amount_farm_instance";
 	public const string amount_sawmill_instance = "amount_sawmill_instance";
@@ -81,6 +84,9 @@ public class Mz_SaveData
             PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_sumOfArmor, StoreHouse.sumOfArmor);
             PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_sumOfWeapon, StoreHouse.sumOfWeapon);
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofgold, StoreHouse.sumOfGold);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_AMOUNT_OF_SPEARMAN, BarracksBeh.AmountOfSpearman);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_AMOUNT_OF_HAPASPIST, BarracksBeh.AmountOfHapaspist);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_AMOUNT_OF_HOPLITE, BarracksBeh.AmountOfHoplite);
 			//<!-- TownCenter.
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
 			

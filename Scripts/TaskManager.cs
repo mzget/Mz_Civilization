@@ -53,7 +53,11 @@ public class TaskManager : MonoBehaviour {
     Rect sixth_button_rect = new Rect(1, 300, 48, 56);
 	Rect seventh_button_rect;
 
-
+	
+	void Awake() {
+		TaskManager.IsShowInteruptGUI = false;
+	}
+	
 	// Use this for initialization
 	IEnumerator Start () 
     {
@@ -336,11 +340,18 @@ public class TaskManager : MonoBehaviour {
                     Application.LoadLevel(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
                 }
             }
-            if (GUI.Button(new Rect(5, 145, label_width, 32), "Quit")) {
-                Mz_SaveData.Save();
-                stageManager._hasQuitCommand = true;
-            }
-            //GUI.Box(new Rect(5, 190, label_width, 32), "Unemployed : " + HouseBeh.SumOfUnemployed, taskbarUI_Skin.box);
+
+			if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer) {
+	            if (GUI.Button(new Rect(5, 145, label_width, 32), "Quit")) {
+	                Mz_SaveData.Save();
+	                stageManager._hasQuitCommand = true;
+	            }
+			}
+			else if(Application.platform == RuntimePlatform.OSXWebPlayer || Application.platform == RuntimePlatform.WindowsWebPlayer) {
+				if(GUI.Button(new Rect(5, 145, label_width, 32), "Fullscreen")) {
+					Screen.fullScreen = !Screen.fullScreen;
+				}
+			}
 		}
 		GUI.EndGroup();		
     }
@@ -362,9 +373,9 @@ public class TaskManager : MonoBehaviour {
             float label_width = sidebarContentGroup_rect.width - 10;
             GUI.Box(new Rect(5, 2, label_width, 32), "troops", taskbarUI_Skin.box);
 
-            GUI.Box(new Rect(5, 100, label_width, 32), UnitDataStore.GreekUnitData.Spearman + " : ", taskbarUI_Skin.box);
-            GUI.Box(new Rect(5, 145, label_width, 32), UnitDataStore.GreekUnitData.Hapaspist + " : ", taskbarUI_Skin.box);
-            GUI.Box(new Rect(5, 190, label_width, 32), UnitDataStore.GreekUnitData.Hoplite + " : ", taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 100, label_width, 32), UnitDataStore.GreekUnitData.Spearman + " : " + BarracksBeh.AmountOfSpearman, taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 145, label_width, 32), UnitDataStore.GreekUnitData.Hapaspist + " : " + BarracksBeh.AmountOfHapaspist, taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 190, label_width, 32), UnitDataStore.GreekUnitData.Hoplite + " : " + BarracksBeh.AmountOfHoplite, taskbarUI_Skin.box);
         }
         GUI.EndGroup();	
     }
