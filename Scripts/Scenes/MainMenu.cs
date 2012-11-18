@@ -320,7 +320,6 @@ public class MainMenu : Mz_BaseScene
                     {
 						Mz_SaveData.SaveSlot = 1;
                         this.LoadDataToSaveStorage();
-                        this.LoadSceneTarget();
                     }
                 }
                 else if (GUI.Button(slot_2Rect, new GUIContent(slot_2, "button")))
@@ -331,7 +330,6 @@ public class MainMenu : Mz_BaseScene
                     {
 						Mz_SaveData.SaveSlot = 2;
                         this.LoadDataToSaveStorage();
-                        this.LoadSceneTarget();
                     }
                 }
                 else if (GUI.Button(slot_3Rect, new GUIContent(slot_3, "button")))
@@ -342,7 +340,6 @@ public class MainMenu : Mz_BaseScene
                     {
 						Mz_SaveData.SaveSlot = 3;
                         this.LoadDataToSaveStorage();
-                        this.LoadSceneTarget();
                     }
                 }
 
@@ -393,8 +390,6 @@ public class MainMenu : Mz_BaseScene
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs, 0);
 
         this.LoadDataToSaveStorage();
-
-        this.LoadSceneTarget();
     }
     private void LoadSceneTarget()
     {
@@ -408,21 +403,19 @@ public class MainMenu : Mz_BaseScene
     private void LoadDataToSaveStorage()
     {
 		Mz_SaveData.Username = PlayerPrefs.GetString(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_username);
-		StoreHouse.sumOfFood = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood);
-		StoreHouse.sumOfWood = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood);
-		StoreHouse.sumOfGold = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold);
-		StoreHouse.sumOfStone = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone);
+		StoreHouse.SumOfFood = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood);
+		StoreHouse.SumOfWood = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood);
+		StoreHouse.SumOfStone = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone);
+		StoreHouse.SumOfCopper = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_SUMOFCOPPER);
         StoreHouse.sumOfArmor = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfArmor);
         StoreHouse.sumOfWeapon = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfWeapon);
+		StoreHouse.sumOfGold = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold);
 		BarracksBeh.AmountOfSpearman = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_SPEARMAN, 0);
 		BarracksBeh.AmountOfHapaspist = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HAPASPIST, 0);
 		BarracksBeh.AmountOfHoplite = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HOPLITE, 0);
 
         Debug.Log("Load storage data to static variable complete.");
 
-        if(!Application.isLoadingLevel) {
-            Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.Town.ToString();
-            Application.LoadLevel(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
-        }
+		this.LoadSceneTarget();
     }
 }

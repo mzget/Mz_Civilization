@@ -22,12 +22,76 @@ public class StoreHouse : BuildingBeh {
 
     //<!--- Static Data.
 	public static int sumOfGold = 0;
-	public static int sumOfFood = 0;
-	public static int sumOfWood = 0;
-	public static int sumOfStone = 0;
-    public static int sumOfCopper = 0;
-    public static int sumOfWeapon = 0;
-    public static int sumOfArmor = 0;
+	public static int sumOfWeapon = 0;
+	public static int sumOfArmor = 0;
+
+	#region <@-- Game resources.
+
+	private static int sumOfFood = 0;
+	public static int SumOfFood {
+		get { return sumOfFood; } 
+		set { sumOfFood = value; } 
+	}
+	public static void Add_sumOfFood (int p_value) {
+		if(sumOfFood < SumOfMaxCapacity) sumOfFood += p_value;
+
+		if(SumOfFood > SumOfMaxCapacity) sumOfFood = SumOfMaxCapacity;
+	}
+	public static void Remove_sumOfFood (int p_value) {
+		if(sumOfFood > 0) sumOfFood -= p_value;
+		
+		if(sumOfFood < 0) sumOfFood = 0;
+	}
+
+	private static int sumOfWood = 0;
+	public static int SumOfWood {
+		get { return sumOfWood; } 
+		set { sumOfWood = value; }
+	}
+	public static void Add_sumOfWood (int p_value) {
+		if(sumOfWood < SumOfMaxCapacity) sumOfWood += p_value;
+
+		if(sumOfWood > SumOfMaxCapacity) sumOfWood = SumOfMaxCapacity;
+	}
+	public static void Remove_sumOfWood (int p_value) {
+		if(sumOfWood > 0) sumOfWood -= p_value;
+		
+		if(sumOfWood < 0) sumOfWood = 0;
+	}
+
+	private static int sumOfStone = 0;
+	public static int SumOfStone {		
+		get { return sumOfStone; }				
+		set { sumOfStone = value;}
+	}
+	public static void Add_sumOfStone (int p_value) {
+		if(sumOfStone < SumOfMaxCapacity) sumOfStone += p_value;
+
+		if(sumOfStone > SumOfMaxCapacity) sumOfStone = SumOfMaxCapacity;
+	}
+	public static void Remove_sumOfStone (int p_value) {
+		if(sumOfStone > 0)	sumOfStone -= p_value;
+		
+		if(sumOfStone < 0)	sumOfStone = 0;
+	}
+
+    private static int sumOfCopper = 0;
+	public static int SumOfCopper {
+		get { return sumOfCopper; } 
+		set {sumOfCopper = value;}
+	}
+	public static void Add_sumOfCopper (int p_value) {
+		if(sumOfCopper < SumOfMaxCapacity) sumOfCopper += p_value;
+		if(sumOfCopper > SumOfMaxCapacity) sumOfCopper = SumOfMaxCapacity;
+	}
+	public static void Remove_sumOfCopper (int p_value) {
+		if(sumOfCopper > 0)	sumOfCopper -= p_value;
+		
+		if(sumOfCopper < 0)	sumOfCopper = 0;
+	}
+
+	#endregion
+
     public static int SumOfMaxCapacity = 0;
     public static string BuildingName = "Store House";
     private static string Description_TH = "";
@@ -43,45 +107,17 @@ public class StoreHouse : BuildingBeh {
         }
     }
 
-    private int food = 500;
-    private int wood = 500;
-    private int stone = 500;
-    private int copper = 0;
     private int[] maxCapacities = new int[10] { 800, 1200, 1800, 2500, 3500, 4800, 6000, 8000, 12000, 15000, };
     private int currentMaxCapacity;
 	
-	
-	public static void CalculationSumofFood() {
-		sumOfFood = 0;
-        foreach (StoreHouse obj in BuildingBeh.StoreHouseInstance) {
-            sumOfFood += obj.food;
-        }
-	}
-	public static void CalculationSumofWood() {
-		sumOfWood = 0;
-        foreach (StoreHouse obj in BuildingBeh.StoreHouseInstance) {
-            sumOfWood += obj.wood;
-        }
-	}
-	public static void CalculationSumofStone() {
-		sumOfStone = 0;
-        foreach (StoreHouse obj in BuildingBeh.StoreHouseInstance) {
-            sumOfStone += obj.stone;
-        }
-	}
-	public static void CalculationSumofCopper() {
-		sumOfCopper = 0;
-        foreach (StoreHouse obj in BuildingBeh.StoreHouseInstance) {
-            sumOfCopper += obj.copper;
-        }
-	}
     public static void CalculationSumOfMaxCapacity() {
         SumOfMaxCapacity = 800;
         foreach (StoreHouse obj in BuildingBeh.StoreHouseInstance) {
             SumOfMaxCapacity += obj.currentMaxCapacity;
         }
     }	
-    public static new void ReachDayCycle(object sender, System.EventArgs e) {
+	
+    public static void ReachDayCycle(object sender, System.EventArgs e) {
         if (BuildingBeh.Farm_Instance.Count == 0 && sumOfFood < SumOfMaxCapacity)
             sumOfFood += 2;
         if (BuildingBeh.Sawmill_Instance.Count == 0 && sumOfWood < SumOfMaxCapacity)
@@ -92,14 +128,19 @@ public class StoreHouse : BuildingBeh {
 //            sumOfCopper += 2;
 		
 		//<!--- Check capacity.
-		if(sumOfFood > SumOfMaxCapacity) 
-			sumOfFood = SumOfMaxCapacity;
-		if(sumOfWood > SumOfMaxCapacity) 
-			sumOfWood = SumOfMaxCapacity;
-		if(sumOfStone > SumOfMaxCapacity) 
-			sumOfStone = SumOfMaxCapacity;
-		if(sumOfCopper > SumOfMaxCapacity)
-			sumOfCopper = SumOfMaxCapacity;
+		if(sumOfFood > SumOfMaxCapacity) 			sumOfFood = SumOfMaxCapacity;
+		if(sumOfFood < 0) 							sumOfFood = 0;
+		
+		if(sumOfWood > SumOfMaxCapacity) 			sumOfWood = SumOfMaxCapacity;
+		if(sumOfWood < 0)							sumOfWood = 0;
+		
+		if(sumOfStone > SumOfMaxCapacity) 			sumOfStone = SumOfMaxCapacity;
+		if(sumOfStone < 0) 							sumOfStone = 0;
+		
+		if(sumOfCopper > SumOfMaxCapacity)			sumOfCopper = SumOfMaxCapacity;
+		if(sumOfCopper < 0) 						sumOfCopper = 0;
+
+        Debug.Log("StoreHouse.ReachDayCycle event");
     }
 	
 
@@ -122,7 +163,6 @@ public class StoreHouse : BuildingBeh {
 		this.InitializeTexturesResource();
         this.ReCalculationCapacityData();
 
-        StoreHouse.ReachDayCycle(this, System.EventArgs.Empty);
         base.NotEnoughResource_Notification_event += StoreHouse_NotEnoughResource_Notification_event;
     }
 	

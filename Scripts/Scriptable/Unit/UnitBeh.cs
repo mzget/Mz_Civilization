@@ -7,9 +7,11 @@ public class UnitBeh : ScriptableObject {
 
 	// Use this for initialization
     void OnEnable() {
-		Debug.Log("Starting... UnitBeh");
+        Debug.Log("UnitBeh :: Starting... ");
 	}
 	
 	// Update is called once per frame
-	void OnDestroy() { }
+	void OnDestroy() {
+        Debug.Log("UnitBeh :: OnDestroy");
+    }
 }

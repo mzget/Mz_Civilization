@@ -115,8 +115,7 @@ public class Farm : BuildingBeh
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
         if (currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
-            if (StoreHouse.sumOfFood < StoreHouse.SumOfMaxCapacity)
-                StoreHouse.sumOfFood += this.productionRate[this.Level];
+                StoreHouse.Add_sumOfFood(this.productionRate[this.Level]);
         }
     }
 

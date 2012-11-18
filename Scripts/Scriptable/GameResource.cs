@@ -61,10 +61,10 @@ public class GameResource
 	/// </param>
     public static void UsedResource(GameResource usedResource)
     {
-        StoreHouse.sumOfFood -= usedResource.Food;
-        StoreHouse.sumOfWood -= usedResource.Wood;
-        StoreHouse.sumOfStone -= usedResource.Stone;
-        StoreHouse.sumOfCopper -= usedResource.Copper;
+        StoreHouse.Remove_sumOfFood(usedResource.Food);
+        StoreHouse.Remove_sumOfWood(usedResource.Wood);
+        StoreHouse.Remove_sumOfStone(usedResource.Stone);
+        StoreHouse.Remove_sumOfCopper(usedResource.Copper);
         StoreHouse.sumOfGold -= usedResource.Gold;
 		
 		StoreHouse.sumOfArmor -= usedResource.Armor;

@@ -125,25 +125,27 @@ public class MarketBeh : BuildingBeh {
         StartCoroutine(LoadtexturesResources());
 
         base.NotEnoughResource_Notification_event += MarketBeh_NotEnoughResourceNotification_event;
-        stageManager.dayCycle_Event += this.ReachDayCycle;
-		ReachDayCycle(this, System.EventArgs.Empty);
+        stageManager.dayCycle_Event += Handle_dayCycle_Event;
+		Handle_dayCycle_Event(this, System.EventArgs.Empty);
 		
         yield return 0;
     }
+
+	#region <@-- Events handle.
+
+	void Handle_dayCycle_Event (object sender, System.EventArgs e)
+	{
+		CheckingIdleCaravan();
+		if(SendingCaravanEvent != null)
+			SendingCaravanEvent(this, System.EventArgs.Empty);
+	}
 
     private void MarketBeh_NotEnoughResourceNotification_event(object sender, NoEnoughResourceNotificationArg e)
     {
         base.notificationText = e.notification_args;
     }
-	
-    protected override void ReachDayCycle(object sender, System.EventArgs e)
-    {
-        base.ReachDayCycle(sender, e);
 
-        CheckingIdleCaravan();
-		if(SendingCaravanEvent != null)
-			SendingCaravanEvent(this, System.EventArgs.Empty);
-    }
+	#endregion
 
     IEnumerator LoadtexturesResources()
     {
@@ -164,7 +166,6 @@ public class MarketBeh : BuildingBeh {
 
         for (int i = 0; i < base.Level; i++) {
             caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
-//            caravanList.Add(new CaravanBeh());
         }
     }
 	protected override void CalculateNumberOfEmployed (int p_level)
@@ -208,7 +209,7 @@ public class MarketBeh : BuildingBeh {
     {
         base.ClearStorageData();
 		
-		stageManager.dayCycle_Event -= this.ReachDayCycle;
+		stageManager.dayCycle_Event -= this.Handle_dayCycle_Event;
         base.NotEnoughResource_Notification_event -= this.MarketBeh_NotEnoughResourceNotification_event;
 
         BuildingBeh.MarketInstance = null;
@@ -297,8 +298,8 @@ public class MarketBeh : BuildingBeh {
                             idleCaravanList.RemoveAt(0);
                         }
 						//<!-- Remove resource form storehouse.
-						StoreHouse.sumOfCopper -= numberOf_CopperIngots;
-						StoreHouse.sumOfStone -= numberOf_StoneBlocks;
+						StoreHouse.Remove_sumOfCopper(numberOf_CopperIngots);
+						StoreHouse.Remove_sumOfStone(numberOf_StoneBlocks);
 						//<!-- Sending caravan.
 						caravan_group.TravelingCaravan(3, getGold);
                         //<!-- Add material to trading list.
@@ -374,8 +375,8 @@ public class MarketBeh : BuildingBeh {
                             idleCaravanList.RemoveAt(0);
                         }
 						//<!-- Remove resource form storehouse.
-						StoreHouse.sumOfFood -= numberOf_Food;
-						StoreHouse.sumOfWood -= numberOf_Wood;
+						StoreHouse.Remove_sumOfFood(numberOf_Food);
+						StoreHouse.Remove_sumOfWood(numberOf_Wood);
 						//<!-- Sending caravan.
 						caravan_group.TravelingCaravan(6, getGold);
 						
@@ -505,7 +506,7 @@ public class MarketBeh : BuildingBeh {
             GUI.enabled = !_IsGreekTrading;
             if (GUI.Button(trade_button_rect, "Trade"))
             {
-                if (numberOf_CopperIngots <= StoreHouse.sumOfCopper && numberOf_StoneBlocks <= StoreHouse.sumOfStone)
+                if (numberOf_CopperIngots <= StoreHouse.SumOfCopper && numberOf_StoneBlocks <= StoreHouse.SumOfStone)
                 {
                     _IsGreekTrading = true;
                     TradingMechanism();
@@ -543,7 +544,7 @@ public class MarketBeh : BuildingBeh {
 					{
 	                    GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_CopperIngots.ToString(), GUI.skin.textField);
 						// <!--- Selected number of button.
-						if(StoreHouse.sumOfCopper > 0) {
+						if(StoreHouse.SumOfCopper > 0) {
 		                    if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
 		                        if (numberOf_CopperIngots > 0)
 		                            numberOf_CopperIngots -= 8;
@@ -565,7 +566,7 @@ public class MarketBeh : BuildingBeh {
 					{
 	                    GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_StoneBlocks.ToString(), GUI.skin.textField);
 						/// Draw selected number button.
-						if(StoreHouse.sumOfStone > 0) {
+						if(StoreHouse.SumOfStone > 0) {
 		                    if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
 		                        if (numberOf_StoneBlocks > 0)
 									numberOf_StoneBlocks -= 8;
@@ -685,7 +686,7 @@ public class MarketBeh : BuildingBeh {
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_Food.ToString(), GUI.skin.textField);
 						/// Draw selected number button.
-						if(StoreHouse.sumOfFood > 0) {
+						if(StoreHouse.SumOfFood > 0) {
 	                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
 	                            if (numberOf_Food > 0)
 	                                numberOf_Food -= 8;
@@ -707,7 +708,7 @@ public class MarketBeh : BuildingBeh {
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_Wood.ToString(), GUI.skin.textField);
 						/// Draw selected number button.
-						if(StoreHouse.sumOfWood > 0) {
+						if(StoreHouse.SumOfWood > 0) {
 	                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style))
 	                        {
 	                            if (numberOf_Wood > 0)

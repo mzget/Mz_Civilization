@@ -185,6 +185,8 @@ public class BarracksBeh : BuildingBeh
         }
 		else
 			currentBarracksStatus = BarracksStatus.None;
+
+        Debug.Log("currentBarracksStatus == " + currentBarracksStatus);
     }
 
     protected override void Update()
@@ -392,7 +394,7 @@ public class BarracksBeh : BuildingBeh
 				});
 			}
 			else
-				Debug.Log("numberOfSpearman == " + amount);
+				Debug.Log("Invalid input or input value more than limit :: numberOfSpearman == " + amount);
 		}
 		catch{
 			
@@ -448,7 +450,7 @@ public class BarracksBeh : BuildingBeh
     private int CalculationCanCreateSpearman()
     {
         int maximumCanCreate = 0;
-        if (StoreHouse.sumOfFood >= UnitDataStore.GreekUnitData.SpearmanResource.Food &&
+        if (StoreHouse.SumOfFood >= UnitDataStore.GreekUnitData.SpearmanResource.Food &&
             StoreHouse.sumOfArmor >= UnitDataStore.GreekUnitData.SpearmanResource.Armor &&
             StoreHouse.sumOfWeapon >= UnitDataStore.GreekUnitData.SpearmanResource.Weapon &&
             StoreHouse.sumOfGold >= UnitDataStore.GreekUnitData.SpearmanResource.Gold)
@@ -464,7 +466,7 @@ public class BarracksBeh : BuildingBeh
             int minimumRequireResource = spearmanRequireResource[0];
             if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Food)
             {
-                maximumCanCreate = StoreHouse.sumOfFood / minimumRequireResource;
+                maximumCanCreate = StoreHouse.SumOfFood / minimumRequireResource;
                 return maximumCanCreate;
             }
             else if (minimumRequireResource == UnitDataStore.GreekUnitData.SpearmanResource.Armor)

@@ -33,13 +33,20 @@ public class HouseBeh : BuildingBeh {
     public static int SumOfPopulation;
     public static int SumOfEmployee;
     public static int SumOfUnemployed;
+    private static bool _IsAddEvent = false;
     public static void CalculationSumOfPopulation() {
         SumOfPopulation = 10;
         foreach (HouseBeh house in BuildingBeh.House_Instances)
             SumOfPopulation += house.currentMaxDweller;
-		
-		SumOfUnemployed = SumOfPopulation - SumOfEmployee;
+
+        SumOfUnemployed = SumOfPopulation - SumOfEmployee;
     }
+	public static new void ClearStaticData() {
+		HouseBeh._IsAddEvent = false;
+		HouseBeh.SumOfPopulation = 0;
+		HouseBeh.SumOfEmployee = 0;
+		HouseBeh.SumOfUnemployed = 0;
+	}
 	
     private int[] maxDweller = new int[5] { 10, 20, 30, 40, 50, };
     private int currentMaxDweller;
@@ -57,20 +64,31 @@ public class HouseBeh : BuildingBeh {
     }
 
 	// Use this for initialization
-	IEnumerator Start () {
+	void Start () {
         this.InitializeTexturesResource();
-        this.ReCalculatePopulationData();
+        this.CalculationCurrentDweller();
 		
 		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResourceNotification_event;
 		
-        yield return 0;
+		if(_IsAddEvent == false) {
+			stageManager.dayCycle_Event += Handle_dayCycle_Event;
+			_IsAddEvent = true;
+		}
     }
 	
-	#region <!--- Event Handle.
+	#region <!--- Events Handle.
 	
 	void HandleBaseNotEnoughResourceNotification_event (object sender, NoEnoughResourceNotificationArg eventArg)
 	{
 		base.notificationText = eventArg.notification_args;
+	}
+	
+	static void Handle_dayCycle_Event (object sender, System.EventArgs e)
+	{
+		StoreHouse.Remove_sumOfFood(HouseBeh.SumOfPopulation);
+
+        string output = string.Format("HouseBeh.Handle_dayCycle_Event..." + ":: remove '{0}' food from storehouse.", SumOfPopulation.ToString());
+        Debug.Log(output);
 	}
 	
 	#endregion
@@ -83,15 +101,15 @@ public class HouseBeh : BuildingBeh {
         buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "House", typeof(Texture2D)) as Texture2D;
     }
 
-    private void ReCalculatePopulationData()
+    private void CalculationCurrentDweller()
     {
         for (int i = 1; i <= maxDweller.Length; i++)
         {
             if (base.Level == i)
             {
                 this.currentMaxDweller = this.maxDweller[i - 1];
-                CalculationSumOfPopulation();
-                break;
+				HouseBeh.CalculationSumOfPopulation();
+                return;
             }
         }
     }
@@ -132,7 +150,7 @@ public class HouseBeh : BuildingBeh {
 
         if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
         {
-            this.ReCalculatePopulationData();
+            this.CalculationCurrentDweller();
 
             this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
         }

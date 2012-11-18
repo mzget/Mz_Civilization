@@ -233,9 +233,9 @@ public class TaskManager : MonoBehaviour {
 
         GUI.BeginGroup(header_group_rect);
         {
-            GUI.Box(first_rect, new GUIContent(StoreHouse.sumOfFood + "/" + StoreHouse.SumOfMaxCapacity, food_icon), taskbarUI_Skin.button);
-            GUI.Box(second_rect, new GUIContent(StoreHouse.sumOfWood + "/" + StoreHouse.SumOfMaxCapacity, wood_icon), taskbarUI_Skin.button);
-            GUI.Box(third_rect, new GUIContent(StoreHouse.sumOfStone + "/" + StoreHouse.SumOfMaxCapacity, stone_icon), taskbarUI_Skin.button);
+            GUI.Box(first_rect, new GUIContent(StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity, food_icon), taskbarUI_Skin.button);
+            GUI.Box(second_rect, new GUIContent(StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity, wood_icon), taskbarUI_Skin.button);
+            GUI.Box(third_rect, new GUIContent(StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, stone_icon), taskbarUI_Skin.button);
             GUI.Box(fourth_rect, new GUIContent(StoreHouse.sumOfGold.ToString(), gold_icon), taskbarUI_Skin.button);
             GUI.Box(fifth_rect, new GUIContent(HouseBeh.SumOfPopulation.ToString(), employee_icon), taskbarUI_Skin.button);
         }
@@ -388,38 +388,38 @@ public class TaskManager : MonoBehaviour {
             //<!-- Food.
             if (MarketBeh.tradingMaterial_List.Count != 0 && MarketBeh.tradingMaterial_List.Contains(stageManager.gameMaterials[0])) {
                 GUI.Box(sidebarContentBox_rect,
-                    new GUIContent("Food : " + StoreHouse.sumOfFood + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
+                    new GUIContent("Food : " + StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
             }
             else {
                 GUI.Box(sidebarContentBox_rect,
-                    new GUIContent("Food : " + StoreHouse.sumOfFood + "/" + StoreHouse.SumOfMaxCapacity), taskbarUI_Skin.box);
+                    new GUIContent("Food : " + StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity), taskbarUI_Skin.box);
             }
             //<!-- Wood.
             if (MarketBeh.tradingMaterial_List.Count != 0 && MarketBeh.tradingMaterial_List.Contains(stageManager.gameMaterials[1])) {
                 GUI.Box(new Rect(sidebarContentBox_rect.x, (sidebarContentBox_rect.y + label_height) + 5, label_width, label_height),
-                    new GUIContent("Wood : " + StoreHouse.sumOfWood + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
+                    new GUIContent("Wood : " + StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
             }
             else {
                 GUI.Box(new Rect(sidebarContentBox_rect.x, (sidebarContentBox_rect.y + label_height) + 5, label_width, label_height),
-                    new GUIContent("Wood : " + StoreHouse.sumOfWood + "/" + StoreHouse.SumOfMaxCapacity), taskbarUI_Skin.box);
+                    new GUIContent("Wood : " + StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity), taskbarUI_Skin.box);
             }
 			//<!-- Stone.
 			if(MarketBeh.tradingMaterial_List.Count != 0 && MarketBeh.tradingMaterial_List.Contains(stageManager.gameMaterials[2])) {
 				GUI.Box(new Rect(sidebarContentBox_rect.x, (sidebarContentBox_rect.y + (label_height + 5) * 2), label_width, label_height),
-				new GUIContent("Stone : " + StoreHouse.sumOfStone + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
+				new GUIContent("Stone : " + StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
 			}
 			else {
 				GUI.Box(new Rect(sidebarContentBox_rect.x, (sidebarContentBox_rect.y + (label_height + 5) * 2), label_width, label_height),
-				"Stone : " + StoreHouse.sumOfStone + "/" + StoreHouse.SumOfMaxCapacity, taskbarUI_Skin.box);
+				"Stone : " + StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, taskbarUI_Skin.box);
 			}
 			//<!-- Copper.
 			if(MarketBeh.tradingMaterial_List.Count != 0 && MarketBeh.tradingMaterial_List.Contains(stageManager.gameMaterials[3])) {
 				GUI.Box(new Rect(sidebarContentBox_rect.x, sidebarContentBox_rect.y + ((label_height + 5) * 3), label_width, label_height),
-                new GUIContent("Copper : " + StoreHouse.sumOfCopper + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
+                new GUIContent("Copper : " + StoreHouse.SumOfCopper + "/" + StoreHouse.SumOfMaxCapacity, marketTradingIcon), taskbarUI_Skin.box);
 			}
 			else {
 				GUI.Box(new Rect(sidebarContentBox_rect.x, sidebarContentBox_rect.y + ((label_height + 5) * 3), label_width, label_height),
-                "Copper : " + StoreHouse.sumOfCopper + "/" + StoreHouse.SumOfMaxCapacity, taskbarUI_Skin.box);
+                "Copper : " + StoreHouse.SumOfCopper + "/" + StoreHouse.SumOfMaxCapacity, taskbarUI_Skin.box);
 			}	
             ///<!-- Draw Weapon status.
 			if(MarketBeh.tradingMaterial_List.Count != 0 && MarketBeh.tradingMaterial_List.Contains(stageManager.gameMaterials[5])) {

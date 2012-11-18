@@ -174,25 +174,6 @@ public class Mz_BaseScene : MonoBehaviour {
         //    	Debug.Log("OnPointerOverName :: " + nameInput);
     }
 
-    void OnApplicationQuit()
-    {
-        Mz_SaveData.Save();
-
-#if UNITY_STANDALONE_WIN
-        Application.CancelQuit();
-
-        if(!Application.isLoadingLevel) {
-            Mz_LoadingScreen.LoadSceneName = Mz_BaseScene.SceneNames.MainMenu.ToString();
-            Application.LoadLevelAsync(Mz_BaseScene.SceneNames.LoadingScene.ToString());
-        }
-#endif
-
-#if UNITY_IPHONE || UNITY_ANDROID
-        //<-- to do asking for quit game.
-#endif
-    }
-
-
     protected virtual void OnGUI()
     {
         GUI.depth = 0;
@@ -213,10 +194,31 @@ public class Mz_BaseScene : MonoBehaviour {
             }
             GUI.EndGroup();
         }
+
+
+        //GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_GUIManager.Extend_heightScale, 50), output);
+    }
+
+    void OnApplicationQuit()
+    {
+        Mz_SaveData.Save();
+
+#if UNITY_STANDALONE_WIN
+        Application.CancelQuit();
+
+        if(!Application.isLoadingLevel) {
+            Mz_LoadingScreen.LoadSceneName = Mz_BaseScene.SceneNames.MainMenu.ToString();
+            Application.LoadLevelAsync(Mz_BaseScene.SceneNames.LoadingScene.ToString());
+        }
+#endif
+
+#if UNITY_IPHONE || UNITY_ANDROID
+        //<-- to do asking for quit game.
+#endif
     }
 
     #region <!-- Unity Log Callback.
-
+/*
     public string output = "";
     public string stack = "";
     void OnEnable()
@@ -232,6 +234,6 @@ public class Mz_BaseScene : MonoBehaviour {
         output = logString;
         stack = stackTrace;
     }
-
+*/
     #endregion
 }

@@ -53,11 +53,12 @@ public class Sawmill : BuildingBeh {
         base.NotEnoughResource_Notification_event += Sawmill_NotEnoughResource_Notification_event;
     }
 
+	#region <@-- Events Handle.
+
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
-		if(this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {			
-	        if (StoreHouse.sumOfWood < StoreHouse.SumOfMaxCapacity)
-	            StoreHouse.sumOfWood += this.productionRate[this.Level];
+		if(this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {		
+			StoreHouse.Add_sumOfWood(this.productionRate[this.Level]);
 		}
     }
 
@@ -65,6 +66,8 @@ public class Sawmill : BuildingBeh {
     {
         base.notificationText = e.notification_args;
     }
+
+	#endregion
 	
 	protected override void InitializeTexturesResource ()
 	{

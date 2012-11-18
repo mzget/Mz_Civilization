@@ -70,29 +70,18 @@ public class StageManager : Mz_BaseScene {
     void Awake() {
         buildingArea_Objs.Clear();
 		BuildingBeh.ClearStaticData();
-
-		HouseBeh.SumOfPopulation = 0;
-		HouseBeh.SumOfEmployee = 0;
-		HouseBeh.SumOfUnemployed = 0;
+		HouseBeh.ClearStaticData();
     }
 
 	// Use this for initialization
-    IEnumerator Start()
+    void Start()
     {				
         this.GenerateBackground();
         this.CreateBuildingArea();
         this.PrepareBuildingPrefabsFromResource();
         this.LoadingAmountOfBuildingInstance();
-        StartCoroutine(this.LoadingDataStorage());
+        this.LoadingDataStorage();
 
-//        GameMaterial food = ScriptableObject.CreateInstance<GameMaterial>();
-//        food.name = "food";
-//        GameMaterial wood = ScriptableObject.CreateInstance<GameMaterial>();
-//        wood.name = "wood";
-//        GameMaterial stone = ScriptableObject.CreateInstance<GameMaterial>();
-//        stone.name = "stone";
-//        GameMaterial copper = ScriptableObject.CreateInstance<GameMaterial>();
-//        copper.name = "copper";
 		gameMaterials.Add(new GameMaterial() { name = "food" });	/// 0.
 		gameMaterials.Add(new GameMaterial() { name = "wood" });	// 1.
 		gameMaterials.Add(new GameMaterial() { name = "stone" });	// 2.
@@ -103,14 +92,13 @@ public class StageManager : Mz_BaseScene {
         if (taskManager == null) 
             taskManager = this.gameObject.GetComponent<TaskManager>();
 		
-		dayCycle_Event += StoreHouse.ReachDayCycle;
-        if (BuildingBeh.StoreHouseInstance.Count == 0)
+        if (BuildingBeh.StoreHouseInstance.Count == 0) {
             StoreHouse.CalculationSumOfMaxCapacity();
+			dayCycle_Event += StoreHouse.ReachDayCycle;
+        }
 		
         if (BuildingBeh.House_Instances.Count == 0)
-			HouseBeh.CalculationSumOfPopulation();
-		
-		yield return 0;
+            HouseBeh.CalculationSumOfPopulation();
     }
 
     void GenerateBackground()
@@ -195,7 +183,7 @@ public class StageManager : Mz_BaseScene {
 	
 	int numberOf_BarracksInstance = 0;
 
-    private void LoadingAmountOfBuildingInstance() {
+    void LoadingAmountOfBuildingInstance() {
         //<!-- Utility --->>
         numberOfHouse_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance);
 		academyInstance = PlayerPrefsX.GetBool(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_AcademyInstance);
@@ -210,7 +198,7 @@ public class StageManager : Mz_BaseScene {
         //<!-- Millitary --->>
         numberOf_BarracksInstance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs);
     }
-	IEnumerator LoadingDataStorage()
+	void LoadingDataStorage()
     {
 		//<!--- Load level of towncenter.
         BuildingBeh.TownCenter.Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.TownCenter_level);
@@ -255,8 +243,6 @@ public class StageManager : Mz_BaseScene {
                 GameObject temp_farm = Instantiate(farm_prefab) as GameObject;
 				Farm farm = temp_farm.GetComponent<Farm>();
                 farm.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
-
-        		Debug.Log("Loading farm instance.");
 	        }
         }
 
@@ -273,8 +259,6 @@ public class StageManager : Mz_BaseScene {
                 GameObject new_Sawmill = Instantiate(sawmill_prefab) as GameObject;
                 Sawmill sawmill = new_Sawmill.GetComponent<Sawmill>();
                 sawmill.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
-
-        		Debug.Log("Loading sawmill instance.");
             }
         }
 
@@ -291,8 +275,6 @@ public class StageManager : Mz_BaseScene {
                 GameObject new_millstone = Instantiate(millstone_prefab) as GameObject;
                 MillStone millstone = new_millstone.GetComponent<MillStone>();
                 millstone.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
-
-        		Debug.Log("Loading millstone instance.");
             }
         }
 
@@ -309,8 +291,6 @@ public class StageManager : Mz_BaseScene {
                 GameObject new_smelter = Instantiate(smelter_prefab) as GameObject;
                 Smelter smelter = new_smelter.GetComponent<Smelter>();
                 smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
-
-        		Debug.Log("Loading smelter instance.");
             }
         }
 
@@ -328,8 +308,6 @@ public class StageManager : Mz_BaseScene {
                 GameObject temp_storehouse = Instantiate(storehouse_prefab) as GameObject;
                 StoreHouse new_storehouse = temp_storehouse.GetComponent<StoreHouse>();
                 new_storehouse.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
-
-        		Debug.Log("Loading storehouse instance.");
             }
         }
 
@@ -363,13 +341,14 @@ public class StageManager : Mz_BaseScene {
 
         #endregion
 
-        yield return 0;
+        Debug.Log("StageManager.LoadingDataStorage");
     }
 	
 	// Update is called once per frame
     protected override void Update()
     {
         base.Update();
+		
         if(TaskManager.IsShowInteruptGUI == false) 
             base.ImplementTouchPostion();
         if (Camera.main.transform.position.x > 512)

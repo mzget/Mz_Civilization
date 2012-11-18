@@ -14,5 +14,7 @@ public class TrainingQueue : ScriptableObject
 		Debug.Log("Starting... :: TrainingQueue");
 	}
 
-    void OnDestroy() { }
+    void OnDestroy() {
+        Debug.Log("TrainingQueue :: OnDestroing...");
+    }
 };

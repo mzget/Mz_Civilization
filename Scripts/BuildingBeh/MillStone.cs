@@ -58,8 +58,7 @@ public class MillStone : BuildingBeh {
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
         if (this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
-            if (StoreHouse.sumOfStone < StoreHouse.SumOfMaxCapacity)
-                StoreHouse.sumOfStone += this.productionRate[this.Level];
+			StoreHouse.Add_sumOfStone(this.productionRate[this.Level]);
         }
     }
 

@@ -16,10 +16,11 @@ public class Mz_SaveData
 	public const string KEY_username = "username";
 	public const string KEY_sumoffood = "sumoffood";
 	public const string KEY_sumofwood = "sumofwood";
-	public const string KEY_sumofgold = "sumofgold";
 	public const string KEY_sumofstone = "sumofstone";
+	public const string KEY_SUMOFCOPPER = "SUMOFCOPPER";
     public const string KEY_sumOfArmor = "sumofarmor";
     public const string KEY_sumOfWeapon = "sumofweapon";
+	public const string KEY_sumofgold = "sumofgold";
 	public const string KEY_AMOUNT_OF_SPEARMAN = "AMOUNT_OF_SPEARMAN";
 	public const string KEY_AMOUNT_OF_HAPASPIST = "AMOUNT_OF_HAPASPIST";
 	public const string KEY_AMOUNT_OF_HOPLITE = "AMOUNT_OF_HOPLITE";
@@ -78,9 +79,10 @@ public class Mz_SaveData
 		
 		if(Mz_SaveData.Username != "") {
 			PlayerPrefs.SetString(Mz_SaveData.SaveSlot + ":" + KEY_username, Mz_SaveData.Username);
-			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumoffood, StoreHouse.sumOfFood);
-			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofwood, StoreHouse.sumOfWood);
-			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofstone, StoreHouse.sumOfStone);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumoffood, StoreHouse.SumOfFood);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofwood, StoreHouse.SumOfWood);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofstone, StoreHouse.SumOfStone);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_SUMOFCOPPER, StoreHouse.SumOfCopper);
             PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_sumOfArmor, StoreHouse.sumOfArmor);
             PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_sumOfWeapon, StoreHouse.sumOfWeapon);
 			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + KEY_sumofgold, StoreHouse.sumOfGold);

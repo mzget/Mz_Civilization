@@ -24,7 +24,9 @@ public class BuildingBeh : Base_ObjectBeh {
 	
     public StageManager stageManager;
 	protected GameObject processbar_Obj_parent;
-    protected OTSprite processBar_Scolling;
+    private OTSprite processBarBackground;
+    private OTSprite processBar_Scolling;
+
     protected OTSprite sprite;
     protected TextMesh buildingLevel_textmesh;
 
@@ -116,27 +118,27 @@ public class BuildingBeh : Base_ObjectBeh {
 			NotEnoughResource_Notification_event(this, e);
 	}
 	public bool CheckingEnoughUpgradeResource(GameResource upgradeResource) {
-		if (StoreHouse.sumOfFood >= upgradeResource.Food && 
-			StoreHouse.sumOfWood >= upgradeResource.Wood &&
-			StoreHouse.sumOfGold >= upgradeResource.Gold &&
-			StoreHouse.sumOfStone >= upgradeResource.Stone &&
-			StoreHouse.sumOfCopper >= upgradeResource.Copper &&
+		if (StoreHouse.SumOfFood >= upgradeResource.Food && 
+			StoreHouse.SumOfWood >= upgradeResource.Wood &&
+			StoreHouse.SumOfStone >= upgradeResource.Stone &&
+			StoreHouse.SumOfCopper >= upgradeResource.Copper &&
+		    StoreHouse.sumOfGold >= upgradeResource.Gold &&
 			HouseBeh.SumOfUnemployed >= upgradeResource.Employee) {
 			return true;
 		}
-		else if(StoreHouse.sumOfFood < upgradeResource.Food) {
+		else if(StoreHouse.SumOfFood < upgradeResource.Food) {
 			OnCheckingResource(new NoEnoughResourceNotificationArg() {notification_args = "Not enough food."});
 			return false;
 		}
-		else if(StoreHouse.sumOfWood < upgradeResource.Wood) {
+		else if(StoreHouse.SumOfWood < upgradeResource.Wood) {
 			OnCheckingResource(new NoEnoughResourceNotificationArg() {notification_args = "Not enough wood."});
 			return false;
 		}
-		else if(StoreHouse.sumOfStone < upgradeResource.Stone) {
+		else if(StoreHouse.SumOfStone < upgradeResource.Stone) {
 			OnCheckingResource(new NoEnoughResourceNotificationArg() {notification_args = "Not enough stone."});
 			return false;
 		}
-		else if(StoreHouse.sumOfCopper < upgradeResource.Copper) {
+		else if(StoreHouse.SumOfCopper < upgradeResource.Copper) {
 			OnCheckingResource(new NoEnoughResourceNotificationArg() {notification_args = "Not enough copper."});
 			return false;
 		}
@@ -186,7 +188,7 @@ public class BuildingBeh : Base_ObjectBeh {
 		building_Skin.box.fontStyle = FontStyle.Normal;
 		building_Skin.box.contentOffset = new Vector2(128, 38);
 		
-		buildingWindowStyle = new GUIStyle(standard_Skin.box);
+		buildingWindowStyle = new GUIStyle(standard_Skin.window);
 		buildingWindowStyle.font = building_Skin.window.font;
 		buildingWindowStyle.fontSize = building_Skin.window.fontSize;
 
@@ -211,13 +213,13 @@ public class BuildingBeh : Base_ObjectBeh {
     }
 	
 	protected virtual void InitializeTexturesResource() {
-        Debug.Log(this.gameObject.name + " : LoadTextures_Resource");
+        Debug.Log(this.name + " : LoadTextures_Resource");
 	}
     protected virtual void InitializingData() {
-        Debug.Log("InitializingData");
+        Debug.Log(this.name + " : InitializingData");
     }
     public virtual void InitializingBuildingBeh(BuildingStatus p_buildingState, int p_indexPosition, int p_level) {
-        Debug.Log("Building.InitializingBuildingBeh");
+        Debug.Log(this.name + " : InitializingBuildingBeh");
 
         currentBuildingStatus = p_buildingState;
         indexOfPosition = p_indexPosition;
@@ -254,13 +256,16 @@ public class BuildingBeh : Base_ObjectBeh {
     {
         if (processbar_Obj_parent == null)
         {
-            processbar_Obj_parent = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Processbar_Group", typeof(GameObject)),
-                new Vector3(this.sprite.position.x, this.sprite.position.y - ((this.sprite.size.y / 2) + 24), 0), Quaternion.identity) as GameObject;
+            processbar_Obj_parent = new GameObject("ProcessbarObj_group");
+            processbar_Obj_parent.transform.position = new Vector3(this.sprite.position.x, this.sprite.position.y - ((this.sprite.size.y / 2) + 24), 0);
 
-            OTSprite backgroundSprite = processbar_Obj_parent.GetComponentInChildren<OTSprite>();
-            backgroundSprite.size = new Vector2(128, 28);
-			backgroundSprite.spriteContainer = OT.ContainerByName("GUI_Atlas");
-			backgroundSprite.frameIndex = 0;
+            GameObject temp_processBar = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Processbar", typeof(GameObject))) as GameObject;
+            temp_processBar.transform.parent = processbar_Obj_parent.transform;
+            temp_processBar.transform.localPosition = Vector3.zero;
+            processBarBackground = temp_processBar.GetComponent<OTSprite>();
+            processBarBackground.spriteContainer = OT.ContainerByName("GUI_Atlas");
+            processBarBackground.frameIndex = 0;
+            processBarBackground.size = new Vector2(128, 28);
 
             if (processBar_Scolling == null)
             {
@@ -272,7 +277,7 @@ public class BuildingBeh : Base_ObjectBeh {
 					processBar_Scolling.spriteContainer = OT.ContainerByName("GUI_Atlas");
 					processBar_Scolling.frameIndex = 1;
                     processBar_Scolling.pivot = OTObject.Pivot.Left;
-                    processBar_Scolling.position = new Vector2((-backgroundSprite.size.x / 2) + 2, -1);
+                    processBar_Scolling.position = new Vector2((-processBarBackground.size.x / 2) + 2, -1);
                     processBar_Scolling.size = new Vector2(12, 24);
                 }
                 else if (buildingStatus == BuildingStatus.OnDestructionProcess)
@@ -283,7 +288,7 @@ public class BuildingBeh : Base_ObjectBeh {
 					processBar_Scolling.spriteContainer = OT.ContainerByName("GUI_Atlas");
 					processBar_Scolling.frameIndex = 2;
                     processBar_Scolling.pivot = OTObject.Pivot.Left;
-                    processBar_Scolling.position = new Vector2((-backgroundSprite.size.x / 2) + 2, -1);
+                    processBar_Scolling.position = new Vector2((-processBarBackground.size.x / 2) + 2, -1);
                     processBar_Scolling.size = new Vector2(12, 24);
                 }
             }
@@ -381,11 +386,6 @@ public class BuildingBeh : Base_ObjectBeh {
         Destroy(this.gameObject);
         Destroy(this.processbar_Obj_parent.gameObject);
 	}
-    
-    protected virtual void ReachDayCycle(object sender, System.EventArgs e)
-    {
-        Debug.Log("Building.ReachDayCycle event");
-    }
 	
     #region <!-- Mouse Events.
 
