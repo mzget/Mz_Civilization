@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TaskManager : MonoBehaviour {
 	
@@ -7,10 +8,20 @@ public class TaskManager : MonoBehaviour {
     public const string PathOfMainGUIResource = "Textures/MainGUI/";
     public const string PathOfGameItemTextures = "Textures/GameItems/";
     public const string Advisor_ResourcePath = "Textures/Advisors/";
+    public const string PathOfTribes_Texture = "Textures/Tribes_Icons/";
 
     public static bool IsShowInteruptGUI = false;
 //	public static bool IsShowSidebarGUI = false;
-    public enum RightSideState { none = 0, show_domination, show_agriculture, show_industry, show_commerce, show_military, show_map, show_setting, };
+    public enum RightSideState { 
+        none = 0, 
+        show_domination, 
+        show_agriculture, 
+        show_industry,
+        show_commerce,
+        show_military,
+        show_map, 
+        show_setting,
+    };
     public RightSideState currentRightSideState = RightSideState.show_domination;
     private StageManager stageManager;
 
@@ -37,10 +48,14 @@ public class TaskManager : MonoBehaviour {
     public Texture2D marketTradingIcon;
 
     public Texture2D elder_advisor;
+    //<!-- Cities symbol.
+    public Texture2D GreekIcon_Texture;
+    public Texture2D EgyptianIcon_Texture;
+    public Texture2D PersianIcon_Texture;
+    public Texture2D CelticIcon_Texture;
 
     protected Rect header_group_rect;
     protected Rect header_button_rect;
-    //private Rect baseSidebarGroup_rect = new Rect(Main.GAMEWIDTH- 50, 0, 50, Main.GAMEHEIGHT);
     Rect baseSidebarGroup_rect;
     Rect sidebarButtonGroup_rect = new Rect(0, 0, 50, Main.GAMEHEIGHT);
     Rect sidebarContentGroup_rect;
@@ -51,7 +66,9 @@ public class TaskManager : MonoBehaviour {
     Rect fourth_button_rect = new Rect(1, 180, 48, 56);
     Rect fifth_button_rect = new Rect(1, 240, 48, 56);
     Rect sixth_button_rect = new Rect(1, 300, 48, 56);
-	Rect seventh_button_rect;
+    Rect seventh_button_rect;
+    private Rect standardWindow_rect;
+    private Rect exitButton_Rect;
 
 	
 	void Awake() {
@@ -65,6 +82,7 @@ public class TaskManager : MonoBehaviour {
         stageManager = gamecontroller.GetComponent<StageManager>();
 
         this.InitializeOnGUIData();
+        StartCoroutine(this.CreateAIbeh());
         StartCoroutine(InitializeTextureResource());
 
 #if UNITY_WEBPLAYER || UNITY_EDITOR
@@ -74,13 +92,16 @@ public class TaskManager : MonoBehaviour {
         yield return 0;
     }
 	
-    private void InitializeOnGUIData()
+    void InitializeOnGUIData()
     {
         taskbarUI_Skin.button.alignment = TextAnchor.MiddleCenter;
 		taskbarUI_Skin.box.alignment = TextAnchor.MiddleCenter;
 		
 		seventh_button_rect = new Rect(1 * Mz_GUIManager.Extend_heightScale, 360, 48 * Mz_GUIManager.Extend_heightScale, 56);
-		
+
+        standardWindow_rect = new Rect((Screen.width * 3 / 4) / 2 - (350 * Mz_GUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 250, 700 * Mz_GUIManager.Extend_heightScale, 500);
+        exitButton_Rect = new Rect(standardWindow_rect.width - (34 * Mz_GUIManager.Extend_heightScale), 2, 32 * Mz_GUIManager.Extend_heightScale, 32);
+
         if (Screen.height != Main.GAMEHEIGHT) {			
 		    first_button_rect =  MzReCalculateScaleRectGUI.ReCalulateWidth(first_button_rect);
             second_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(second_button_rect);
@@ -126,6 +147,20 @@ public class TaskManager : MonoBehaviour {
         marketTradingIcon = Resources.Load(PathOfMainGUIResource + "Market", typeof(Texture2D)) as Texture2D;
 
         elder_advisor = Resources.Load(Advisor_ResourcePath + "VillageElder", typeof(Texture2D)) as Texture2D;
+
+        yield return 0;
+    }
+
+    public List<AICities> AICity_list = new List<AICities>();
+    private IEnumerator CreateAIbeh()
+    {
+        GreekIcon_Texture = Resources.Load(PathOfTribes_Texture + "Greek", typeof(Texture2D)) as Texture2D;
+        PersianIcon_Texture = Resources.Load(PathOfTribes_Texture + "Persian", typeof(Texture2D)) as Texture2D;
+
+        AICity_list.Add(new AICities() { name = "Greek", symbols = GreekIcon_Texture, });
+        AICity_list.Add(new AICities() { name = "Egyptian" });
+        AICity_list.Add(new AICities() { name = "Persian", symbols = PersianIcon_Texture, });
+        AICity_list.Add(new AICities() { name = "Celtic" });
 
         yield return 0;
     }
@@ -308,16 +343,23 @@ public class TaskManager : MonoBehaviour {
 
             #region <!--- show_Map.
 
-            if(currentRightSideState == RightSideState.show_map) {                
+            if(currentRightSideState == RightSideState.show_map) 
+            {
+                standardWindow_rect = GUI.Window(0, standardWindow_rect, DrawWorldMap_window, new GUIContent("Foreign affairs"));
 				GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
-				{
-					float label_width = sidebarContentGroup_rect.width - 20;
-                    GUI.Box(new Rect(10, 10, label_width, 40), "Map", taskbarUI_Skin.box);
+                {
+                    float label_width = sidebarContentGroup_rect.width - 20;
+                    GUI.Box(new Rect(5, 10, label_width + 10, 40), "Map", taskbarUI_Skin.box);
+                    GUI.Box(new Rect(5, 55, label_width + 10, 40), AICity_list[0].name, taskbarUI_Skin.box);
 
-                    //GUI.Box(new Rect(10, 100, label_width, 40), "Population : " + HouseBeh.SumOfPopulation, taskbarUI_Skin.box);
-                    //GUI.Box(new Rect(10, 145, label_width, 40), "Employee : " + HouseBeh.SumOfEmployee, taskbarUI_Skin.box);
-                    //GUI.Box(new Rect(10, 190, label_width, 40), "Unemployee : " + HouseBeh.SumOfUnemployed, taskbarUI_Skin.box);
-				}
+                    GUI.BeginGroup(new Rect(5, sidebarContentGroup_rect.height - 205, sidebarContentGroup_rect.width - 10, 200));
+                    {
+                        GUI.Button(new Rect(5, 0, label_width, 40), "Pillage");
+                        GUI.Button(new Rect(5, 45, label_width, 40), "Conquer");
+                        GUI.Button(new Rect(5, 90, label_width, 40), "Ask for help");
+                        GUI.Button(new Rect(5, 135, label_width, 40), "");
+                    } GUI.EndGroup();
+                }
 				GUI.EndGroup();
             }
 
@@ -325,6 +367,27 @@ public class TaskManager : MonoBehaviour {
         }
 		GUI.EndGroup();
 	}
+
+    private Rect citiesSymbol_rect = new Rect(24 * Mz_GUIManager.Extend_heightScale, 24, 100 * Mz_GUIManager.Extend_heightScale, 100);
+    private Rect citiesTagName_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 130, 120 * Mz_GUIManager.Extend_heightScale, 32);
+
+    private void DrawWorldMap_window(int id)
+    {
+        //<!-- Exit Button.
+        //if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6]))
+        //{
+        //    CloseGUIWindow();
+        //}
+        
+        /// Draw cities symbol.
+        GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
+        GUI.Box(citiesTagName_rect, AICity_list[0].name);
+    }
+
+    protected void CloseGUIWindow()
+    {
+        IsShowInteruptGUI = false;
+    }
 
     private void DrawSettingTab()
     {

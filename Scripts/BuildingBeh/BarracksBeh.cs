@@ -180,6 +180,8 @@ public class BarracksBeh : BuildingBeh
 
     private void TrainingUnitMechanism()
     {
+        Debug.Log("TrainingUnitMechanism()");
+
         if (list_trainingUnit.Count > 0) {
             currentBarracksStatus = BarracksStatus.TrainingUnit;
         }
@@ -369,7 +371,7 @@ public class BarracksBeh : BuildingBeh
 		try {
 			int amount = int.Parse(numberOfSpearman_input);
 			
-			if (amount > 0 && amount < CalculationCanCreateSpearman())
+			if (amount > 0 && amount <= CalculationCanCreateSpearman())
 			{
 				TimeSpan timePerUnit = UnitDataStore.GreekUnitData.SpearmanTraining_timer;
 				TimeSpan total = TimeSpan.FromSeconds(timePerUnit.TotalSeconds * amount);

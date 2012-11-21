@@ -82,12 +82,7 @@ public class StageManager : Mz_BaseScene {
         this.LoadingAmountOfBuildingInstance();
         this.LoadingDataStorage();
 
-		gameMaterials.Add(new GameMaterial() { name = "food" });	/// 0.
-		gameMaterials.Add(new GameMaterial() { name = "wood" });	// 1.
-		gameMaterials.Add(new GameMaterial() { name = "stone" });	// 2.
-		gameMaterials.Add(new GameMaterial() { name = "copper" });	// 3.
-		gameMaterials.Add(new GameMaterial() { name = "armor" });	// 4.
-		gameMaterials.Add(new GameMaterial() { name = "weapon" });	// 5.
+        StartCoroutine(this.CreateGameMaterials());
 
         if (taskManager == null) 
             taskManager = this.gameObject.GetComponent<TaskManager>();
@@ -99,6 +94,18 @@ public class StageManager : Mz_BaseScene {
 		
         if (BuildingBeh.House_Instances.Count == 0)
             HouseBeh.CalculationSumOfPopulation();
+    }
+
+    private IEnumerator CreateGameMaterials()
+    {
+        gameMaterials.Add(new GameMaterial() { name = "food" });	/// 0.
+        gameMaterials.Add(new GameMaterial() { name = "wood" });	// 1.
+        gameMaterials.Add(new GameMaterial() { name = "stone" });	// 2.
+        gameMaterials.Add(new GameMaterial() { name = "copper" });	// 3.
+        gameMaterials.Add(new GameMaterial() { name = "armor" });	// 4.
+        gameMaterials.Add(new GameMaterial() { name = "weapon" });	// 5.
+
+        yield return 0;
     }
 
     void GenerateBackground()

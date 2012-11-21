@@ -68,7 +68,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	
     protected Vector2 scrollPosition = Vector2.zero;
     protected Rect windowRect;
-    protected Rect exitButton_Rect;
+    private Rect exitButton_Rect;
     protected Rect background_Rect;
     protected Rect tagName_Rect = new Rect(20, 16, 120, 32);    //<!-- Tag name rect.
     protected Rect imgIcon_Rect = new Rect(40, 40, 80, 80);     //<!-- Images Icon rect.

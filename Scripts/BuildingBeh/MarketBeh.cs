@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class MarketBeh : BuildingBeh {
 
-    public const string PathOfTribes_Texture = "Textures/Tribes_Icons/";
     //<!--- Constant price of resource.
     public const int pricePerUnitOf_Food = 8;
     public const int pricePerUnitOf_Wood = 15;
@@ -74,11 +73,6 @@ public class MarketBeh : BuildingBeh {
 	public List<CaravanBeh> idleCaravanList;
 	public GroupCaravan caravan_group; 
 	public static int carryAbility = 32;
-
-    public Texture2D GreekIcon_Texture;
-    public Texture2D EgyptianIcon_Texture;
-    public Texture2D PersianIcon_Texture;
-    public Texture2D CelticIcon_Texture;    
 
     private GUIStyle goods_Label_style;
 	
@@ -151,8 +145,6 @@ public class MarketBeh : BuildingBeh {
     {
         //<!-- Load textures.
         buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Market", typeof(Texture2D)) as Texture2D;
-        GreekIcon_Texture = Resources.Load(PathOfTribes_Texture + "Greek", typeof(Texture2D)) as Texture2D;
-        PersianIcon_Texture = Resources.Load(PathOfTribes_Texture + "Persian", typeof(Texture2D)) as Texture2D;
 
         yield return 0;
     }
@@ -495,7 +487,7 @@ public class MarketBeh : BuildingBeh {
     {
         GUI.BeginGroup(new Rect(0, 1 * base.background_Rect.height, background_Rect.width, base.background_Rect.height), GUIContent.none, building_Skin.box);
         {
-            GUI.DrawTexture(base.imgIcon_Rect, GreekIcon_Texture);
+            GUI.DrawTexture(base.imgIcon_Rect, stageManager.taskManager.GreekIcon_Texture);
             GUI.Label(base.levelLable_Rect, "Greek", base.status_style);
 			
             #region <!-- Trade button.
@@ -646,7 +638,7 @@ public class MarketBeh : BuildingBeh {
     {
         GUI.BeginGroup(new Rect(0, 2 * base.background_Rect.height, background_Rect.width, base.background_Rect.height), GUIContent.none, building_Skin.box);
         {
-            GUI.DrawTexture(base.imgIcon_Rect, PersianIcon_Texture);
+            GUI.DrawTexture(base.imgIcon_Rect, stageManager.taskManager.PersianIcon_Texture);
             GUI.Label(base.levelLable_Rect, "Persian", base.status_style);
             
 			#region <!-- Trade button.
