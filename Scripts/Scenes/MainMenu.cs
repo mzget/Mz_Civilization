@@ -43,7 +43,8 @@ public class MainMenu : Mz_BaseScene
     // Use this for initialization
     void Start() 
 	{
-        base.InitializeAudio();
+        StartCoroutine(base.InitializeAudio());
+		
         //if(PlayerPrefs.HasKey(Mz_SaveData.usernameKey)) {
         //    username = PlayerPrefs.GetString(Mz_SaveData.usernameKey);				
         //    guiState = GUIState.showSaveGame; 

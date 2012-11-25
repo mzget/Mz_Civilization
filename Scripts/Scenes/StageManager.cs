@@ -47,7 +47,6 @@ public class StageManager : Mz_BaseScene {
     private Rect contentRect = new Rect(160, 40, 400, 200);
     private Rect buttonRect = new Rect(460, 200, 100, 30);
 	
-	public GameObject buildingArea_prefab;
     // Building prefab objects.
     public GameObject house_prefab;
     public GameObject academy_prefab;
@@ -128,11 +127,10 @@ public class StageManager : Mz_BaseScene {
     void CreateBuildingArea()
     {
         GameObject building_area_group = GameObject.Find("Building_Area_Group");
-		buildingArea_prefab = Resources.Load(PrototypeObjects_ResourcePath + "Building_Area", typeof(GameObject)) as GameObject;
 
         for (int i = 0; i < 8; i++)
         {
-            GameObject Temp_obj = Instantiate(buildingArea_prefab) as GameObject;
+			GameObject Temp_obj = OT.CreateObject("Building_Area");
             Temp_obj.transform.parent = building_area_group.transform;
 
             buildingArea_Objs.Add(Temp_obj.GetComponent<BuildingArea>());
@@ -145,7 +143,7 @@ public class StageManager : Mz_BaseScene {
 
         for (int i = 8; i < buildingArea_Pos.Count; i++)
         {
-            GameObject Temp_obj = Instantiate(buildingArea_prefab) as GameObject;
+			GameObject Temp_obj = OT.CreateObject("Building_Area");
             Temp_obj.transform.parent = building_area_group.transform;
 
             buildingArea_Objs.Add(Temp_obj.GetComponent<BuildingArea>());

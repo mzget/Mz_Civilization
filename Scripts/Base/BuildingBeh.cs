@@ -117,7 +117,8 @@ public class BuildingBeh : Base_ObjectBeh {
 		if(NotEnoughResource_Notification_event != null)
 			NotEnoughResource_Notification_event(this, e);
 	}
-	public bool CheckingEnoughUpgradeResource(GameResource upgradeResource) {
+	public bool CheckingEnoughUpgradeResource(GameResource upgradeResource)
+	{
 		if (StoreHouse.SumOfFood >= upgradeResource.Food && 
 			StoreHouse.SumOfWood >= upgradeResource.Wood &&
 			StoreHouse.SumOfStone >= upgradeResource.Stone &&
@@ -387,22 +388,22 @@ public class BuildingBeh : Base_ObjectBeh {
         Destroy(this.processbar_Obj_parent.gameObject);
 	}
 	
-    #region <!-- Mouse Events.
-
-    protected override void OnMouseDown()
+	/// <summary>
+	/// Raises the mouse down event.
+	/// </summary>
+    protected override void OnTouchDown()
     {
 		if(TaskManager.IsShowInteruptGUI == false) {
             _IsShowInterface = true;
             TaskManager.IsShowInteruptGUI = true;
         }
 
-        base.OnMouseDown();
+        base.OnTouchDown();
     }
 
-    #endregion
-	
-	#region <!-- OnGUI Section.
-	
+	/// <summary>
+    /// <!-- OnGUI Section.
+	/// </summary>
     protected void OnGUI()
     {
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
@@ -426,8 +427,9 @@ public class BuildingBeh : Base_ObjectBeh {
         TaskManager.IsShowInteruptGUI = false;
     }
 	
-	#endregion
-	
+	/// <summary>
+	/// Clears the static data.
+	/// </summary>
 	internal static void ClearStaticData() {
 		House_Instances.Clear();
 		AcademyInstance = null;

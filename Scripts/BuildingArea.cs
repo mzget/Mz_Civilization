@@ -85,8 +85,7 @@ public class BuildingArea : Base_ObjectBeh
 
         if(areaState == AreaState.UnActive) {
             Sprite.frameIndex = 4;
-		    Sprite.materialReference = "tint";
-		    Sprite.tintColor = Color.gray;
+			Sprite.tintColor = Color.gray;
 			
             return;
         }
@@ -182,11 +181,7 @@ public class BuildingArea : Base_ObjectBeh
     
     #region <!-- OnMouse Event.
 	
-	protected override void OnTouchBegan ()
-	{
-		base.OnTouchBegan ();
-	}
-    protected override void OnMouseDown()
+    protected override void OnTouchDown()
     {
         if(areaState == AreaState.Active) {
 		    if(TaskManager.IsShowInteruptGUI == false) {
@@ -201,12 +196,8 @@ public class BuildingArea : Base_ObjectBeh
             }
         }
 
-        base.OnMouseDown();
+        base.OnTouchDown();
     }
-	protected override void OnMouseExit ()
-	{
-		base.OnMouseExit ();
-	}
 
     #endregion
     

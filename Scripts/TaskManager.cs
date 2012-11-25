@@ -56,6 +56,7 @@ public class TaskManager : MonoBehaviour {
 
     protected Rect header_group_rect;
     protected Rect header_button_rect;
+	Rect first_rect, second_rect, third_rect, fourth_rect, fifth_rect, sixth_rect;
     Rect baseSidebarGroup_rect;
     Rect sidebarButtonGroup_rect = new Rect(0, 0, 50, Main.GAMEHEIGHT);
     Rect sidebarContentGroup_rect;
@@ -67,6 +68,12 @@ public class TaskManager : MonoBehaviour {
     Rect fifth_button_rect = new Rect(1, 240, 48, 56);
     Rect sixth_button_rect = new Rect(1, 300, 48, 56);
     Rect seventh_button_rect;
+	//<@--- world map section.
+	private Rect showSymbol_rect;
+	private Rect showNameOfAIcity_rect;
+    private Rect previousButton_rect;
+    private Rect nextButton_rect;
+
     private Rect standardWindow_rect;
     private Rect exitButton_Rect;
 
@@ -78,12 +85,11 @@ public class TaskManager : MonoBehaviour {
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        var gamecontroller = GameObject.FindGameObjectWithTag("GameController");
-        stageManager = gamecontroller.GetComponent<StageManager>();
-
-        this.InitializeOnGUIData();
         StartCoroutine(this.CreateAIbeh());
         StartCoroutine(InitializeTextureResource());
+        this.InitializeOnGUIDataFields();
+        var gamecontroller = GameObject.FindGameObjectWithTag("GameController");
+        stageManager = gamecontroller.GetComponent<StageManager>();
 
 #if UNITY_WEBPLAYER || UNITY_EDITOR
         StartCoroutine(InitializeJoystick());
@@ -92,12 +98,31 @@ public class TaskManager : MonoBehaviour {
         yield return 0;
     }
 	
-    void InitializeOnGUIData()
+    void InitializeOnGUIDataFields()
     {
         taskbarUI_Skin.button.alignment = TextAnchor.MiddleCenter;
 		taskbarUI_Skin.box.alignment = TextAnchor.MiddleCenter;
+				
+        baseSidebarGroup_rect = new Rect(Screen.width - (Screen.width / 4), 0, Screen.width / 4, Main.GAMEHEIGHT - 240);
+        sidebarContentGroup_rect = new Rect(48 * Mz_GUIManager.Extend_heightScale, 0, baseSidebarGroup_rect.width - (48 * Mz_GUIManager.Extend_heightScale), baseSidebarGroup_rect.height);
+        sidebarContentBox_rect = new Rect(5, 50, sidebarContentGroup_rect.width - 10, 32);
 		
+        header_group_rect = new Rect(0, 0, Screen.width - baseSidebarGroup_rect.width, 40);
+		header_button_rect = new Rect(0, 0, header_group_rect.width / 5, 40);
+
+        first_rect = new Rect(0, header_button_rect.y, header_button_rect.width, header_button_rect.height);
+        second_rect = new Rect((header_button_rect.width) * 1, header_button_rect.y, header_button_rect.width, header_button_rect.height);
+        third_rect = new Rect((header_button_rect.width) * 2, header_button_rect.y, header_button_rect.width, header_button_rect.height);
+        fourth_rect = new Rect((header_button_rect.width) * 3, header_button_rect.y, header_button_rect.width, header_button_rect.height);
+        fifth_rect = new Rect((header_button_rect.width) * 4, header_button_rect.y, header_button_rect.width, header_button_rect.height);
+        sixth_rect = new Rect((header_button_rect.width) * 5, header_button_rect.y, header_button_rect.width, header_button_rect.height);
 		seventh_button_rect = new Rect(1 * Mz_GUIManager.Extend_heightScale, 360, 48 * Mz_GUIManager.Extend_heightScale, 56);
+
+        showSymbol_rect = new Rect(0, 50, 100 * Mz_GUIManager.Extend_heightScale, 100);
+        showSymbol_rect.x = sidebarContentBox_rect.width / 2 - (showSymbol_rect.width / 2);
+        showNameOfAIcity_rect = new Rect(5 * Mz_GUIManager.Extend_heightScale, 155, sidebarContentBox_rect.width, 40);
+        previousButton_rect = new Rect(18 * Mz_GUIManager.Extend_heightScale, 85, 32 * Mz_GUIManager.Extend_heightScale, 32);
+        nextButton_rect = new Rect((showSymbol_rect.x + showSymbol_rect.width) + (32 * Mz_GUIManager.Extend_heightScale), 85, 32 * Mz_GUIManager.Extend_heightScale, 32);
 
         standardWindow_rect = new Rect((Screen.width * 3 / 4) / 2 - (350 * Mz_GUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 250, 700 * Mz_GUIManager.Extend_heightScale, 500);
         exitButton_Rect = new Rect(standardWindow_rect.width - (34 * Mz_GUIManager.Extend_heightScale), 2, 32 * Mz_GUIManager.Extend_heightScale, 32);
@@ -110,13 +135,6 @@ public class TaskManager : MonoBehaviour {
             fifth_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(fifth_button_rect);
             sixth_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(sixth_button_rect);
         }
-		
-        baseSidebarGroup_rect = new Rect(Screen.width - (Screen.width / 4), 0, Screen.width / 4, Main.GAMEHEIGHT - 240);
-        sidebarContentGroup_rect = new Rect(first_button_rect.width, 0, baseSidebarGroup_rect.width - first_button_rect.width, baseSidebarGroup_rect.height);
-        sidebarContentBox_rect = new Rect(5, 50, sidebarContentGroup_rect.width - 10, 32);
-		
-        header_group_rect = new Rect(0, 0, Screen.width - baseSidebarGroup_rect.width, 40);
-		header_button_rect = new Rect(0, 0, header_group_rect.width / 5, 40);
     }
 	
     IEnumerator InitializeTextureResource() 
@@ -256,15 +274,6 @@ public class TaskManager : MonoBehaviour {
     void OnGUI()
     {		
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
-		
-		#region <!-- Header group.
-
-        Rect first_rect = new Rect(0, header_button_rect.y, header_button_rect.width, header_button_rect.height);
-        Rect second_rect = new Rect((header_button_rect.width) * 1, header_button_rect.y, header_button_rect.width, header_button_rect.height);
-        Rect third_rect = new Rect((header_button_rect.width) * 2, header_button_rect.y, header_button_rect.width, header_button_rect.height);
-        Rect fourth_rect = new Rect((header_button_rect.width) * 3, header_button_rect.y, header_button_rect.width, header_button_rect.height);
-        Rect fifth_rect = new Rect((header_button_rect.width) * 4, header_button_rect.y, header_button_rect.width, header_button_rect.height);
-        Rect sixth_rect = new Rect((header_button_rect.width) * 5, header_button_rect.y, header_button_rect.width, header_button_rect.height);
 
         GUI.BeginGroup(header_group_rect);
         {
@@ -276,9 +285,16 @@ public class TaskManager : MonoBehaviour {
         }
         GUI.EndGroup();
 		
-		#endregion
-		
 		this.DrawRightSidebar();
+		
+		if(currentForeignTabStatus == ForeignTabStatus.DrawActivity) {
+			standardWindow_rect = GUI.Window(0, standardWindow_rect, DrawWorldMap_window, new GUIContent("Select troops"));
+		}
+		
+		if(currentRightSideState != RightSideState.show_map && currentForeignTabStatus != ForeignTabStatus.None) {
+			currentForeignTabStatus = ForeignTabStatus.None;
+			IsShowInteruptGUI = false;
+		}
     }
 	
 	private void DrawRightSidebar() 
@@ -324,68 +340,81 @@ public class TaskManager : MonoBehaviour {
 				}
             }
             GUI.EndGroup();
-			
 		
 			if(currentRightSideState == RightSideState.show_domination) {
 				DrawDomination_tab();
 			}
-            else if (currentRightSideState == RightSideState.show_military) {
-                DrawMilitaryTab();
-            }
-            else if (currentRightSideState == RightSideState.show_commerce)
-            {
-                DrawCommerce_tab();
-            }
-            else if (currentRightSideState == RightSideState.show_setting)
-            {
-                this.DrawSettingTab();
-            }
-
-            #region <!--- show_Map.
-
-            if(currentRightSideState == RightSideState.show_map) 
-            {
-                standardWindow_rect = GUI.Window(0, standardWindow_rect, DrawWorldMap_window, new GUIContent("Foreign affairs"));
-				GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
-                {
-                    float label_width = sidebarContentGroup_rect.width - 20;
-                    GUI.Box(new Rect(5, 10, label_width + 10, 40), "Map", taskbarUI_Skin.box);
-                    GUI.Box(new Rect(5, 55, label_width + 10, 40), AICity_list[0].name, taskbarUI_Skin.box);
-
-                    GUI.BeginGroup(new Rect(5, sidebarContentGroup_rect.height - 205, sidebarContentGroup_rect.width - 10, 200));
-                    {
-                        GUI.Button(new Rect(5, 0, label_width, 40), "Pillage");
-                        GUI.Button(new Rect(5, 45, label_width, 40), "Conquer");
-                        GUI.Button(new Rect(5, 90, label_width, 40), "Ask for help");
-                        GUI.Button(new Rect(5, 135, label_width, 40), "");
-                    } GUI.EndGroup();
-                }
-				GUI.EndGroup();
-            }
-
-            #endregion
+			else if (currentRightSideState == RightSideState.show_military) {
+				DrawMilitaryTab();
+			}
+			else if (currentRightSideState == RightSideState.show_commerce) {
+				DrawCommerce_tab();
+			}
+			else if (currentRightSideState == RightSideState.show_setting) {
+				this.DrawSettingTab();
+			}
+			else if(currentRightSideState == RightSideState.show_map) {
+				this.DrawForeignTab();
+			}
         }
 		GUI.EndGroup();
 	}
 
-    private Rect citiesSymbol_rect = new Rect(24 * Mz_GUIManager.Extend_heightScale, 24, 100 * Mz_GUIManager.Extend_heightScale, 100);
-    private Rect citiesTagName_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 130, 120 * Mz_GUIManager.Extend_heightScale, 32);
+	private enum ForeignTabStatus {
+		None = 0, DrawActivity = 1,
+	}
+	private ForeignTabStatus currentForeignTabStatus;
+	private void DrawForeignTab ()
+	{
+		GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
+		{
+			float label_width = sidebarContentGroup_rect.width - 20;
+			GUI.Box(new Rect(5, 10, label_width + 10, 40), "Foreign land", taskbarUI_Skin.box);
+			
+			if (GUI.Button(previousButton_rect, "", left_button_Style)) { }
+            else if (GUI.Button(nextButton_rect, "", right_button_Style)) { }
+
+			GUI.DrawTexture(showSymbol_rect, AICity_list[0].symbols);
+			GUI.Box(showNameOfAIcity_rect, AICity_list[0].name, taskbarUI_Skin.box);
+	
+			
+			GUI.BeginGroup(new Rect(5, sidebarContentGroup_rect.height - 205, sidebarContentGroup_rect.width - 10, 200));
+			{
+				if (GUI.Button(new Rect(5, 0, label_width, 40), "Pillage"))
+				{
+					if(IsShowInteruptGUI == false) {
+						currentForeignTabStatus = ForeignTabStatus.DrawActivity;
+						IsShowInteruptGUI = true;
+					}
+				}
+				else if (GUI.Button(new Rect(5, 45, label_width, 40), "Conquer")) { 
+				}
+				GUI.Button(new Rect(5, 90, label_width, 40), "");
+				GUI.Button(new Rect(5, 135, label_width, 40), "");
+			} GUI.EndGroup();
+		}
+		GUI.EndGroup();
+	}
+	
+	private Rect citiesSymbol_rect = new Rect(24 * Mz_GUIManager.Extend_heightScale, 24, 100 * Mz_GUIManager.Extend_heightScale, 100);
+	private Rect citiesTagName_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 130, 120 * Mz_GUIManager.Extend_heightScale, 32);
 
     private void DrawWorldMap_window(int id)
     {
         //<!-- Exit Button.
-        //if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6]))
-        //{
-        //    CloseGUIWindow();
-        //}
+        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6]))
+        {
+            CloseGUIWindow();
+        }
         
         /// Draw cities symbol.
         GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
         GUI.Box(citiesTagName_rect, AICity_list[0].name);
     }
 
-    protected void CloseGUIWindow()
+    private void CloseGUIWindow()
     {
+        currentForeignTabStatus = ForeignTabStatus.None;
         IsShowInteruptGUI = false;
     }
 
@@ -410,11 +439,6 @@ public class TaskManager : MonoBehaviour {
 	                stageManager._hasQuitCommand = true;
 	            }
 			}
-			else if(Application.platform == RuntimePlatform.OSXWebPlayer || Application.platform == RuntimePlatform.WindowsWebPlayer) {
-				if(GUI.Button(new Rect(5, 145, label_width, 32), "Fullscreen")) {
-					Screen.fullScreen = !Screen.fullScreen;
-				}
-			}
 		}
 		GUI.EndGroup();		
     }
@@ -430,7 +454,7 @@ public class TaskManager : MonoBehaviour {
 		}
 		GUI.EndGroup();		
 	}
-    void DrawMilitaryTab() {
+    private void DrawMilitaryTab() {
         GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
         {
             float label_width = sidebarContentGroup_rect.width - 10;

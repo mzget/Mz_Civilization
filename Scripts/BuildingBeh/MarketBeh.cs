@@ -385,9 +385,9 @@ public class MarketBeh : BuildingBeh {
 		}
     }
 
-	protected override void OnMouseDown ()
+	protected override void OnTouchDown ()
 	{
-		base.OnMouseDown ();
+		base.OnTouchDown ();
 		
 		stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
 	}

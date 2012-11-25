@@ -17,6 +17,7 @@ public class Mz_BaseScene : MonoBehaviour {
     public static ScenesInstance SceneInstance;
     public bool _hasQuitCommand = false;
     /// Detect Touch and Input
+    private Mz_SmartDeviceInput smartDeviceInput;
     public Touch touch;
     public Vector3 mousePos;
     public Vector3 originalPos;
@@ -33,48 +34,60 @@ public class Mz_BaseScene : MonoBehaviour {
     public AudioDescribeManager audioDescribe;
     public GameObject audioBackground_Obj;
 
-    protected void InitializeAudio()
+    protected virtual IEnumerator InitializeAudio()
     {
-        Debug.Log("Scene :: InitializeAudio");
+		Debug.Log("Scene :: InitializeAudio");
 
         //<!-- Setup All Audio Objects.
-        if (audioEffect == null)
-        {
+        if (audioEffect == null) {
             audioEffect = GameObject.FindGameObjectWithTag("AudioEffect").GetComponent<AudioEffectManager>();
 
-            if (audioEffect)
-            {
-                audioEffect.alternativeEffect_source = audioEffect.transform.GetComponentInChildren<AudioSource>();
+            if(audioEffect) { 
+				audioEffect.alternativeEffect_source = audioEffect.transform.GetComponentInChildren<AudioSource>();
 
-                audioEffect.audio.mute = !ToggleAudioActive;
-                audioEffect.alternativeEffect_source.audio.mute = !ToggleAudioActive;
-            }
+				audioEffect.audio.mute = !ToggleAudioActive;
+            	audioEffect.alternativeEffect_source.audio.mute = !ToggleAudioActive;
+			}
         }
 
-        if (audioDescribe == null)
-        {
-            try
-            {
-                audioDescribe = GameObject.FindGameObjectWithTag("AudioDescribe").GetComponent<AudioDescribeManager>();
-                audioDescribe.audio.mute = !ToggleAudioActive;
-            }
-            catch {
-                audioDescribe = null;
-            }
-        }
-
+//        if (audioDescribe == null) {
+//            audioDescribe = GameObject.FindGameObjectWithTag("AudioDescribe").GetComponent<AudioDescribeManager>();
+//			audioDescribe.audio.mute = !ToggleAudioActive;
+//        }
+        
+        /// <! Manage audio background.
+		audioBackground_Obj = GameObject.FindGameObjectWithTag("AudioBackground");
         if (audioBackground_Obj == null)
         {
-            audioBackground_Obj = GameObject.FindGameObjectWithTag("AudioBackground");
+            audioBackground_Obj = new GameObject("AudioBackground", typeof(AudioSource));
+            audioBackground_Obj.tag = "AudioBackground";
+            audioBackground_Obj.audio.playOnAwake = true;
+            audioBackground_Obj.audio.mute = !ToggleAudioActive;
+
+            DontDestroyOnLoad(audioBackground_Obj);
+        }
+        else { 
             audioBackground_Obj.audio.mute = !ToggleAudioActive;
         }
+
+        yield return 0;
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
-        if(TaskManager.IsShowInteruptGUI == false)
-            Mz_SmartDeviceInput.IOS_INPUT();
+		if (smartDeviceInput == null) {
+			this.gameObject.AddComponent<Mz_SmartDeviceInput>();
+			smartDeviceInput = this.gameObject.GetComponent<Mz_SmartDeviceInput>();
+		}
+
+        if (TaskManager.IsShowInteruptGUI == false)
+        {
+            if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+                smartDeviceInput.ImplementTouchInput();
+            if (Application.isWebPlayer || Application.isEditor)
+                smartDeviceInput.ImplementMouseInput();
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Menu))
         {
@@ -209,19 +222,6 @@ public class Mz_BaseScene : MonoBehaviour {
     void OnApplicationQuit()
     {
         Mz_SaveData.Save();
-
-#if UNITY_STANDALONE_WIN
-        Application.CancelQuit();
-
-        if(!Application.isLoadingLevel) {
-            Mz_LoadingScreen.LoadSceneName = Mz_BaseScene.SceneNames.MainMenu.ToString();
-            Application.LoadLevelAsync(Mz_BaseScene.SceneNames.LoadingScene.ToString());
-        }
-#endif
-
-#if UNITY_IPHONE || UNITY_ANDROID
-        //<-- to do asking for quit game.
-#endif
     }
 
     #region <!-- Unity Log Callback.
