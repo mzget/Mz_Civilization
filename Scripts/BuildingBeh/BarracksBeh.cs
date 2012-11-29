@@ -217,9 +217,9 @@ public class BarracksBeh : BuildingBeh
         }
     }
 	
-	protected override void OnTouchDown ()
+	protected override void OnMouseDown ()
 	{
-		base.OnTouchDown ();
+		base.OnMouseDown ();
 		
         stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_military;
 	}

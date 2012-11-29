@@ -75,6 +75,8 @@ public class StageManager : Mz_BaseScene {
 	// Use this for initialization
     void Start()
     {				
+		this.StartCoroutine(this.InitializeAudio());
+
         this.GenerateBackground();
         this.CreateBuildingArea();
         this.PrepareBuildingPrefabsFromResource();
@@ -94,6 +96,13 @@ public class StageManager : Mz_BaseScene {
         if (BuildingBeh.House_Instances.Count == 0)
             HouseBeh.CalculationSumOfPopulation();
     }
+
+	private new IEnumerator InitializeAudio ()
+	{
+		base.InitializeAudio();
+
+		yield return null;
+	}
 
     private IEnumerator CreateGameMaterials()
     {

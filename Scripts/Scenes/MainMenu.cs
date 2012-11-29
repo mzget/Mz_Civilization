@@ -43,8 +43,7 @@ public class MainMenu : Mz_BaseScene
     // Use this for initialization
     void Start() 
 	{
-        StartCoroutine(base.InitializeAudio());
-		
+        StartCoroutine(this.InitializeAudio());
         //if(PlayerPrefs.HasKey(Mz_SaveData.usernameKey)) {
         //    username = PlayerPrefs.GetString(Mz_SaveData.usernameKey);				
         //    guiState = GUIState.showSaveGame; 
@@ -55,6 +54,12 @@ public class MainMenu : Mz_BaseScene
         //        newgameUIState = NewGameUIState.showTextField;
         //    }
         //}
+    }
+
+    private new IEnumerator InitializeAudio() {
+        base.InitializeAudio();
+
+        yield return null;
     }
 
     public bool _showSkinLayout;

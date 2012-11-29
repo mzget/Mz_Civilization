@@ -181,7 +181,7 @@ public class BuildingArea : Base_ObjectBeh
     
     #region <!-- OnMouse Event.
 	
-    protected override void OnTouchDown()
+    protected override void OnMouseDown()
     {
         if(areaState == AreaState.Active) {
 		    if(TaskManager.IsShowInteruptGUI == false) {
@@ -196,7 +196,7 @@ public class BuildingArea : Base_ObjectBeh
             }
         }
 
-        base.OnTouchDown();
+        base.OnMouseDown();
     }
 
     #endregion

@@ -398,18 +398,23 @@ public class TaskManager : MonoBehaviour {
 	
 	private Rect citiesSymbol_rect = new Rect(24 * Mz_GUIManager.Extend_heightScale, 24, 100 * Mz_GUIManager.Extend_heightScale, 100);
 	private Rect citiesTagName_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 130, 120 * Mz_GUIManager.Extend_heightScale, 32);
+    private Rect sendButton_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 170, 120 * Mz_GUIManager.Extend_heightScale, 32);
+    private Rect selectTroopBox_rect = new Rect(150 * Mz_GUIManager.Extend_heightScale, 40, 545 * Mz_GUIManager.Extend_heightScale, 450);
 
     private void DrawWorldMap_window(int id)
     {
         //<!-- Exit Button.
-        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6]))
-        {
+        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6])) {
             CloseGUIWindow();
         }
+		
+		GUI.Box(selectTroopBox_rect, "");
         
         /// Draw cities symbol.
         GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
         GUI.Box(citiesTagName_rect, AICity_list[0].name);
+
+        if (GUI.Button(sendButton_rect, "Send")) { }
     }
 
     private void CloseGUIWindow()
