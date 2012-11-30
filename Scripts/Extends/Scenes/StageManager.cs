@@ -11,7 +11,7 @@ public class StageManager : Mz_BaseScene {
 
     public GUISkin mainBuildingSkin;
     public TaskManager taskManager;
-    public List<GameMaterial> gameMaterials;
+    public List<GameMaterial> gameMaterials = new List<GameMaterial>();
     // Map and building area.
     public Texture2D mapTex;
     private OTFilledSprite background;
@@ -76,14 +76,13 @@ public class StageManager : Mz_BaseScene {
     void Start()
     {				
 		this.StartCoroutine(this.InitializeAudio());
+        this.StartCoroutine(this.CreateGameMaterials());
 
         this.GenerateBackground();
         this.CreateBuildingArea();
         this.PrepareBuildingPrefabsFromResource();
         this.LoadingAmountOfBuildingInstance();
         this.LoadingDataStorage();
-
-        StartCoroutine(this.CreateGameMaterials());
 
         if (taskManager == null) 
             taskManager = this.gameObject.GetComponent<TaskManager>();

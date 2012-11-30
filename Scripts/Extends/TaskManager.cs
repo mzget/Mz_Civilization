@@ -249,7 +249,7 @@ public class TaskManager : MonoBehaviour {
 		}
 	}
 	
-	public void OnInput(string Inputname) {
+	internal void OnInput(string Inputname) {
 		Debug.Log("GUI_Manager.OnInput : " + Inputname);
 		
 		if(Inputname == "Left_button") {
@@ -271,6 +271,22 @@ public class TaskManager : MonoBehaviour {
         }
     }
 
+//    internal void GetInput(string nameInput)
+//    {
+//        if (currentForeignTabStatus == ForeignTabStatus.DrawActivity) {
+//            switch (nameInput)
+//            {
+//                case "Close_button":
+//                    ForeignLand_window.SetActive(false);
+//                    IsShowInteruptGUI = false;
+//                    currentForeignTabStatus = ForeignTabStatus.None;
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//    }
+
     void OnGUI()
     {		
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
@@ -287,14 +303,14 @@ public class TaskManager : MonoBehaviour {
 		
 		this.DrawRightSidebar();
 		
-		if(currentForeignTabStatus == ForeignTabStatus.DrawActivity) {
-			standardWindow_rect = GUI.Window(0, standardWindow_rect, DrawWorldMap_window, new GUIContent("Select troops"));
-		}
+//		if(currentForeignTabStatus == ForeignTabStatus.DrawActivity) {
+//			standardWindow_rect = GUI.Window(0, standardWindow_rect, DrawWorldMap_window, new GUIContent("Select troops"));
+//		}
 		
-		if(currentRightSideState != RightSideState.show_map && currentForeignTabStatus != ForeignTabStatus.None) {
-			currentForeignTabStatus = ForeignTabStatus.None;
-			IsShowInteruptGUI = false;
-		}
+//		if(currentRightSideState != RightSideState.show_map && currentForeignTabStatus != ForeignTabStatus.None) {
+//			currentForeignTabStatus = ForeignTabStatus.None;
+//			IsShowInteruptGUI = false;
+//		}
     }
 	
 	private void DrawRightSidebar() 
@@ -360,10 +376,11 @@ public class TaskManager : MonoBehaviour {
 		GUI.EndGroup();
 	}
 
-	private enum ForeignTabStatus {
-		None = 0, DrawActivity = 1,
-	}
-	private ForeignTabStatus currentForeignTabStatus;
+    private enum ForeignTabStatus
+    {
+        None = 0, DrawActivity = 1,
+    };
+    private ForeignTabStatus currentForeignTabStatus;
 	private void DrawForeignTab ()
 	{
 		GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
@@ -383,7 +400,8 @@ public class TaskManager : MonoBehaviour {
 				if (GUI.Button(new Rect(5, 0, label_width, 40), "Pillage"))
 				{
 					if(IsShowInteruptGUI == false) {
-						currentForeignTabStatus = ForeignTabStatus.DrawActivity;
+                        currentForeignTabStatus = ForeignTabStatus.DrawActivity;
+
 						IsShowInteruptGUI = true;
 					}
 				}
@@ -401,27 +419,27 @@ public class TaskManager : MonoBehaviour {
     private Rect sendButton_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 170, 120 * Mz_GUIManager.Extend_heightScale, 32);
     private Rect selectTroopBox_rect = new Rect(150 * Mz_GUIManager.Extend_heightScale, 40, 545 * Mz_GUIManager.Extend_heightScale, 450);
 
-    private void DrawWorldMap_window(int id)
-    {
-        //<!-- Exit Button.
-        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6])) {
-            CloseGUIWindow();
-        }
-		
-		GUI.Box(selectTroopBox_rect, "");
-        
-        /// Draw cities symbol.
-        GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
-        GUI.Box(citiesTagName_rect, AICity_list[0].name);
+//    private void DrawWorldMap_window(int id)
+//    {
+//        //<!-- Exit Button.
+//        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6])) {
+//            CloseGUIWindow();
+//        }
+//		
+//		GUI.Box(selectTroopBox_rect, "");
+//        
+//        /// Draw cities symbol.
+//        GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
+//        GUI.Box(citiesTagName_rect, AICity_list[0].name);
+//
+//        if (GUI.Button(sendButton_rect, "Send")) { }
+//    }
 
-        if (GUI.Button(sendButton_rect, "Send")) { }
-    }
-
-    private void CloseGUIWindow()
-    {
-        currentForeignTabStatus = ForeignTabStatus.None;
-        IsShowInteruptGUI = false;
-    }
+//    private void CloseGUIWindow()
+//    {
+//        currentForeignTabStatus = ForeignTabStatus.None;
+//        IsShowInteruptGUI = false;
+//    }
 
     private void DrawSettingTab()
     {
