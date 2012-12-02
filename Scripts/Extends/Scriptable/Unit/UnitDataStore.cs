@@ -3,8 +3,15 @@ using System;
 using System.Collections;
 
 public class UnitDataStore {
+    public enum Tribes {
+		None = 0,
+        Greek = 1,
+        Egyptian = 2,
+        Persian = 3,
+        Celtic = 4,
+    };
 
-	public struct GreekUnitData {		
+	public class GreekUnitData {		
         //<!--- Spearman.
         public const string Spearman = "Spearman";
 	    public const string TH_Spearman_Describe = "Spearman เป็นหน่วยที่มีพรสวรรค์และมีความชำนาญ ในการเอาชนะกองทหารม้า";

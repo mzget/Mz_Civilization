@@ -70,6 +70,9 @@ public class StageManager : Mz_BaseScene {
         buildingArea_Objs.Clear();
 		BuildingBeh.ClearStaticData();
 		HouseBeh.ClearStaticData();
+
+        if (taskManager == null) 
+            taskManager = this.gameObject.GetComponent<TaskManager>();
     }
 
 	// Use this for initialization
@@ -77,15 +80,13 @@ public class StageManager : Mz_BaseScene {
     {				
 		this.StartCoroutine(this.InitializeAudio());
         this.StartCoroutine(this.CreateGameMaterials());
+        StartCoroutine(this.CreateAIbeh());
 
         this.GenerateBackground();
         this.CreateBuildingArea();
         this.PrepareBuildingPrefabsFromResource();
         this.LoadingAmountOfBuildingInstance();
         this.LoadingDataStorage();
-
-        if (taskManager == null) 
-            taskManager = this.gameObject.GetComponent<TaskManager>();
 		
         if (BuildingBeh.StoreHouseInstance.Count == 0) {
             StoreHouse.CalculationSumOfMaxCapacity();
@@ -118,13 +119,32 @@ public class StageManager : Mz_BaseScene {
 
         yield return 0;
     }
+    
+    public static List<AICities> list_AICity;
+    private IEnumerator CreateAIbeh() {
+        taskManager.GreekIcon_Texture = Resources.Load(TaskManager.PathOfTribes_Texture + "Greek", typeof(Texture2D)) as Texture2D;
+        taskManager.PersianIcon_Texture = Resources.Load(TaskManager.PathOfTribes_Texture + "Persian", typeof(Texture2D)) as Texture2D;
+		
+		AICities greek = new AICities() { name = "Greek", symbols = taskManager.GreekIcon_Texture, tribe = UnitDataStore.Tribes.Greek, };
+        greek.AmountOfUnits[0] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN);
+        greek.AmountOfUnits[1] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST);
+        greek.AmountOfUnits[2] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HOPLITE);
+        greek.TraceUnitData();
+        
+		list_AICity = new List<AICities>();
+        list_AICity.Add(greek);
+        list_AICity.Add(new AICities() { name = "Egyptian", symbols = taskManager.EgyptianIcon_Texture, tribe = UnitDataStore.Tribes.Egyptian, });
+        list_AICity.Add(new AICities() { name = "Persian", symbols = taskManager.PersianIcon_Texture, tribe = UnitDataStore.Tribes.Persian, });
+        list_AICity.Add(new AICities() { name = "Celtic", symbols = taskManager.CelticIcon_Texture, tribe = UnitDataStore.Tribes.Celtic, });
+
+        yield return 0;
+    }
 
     public GameObject joystick_base_obj;
     public GameObject joystick_obj;
 	public JoystickManager joystickManager;
 	private float moveCamSpeed;
-    private IEnumerator InitializeJoystick()
-    {
+    private IEnumerator InitializeJoystick() {
         joystick_base_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystickbase", typeof(GameObject))) as GameObject;
         joystick_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystick", typeof(GameObject))) as GameObject;
 		
@@ -132,8 +152,7 @@ public class StageManager : Mz_BaseScene {
     }
 	
 
-    void GenerateBackground()
-    {
+    void GenerateBackground() {
         // To create the background lets create a filled sprite object
         background = OT.CreateObject(OTObjectType.FilledSprite).GetComponent<OTFilledSprite>();
         // Set the image to our wyrmtale tile
@@ -177,7 +196,7 @@ public class StageManager : Mz_BaseScene {
             buildingArea_Objs[i].IndexOfAreaPosition = i;
             buildingArea_Objs[i].Sprite.rotation = 45f;
 
-			int state = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot +":"+ Mz_SaveData.BuildingAreaState + i);
+			int state = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot +":"+ Mz_SaveData.BuildingAreaState + i);
             if (state == 0)
                 buildingArea_Objs[i].areaState = BuildingArea.AreaState.UnActive;
             else if (state == 1)
@@ -215,31 +234,31 @@ public class StageManager : Mz_BaseScene {
 
     void LoadingAmountOfBuildingInstance() {
         //<!-- Utility --->>
-        numberOfHouse_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance);
-		academyInstance = PlayerPrefsX.GetBool(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_AcademyInstance);
+		numberOfHouse_Instance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance);
+		academyInstance = PlayerPrefsX.GetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_AcademyInstance);
 		//<!-- Resource --->>
-        amount_Farm_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_farm_instance);
-        amount_Sawmill_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_sawmill_instance);
-        amount_MillStone_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_millstone_instance);
-        amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance);
+		amount_Farm_Instance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_farm_instance);
+		amount_Sawmill_Instance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_sawmill_instance);
+		amount_MillStone_Instance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_millstone_instance);
+		amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance);
         //<!-- Economy --->>
-        numberOfStoreHouseInstances = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.numberOfStorehouseInstance);
-        marketInstance = PlayerPrefsX.GetBool(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_MarketInstance);
+		numberOfStoreHouseInstances = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfStorehouseInstance);
+		marketInstance = PlayerPrefsX.GetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_MarketInstance);
         //<!-- Millitary --->>
-        numberOf_BarracksInstance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs);
+		numberOf_BarracksInstance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs);
     }
 	void LoadingDataStorage()
     {
 		//<!--- Load level of towncenter.
-        BuildingBeh.TownCenter.Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.TownCenter_level);
+		BuildingBeh.TownCenter.Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.TownCenter_level);
 		
         #region <!--- House instance data.
 		
         if (numberOfHouse_Instance != 0) {
             for (int i = 0; i < numberOfHouse_Instance; i++)
             {
-                int temp_level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.house_level_ + i);
-                int temp_pos = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.house_position_ + i);
+				int temp_level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.house_level_ + i);
+				int temp_pos = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.house_position_ + i);
 
                 GameObject tempHouse = Instantiate(house_prefab) as GameObject;
                 HouseBeh house = tempHouse.GetComponent<HouseBeh>();
@@ -251,8 +270,8 @@ public class StageManager : Mz_BaseScene {
 		#region <!--- Academy.
 		
 		if(academyInstance) {
-        	int position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_AcademyPosition);
-        	int level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_AcademyLevel);
+			int position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_AcademyPosition);
+			int level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_AcademyLevel);
 			
 			GameObject academy = Instantiate(academy_prefab) as GameObject;
 			AcademyBeh academyBeh = academy.GetComponent<AcademyBeh>();
@@ -267,8 +286,8 @@ public class StageManager : Mz_BaseScene {
         {
 	        for (int i = 0; i < amount_Farm_Instance; i++) 
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.farm_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.farm_position_ + i);
+				int Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.farm_level_ + i);
+				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.farm_position_ + i);
 
                 GameObject temp_farm = Instantiate(farm_prefab) as GameObject;
 				Farm farm = temp_farm.GetComponent<Farm>();
@@ -283,8 +302,8 @@ public class StageManager : Mz_BaseScene {
         {
             for (int i = 0; i < amount_Sawmill_Instance; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.sawmill_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.sawmill_position_ + i);
+				int Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.sawmill_level_ + i);
+				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.sawmill_position_ + i);
 
                 GameObject new_Sawmill = Instantiate(sawmill_prefab) as GameObject;
                 Sawmill sawmill = new_Sawmill.GetComponent<Sawmill>();
@@ -299,8 +318,8 @@ public class StageManager : Mz_BaseScene {
         {
             for (int i = 0; i < amount_MillStone_Instance; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.millstone_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.millstone_position_ + i);
+				int Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.millstone_level_ + i);
+				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.millstone_position_ + i);
 
                 GameObject new_millstone = Instantiate(millstone_prefab) as GameObject;
                 MillStone millstone = new_millstone.GetComponent<MillStone>();
@@ -315,8 +334,8 @@ public class StageManager : Mz_BaseScene {
         {
             for (int i = 0; i < amount_Smelter_Instance; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.smelter_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.smelter_position_ + i);
+				int Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.smelter_level_ + i);
+				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.smelter_position_ + i);
 
                 GameObject new_smelter = Instantiate(smelter_prefab) as GameObject;
                 Smelter smelter = new_smelter.GetComponent<Smelter>();
@@ -332,8 +351,8 @@ public class StageManager : Mz_BaseScene {
         {
             for (int i = 0; i < numberOfStoreHouseInstances; i++)
             {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.storehouse_level_ + i);
-                int Position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.storehouse_position_ + i);
+				int Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.storehouse_level_ + i);
+				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.storehouse_position_ + i);
 				
                 GameObject temp_storehouse = Instantiate(storehouse_prefab) as GameObject;
                 StoreHouse new_storehouse = temp_storehouse.GetComponent<StoreHouse>();
@@ -345,8 +364,8 @@ public class StageManager : Mz_BaseScene {
 		#region <!--- Market data.
 		
 		if(marketInstance) {
-        	int position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_MarketPosition);
-        	int level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_MarketLevel);
+			int position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_MarketPosition);
+			int level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_MarketLevel);
 			
 			GameObject market_Obj = Instantiate(market_prefab) as GameObject;
 			MarketBeh marketBeh = market_Obj.GetComponent<MarketBeh>();
@@ -360,8 +379,8 @@ public class StageManager : Mz_BaseScene {
         if (numberOf_BarracksInstance != 0) {
             for (int i = 0; i < numberOf_BarracksInstance; i++) 
             {
-                int level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.barracks_level_ + i);
-                int position = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.barracks_position_ + i);
+				int level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.barracks_level_ + i);
+				int position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.barracks_position_ + i);
 				
                 GameObject barracks_obj = Instantiate(barracks_prefab) as GameObject;
 				BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
@@ -506,5 +525,13 @@ public class StageManager : Mz_BaseScene {
     void OnApplicationPause()
     {
         Mz_SaveData.Save();
+    }
+
+    public override void OnDispose()
+    {
+        base.OnDispose();
+
+        list_AICity.Clear();
+        list_AICity = null;
     }
 }

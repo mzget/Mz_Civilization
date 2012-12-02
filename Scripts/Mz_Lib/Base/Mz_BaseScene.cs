@@ -192,9 +192,7 @@ public class Mz_BaseScene : MonoBehaviour {
     {
         //    	Debug.Log("OnPointerOverName :: " + nameInput);
     }
-
-    private GUIStyle debugLogCallback_style;
-
+    
     protected virtual void OnGUI()
     {
         GUI.depth = 0;
@@ -233,6 +231,8 @@ public class Mz_BaseScene : MonoBehaviour {
     {
         Mz_SaveData.Save();
     }
+
+    public virtual void OnDispose() { }
 
     #region <!-- Unity Log Callback.
 /*

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class MzGUITextureButton : MonoBehaviour {
+public class Mz_GUITextureButton : MonoBehaviour {
 	
 	private StageManager stageManager;
     private AudioEffectManager audioEffect; 

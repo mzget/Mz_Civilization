@@ -225,7 +225,7 @@ public class BuildingArea : Base_ObjectBeh
         Sprite.materialReference = "transparent";
         Sprite.frameIndex = 3;
 		
-		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
+		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
 		PlayerPrefs.Save();
 
         this.CloseGUIWindow();

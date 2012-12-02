@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[ExecuteInEditMode]
 public class TaskManager : MonoBehaviour {
 	
 	public const string PathOfGUISprite = "UI_Sprites/";
@@ -12,7 +13,6 @@ public class TaskManager : MonoBehaviour {
     public const string PathOf_TroopIcons = "Textures/Troop_Icons/";
 
     public static bool IsShowInteruptGUI = false;
-//	public static bool IsShowSidebarGUI = false;
     public enum RightSideState { 
         none = 0, 
         show_domination, 
@@ -25,6 +25,7 @@ public class TaskManager : MonoBehaviour {
     };
     public RightSideState currentRightSideState = RightSideState.show_domination;
     private StageManager stageManager;
+	private DisplayTroopsActivity displayTroopsActivity;
 
     public GUISkin taskbarUI_Skin;
     public GUIStyle left_button_Style;
@@ -86,16 +87,17 @@ public class TaskManager : MonoBehaviour {
 	
 	void Awake() {
 		TaskManager.IsShowInteruptGUI = false;
+
+		var gamecontroller = GameObject.FindGameObjectWithTag("GameController");
+		stageManager = gamecontroller.GetComponent<StageManager>();
+		displayTroopsActivity = gamecontroller.GetComponent<DisplayTroopsActivity>();
 	}
 	
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        StartCoroutine(this.CreateAIbeh());
         StartCoroutine(InitializeTextureResource());
         this.InitializeOnGUIDataFields();
-        var gamecontroller = GameObject.FindGameObjectWithTag("GameController");
-        stageManager = gamecontroller.GetComponent<StageManager>();
 		
         yield return 0;
     }
@@ -176,19 +178,6 @@ public class TaskManager : MonoBehaviour {
         yield return 0;
     }
 
-    public List<AICities> AICity_list = new List<AICities>();
-    private IEnumerator CreateAIbeh()
-    {
-        GreekIcon_Texture = Resources.Load(PathOfTribes_Texture + "Greek", typeof(Texture2D)) as Texture2D;
-        PersianIcon_Texture = Resources.Load(PathOfTribes_Texture + "Persian", typeof(Texture2D)) as Texture2D;
-
-        AICity_list.Add(new AICities() { name = "Greek", symbols = GreekIcon_Texture, });
-        AICity_list.Add(new AICities() { name = "Egyptian" });
-        AICity_list.Add(new AICities() { name = "Persian", symbols = PersianIcon_Texture, });
-        AICity_list.Add(new AICities() { name = "Celtic" });
-
-        yield return 0;
-    }
 	// Update is called once per frame
 	void Update () { }
 
@@ -299,8 +288,8 @@ public class TaskManager : MonoBehaviour {
 			if (GUI.Button(previousButton_rect, "", left_button_Style)) { }
             else if (GUI.Button(nextButton_rect, "", right_button_Style)) { }
 
-			GUI.DrawTexture(showSymbol_rect, AICity_list[0].symbols);
-			GUI.Box(showNameOfAIcity_rect, AICity_list[0].name, taskbarUI_Skin.box);
+			GUI.DrawTexture(showSymbol_rect, StageManager.list_AICity[0].symbols);
+			GUI.Box(showNameOfAIcity_rect, StageManager.list_AICity[0].name, taskbarUI_Skin.box);
 	
 			
 			GUI.BeginGroup(new Rect(5, sidebarContentGroup_rect.height - 205, sidebarContentGroup_rect.width - 10, 200));
@@ -375,8 +364,8 @@ public class TaskManager : MonoBehaviour {
 		GUI.EndGroup();
         
         /// Draw cities symbol.
-        GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
-        GUI.Box(citiesTagName_rect, AICity_list[0].name);
+        GUI.DrawTexture(citiesSymbol_rect, StageManager.list_AICity[0].symbols);
+        GUI.Box(citiesTagName_rect, StageManager.list_AICity[0].name);
 
         if (GUI.Button(sendButton_rect, "Send")) {
             try{
@@ -385,6 +374,10 @@ public class TaskManager : MonoBehaviour {
                 int unit_3 = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
 
                 if(unit_0 + unit_1 + unit_3 > 0) {
+					displayTroopsActivity.MilitaryActivityList.Add(new TroopsActivity() {
+						currentTroopsStatus = TroopsActivity.TroopsStatus.LeaveOfTown,
+                        targetCity = StageManager.list_AICity[0],
+					});
                     CloseGUIWindow();
                 }
             }catch {
@@ -410,6 +403,7 @@ public class TaskManager : MonoBehaviour {
 
             if (GUI.Button(new Rect(5, 100, label_width, 32), "Main Menu")) {
                 Mz_SaveData.Save();
+                stageManager.OnDispose();
                 if (Application.isLoadingLevel == false) {
                     Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.MainMenu.ToString();
                     Application.LoadLevel(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
