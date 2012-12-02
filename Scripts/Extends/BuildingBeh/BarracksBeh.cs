@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 public class BarracksBeh : BuildingBeh
 {
-    public const string PathOf_TroopIcons = "Textures/Troop_Icons/";
-
 	//<!-- Static Data.
     public static GameResource[] RequireResource = new GameResource[10] {
         new GameResource() { Food = 300, Wood = 120, Copper = 500, Gold = 250 },
@@ -46,13 +44,9 @@ public class BarracksBeh : BuildingBeh
     public BarracksStatus currentBarracksStatus;
 
 	public GUISkin mainBuildingSkin;
-	public Texture2D spearmanTex;
     private string spearman_describe;
-	public Texture2D hypaspistTex;
-    public string hypaspist_describe;
-	public Texture2D hopliteTex;
-    public string hoplite_describe;
-	public Texture2D ToxotesTex;
+    private string hypaspist_describe;
+    private string hoplite_describe;	
 
     private Rect troopsIcon_Rect;
     Rect training_group_rect;
@@ -92,11 +86,6 @@ public class BarracksBeh : BuildingBeh
 		base.InitializeTexturesResource ();
 
         buildingIcon_Texture = Resources.Load(BuildingIcons_TextureResourcePath + "Barracks", typeof(Texture2D)) as Texture2D;
-        //<!-- Load troop icon.
-        spearmanTex = Resources.Load(PathOf_TroopIcons + "Spearman", typeof(Texture2D)) as Texture2D;
-        hypaspistTex = Resources.Load(PathOf_TroopIcons + "Hypaspist", typeof(Texture2D)) as Texture2D;
-        hopliteTex = Resources.Load(PathOf_TroopIcons + "Hoplite", typeof(Texture2D)) as Texture2D;
-        ToxotesTex = Resources.Load(PathOf_TroopIcons + "Toxotai", typeof(Texture2D)) as Texture2D;
 	}
     protected override void InitializingData()
     {
@@ -336,7 +325,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 2 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);
         {
             GUI.Label(base.tagName_Rect, new GUIContent("Spearman", "สเปียร์แมน"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, spearmanTex);      //<!-- Spearman Images.
+            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.spearmanUnitIcon);      //<!-- Spearman Images.
 
             GUI.BeginGroup(soldierDescriptionRect, new GUIContent(spearman_describe, "content"), mainBuildingSkin.textArea);
             {
@@ -411,7 +400,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 3 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);
         {
             GUI.Label(base.tagName_Rect, new GUIContent("Hypaspist", "พลดาบสองมือ"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, hypaspistTex);    //<!-- Hypaspist Images.
+            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.hypaspistUnitIcon);    //<!-- Hypaspist Images.
             GUI.Box(soldierDescriptionRect, new GUIContent(hypaspist_describe, "content"), mainBuildingSkin.textArea);
             if (GUI.Button(createButton_rect, "Create"))
             {
@@ -425,7 +414,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 4 * height, background_Rect.width, height), new GUIContent("", "Backgroud"), mainBuildingSkin.box);
         {
             GUI.Label(base.tagName_Rect, new GUIContent("Hoplite", "พลหุ้มเกราะ"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, hopliteTex);      //<!-- Hoplite Images.
+            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.hopliteUnitIcon);      //<!-- Hoplite Images.
             GUI.Box(soldierDescriptionRect, new GUIContent(hoplite_describe, "content"), mainBuildingSkin.textArea);
             if (GUI.Button(createButton_rect, "Create"))
             {
@@ -439,7 +428,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 5 * height, background_Rect.width, height), new GUIContent("", "background"), mainBuildingSkin.box);
         {
             GUI.Label(tagName_Rect, new GUIContent("Toxotes", "พลธนู"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, ToxotesTex);    //<!-- Toxotes images icons.
+            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.ToxotesUnitIcon);    //<!-- Toxotes images icons.
             GUI.Box(soldierDescriptionRect, new GUIContent("Toxotes เป็นหน่วยจู่โจมด้วยธนู \n พวกเขามีความชำนาญในการโจมตีจากระยะไกล", "content"), mainBuildingSkin.textArea);
             if (GUI.Button(createButton_rect, "Create"))
             {

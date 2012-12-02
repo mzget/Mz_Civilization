@@ -9,6 +9,7 @@ public class TaskManager : MonoBehaviour {
     public const string PathOfGameItemTextures = "Textures/GameItems/";
     public const string Advisor_ResourcePath = "Textures/Advisors/";
     public const string PathOfTribes_Texture = "Textures/Tribes_Icons/";
+    public const string PathOf_TroopIcons = "Textures/Troop_Icons/";
 
     public static bool IsShowInteruptGUI = false;
 //	public static bool IsShowSidebarGUI = false;
@@ -48,6 +49,11 @@ public class TaskManager : MonoBehaviour {
     public Texture2D marketTradingIcon;
 
     public Texture2D elder_advisor;
+    //@!-- Troops units.
+    public Texture2D spearmanUnitIcon;
+    public Texture2D hypaspistUnitIcon;
+    public Texture2D hopliteUnitIcon;
+    public Texture2D ToxotesUnitIcon;
     //<!-- Cities symbol.
     public Texture2D GreekIcon_Texture;
     public Texture2D EgyptianIcon_Texture;
@@ -90,10 +96,6 @@ public class TaskManager : MonoBehaviour {
         this.InitializeOnGUIDataFields();
         var gamecontroller = GameObject.FindGameObjectWithTag("GameController");
         stageManager = gamecontroller.GetComponent<StageManager>();
-
-#if UNITY_WEBPLAYER || UNITY_EDITOR
-        StartCoroutine(InitializeJoystick());
-#endif
 		
         yield return 0;
     }
@@ -104,7 +106,7 @@ public class TaskManager : MonoBehaviour {
 		taskbarUI_Skin.box.alignment = TextAnchor.MiddleCenter;
 				
         baseSidebarGroup_rect = new Rect(Screen.width - (Screen.width / 4), 0, Screen.width / 4, Main.GAMEHEIGHT - 240);
-        sidebarContentGroup_rect = new Rect(48 * Mz_GUIManager.Extend_heightScale, 0, baseSidebarGroup_rect.width - (48 * Mz_GUIManager.Extend_heightScale), baseSidebarGroup_rect.height);
+        sidebarContentGroup_rect = new Rect(48 * Mz_OnGUIManager.Extend_heightScale, 0, baseSidebarGroup_rect.width - (48 * Mz_OnGUIManager.Extend_heightScale), baseSidebarGroup_rect.height);
         sidebarContentBox_rect = new Rect(5, 50, sidebarContentGroup_rect.width - 10, 32);
 		
         header_group_rect = new Rect(0, 0, Screen.width - baseSidebarGroup_rect.width, 40);
@@ -116,16 +118,16 @@ public class TaskManager : MonoBehaviour {
         fourth_rect = new Rect((header_button_rect.width) * 3, header_button_rect.y, header_button_rect.width, header_button_rect.height);
         fifth_rect = new Rect((header_button_rect.width) * 4, header_button_rect.y, header_button_rect.width, header_button_rect.height);
         sixth_rect = new Rect((header_button_rect.width) * 5, header_button_rect.y, header_button_rect.width, header_button_rect.height);
-		seventh_button_rect = new Rect(1 * Mz_GUIManager.Extend_heightScale, 360, 48 * Mz_GUIManager.Extend_heightScale, 56);
+		seventh_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 360, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
 
-        showSymbol_rect = new Rect(0, 50, 100 * Mz_GUIManager.Extend_heightScale, 100);
+        showSymbol_rect = new Rect(0, 50, 100 * Mz_OnGUIManager.Extend_heightScale, 100);
         showSymbol_rect.x = sidebarContentBox_rect.width / 2 - (showSymbol_rect.width / 2);
-        showNameOfAIcity_rect = new Rect(5 * Mz_GUIManager.Extend_heightScale, 155, sidebarContentBox_rect.width, 40);
-        previousButton_rect = new Rect(18 * Mz_GUIManager.Extend_heightScale, 85, 32 * Mz_GUIManager.Extend_heightScale, 32);
-        nextButton_rect = new Rect((showSymbol_rect.x + showSymbol_rect.width) + (32 * Mz_GUIManager.Extend_heightScale), 85, 32 * Mz_GUIManager.Extend_heightScale, 32);
+        showNameOfAIcity_rect = new Rect(5 * Mz_OnGUIManager.Extend_heightScale, 155, sidebarContentBox_rect.width, 40);
+        previousButton_rect = new Rect(18 * Mz_OnGUIManager.Extend_heightScale, 85, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
+        nextButton_rect = new Rect((showSymbol_rect.x + showSymbol_rect.width) + (32 * Mz_OnGUIManager.Extend_heightScale), 85, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
 
-        standardWindow_rect = new Rect((Screen.width * 3 / 4) / 2 - (350 * Mz_GUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 250, 700 * Mz_GUIManager.Extend_heightScale, 500);
-        exitButton_Rect = new Rect(standardWindow_rect.width - (34 * Mz_GUIManager.Extend_heightScale), 2, 32 * Mz_GUIManager.Extend_heightScale, 32);
+        standardWindow_rect = new Rect((Screen.width * 3 / 4) / 2 - (350 * Mz_OnGUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 250, 700 * Mz_OnGUIManager.Extend_heightScale, 500);
+        exitButton_Rect = new Rect(standardWindow_rect.width - (34 * Mz_OnGUIManager.Extend_heightScale), 2, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
 
         if (Screen.height != Main.GAMEHEIGHT) {			
 		    first_button_rect =  MzReCalculateScaleRectGUI.ReCalulateWidth(first_button_rect);
@@ -165,6 +167,11 @@ public class TaskManager : MonoBehaviour {
         marketTradingIcon = Resources.Load(PathOfMainGUIResource + "Market", typeof(Texture2D)) as Texture2D;
 
         elder_advisor = Resources.Load(Advisor_ResourcePath + "VillageElder", typeof(Texture2D)) as Texture2D;
+        //<!-- Load troop icon.
+        spearmanUnitIcon = Resources.Load(PathOf_TroopIcons + "Spearman", typeof(Texture2D)) as Texture2D;
+        hypaspistUnitIcon = Resources.Load(PathOf_TroopIcons + "Hypaspist", typeof(Texture2D)) as Texture2D;
+        hopliteUnitIcon = Resources.Load(PathOf_TroopIcons + "Hoplite", typeof(Texture2D)) as Texture2D;
+        ToxotesUnitIcon = Resources.Load(PathOf_TroopIcons + "Toxotai", typeof(Texture2D)) as Texture2D;
 
         yield return 0;
     }
@@ -182,110 +189,8 @@ public class TaskManager : MonoBehaviour {
 
         yield return 0;
     }
-
-    public GameObject joystick_base_obj;
-    public GameObject joystick_obj;
-	public JoystickManager joystickManager;
-	private float moveCamSpeed;
-    private IEnumerator InitializeJoystick()
-    {
-        joystick_base_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystickbase", typeof(GameObject))) as GameObject;
-        joystick_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystick", typeof(GameObject))) as GameObject;
-		
-        yield return 0;
-    }
-	
 	// Update is called once per frame
-	void Update () {
-		if(joystick_obj != null) {
-			if(joystickManager != null)
-				this.UpdateJoystick();
-			else
-				joystickManager = joystick_obj.GetComponent<JoystickManager>();
-		}
-
-        #region <!-- Detech when used keybroad input.
-
-        if (Input.GetKey(KeyCode.LeftArrow)) {
-            if (Camera.main.transform.position.x > -640)
-                Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
-        }
-        else if (Input.GetKey(KeyCode.RightArrow)) {
-            if (Camera.main.transform.position.x < 640)
-                Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
-        }
-
-        if (Input.GetKey(KeyCode.UpArrow)) {
-            if (Camera.main.transform.position.y < 400)
-                Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
-        }
-        else if (Input.GetKey(KeyCode.DownArrow)) {
-            if (Camera.main.transform.position.y > -400)
-                Camera.main.transform.Translate(Vector3.down * moveCamSpeed);
-        }
-
-        #endregion
-	}
-	
-	void UpdateJoystick() {
-		moveCamSpeed = Time.deltaTime * 360f;
-		
-		if(joystickManager.joystick.touchCount != 0) {
-			if(joystickManager.joystick._isMoveGUI) {
-				if(joystickManager.joystick.position.x > 0.2f) {
-					Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
-				}
-				else if(joystickManager.joystick.position.x < .2f) {			
-					Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
-				}
-				
-				if(joystickManager.joystick.position.y > .2f) {
-					Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
-				}
-				else if(joystickManager.joystick.position.y < -.2f) {
-					Camera.main.transform.Translate(Vector3.down * moveCamSpeed);
-				}
-			}
-		}
-	}
-	
-	internal void OnInput(string Inputname) {
-		Debug.Log("GUI_Manager.OnInput : " + Inputname);
-		
-		if(Inputname == "Left_button") {
-			if(Camera.main.transform.position.x > -640)
-				Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
-		}
-		else if(Inputname == "Right_button") {
-			if(Camera.main.transform.position.x < 640)
-				Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
-		}
-		
-		if(Inputname == "Up_button") {
-            if(Camera.main.transform.position.y < 400)
-                Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
-		}
-		else if(Inputname == "Down_button") {
-            if(Camera.main.transform.position.y > -400)
-                Camera.main.transform.Translate(Vector3.down * moveCamSpeed);
-        }
-    }
-
-//    internal void GetInput(string nameInput)
-//    {
-//        if (currentForeignTabStatus == ForeignTabStatus.DrawActivity) {
-//            switch (nameInput)
-//            {
-//                case "Close_button":
-//                    ForeignLand_window.SetActive(false);
-//                    IsShowInteruptGUI = false;
-//                    currentForeignTabStatus = ForeignTabStatus.None;
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    }
+	void Update () { }
 
     void OnGUI()
     {		
@@ -303,14 +208,17 @@ public class TaskManager : MonoBehaviour {
 		
 		this.DrawRightSidebar();
 		
-//		if(currentForeignTabStatus == ForeignTabStatus.DrawActivity) {
-//			standardWindow_rect = GUI.Window(0, standardWindow_rect, DrawWorldMap_window, new GUIContent("Select troops"));
-//		}
+		#region <@!-- ForeignTabStatus.
 		
-//		if(currentRightSideState != RightSideState.show_map && currentForeignTabStatus != ForeignTabStatus.None) {
-//			currentForeignTabStatus = ForeignTabStatus.None;
-//			IsShowInteruptGUI = false;
-//		}
+		if(currentForeignTabStatus == ForeignTabStatus.DrawActivity) {
+			standardWindow_rect = GUI.Window(0, standardWindow_rect, DrawActivityWindow, new GUIContent("Select troops"));
+		}		
+		if(currentRightSideState != RightSideState.show_map && currentForeignTabStatus != ForeignTabStatus.None) {
+			currentForeignTabStatus = ForeignTabStatus.None;
+			IsShowInteruptGUI = false;
+		}
+		
+		#endregion
     }
 	
 	private void DrawRightSidebar() 
@@ -414,32 +322,84 @@ public class TaskManager : MonoBehaviour {
 		GUI.EndGroup();
 	}
 	
-	private Rect citiesSymbol_rect = new Rect(24 * Mz_GUIManager.Extend_heightScale, 24, 100 * Mz_GUIManager.Extend_heightScale, 100);
-	private Rect citiesTagName_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 130, 120 * Mz_GUIManager.Extend_heightScale, 32);
-    private Rect sendButton_rect = new Rect(10 * Mz_GUIManager.Extend_heightScale, 170, 120 * Mz_GUIManager.Extend_heightScale, 32);
-    private Rect selectTroopBox_rect = new Rect(150 * Mz_GUIManager.Extend_heightScale, 40, 545 * Mz_GUIManager.Extend_heightScale, 450);
+	private Rect citiesSymbol_rect = new Rect(24 * Mz_OnGUIManager.Extend_heightScale, 24, 100 * Mz_OnGUIManager.Extend_heightScale, 100);
+	private Rect citiesTagName_rect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 130, 120 * Mz_OnGUIManager.Extend_heightScale, 32);
+    private Rect sendButton_rect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 170, 120 * Mz_OnGUIManager.Extend_heightScale, 32);
+    private Rect selectTroopBox_rect = new Rect(150 * Mz_OnGUIManager.Extend_heightScale, 40, 545 * Mz_OnGUIManager.Extend_heightScale, 450);
+    private Rect drawUnit_00_rect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 10, 60 * Mz_OnGUIManager.Extend_heightScale, 60);
+    private Rect selectUnitBoxRect_00 = new Rect(70 * Mz_OnGUIManager.Extend_heightScale, 24, 60 * Mz_OnGUIManager.Extend_heightScale, 32);
+    private Rect maxUnitButtonRect_00 = new Rect(130 * Mz_OnGUIManager.Extend_heightScale, 20, 60 * Mz_OnGUIManager.Extend_heightScale, 40);
+    private Rect drawUnitRect_01 = new Rect(240 * Mz_OnGUIManager.Extend_heightScale, 10, 60 * Mz_OnGUIManager.Extend_heightScale, 60);
+    private Rect selectUnitBoxRect_01 = new Rect(300 * Mz_OnGUIManager.Extend_heightScale, 24, 60 * Mz_OnGUIManager.Extend_heightScale, 32);
+    private Rect maxUnitButtonRect_01 = new Rect(360 * Mz_OnGUIManager.Extend_heightScale, 20, 60 * Mz_OnGUIManager.Extend_heightScale, 40);
+    private Rect drawUnitRect_10 = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 80, 60 * Mz_OnGUIManager.Extend_heightScale, 60);
+    private Rect selectUnitBoxRect_10 = new Rect(70 * Mz_OnGUIManager.Extend_heightScale, 94, 60 * Mz_OnGUIManager.Extend_heightScale, 32);
+    private Rect maxUnitButtonRect_10 = new Rect(130 * Mz_OnGUIManager.Extend_heightScale, 90, 60 * Mz_OnGUIManager.Extend_heightScale, 40);
+    private Rect drawUnitRect_11 = new Rect(240 * Mz_OnGUIManager.Extend_heightScale, 80, 60 * Mz_OnGUIManager.Extend_heightScale, 60);
+    private Rect selectUnitBoxRect_11 = new Rect(300 * Mz_OnGUIManager.Extend_heightScale, 94, 60 * Mz_OnGUIManager.Extend_heightScale, 32);
+    private Rect maxUnitButtonRect_11 = new Rect(360 * Mz_OnGUIManager.Extend_heightScale, 90, 60 * Mz_OnGUIManager.Extend_heightScale, 40);
+    private string numberOFUnit_00 = string.Empty; 
+    private string numberOFUnit_01 = string.Empty;
+    private string numberOFUnit_02 = string.Empty;
 
-//    private void DrawWorldMap_window(int id)
-//    {
-//        //<!-- Exit Button.
-//        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6])) {
-//            CloseGUIWindow();
-//        }
-//		
-//		GUI.Box(selectTroopBox_rect, "");
-//        
-//        /// Draw cities symbol.
-//        GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
-//        GUI.Box(citiesTagName_rect, AICity_list[0].name);
-//
-//        if (GUI.Button(sendButton_rect, "Send")) { }
-//    }
+    private void DrawActivityWindow(int id)
+    {
+        //<!-- Exit Button.
+        if (GUI.Button(exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskbarUI_Skin.customStyles[6])) {
+            CloseGUIWindow();
+        }
+		
+		GUI.BeginGroup(selectTroopBox_rect, "Pillage", taskbarUI_Skin.box); {
+			GUI.DrawTexture(drawUnit_00_rect, spearmanUnitIcon);
+            numberOFUnit_00 = GUI.TextField(selectUnitBoxRect_00, numberOFUnit_00, 3, taskbarUI_Skin.textField);
+            if (GUI.Button(maxUnitButtonRect_00, BarracksBeh.AmountOfSpearman.ToString())) {
+                numberOFUnit_00 = BarracksBeh.AmountOfSpearman.ToString();
+            }
 
-//    private void CloseGUIWindow()
-//    {
-//        currentForeignTabStatus = ForeignTabStatus.None;
-//        IsShowInteruptGUI = false;
-//    }
+            GUI.DrawTexture(drawUnitRect_01, hypaspistUnitIcon);
+            GUI.TextField(selectUnitBoxRect_01, "0", 3, taskbarUI_Skin.textField);
+            if (GUI.Button(maxUnitButtonRect_01, BarracksBeh.AmountOfHapaspist.ToString())) {
+                numberOFUnit_01 = BarracksBeh.AmountOfHapaspist.ToString();
+            }
+
+            GUI.DrawTexture(drawUnitRect_10, hopliteUnitIcon);
+            GUI.TextField(selectUnitBoxRect_10, "0", 3, taskbarUI_Skin.textField);
+            if (GUI.Button(maxUnitButtonRect_10, BarracksBeh.AmountOfHoplite.ToString())) {
+                numberOFUnit_02 = BarracksBeh.AmountOfHoplite.ToString();
+            }
+
+            GUI.DrawTexture(drawUnitRect_11, ToxotesUnitIcon);
+            GUI.TextField(selectUnitBoxRect_11, "0", 3, taskbarUI_Skin.textField);
+            GUI.Button(maxUnitButtonRect_11, "Max");
+		}
+		GUI.EndGroup();
+        
+        /// Draw cities symbol.
+        GUI.DrawTexture(citiesSymbol_rect, AICity_list[0].symbols);
+        GUI.Box(citiesTagName_rect, AICity_list[0].name);
+
+        if (GUI.Button(sendButton_rect, "Send")) {
+            try{
+                int unit_0 = numberOFUnit_00 != string.Empty ? int.Parse(numberOFUnit_00) : 0;
+                int unit_1 = numberOFUnit_01 != string.Empty ? int.Parse(numberOFUnit_01) : 0;
+                int unit_3 = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
+
+                if(unit_0 + unit_1 + unit_3 > 0) {
+                    CloseGUIWindow();
+                }
+            }catch {
+            }finally {
+                numberOFUnit_00 = string.Empty;
+                numberOFUnit_01 = string.Empty;
+                numberOFUnit_02 = string.Empty;
+            }
+        }
+    }
+    private void CloseGUIWindow()
+    {
+        currentForeignTabStatus = ForeignTabStatus.None;
+        IsShowInteruptGUI = false;
+    }
 
     private void DrawSettingTab()
     {

@@ -204,11 +204,11 @@ public class Mz_BaseScene : MonoBehaviour {
         {
 			TaskManager.IsShowInteruptGUI = true;
 			
-            GUI.BeginGroup(new Rect(Screen.width / 2 - (200 * Mz_GUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 100, 400 * Mz_GUIManager.Extend_heightScale, 200), "Do you want to quit ?", GUI.skin.window);
+            GUI.BeginGroup(new Rect(Screen.width / 2 - (200 * Mz_OnGUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 100, 400 * Mz_OnGUIManager.Extend_heightScale, 200), "Do you want to quit ?", GUI.skin.window);
             {
-                if (GUI.Button(new Rect(60 * Mz_GUIManager.Extend_heightScale, 155, 100 * Mz_GUIManager.Extend_heightScale, 40), "Yes"))
+                if (GUI.Button(new Rect(60 * Mz_OnGUIManager.Extend_heightScale, 155, 100 * Mz_OnGUIManager.Extend_heightScale, 40), "Yes"))
                     Application.Quit();
-                else if (GUI.Button(new Rect(240 * Mz_GUIManager.Extend_heightScale, 155, 100 * Mz_GUIManager.Extend_heightScale, 40), "No")) {
+                else if (GUI.Button(new Rect(240 * Mz_OnGUIManager.Extend_heightScale, 155, 100 * Mz_OnGUIManager.Extend_heightScale, 40), "No")) {
                     _hasQuitCommand = false; 
 					TaskManager.IsShowInteruptGUI = false;
 				}
@@ -216,13 +216,17 @@ public class Mz_BaseScene : MonoBehaviour {
             GUI.EndGroup();
         }
 
-        if (debugLogCallback_style == null) {
-            debugLogCallback_style = new GUIStyle(GUI.skin.box);
-            debugLogCallback_style.fontSize = 12;
-            debugLogCallback_style.alignment = TextAnchor.MiddleLeft;
-        }
+        #region <@!-- Draw_LogCallback debuging.
 
-        GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_GUIManager.Extend_heightScale, 50), output, debugLogCallback_style);
+        //if (debugLogCallback_style == null) {
+        //    debugLogCallback_style = new GUIStyle(GUI.skin.box);
+        //    debugLogCallback_style.fontSize = 12;
+        //    debugLogCallback_style.alignment = TextAnchor.MiddleLeft;
+        //}
+
+        //GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_OnGUIManager.Extend_heightScale, 50), output, debugLogCallback_style);
+
+        #endregion
     }
 
     void OnApplicationQuit()
@@ -231,7 +235,7 @@ public class Mz_BaseScene : MonoBehaviour {
     }
 
     #region <!-- Unity Log Callback.
-
+/*
     public string output = "";
     public string stack = "";
     void OnEnable()
@@ -247,6 +251,6 @@ public class Mz_BaseScene : MonoBehaviour {
         output = logString;
         stack = stackTrace;
     }
-
+*/
     #endregion
 }

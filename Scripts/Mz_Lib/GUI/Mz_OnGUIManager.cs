@@ -1,14 +1,25 @@
 using UnityEngine;
 using System.Collections;
 
-public class Mz_GUIManager {
+
+/// <summary>
+/// Return Extend_heightScale as float for use to multiply with Rectangle.x, Rectangle.width.
+/// </summary>
+public class Mz_OnGUIManager {
 	
 	private Mz_BaseScene baseScene;
-
+    
+    /// <summary>
+    /// Return Static Fields. 
+    /// </summary>
     public static Rect viewPort_rect;
 	public static Rect midcenterGroup_rect = new Rect(0, 0, Main.GAMEWIDTH, Main.GAMEHEIGHT);	
 	//<!--- Equation finding scale == x = screen.height/ main.fixed.
     public static float Extend_heightScale = 1;
+
+    /// <summary>
+    /// Call onec on application startup.
+    /// </summary>
     public static void CalculateViewportScreen() {    
 		// Calculation height of screen.
 		if(Screen.height == Main.FixedGameHeight) {

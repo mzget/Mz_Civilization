@@ -17,11 +17,9 @@ public class Startup : Mz_BaseScene {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	new void Update () { }
 
-	}
-
-    void OnGUI() {
+    private new void OnGUI() {
         GUI.DrawTexture(new Rect(Screen.width / 2 - (mzLogo_Icon.width / 2), Screen.height / 2 - (mzLogo_Icon.height / 2), 
             mzLogo_Icon.width, mzLogo_Icon.height), mzLogo_Icon);
     }

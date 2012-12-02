@@ -31,12 +31,12 @@ public class MainMenu : Mz_BaseScene
 
 
     void Awake() {
-        Mz_GUIManager.CalculateViewportScreen();
+        Mz_OnGUIManager.CalculateViewportScreen();
 
         usernameTextfield_rect = new Rect(50, 120, 300, 64);
         doneButton_rect = new Rect(gameWindow_rect.width / 2 - 50, 200, 100, 32);
 
-        mainMenuGroup_rect.width = mainMenuGroup_rect.width * Mz_GUIManager.Extend_heightScale;
+        mainMenuGroup_rect.width = mainMenuGroup_rect.width * Mz_OnGUIManager.Extend_heightScale;
         mainMenuGroup_rect.x = Screen.width - mainMenuGroup_rect.width;
     }
 
@@ -82,10 +82,10 @@ public class MainMenu : Mz_BaseScene
             this.DrawMainMenu();
         }
 
-        GUI.BeginGroup(Mz_GUIManager.viewPort_rect);
+        GUI.BeginGroup(Mz_OnGUIManager.viewPort_rect);
         {
             if (_showSkinLayout)
-                GUI.Box(new Rect(0, 0, Mz_GUIManager.viewPort_rect.width, Mz_GUIManager.viewPort_rect.height), "Skin layout", GUI.skin.box);
+                GUI.Box(new Rect(0, 0, Mz_OnGUIManager.viewPort_rect.width, Mz_OnGUIManager.viewPort_rect.height), "Skin layout", GUI.skin.box);
 
             if (sceneState == SceneState.showNewGame)
             {
@@ -113,7 +113,7 @@ public class MainMenu : Mz_BaseScene
                 dublicateNoticeText = "This name already exists.";
             }
 
-            Rect notification_Rect = new Rect(Mz_GUIManager.viewPort_rect.width / 2 - 200, 0, 400, 64);
+            Rect notification_Rect = new Rect(Mz_OnGUIManager.viewPort_rect.width / 2 - 200, 0, 400, 64);
             if (_isNullUsernameNotification)
                 GUI.Box(notification_Rect, notificationText);
             if (_isDuplicateUsername)
@@ -149,11 +149,11 @@ public class MainMenu : Mz_BaseScene
 
     private void DrawNewGameTextField()
     {
-        float newGameGroup_width = 500 * Mz_GUIManager.Extend_heightScale, newGameGroupHeight = 400f;
-        Rect newGameGroup_rect = new Rect(Mz_GUIManager.viewPort_rect.width / 2 - newGameGroup_width/2, Mz_GUIManager.viewPort_rect.height / 2 - newGameGroupHeight / 2, newGameGroup_width, newGameGroupHeight);
-        Rect usernameTextfield_rect = new Rect((newGameGroup_rect.width / 2) - ((250 * Mz_GUIManager.Extend_heightScale) / 2), newGameGroup_rect.height / 2 - 50, 250 * Mz_GUIManager.Extend_heightScale, 50);
-        Rect startButton_rect = new Rect(50 * Mz_GUIManager.Extend_heightScale, 300, 150 * Mz_GUIManager.Extend_heightScale, 40);
-        Rect cancelButton_rect = new Rect(300 * Mz_GUIManager.Extend_heightScale, 300, 150 * Mz_GUIManager.Extend_heightScale, 40);
+        float newGameGroup_width = 500 * Mz_OnGUIManager.Extend_heightScale, newGameGroupHeight = 400f;
+        Rect newGameGroup_rect = new Rect(Mz_OnGUIManager.viewPort_rect.width / 2 - newGameGroup_width/2, Mz_OnGUIManager.viewPort_rect.height / 2 - newGameGroupHeight / 2, newGameGroup_width, newGameGroupHeight);
+        Rect usernameTextfield_rect = new Rect((newGameGroup_rect.width / 2) - ((250 * Mz_OnGUIManager.Extend_heightScale) / 2), newGameGroup_rect.height / 2 - 50, 250 * Mz_OnGUIManager.Extend_heightScale, 50);
+        Rect startButton_rect = new Rect(50 * Mz_OnGUIManager.Extend_heightScale, 300, 150 * Mz_OnGUIManager.Extend_heightScale, 40);
+        Rect cancelButton_rect = new Rect(300 * Mz_OnGUIManager.Extend_heightScale, 300, 150 * Mz_OnGUIManager.Extend_heightScale, 40);
 		
         GUI.BeginGroup(newGameGroup_rect, "New Player", GUI.skin.window);
         {
@@ -241,12 +241,12 @@ public class MainMenu : Mz_BaseScene
     //<!-- Show save game slot. If slot is full.
     void DrawSaveGameSlot(bool _toSaveGame)
     {
-        float group_width = 500 * Mz_GUIManager.Extend_heightScale, group_height = 380;
-        float slot_width = 300 * Mz_GUIManager.Extend_heightScale;
+        float group_width = 500 * Mz_OnGUIManager.Extend_heightScale, group_height = 380;
+        float slot_width = 300 * Mz_OnGUIManager.Extend_heightScale;
         Rect slot_1Rect = new Rect(group_width/2 - (slot_width/2), 140, slot_width, 48);
         Rect slot_2Rect = new Rect(group_width / 2 - (slot_width / 2), 205, slot_width, 48);
         Rect slot_3Rect = new Rect(group_width / 2 - (slot_width / 2), 270, slot_width, 48);
-        Rect textbox_header_rect = new Rect((group_width / 2) - ((200 * Mz_GUIManager.Extend_heightScale) /2), 50, 200 * Mz_GUIManager.Extend_heightScale, 30);
+        Rect textbox_header_rect = new Rect((group_width / 2) - ((200 * Mz_OnGUIManager.Extend_heightScale) /2), 50, 200 * Mz_OnGUIManager.Extend_heightScale, 30);
 
         if (_toSaveGame)
         {
@@ -255,12 +255,12 @@ public class MainMenu : Mz_BaseScene
             //message = "เลือกช่องที่ต้องการ เพื่อลบข้อมูลเก่า และทับด้วยข้อมูลใหม่";
             message = "Select Data Slot To Replace New Data";
 
-            GUI.Box(new Rect(Mz_GUIManager.viewPort_rect.width / 2 - 200, 0, 400, 64), message);
+            GUI.Box(new Rect(Mz_OnGUIManager.viewPort_rect.width / 2 - 200, 0, 400, 64), message);
         }
 
-        GUI.BeginGroup(new Rect((Mz_GUIManager.viewPort_rect.width / 2) - group_width / 2, (Main.GAMEHEIGHT / 2) - group_height / 2, group_width, group_height), "Load game", GUI.skin.window);
+        GUI.BeginGroup(new Rect((Mz_OnGUIManager.viewPort_rect.width / 2) - group_width / 2, (Main.GAMEHEIGHT / 2) - group_height / 2, group_width, group_height), "Load game", GUI.skin.window);
         {
-            if (GUI.Button(new Rect(group_width - (50 * Mz_GUIManager.Extend_heightScale), 0, 50 * Mz_GUIManager.Extend_heightScale, 50), "X"))
+            if (GUI.Button(new Rect(group_width - (50 * Mz_OnGUIManager.Extend_heightScale), 0, 50 * Mz_OnGUIManager.Extend_heightScale, 50), "X"))
             {
                 sceneState = SceneState.none;
             }

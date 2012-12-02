@@ -94,6 +94,10 @@ public class StageManager : Mz_BaseScene {
 		
         if (BuildingBeh.House_Instances.Count == 0)
             HouseBeh.CalculationSumOfPopulation();
+
+#if UNITY_WEBPLAYER || UNITY_EDITOR
+        StartCoroutine(InitializeJoystick());
+#endif
     }
 
 	private new IEnumerator InitializeAudio ()
@@ -114,6 +118,19 @@ public class StageManager : Mz_BaseScene {
 
         yield return 0;
     }
+
+    public GameObject joystick_base_obj;
+    public GameObject joystick_obj;
+	public JoystickManager joystickManager;
+	private float moveCamSpeed;
+    private IEnumerator InitializeJoystick()
+    {
+        joystick_base_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystickbase", typeof(GameObject))) as GameObject;
+        joystick_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystick", typeof(GameObject))) as GameObject;
+		
+        yield return 0;
+    }
+	
 
     void GenerateBackground()
     {
@@ -386,6 +403,36 @@ public class StageManager : Mz_BaseScene {
             if (resourceCycle_Event != null)
                 resourceCycle_Event(this, System.EventArgs.Empty);
         }
+		
+		if(Application.isWebPlayer || Application.isEditor) {
+			if(joystick_obj != null) {
+				if(joystickManager != null)
+					this.UpdateJoystick();
+				else
+					joystickManager = joystick_obj.GetComponent<JoystickManager>();
+			}
+
+	        #region <!-- Detech when used keybroad input.
+	
+	        if (Input.GetKey(KeyCode.LeftArrow)) {
+	            if (Camera.main.transform.position.x > -640)
+	                Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
+	        }
+	        else if (Input.GetKey(KeyCode.RightArrow)) {
+	            if (Camera.main.transform.position.x < 640)
+	                Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
+	        }
+	
+	        if (Input.GetKey(KeyCode.UpArrow)) {
+	            if (Camera.main.transform.position.y < 400)
+	                Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
+	        }
+	        else if (Input.GetKey(KeyCode.DownArrow)) {
+	            if (Camera.main.transform.position.y > -400)
+	                Camera.main.transform.Translate(Vector3.down * moveCamSpeed);
+	        }
+	        #endregion
+		}
     }
 
     protected override void MovingCameraTransform()
@@ -400,6 +447,55 @@ public class StageManager : Mz_BaseScene {
             // Move object across XY plane       
             //transform.Translate(-touchDeltaPosition.x * speed, -touchDeltaPosition.y * speed, 0);
             Camera.main.transform.Translate(-touchDeltaPosition.x * speed, -touchDeltaPosition.y * speed, 0);
+        }
+    }
+	
+	void UpdateJoystick() {
+		moveCamSpeed = Time.deltaTime * 360f;
+		
+		if(joystickManager.joystick.touchCount != 0) {
+			if(joystickManager.joystick._isMoveGUI) {
+				if(joystickManager.joystick.position.x > 0.2f) {
+					Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
+				}
+				else if(joystickManager.joystick.position.x < .2f) {			
+					Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
+				}
+				
+				if(joystickManager.joystick.position.y > .2f) {
+					Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
+				}
+				else if(joystickManager.joystick.position.y < -.2f) {
+					Camera.main.transform.Translate(Vector3.down * moveCamSpeed);
+				}
+			}
+		}
+	}
+
+    public override void OnInput(string nameInput)
+    {
+        base.OnInput(nameInput);
+
+        if (nameInput == "Left_button")
+        {
+            if (Camera.main.transform.position.x > -640)
+                Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
+        }
+        else if (nameInput == "Right_button")
+        {
+            if (Camera.main.transform.position.x < 640)
+                Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
+        }
+
+        if (nameInput == "Up_button")
+        {
+            if (Camera.main.transform.position.y < 400)
+                Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
+        }
+        else if (nameInput == "Down_button")
+        {
+            if (Camera.main.transform.position.y > -400)
+                Camera.main.transform.Translate(Vector3.down * moveCamSpeed);
         }
     }
 
