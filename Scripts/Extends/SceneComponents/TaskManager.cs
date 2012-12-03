@@ -375,8 +375,9 @@ public class TaskManager : MonoBehaviour {
 
                 if(unit_0 + unit_1 + unit_3 > 0) {
 					displayTroopsActivity.MilitaryActivityList.Add(new TroopsActivity() {
-						currentTroopsStatus = TroopsActivity.TroopsStatus.LeaveOfTown,
+						currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage,
                         targetCity = StageManager.list_AICity[0],
+//						timeToTravel = 
 					});
                     CloseGUIWindow();
                 }

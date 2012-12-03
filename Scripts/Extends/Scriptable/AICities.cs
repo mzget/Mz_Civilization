@@ -5,7 +5,7 @@ public class AICities : ScriptableObject {
 
     public Texture2D symbols;
     public UnitDataStore.Tribes tribe;
-
+	public int distance; //@-- Distance use to calculation time to travel.
     public int[] AmountOfUnits = new int[3];
 
     void OnEnable() { 
@@ -18,5 +18,7 @@ public class AICities : ScriptableObject {
         }
     }
 
-    void OnDestroy() { }
+    void OnDestroy() {
+
+	}
 }

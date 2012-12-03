@@ -67,10 +67,6 @@ public class StageManager : Mz_BaseScene {
 
 
     void Awake() {
-        buildingArea_Objs.Clear();
-		BuildingBeh.ClearStaticData();
-		HouseBeh.ClearStaticData();
-
         if (taskManager == null) 
             taskManager = this.gameObject.GetComponent<TaskManager>();
     }
@@ -125,7 +121,12 @@ public class StageManager : Mz_BaseScene {
         taskManager.GreekIcon_Texture = Resources.Load(TaskManager.PathOfTribes_Texture + "Greek", typeof(Texture2D)) as Texture2D;
         taskManager.PersianIcon_Texture = Resources.Load(TaskManager.PathOfTribes_Texture + "Persian", typeof(Texture2D)) as Texture2D;
 		
-		AICities greek = new AICities() { name = "Greek", symbols = taskManager.GreekIcon_Texture, tribe = UnitDataStore.Tribes.Greek, };
+		AICities greek = new AICities() {
+			name = "Greek", 
+			symbols = taskManager.GreekIcon_Texture, 
+			tribe = UnitDataStore.Tribes.Greek,
+			distance = 10,
+		};
         greek.AmountOfUnits[0] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN);
         greek.AmountOfUnits[1] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST);
         greek.AmountOfUnits[2] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HOPLITE);
@@ -530,6 +531,10 @@ public class StageManager : Mz_BaseScene {
     public override void OnDispose()
     {
         base.OnDispose();
+		
+		buildingArea_Objs.Clear();
+		BuildingBeh.ClearStaticData();
+		HouseBeh.ClearStaticData();
 
         list_AICity.Clear();
         list_AICity = null;

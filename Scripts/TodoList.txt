@@ -16,6 +16,10 @@
 //<!-- "Barranks" features -->
 - limit other troops even spearmans. Cannot train them until 
 
+//<@-- "TaskManager.ForeignTab"
+<!-- Send troops to target city. Calculation time to travel of troops.
+
+
 ///<!-- Minor list. --/>
 /////////////////////////////////////////////////////////////
 <!-- Show time process on building construction.
