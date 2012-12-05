@@ -246,8 +246,7 @@ public class BarracksBeh : BuildingBeh
 			{
                 if (base.Level < RequireResource.Length)
                 {
-                    if (list_trainingUnit.Count > 0)
-                    {
+                    if (list_trainingUnit.Count > 0) {
 						if(list_trainingUnit[0].RemainingTime.Ticks > 0) {
 							GUI.BeginGroup(training_group_rect, GUIContent.none, GUI.skin.textArea);
 							{

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class TaskManager : MonoBehaviour {
 	
 	public const string PathOfGUISprite = "UI_Sprites/";
-    public const string PathOfMainGUIResource = "Textures/MainGUI/";
+    public const string PathOfMainGUI = "Textures/MainGUI/";
     public const string PathOfGameItemTextures = "Textures/GameItems/";
     public const string Advisor_ResourcePath = "Textures/Advisors/";
     public const string PathOfTribes_Texture = "Textures/Tribes_Icons/";
@@ -50,6 +50,7 @@ public class TaskManager : MonoBehaviour {
     public Texture2D marketTradingIcon;
 
     public Texture2D elder_advisor;
+	public Texture2D messageFormSystem_icon;
     //@!-- Troops units.
     public Texture2D spearmanUnitIcon;
     public Texture2D hypaspistUnitIcon;
@@ -81,8 +82,8 @@ public class TaskManager : MonoBehaviour {
     private Rect previousButton_rect;
     private Rect nextButton_rect;
 
-    private Rect standardWindow_rect;
-    private Rect exitButton_Rect;
+    public Rect standardWindow_rect;
+    public Rect exitButton_Rect;
 
 	
 	void Awake() {
@@ -143,10 +144,10 @@ public class TaskManager : MonoBehaviour {
 	
     IEnumerator InitializeTextureResource() 
     {
-        left_button_Style.normal.background = Resources.Load(PathOfMainGUIResource + "Back_up", typeof(Texture2D)) as Texture2D;
-        left_button_Style.active.background = Resources.Load(PathOfMainGUIResource + "Back_down", typeof(Texture2D)) as Texture2D;
-        right_button_Style.normal.background = Resources.Load(PathOfMainGUIResource + "Next_up", typeof(Texture2D)) as Texture2D;
-        right_button_Style.active.background = Resources.Load(PathOfMainGUIResource + "Next_down", typeof(Texture2D)) as Texture2D;
+        left_button_Style.normal.background = Resources.Load(PathOfMainGUI + "Back_up", typeof(Texture2D)) as Texture2D;
+        left_button_Style.active.background = Resources.Load(PathOfMainGUI + "Back_down", typeof(Texture2D)) as Texture2D;
+        right_button_Style.normal.background = Resources.Load(PathOfMainGUI + "Next_up", typeof(Texture2D)) as Texture2D;
+        right_button_Style.active.background = Resources.Load(PathOfMainGUI + "Next_down", typeof(Texture2D)) as Texture2D;
 
         food_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Grain", typeof(Texture2D)) as Texture2D;
         wood_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "PinePlanks", typeof(Texture2D)) as Texture2D;
@@ -155,20 +156,21 @@ public class TaskManager : MonoBehaviour {
         armor_icon = Resources.Load(PathOfGameItemTextures + "Armor", typeof(Texture2D)) as Texture2D;
 		weapon_icon = Resources.Load(PathOfGameItemTextures + "Weapon", typeof(Texture2D)) as Texture2D;
 		
-        gold_icon = Resources.Load(PathOfMainGUIResource + "GoldIngot", typeof(Texture2D)) as Texture2D;
-        employee_icon = Resources.Load(PathOfMainGUIResource + "Employee_icon", typeof(Texture2D)) as Texture2D;
+        gold_icon = Resources.Load(PathOfMainGUI + "GoldIngot", typeof(Texture2D)) as Texture2D;
+        employee_icon = Resources.Load(PathOfMainGUI + "Employee_icon", typeof(Texture2D)) as Texture2D;
 		
-		domination_icon = Resources.Load(PathOfMainGUIResource + "Domination", typeof(Texture2D)) as Texture2D;
-		agriculture_icon = Resources.Load(PathOfMainGUIResource + "Agriculture", typeof(Texture2D)) as Texture2D;
-		industry_icon = Resources.Load(PathOfMainGUIResource + "Industry", typeof(Texture2D)) as Texture2D;
-		commerce_icon = Resources.Load(PathOfMainGUIResource + "Commerce", typeof(Texture2D)) as Texture2D;
-		military_icon = Resources.Load(PathOfMainGUIResource + "Military", typeof(Texture2D)) as Texture2D;
-        map_icon = Resources.Load(PathOfMainGUIResource + "Map_Texture", typeof(Texture2D)) as Texture2D;
-		setting_icon = Resources.Load(PathOfMainGUIResource + "Setting", typeof(Texture2D)) as Texture2D;
+		domination_icon = Resources.Load(PathOfMainGUI + "Domination", typeof(Texture2D)) as Texture2D;
+		agriculture_icon = Resources.Load(PathOfMainGUI + "Agriculture", typeof(Texture2D)) as Texture2D;
+		industry_icon = Resources.Load(PathOfMainGUI + "Industry", typeof(Texture2D)) as Texture2D;
+		commerce_icon = Resources.Load(PathOfMainGUI + "Commerce", typeof(Texture2D)) as Texture2D;
+		military_icon = Resources.Load(PathOfMainGUI + "Military", typeof(Texture2D)) as Texture2D;
+        map_icon = Resources.Load(PathOfMainGUI + "Map_Texture", typeof(Texture2D)) as Texture2D;
+		setting_icon = Resources.Load(PathOfMainGUI + "Setting", typeof(Texture2D)) as Texture2D;
 
-        marketTradingIcon = Resources.Load(PathOfMainGUIResource + "Market", typeof(Texture2D)) as Texture2D;
+        marketTradingIcon = Resources.Load(PathOfMainGUI + "Market", typeof(Texture2D)) as Texture2D;
 
         elder_advisor = Resources.Load(Advisor_ResourcePath + "VillageElder", typeof(Texture2D)) as Texture2D;
+		messageFormSystem_icon = Resources.Load(PathOfMainGUI + "MessageIcon", typeof(Texture2D)) as Texture2D;
         //<!-- Load troop icon.
         spearmanUnitIcon = Resources.Load(PathOf_TroopIcons + "Spearman", typeof(Texture2D)) as Texture2D;
         hypaspistUnitIcon = Resources.Load(PathOf_TroopIcons + "Hypaspist", typeof(Texture2D)) as Texture2D;
@@ -196,6 +198,7 @@ public class TaskManager : MonoBehaviour {
         GUI.EndGroup();
 		
 		this.DrawRightSidebar();
+		this.DrawMessageIcon();
 		
 		#region <@!-- ForeignTabStatus.
 		
@@ -290,7 +293,6 @@ public class TaskManager : MonoBehaviour {
 
 			GUI.DrawTexture(showSymbol_rect, StageManager.list_AICity[0].symbols);
 			GUI.Box(showNameOfAIcity_rect, StageManager.list_AICity[0].name, taskbarUI_Skin.box);
-	
 			
 			GUI.BeginGroup(new Rect(5, sidebarContentGroup_rect.height - 205, sidebarContentGroup_rect.width - 10, 200));
 			{
@@ -371,14 +373,25 @@ public class TaskManager : MonoBehaviour {
             try{
                 int unit_0 = numberOFUnit_00 != string.Empty ? int.Parse(numberOFUnit_00) : 0;
                 int unit_1 = numberOFUnit_01 != string.Empty ? int.Parse(numberOFUnit_01) : 0;
-                int unit_3 = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
+                int unit_2 = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
 
-                if(unit_0 + unit_1 + unit_3 > 0) {
+                GroupOFUnitBeh groupTemp = new GroupOFUnitBeh();
+                groupTemp.unitName.Add(UnitDataStore.GreekUnitData.Spearman);
+				groupTemp.unitName.Add(UnitDataStore.GreekUnitData.Hapaspist);
+				groupTemp.unitName.Add(UnitDataStore.GreekUnitData.Hoplite);
+                groupTemp.member.Add(unit_0);
+				groupTemp.member.Add(unit_1);
+				groupTemp.member.Add(unit_2);
+
+                if(unit_0 + unit_1 + unit_2 > 0) {
 					displayTroopsActivity.MilitaryActivityList.Add(new TroopsActivity() {
 						currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage,
                         targetCity = StageManager.list_AICity[0],
-//						timeToTravel = 
+                        timeToTravel = System.TimeSpan.FromSeconds(StageManager.list_AICity[0].distance),
+                        startTime = System.DateTime.UtcNow,
+						groupUnits = groupTemp,
 					});
+
                     CloseGUIWindow();
                 }
             }catch {
@@ -507,4 +520,11 @@ public class TaskManager : MonoBehaviour {
 		}
 		GUI.EndGroup();	
 	}
+
+	void DrawMessageIcon ()
+	{
+		if (GUI.Button (new Rect (10 * Mz_OnGUIManager.Extend_heightScale, 50, 80 * Mz_OnGUIManager.Extend_heightScale, 80), messageFormSystem_icon)) {
+		}
+	}
+
 }
