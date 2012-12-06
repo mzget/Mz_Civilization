@@ -22,7 +22,5 @@ public class GroupOFUnitBeh {
     public List<string> unitName = new List<string>();
     public List<int> member = new List<int>();
 	
-	public GroupOFUnitBeh() {
-		Debug.Log("GroupOFUnitBeh");
-	}
+	public GroupOFUnitBeh() { }
 }

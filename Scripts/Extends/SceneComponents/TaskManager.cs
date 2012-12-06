@@ -65,7 +65,7 @@ public class TaskManager : MonoBehaviour {
     protected Rect header_group_rect;
     protected Rect header_button_rect;
 	Rect first_rect, second_rect, third_rect, fourth_rect, fifth_rect, sixth_rect;
-    Rect baseSidebarGroup_rect;
+    public Rect baseSidebarGroup_rect;
     Rect sidebarButtonGroup_rect = new Rect(0, 0, 50, Main.GAMEHEIGHT);
     Rect sidebarContentGroup_rect;
 	Rect sidebarContentBox_rect;
@@ -391,10 +391,13 @@ public class TaskManager : MonoBehaviour {
                         startTime = System.DateTime.UtcNow,
 						groupUnits = groupTemp,
 					});
-
+					
+					Debug.Log ("displayTroopsActivity.MilitaryActivityList.Count : " + displayTroopsActivity.MilitaryActivityList.Count);
+					
                     CloseGUIWindow();
                 }
             }catch {
+				
             }finally {
                 numberOFUnit_00 = string.Empty;
                 numberOFUnit_01 = string.Empty;
@@ -526,5 +529,4 @@ public class TaskManager : MonoBehaviour {
 		if (GUI.Button (new Rect (10 * Mz_OnGUIManager.Extend_heightScale, 50, 80 * Mz_OnGUIManager.Extend_heightScale, 80), messageFormSystem_icon)) {
 		}
 	}
-
 }

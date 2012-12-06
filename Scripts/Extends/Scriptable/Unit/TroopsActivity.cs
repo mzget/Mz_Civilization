@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class TroopsActivity : ScriptableObject {
+public class TroopsActivity {
 
 	public enum TroopsStatus {
 		LeaveOfTown = 0, BackToTown = 1, Pillage = 2, Conquer = 3,

@@ -8,10 +8,9 @@ public class DisplayTroopsActivity : MonoBehaviour {
 
 	public List<TroopsActivity> MilitaryActivityList = new List<TroopsActivity>();
 	
-	private Rect activityWindowsRect = new Rect(0, 40, 400 * Mz_OnGUIManager.Extend_heightScale, 200);
+	private Rect activityWindowsRect;
 	
 	private Rect[] arr_activityRect = new Rect[4];
-    private Rect[] arr_labelRect = new Rect[4];
 
     /// <summary>
     /// Draw Troops activity details.
@@ -29,24 +28,25 @@ public class DisplayTroopsActivity : MonoBehaviour {
     //private DateTime counterTimer;
     //private DateTime startingCounterTimer;
 
-	
+
+	void Awake ()
+	{
+		taskManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<TaskManager>();
+	}
+
 	// Use this for initialization
 	void Start () {
         this.InitializeDataFields();
-        taskManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<TaskManager>();
 	}
 
     private void InitializeDataFields()
     {
-		arr_activityRect[0] = new Rect(0 * Mz_OnGUIManager.Extend_heightScale, 30, 180 * Mz_OnGUIManager.Extend_heightScale, 40);
+		activityWindowsRect = new Rect(taskManager.baseSidebarGroup_rect.x - (300 * Mz_OnGUIManager.Extend_heightScale), 40, 300 * Mz_OnGUIManager.Extend_heightScale, 200);
+
+		arr_activityRect[0] = new Rect(0 * Mz_OnGUIManager.Extend_heightScale, 30, 300 * Mz_OnGUIManager.Extend_heightScale, 40);
 		arr_activityRect[1] = arr_activityRect[0]; arr_activityRect[1].y += 40;
         arr_activityRect[2] = arr_activityRect[1]; arr_activityRect[2].y += 40;
         arr_activityRect[3] = arr_activityRect[2]; arr_activityRect[3].y += 40;
-
-        arr_labelRect[0] = new Rect(180 * Mz_OnGUIManager.Extend_heightScale, 30, 200 * Mz_OnGUIManager.Extend_heightScale, 40);
-        arr_labelRect[1] = arr_labelRect[0]; arr_labelRect[1].y += 40;
-        arr_labelRect[2] = arr_labelRect[1]; arr_labelRect[2].y += 40;
-        arr_labelRect[3] = arr_labelRect[2]; arr_labelRect[3].y += 40;
 
 		drawRemainingTime  =  new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 30, 500 * Mz_OnGUIManager.Extend_heightScale, 40);
         arr_showGroupUnitBox[0] = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 70, 500 * Mz_OnGUIManager.Extend_heightScale, 40);
@@ -95,22 +95,24 @@ public class DisplayTroopsActivity : MonoBehaviour {
             }
 		
 		    if(MilitaryActivityList.Count > 0) {
-			    GUI.BeginGroup(activityWindowsRect, "Military activities", GUIStyle.none);
+			    GUI.BeginGroup(activityWindowsRect, "Military activities list.", GUIStyle.none);
 			    {
-				    for (int i = 0; i < MilitaryActivityList.Count; i++) {
-                        if(GUI.Button(arr_activityRect[i], MilitaryActivityList[i].currentTroopsStatus + " : " + MilitaryActivityList[i].targetCity.name)) {
-                            currentDrawGUIState = DrawGUIState.DrawDetailWindow;
-                        }
-					
-					    if(MilitaryActivityList[i].RemainingTime.Ticks > 0) {
-                    	    string queueTime = new DateTime(MilitaryActivityList[i].RemainingTime.Ticks).ToString("HH:mm:ss");
-                    	    GUI.Label(arr_labelRect[i], queueTime, labelStyle);
-					    }
-					    else {
-						    MilitaryActivityList.RemoveAt(i);
+				    for (int i = 0; i < MilitaryActivityList.Count; i++) {	
+						string queueTime = "";
+						if(MilitaryActivityList[i].RemainingTime.Ticks >= 0) {
+							queueTime = new DateTime(MilitaryActivityList[i].RemainingTime.Ticks).ToString("HH:mm:ss");
 
-                            Debug.Log("MilitaryActivityList.Count : " + MilitaryActivityList.Count);
-					    }
+                            if(GUI.Button(arr_activityRect[i], MilitaryActivityList[i].currentTroopsStatus 
+						                  + " : " + MilitaryActivityList[i].targetCity.name
+						                  + " in " + queueTime.ToString())) {
+                                currentDrawGUIState = DrawGUIState.DrawDetailWindow;
+                            }
+						}
+						else {
+							MilitaryActivityList.RemoveAt(i);
+							
+							Debug.Log("MilitaryActivityList.Count : " + MilitaryActivityList.Count);
+						}
 				    }
 			    }
 			    GUI.EndGroup();

@@ -216,13 +216,13 @@ public class Mz_BaseScene : MonoBehaviour {
 
         #region <@!-- Draw_LogCallback debuging.
 
-        //if (debugLogCallback_style == null) {
-        //    debugLogCallback_style = new GUIStyle(GUI.skin.box);
-        //    debugLogCallback_style.fontSize = 12;
-        //    debugLogCallback_style.alignment = TextAnchor.MiddleLeft;
-        //}
+//        if (debugLogCallback_style == null) {
+//            debugLogCallback_style = new GUIStyle(GUI.skin.box);
+//            debugLogCallback_style.fontSize = 12;
+//            debugLogCallback_style.alignment = TextAnchor.MiddleLeft;
+//        }
 
-        //GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_OnGUIManager.Extend_heightScale, 50), output, debugLogCallback_style);
+        GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_OnGUIManager.Extend_heightScale, 50), output, GUI.skin.textArea);
 
         #endregion
     }
@@ -235,7 +235,7 @@ public class Mz_BaseScene : MonoBehaviour {
     public virtual void OnDispose() { }
 
     #region <!-- Unity Log Callback.
-/*
+
     public string output = "";
     public string stack = "";
     void OnEnable()
@@ -251,6 +251,6 @@ public class Mz_BaseScene : MonoBehaviour {
         output = logString;
         stack = stackTrace;
     }
-*/
+
     #endregion
 }
