@@ -20,10 +20,10 @@ public class DisplayTroopsActivity : MonoBehaviour {
 
     #region <@-- Events.
     
-    public event System.EventHandler displayMessageUI_Event;
-    private void OnDisplayMessageUIEvent(System.EventArgs e) {
-        if (displayMessageUI_Event != null)
-            displayMessageUI_Event(this, e);
+    public event System.EventHandler troopsReachTOTarget_Event;
+    private void OnTroopsReachToTargetEvent(System.EventArgs e) {
+        if (troopsReachTOTarget_Event != null)
+            troopsReachTOTarget_Event(this, e);
     }
 
     #endregion
@@ -75,7 +75,7 @@ public class DisplayTroopsActivity : MonoBehaviour {
 			    MilitaryActivityList[i].RemainingTime = remainTime;
                 if(MilitaryActivityList[i].RemainingTime.Ticks <= 0) {
                     currentDrawGUIState = DrawGUIState.None;
-                    this.OnDisplayMessageUIEvent(EventArgs.Empty);
+                    this.OnTroopsReachToTargetEvent(EventArgs.Empty);
                 }
 
                 //counterTimer = DateTime.UtcNow;

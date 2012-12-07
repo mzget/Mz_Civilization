@@ -18,7 +18,7 @@ public class MessageManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        displayTroop.displayMessageUI_Event += displayTroopsActivity_displayMessageUI_Event;
+        displayTroop.troopsReachTOTarget_Event += displayTroopsActivity_displayMessageUI_Event;
 	}
 
     private void displayTroopsActivity_displayMessageUI_Event(object sender, System.EventArgs e)
