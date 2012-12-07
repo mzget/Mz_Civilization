@@ -18,6 +18,15 @@ public class DisplayTroopsActivity : MonoBehaviour {
 	private Rect drawRemainingTime;
     private Rect[] arr_showGroupUnitBox = new Rect[4];
 
+    #region <@-- Events.
+    
+    public event System.EventHandler displayMessageUI_Event;
+    private void OnDisplayMessageUIEvent(System.EventArgs e) {
+        if (displayMessageUI_Event != null)
+            displayMessageUI_Event(this, e);
+    }
+
+    #endregion
 
     private TaskManager taskManager;
     private GUIStyle labelStyle;
@@ -66,6 +75,7 @@ public class DisplayTroopsActivity : MonoBehaviour {
 			    MilitaryActivityList[i].RemainingTime = remainTime;
                 if(MilitaryActivityList[i].RemainingTime.Ticks <= 0) {
                     currentDrawGUIState = DrawGUIState.None;
+                    this.OnDisplayMessageUIEvent(EventArgs.Empty);
                 }
 
                 //counterTimer = DateTime.UtcNow;

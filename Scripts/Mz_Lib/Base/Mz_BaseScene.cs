@@ -16,7 +16,9 @@ public class Mz_BaseScene : MonoBehaviour {
     }
     public static ScenesInstance SceneInstance;
     public bool _hasQuitCommand = false;
-    /// Detect Touch and Input
+	
+    #region <@-- Detect Touch and Input Data Fields.
+	
     private Mz_SmartDeviceInput smartDeviceInput;
     public Touch touch;
     public Vector3 mousePos;
@@ -25,10 +27,11 @@ public class Mz_BaseScene : MonoBehaviour {
 	private Vector3[] mainCameraPos = new Vector3[] { new Vector3(0,0,-10), new Vector3(2.66f,0,-10) };
 	private Vector3 currentCameraPos = new Vector3(0, 0, -10);
     public bool _isDragMove = false;
-
-    /// <summary>
-    /// Audio data.
-    /// </summary>
+	
+	#endregion
+	
+    #region <@-- Audio data.
+    
     protected static bool ToggleAudioActive = true;
     public AudioEffectManager audioEffect;
     public AudioDescribeManager audioDescribe;
@@ -77,7 +80,23 @@ public class Mz_BaseScene : MonoBehaviour {
             audioBackground_Obj.audio.mute = !ToggleAudioActive;
         }
     }
+	
+	#endregion
+	
+	public bool onScreenDebuging = true;
+	private Mz_DebugLogingGUI textDebug;
+	private void Start() {
+		if(onScreenDebuging) {
+			this.gameObject.AddComponent<Mz_DebugLogingGUI>();
+			textDebug = this.GetComponent<Mz_DebugLogingGUI>();
+			textDebug.debugIsOn = true;
+		}
+		
+		this.Initializing();
+	}
 
+	protected virtual void Initializing () {}
+	
     // Update is called once per frame
     protected virtual void Update()
     {
@@ -222,7 +241,7 @@ public class Mz_BaseScene : MonoBehaviour {
 //            debugLogCallback_style.alignment = TextAnchor.MiddleLeft;
 //        }
 
-        GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_OnGUIManager.Extend_heightScale, 50), output, GUI.skin.textArea);
+//        GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_OnGUIManager.Extend_heightScale, 50), output, GUI.skin.textArea);
 
         #endregion
     }
@@ -233,24 +252,4 @@ public class Mz_BaseScene : MonoBehaviour {
     }
 
     public virtual void OnDispose() { }
-
-    #region <!-- Unity Log Callback.
-
-    public string output = "";
-    public string stack = "";
-    void OnEnable()
-    {
-        Application.RegisterLogCallback(HandleLog);
-    }
-    void OnDisable()
-    {
-        Application.RegisterLogCallback(null);
-    }
-    public void HandleLog(string logString, string stackTrace, LogType type)
-    {
-        output = logString;
-        stack = stackTrace;
-    }
-
-    #endregion
 }

@@ -72,30 +72,32 @@ public class StageManager : Mz_BaseScene {
     }
 
 	// Use this for initialization
-    void Start()
-    {				
+	protected override void Initializing ()
+	{
+		base.Initializing ();	
+
 		this.StartCoroutine(this.InitializeAudio());
-        this.StartCoroutine(this.CreateGameMaterials());
-        StartCoroutine(this.CreateAIbeh());
-
-        this.GenerateBackground();
-        this.CreateBuildingArea();
-        this.PrepareBuildingPrefabsFromResource();
-        this.LoadingAmountOfBuildingInstance();
-        this.LoadingDataStorage();
+		this.StartCoroutine(this.CreateGameMaterials());
+		StartCoroutine(this.CreateAIbeh());
 		
-        if (BuildingBeh.StoreHouseInstance.Count == 0) {
-            StoreHouse.CalculationSumOfMaxCapacity();
+		this.GenerateBackground();
+		this.CreateBuildingArea();
+		this.PrepareBuildingPrefabsFromResource();
+		this.LoadingAmountOfBuildingInstance();
+		this.LoadingDataStorage();
+		
+		if (BuildingBeh.StoreHouseInstance.Count == 0) {
+			StoreHouse.CalculationSumOfMaxCapacity();
 			dayCycle_Event += StoreHouse.ReachDayCycle;
-        }
+		}
 		
-        if (BuildingBeh.House_Instances.Count == 0)
-            HouseBeh.CalculationSumOfPopulation();
-
+		if (BuildingBeh.House_Instances.Count == 0)
+			HouseBeh.CalculationSumOfPopulation();
+		
 #if UNITY_WEBPLAYER || UNITY_EDITOR
-        StartCoroutine(InitializeJoystick());
+		StartCoroutine(InitializeJoystick());
 #endif
-    }
+	}
 
 	private new IEnumerator InitializeAudio ()
 	{

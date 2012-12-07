@@ -3,7 +3,7 @@ using System.Collections;
 
  
 
-public class Mz_GuiTextDebug : MonoBehaviour {
+public class Mz_DebugLogingGUI : MonoBehaviour {
 
  
     private float windowPosition = 0;
@@ -27,44 +27,64 @@ public class Mz_GuiTextDebug : MonoBehaviour {
 
     }
 	
-    public static void debug(string newString) {
+    public void debug(string newString) {
         windowText = newString + "\n" + windowText;
-        UnityEngine.Debug.Log(newString);
     }
 
-    void OnGUI () {
-		
-        if (debugIsOn) {
-			
-            GUI.depth = 0;
-
-            GUI.BeginGroup (new Rect(windowPosition, 40.0f, Screen.width/2, Screen.height/3));
-			{
-                scrollViewVector = GUI.BeginScrollView (new Rect (0, 0.0f, Screen.width/2, Screen.height/3), scrollViewVector, 
-					new Rect (0.0f, 0.0f, 600, 2000.0f));
-
-                GUI.Box (new Rect (0, 0.0f, debugWidth - 20.0f, 2000.0f), windowText, debugBoxStyle);
-
-                GUI.EndScrollView();            
-			}
-            GUI.EndGroup ();
-
-            if (GUI.Button(new Rect (0, 0.0f,75.0f,40.0f), "Debug")) 
-			{
-                if (positionCheck == 1) {
+    void OnGUI()
+    {
+        if (debugIsOn)
+        {
+            GUI.depth = 10;
+            Rect logArea = new Rect(windowPosition, Screen.height - (Screen.height / 4), (Screen.width / 4) * 3, Screen.height / 4);
+            if (GUI.Button(new Rect(0, logArea.y - 30, 75, 30), "Debug")) {
+                if (positionCheck == 1)
+                {
                     windowPosition = 0;
                     positionCheck = 2;
                 }
-                else {
+                else
+                {
                     windowPosition = leftSide;
                     positionCheck = 1;
                 }
             }
-
-            
-            if (GUI.Button(new Rect (80f,0.0f,75.0f,40.0f),"Clear")) {
+            else if (GUI.Button(new Rect(80f, logArea.y - 30, 75, 30), "Clear"))
+            {
                 windowText = "";
             }
+
+            GUI.BeginGroup(logArea, GUI.skin.box);
+            {
+                scrollViewVector = GUI.BeginScrollView(new Rect(0, 0, (Screen.width/4) * 3, Screen.height/4), scrollViewVector, new Rect(0.0f, 30, Screen.width, Screen.height * 4));
+                {
+                    GUI.Box(new Rect(0, 0, debugWidth - 20.0f, 2000.0f), windowText, debugBoxStyle);
+                }
+                GUI.EndScrollView();
+            }
+            GUI.EndGroup();
         }
     }
+	
+    #region <!-- Unity Log Callback.
+
+    public string output = "";
+    public string stack = "";
+    void OnEnable()
+    {
+        Application.RegisterLogCallback(HandleLog);
+    }
+    void OnDisable()
+    {
+        Application.RegisterLogCallback(null);
+    }
+    public void HandleLog(string logString, string stackTrace, LogType type)
+    {
+        output = logString;
+        stack = stackTrace;
+
+        this.debug(output);
+    }
+
+    #endregion
 }

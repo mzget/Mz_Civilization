@@ -41,20 +41,21 @@ public class MainMenu : Mz_BaseScene
     }
 
     // Use this for initialization
-    void Start() 
+	protected override void Initializing ()
 	{
-        StartCoroutine(this.InitializeAudio());
-        //if(PlayerPrefs.HasKey(Mz_SaveData.usernameKey)) {
-        //    username = PlayerPrefs.GetString(Mz_SaveData.usernameKey);				
-        //    guiState = GUIState.showSaveGame; 
-        //}
-        //else {			
-        //    guiState = GUIState.showNewGame;			
-        //    if (newgameUIState != NewGameUIState.showTextField) {
-        //        newgameUIState = NewGameUIState.showTextField;
-        //    }
-        //}
-    }
+		base.Initializing ();
+		StartCoroutine(this.InitializeAudio());
+		//if(PlayerPrefs.HasKey(Mz_SaveData.usernameKey)) {
+		//    username = PlayerPrefs.GetString(Mz_SaveData.usernameKey);				
+		//    guiState = GUIState.showSaveGame; 
+		//}
+		//else {			
+		//    guiState = GUIState.showNewGame;			
+		//    if (newgameUIState != NewGameUIState.showTextField) {
+		//        newgameUIState = NewGameUIState.showTextField;
+		//    }
+		//}
+	}
 
     private new IEnumerator InitializeAudio() {
         base.InitializeAudio();

@@ -26,11 +26,14 @@ public class TaskManager : MonoBehaviour {
     public RightSideState currentRightSideState = RightSideState.show_domination;
     private StageManager stageManager;
 	private DisplayTroopsActivity displayTroopsActivity;
+    private MessageManager messageManager;
 
     public GUISkin taskbarUI_Skin;
     public GUIStyle left_button_Style;
     public GUIStyle right_button_Style;
-	
+
+    #region <@!-- Textures.
+
     public Texture2D food_icon;
     public Texture2D wood_icon;
     public Texture2D stone_icon;
@@ -62,6 +65,10 @@ public class TaskManager : MonoBehaviour {
     public Texture2D PersianIcon_Texture;
     public Texture2D CelticIcon_Texture;
 
+    #endregion
+
+    #region <@!-- Rectangles.
+
     protected Rect header_group_rect;
     protected Rect header_button_rect;
 	Rect first_rect, second_rect, third_rect, fourth_rect, fifth_rect, sixth_rect;
@@ -85,13 +92,22 @@ public class TaskManager : MonoBehaviour {
     public Rect standardWindow_rect;
     public Rect exitButton_Rect;
 
-	
-	void Awake() {
+    #endregion
+
+    #region <@-- Events.
+
+    #endregion
+
+
+    void Awake() {
 		TaskManager.IsShowInteruptGUI = false;
 
-		var gamecontroller = GameObject.FindGameObjectWithTag("GameController");
+		GameObject gamecontroller = GameObject.FindGameObjectWithTag("GameController");
 		stageManager = gamecontroller.GetComponent<StageManager>();
 		displayTroopsActivity = gamecontroller.GetComponent<DisplayTroopsActivity>();
+
+        gamecontroller.AddComponent<MessageManager>();
+        messageManager = gamecontroller.GetComponent<MessageManager>();
 	}
 	
 	// Use this for initialization
@@ -198,7 +214,6 @@ public class TaskManager : MonoBehaviour {
         GUI.EndGroup();
 		
 		this.DrawRightSidebar();
-		this.DrawMessageIcon();
 		
 		#region <@!-- ForeignTabStatus.
 		
@@ -522,11 +537,5 @@ public class TaskManager : MonoBehaviour {
 			}
 		}
 		GUI.EndGroup();	
-	}
-
-	void DrawMessageIcon ()
-	{
-		if (GUI.Button (new Rect (10 * Mz_OnGUIManager.Extend_heightScale, 50, 80 * Mz_OnGUIManager.Extend_heightScale, 80), messageFormSystem_icon)) {
-		}
 	}
 }
