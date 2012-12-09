@@ -83,10 +83,9 @@ public class Mz_BaseScene : MonoBehaviour {
 	
 	#endregion
 	
-	public bool onScreenDebuging = true;
 	private Mz_DebugLogingGUI textDebug;
 	private void Start() {
-		if(onScreenDebuging) {
+		if(Mz_DebugLogingGUI._enableOnScreenDebuging) {
 			this.gameObject.AddComponent<Mz_DebugLogingGUI>();
 			textDebug = this.GetComponent<Mz_DebugLogingGUI>();
 			textDebug.debugIsOn = true;

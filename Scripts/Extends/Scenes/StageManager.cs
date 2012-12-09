@@ -75,6 +75,8 @@ public class StageManager : Mz_BaseScene {
 	protected override void Initializing ()
 	{
 		base.Initializing ();	
+		
+		AdBannerObserver.Initialize("a150c2e14a5d753", "DIAT-GE5P-2J5H-2", 30f);
 
 		this.StartCoroutine(this.InitializeAudio());
 		this.StartCoroutine(this.CreateGameMaterials());

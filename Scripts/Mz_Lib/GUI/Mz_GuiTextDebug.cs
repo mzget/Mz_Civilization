@@ -16,6 +16,11 @@ public class Mz_DebugLogingGUI : MonoBehaviour {
     private float debugWidth = 480f;
     public bool debugIsOn = false;
 	
+	/// <summary>
+	/// The _enable on screen debuging.
+	/// </summary>
+	public static bool _enableOnScreenDebuging = false;
+	
 
 
     void Start () {
