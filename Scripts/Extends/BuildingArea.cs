@@ -225,8 +225,7 @@ public class BuildingArea : Base_ObjectBeh
         Sprite.materialReference = "transparent";
         Sprite.frameIndex = 3;
 		
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
-		PlayerPrefs.Save();
+		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
 
         this.CloseGUIWindow();
     }
@@ -846,11 +845,11 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!-- Build Button mechanichm.
 
-        bool enableBuildingButton = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() &&
-            buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]) &&
-            BuildingBeh.AcademyInstance.Level >= 3) 
-            enableBuildingButton = true;
+		bool enableBuildingButton  = false;
+		if(BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]) &&
+		   BuildingBeh.AcademyInstance != null) {
+			enableBuildingButton = (BuildingBeh.AcademyInstance.Level >= 3) ? true : false;
+		}
 
         GUI.enabled = enableBuildingButton;
         if (GUI.Button(createButton_rect, "Build"))

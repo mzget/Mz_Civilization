@@ -25,9 +25,10 @@ public class TaskManager : MonoBehaviour {
     };
     public RightSideState currentRightSideState = RightSideState.show_domination;
     private StageManager stageManager;
-	private DisplayTroopsActivity displayTroopsActivity;
+	public DisplayTroopsActivity displayTroopsActivity;
     private MessageManager messageManager;
-	private ForeignManager foreignManager;
+    private ForeignManager foreignManager;
+    public QuestManager questManager;
 
     public GUISkin taskbarUI_Skin;
     public GUIStyle left_button_Style;
@@ -77,12 +78,12 @@ public class TaskManager : MonoBehaviour {
     Rect sidebarButtonGroup_rect = new Rect(0, 0, 50, Main.GAMEHEIGHT);
     Rect sidebarContentGroup_rect;
 	Rect sidebarContentBox_rect;
-    Rect first_button_rect = new Rect(1, 2, 48, 56);
-    Rect second_button_rect = new Rect(1, 60, 48, 56);
-    Rect third_button_rect = new Rect(1, 120, 48, 56);
-    Rect fourth_button_rect = new Rect(1, 180, 48, 56);
-    Rect fifth_button_rect = new Rect(1, 240, 48, 56);
-    Rect sixth_button_rect = new Rect(1, 300, 48, 56);
+    Rect first_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 2, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
+	Rect second_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 60, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
+	Rect third_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 120, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
+	Rect fourth_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 180, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
+	Rect fifth_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 240, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
+	Rect sixth_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 300, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
     Rect seventh_button_rect;
 	//<@--- world map section.
 	private Rect showSymbol_rect;
@@ -93,29 +94,29 @@ public class TaskManager : MonoBehaviour {
     public Rect standardWindow_rect;
     public Rect exitButton_Rect;
 
+	//<@-- Notification display rectangles.
+	public Rect notificationRect_1 = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 50, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
+	public Rect notificationRect_2 = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 150, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
+
     #endregion
 
     #region <@-- Events.
 
     #endregion
 
-
-    void Awake() {
-		TaskManager.IsShowInteruptGUI = false;
-
-		GameObject gamecontroller = GameObject.FindGameObjectWithTag("GameController");
-		stageManager = gamecontroller.GetComponent<StageManager>();
-		displayTroopsActivity = gamecontroller.GetComponent<DisplayTroopsActivity>();
-
-        gamecontroller.AddComponent<MessageManager>();
-		gamecontroller.AddComponent<ForeignManager>();
-        messageManager = gamecontroller.GetComponent<MessageManager>();
-		foreignManager = gamecontroller.GetComponent<ForeignManager>();
-	}
 	
 	// Use this for initialization
-	IEnumerator Start () 
+	IEnumerator Start ()
     {
+        TaskManager.IsShowInteruptGUI = false;
+
+        GameObject gamecontroller = GameObject.FindGameObjectWithTag("GameController");
+        stageManager = gamecontroller.GetComponent<StageManager>();
+        messageManager = gamecontroller.GetComponent<MessageManager>();
+        foreignManager = gamecontroller.GetComponent<ForeignManager>();
+        displayTroopsActivity = gamecontroller.GetComponent<DisplayTroopsActivity>();
+        questManager = gamecontroller.GetComponent<QuestManager>();
+
         StartCoroutine(InitializeTextureResource());
         this.InitializeOnGUIDataFields();
 		
@@ -146,19 +147,10 @@ public class TaskManager : MonoBehaviour {
         showSymbol_rect.x = sidebarContentBox_rect.width / 2 - (showSymbol_rect.width / 2);
         showNameOfAIcity_rect = new Rect(5 * Mz_OnGUIManager.Extend_heightScale, 155, sidebarContentBox_rect.width, 40);
         previousButton_rect = new Rect(18 * Mz_OnGUIManager.Extend_heightScale, 85, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
-        nextButton_rect = new Rect((showSymbol_rect.x + showSymbol_rect.width) + (32 * Mz_OnGUIManager.Extend_heightScale), 85, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
+        nextButton_rect = new Rect(sidebarContentBox_rect.width - (50 * Mz_OnGUIManager.Extend_heightScale), 85, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
 
         standardWindow_rect = new Rect((Screen.width * 3 / 4) / 2 - (350 * Mz_OnGUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 250, 700 * Mz_OnGUIManager.Extend_heightScale, 500);
         exitButton_Rect = new Rect(standardWindow_rect.width - (34 * Mz_OnGUIManager.Extend_heightScale), 2, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
-
-        if (Screen.height != Main.GAMEHEIGHT) {			
-		    first_button_rect =  MzReCalculateScaleRectGUI.ReCalulateWidth(first_button_rect);
-            second_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(second_button_rect);
-            third_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(third_button_rect);
-            fourth_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(fourth_button_rect);
-            fifth_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(fifth_button_rect);
-            sixth_button_rect = MzReCalculateScaleRectGUI.ReCalulateWidth(sixth_button_rect);
-        }
     }
 	
     IEnumerator InitializeTextureResource() 

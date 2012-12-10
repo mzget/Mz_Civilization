@@ -5,7 +5,6 @@ using System.Collections;
 
 public class Mz_DebugLogingGUI : MonoBehaviour {
 
- 
     private float windowPosition = 0;
     private int positionCheck = 2;
     private static string windowText = "";

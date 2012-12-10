@@ -66,17 +66,13 @@ public class StageManager : Mz_BaseScene {
     public event System.EventHandler resourceCycle_Event;
 
 
-    void Awake() {
-        if (taskManager == null) 
-            taskManager = this.gameObject.GetComponent<TaskManager>();
-    }
-
 	// Use this for initialization
 	protected override void Initializing ()
 	{
-		base.Initializing ();	
-		
-		AdBannerObserver.Initialize("a150c2e14a5d753", "DIAT-GE5P-2J5H-2", 30f);
+        base.Initializing();
+
+        if (taskManager == null)
+            taskManager = this.gameObject.GetComponent<TaskManager>();
 
 		this.StartCoroutine(this.InitializeAudio());
 		this.StartCoroutine(this.CreateGameMaterials());
@@ -99,7 +95,14 @@ public class StageManager : Mz_BaseScene {
 #if UNITY_WEBPLAYER || UNITY_EDITOR
 		StartCoroutine(InitializeJoystick());
 #endif
-	}
+
+        //<@-- Admob integration.
+#if UNITY_ANDROID || UNITY_IPHONE
+
+		AdBannerObserver.Initialize("a150c2e14a5d753", "DIAT-GE5P-2J5H-2", 30f);
+
+#endif
+    }
 
 	private new IEnumerator InitializeAudio ()
 	{
@@ -156,7 +159,6 @@ public class StageManager : Mz_BaseScene {
         yield return 0;
     }
 	
-
     void GenerateBackground() {
         // To create the background lets create a filled sprite object
         background = OT.CreateObject(OTObjectType.FilledSprite).GetComponent<OTFilledSprite>();
@@ -201,7 +203,7 @@ public class StageManager : Mz_BaseScene {
             buildingArea_Objs[i].IndexOfAreaPosition = i;
             buildingArea_Objs[i].Sprite.rotation = 45f;
 
-			int state = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot +":"+ Mz_SaveData.BuildingAreaState + i);
+			int state = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + i);
             if (state == 0)
                 buildingArea_Objs[i].areaState = BuildingArea.AreaState.UnActive;
             else if (state == 1)

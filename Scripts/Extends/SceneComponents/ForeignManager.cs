@@ -9,9 +9,8 @@ public class ForeignManager : MonoBehaviour
 	};
 	public ForeignTabStatus currentForeignTabStatus;
 
-	private TaskManager taskManager;
-	private DisplayTroopsActivity displayTroopsActivity;
-	
+	private TaskManager taskManager;	
+
 	private Rect citiesSymbol_rect = new Rect(24 * Mz_OnGUIManager.Extend_heightScale, 24, 100 * Mz_OnGUIManager.Extend_heightScale, 100);
 	private Rect citiesTagName_rect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 130, 120 * Mz_OnGUIManager.Extend_heightScale, 32);
 	private Rect sendButton_rect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 170, 120 * Mz_OnGUIManager.Extend_heightScale, 32);
@@ -37,12 +36,10 @@ public class ForeignManager : MonoBehaviour
 	{
 		GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
 		taskManager = gameController.GetComponent<TaskManager>();
-		displayTroopsActivity = gameController.GetComponent<DisplayTroopsActivity>();
 	}
 	
 	// Update is called once per frame
-	void Update ()
-	{
+	void Update ()	{
 	
 	}
 
@@ -109,7 +106,7 @@ public class ForeignManager : MonoBehaviour
 				groupTemp.member.Add(unit_2);
 				
 				if(unit_0 + unit_1 + unit_2 > 0) {
-					displayTroopsActivity.MilitaryActivityList.Add(new TroopsActivity() {
+					taskManager.displayTroopsActivity.MilitaryActivityList.Add(new TroopsActivity() {
 						currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage,
 						targetCity = StageManager.list_AICity[0],
 						timeToTravel = System.TimeSpan.FromSeconds(StageManager.list_AICity[0].distance),
@@ -117,7 +114,7 @@ public class ForeignManager : MonoBehaviour
 						groupUnits = groupTemp,
 					});
 					
-					Debug.Log ("displayTroopsActivity.MilitaryActivityList.Count : " + displayTroopsActivity.MilitaryActivityList.Count);
+					Debug.Log ("displayTroopsActivity.MilitaryActivityList.Count : " + taskManager.displayTroopsActivity.MilitaryActivityList.Count);
 					
 					CloseGUIWindow();
 				}

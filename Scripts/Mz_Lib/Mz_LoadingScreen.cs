@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Mz_LoadingScreen : MonoBehaviour
 {
-    public Texture2D background;
+    //public Texture2D background;
 
 	public static string TargetSceneName = string.Empty;
 
@@ -53,7 +53,7 @@ public class Mz_LoadingScreen : MonoBehaviour
         GUI.depth = 0;
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
 
-        GUI.DrawTexture(new Rect(0, 0, Main.GAMEWIDTH, Main.GAMEHEIGHT), background);
+        //GUI.DrawTexture(new Rect(0, 0, Main.GAMEWIDTH, Main.GAMEHEIGHT), background);
 		
 		GUI.skin.box.fontSize = 32;
 		GUI.skin.box.alignment = TextAnchor.MiddleCenter;

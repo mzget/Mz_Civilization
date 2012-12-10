@@ -8,8 +8,6 @@ public class MainMenu : Mz_BaseScene
 	public enum BuildVersion : int { debugMode = 0, releaseMode = 1, };
 	public BuildVersion buildVersion;
 
-    public GUISkin newgame_Skin;
-
     public enum SceneState { none = 0, showOption, showNewGame, showLoadGame, };
     private SceneState sceneState;
     public enum NewGameUIState { none = 0, showTextField, showDuplicateName, showSaveGameSlot, };
@@ -25,26 +23,49 @@ public class MainMenu : Mz_BaseScene
     
 
     Rect gameWindow_rect = new Rect((Screen.width / 2) - 200, (Screen.height / 2) - 150, 400, 300);
-    Rect usernameTextfield_rect;
-    Rect doneButton_rect;
-    Rect mainMenuGroup_rect = new Rect(Screen.width - 300, 0, 300, Main.GAMEHEIGHT);
+    Rect mainMenuGroup_rect = new Rect(Main.FixedGameWidth - 300, 0, 300, Main.FixedGameHeight);
+    Rect newPlayer_rect = new Rect(75, 50, 150, 50);
+    private Rect loadGameButton_rect = new Rect(75, 140, 150, 50);
+    private Rect thirdButton_rect = new Rect(75, 240, 150, 50);
+    private Rect fourthButton_rect = new Rect(75, 340, 150, 50);
+    //<@-- New game data fields.
+    float newGameGroup_width = 400f , newGameGroupHeight = 300f;
+    Rect midCenterWindowGroup_rect;
+    Rect usernameTextInput_rect;
+    Rect startButton_rect;
+    Rect cancelButton_rect;
+    //<@-- Savegame slot data fields.
+    float group_width = 400f, group_height = 300f;
+    float slot_width = 200f;
+    Rect saveSlot_1Rect;
+    Rect saveSlot_2Rect;
+    Rect saveSlot_3Rect;
+    Rect textbox_header_rect;
 
-
-    void Awake() {
-        Mz_OnGUIManager.CalculateViewportScreen();
-
-        usernameTextfield_rect = new Rect(50, 120, 300, 64);
-        doneButton_rect = new Rect(gameWindow_rect.width / 2 - 50, 200, 100, 32);
-
-        mainMenuGroup_rect.width = mainMenuGroup_rect.width * Mz_OnGUIManager.Extend_heightScale;
-        mainMenuGroup_rect.x = Screen.width - mainMenuGroup_rect.width;
-    }
 
     // Use this for initialization
 	protected override void Initializing ()
 	{
 		base.Initializing ();
-		StartCoroutine(this.InitializeAudio());
+        StartCoroutine(this.InitializeAudio());
+
+        player_1 = PlayerPrefs.GetString(1 + ":" + "username");
+        player_2 = PlayerPrefs.GetString(2 + ":" + "username");
+        player_3 = PlayerPrefs.GetString(3 + ":" + "username");
+
+        saveSlot_1Rect = new Rect(group_width / 2 - (slot_width / 2), 100, slot_width, 50);
+        saveSlot_2Rect = new Rect(group_width / 2 - (slot_width / 2), 160, slot_width, 50);
+        saveSlot_3Rect = new Rect(group_width / 2 - (slot_width / 2), 220, slot_width, 50);
+        textbox_header_rect = new Rect((group_width / 2) - 150, 40, 300, 40);
+
+        midCenterWindowGroup_rect = new Rect(Main.FixedGameWidth / 2 - newGameGroup_width / 2, Main.FixedGameHeight / 2 - newGameGroupHeight / 2, newGameGroup_width, newGameGroupHeight);
+        usernameTextInput_rect = new Rect((midCenterWindowGroup_rect.width / 2) - 150, 100, 300, 60);
+        startButton_rect = new Rect(30, 200, 150, 60);
+        cancelButton_rect = new Rect(newGameGroup_width - 180, 200, 150, 60);
+
+
+        //mainMenuGroup_rect.width = mainMenuGroup_rect.width * Mz_OnGUIManager.Extend_heightScale;
+        //mainMenuGroup_rect.x = Screen.width - mainMenuGroup_rect.width;
 		
 		//if(PlayerPrefs.HasKey(Mz_SaveData.usernameKey)) {
 		//    username = PlayerPrefs.GetString(Mz_SaveData.usernameKey);				
@@ -64,14 +85,9 @@ public class MainMenu : Mz_BaseScene
         yield return null;
     }
 
-    public bool _showSkinLayout;
     protected override void OnGUI()
     {
-        player_1 = PlayerPrefs.GetString(1 + ":" + "username");
-        player_2 = PlayerPrefs.GetString(2 + ":" + "username");
-        player_3 = PlayerPrefs.GetString(3 + ":" + "username");
-
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width/Main.FixedGameWidth, Screen.height / Main.GAMEHEIGHT, 1));
         
         //<!--- Draw menu outside viewport.
         if (sceneState == SceneState.none)
@@ -79,85 +95,79 @@ public class MainMenu : Mz_BaseScene
             _isDuplicateUsername = false;
             _isNullUsernameNotification = false;
             _isFullSaveGameSlot = false;
-            username = ""; 
-                
-            this.DrawMainMenu();
-        }
+            username = "";
 
-        GUI.BeginGroup(Mz_OnGUIManager.viewPort_rect);
+            this.DrawMainMenuWindow();
+        }
+        else
         {
-            if (_showSkinLayout)
-                GUI.Box(new Rect(0, 0, Mz_OnGUIManager.viewPort_rect.width, Mz_OnGUIManager.viewPort_rect.height), "Skin layout", GUI.skin.box);
-
-            if (sceneState == SceneState.showNewGame)
+            //@-- Viewport Screen rect.
+            GUI.BeginGroup(new Rect(0, 0, Main.FixedGameWidth, Main.FixedGameHeight), GUIContent.none, GUIStyle.none);
             {
-                this.DrawNewGameTextField();
+                if (sceneState == SceneState.showNewGame)
+                {
+                    this.DrawNewGameWindow();
+                }
+                else if (sceneState == SceneState.showLoadGame)
+                {
+                    // Call ShowSaveGameSlot Method.
+                    this.DrawSaveGameSlot(_isFullSaveGameSlot);
+                }
+
+                #region Show Notification When Username have a problem.
+
+                string notificationText = "";
+                string dublicateNoticeText = "";
+
+                if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+                {
+                    notificationText = "Please Fill Your Username. \n กรุณาใส่ชื่อผู้เล่น";
+                    dublicateNoticeText = "This name already exists. \n ซื่อนี้มีอยู่แล้ว";
+                }
+                else if (Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android)
+                {
+                    notificationText = "Please Fill Your Username.";
+                    dublicateNoticeText = "This name already exists.";
+                }
+
+                Rect notification_Rect = new Rect(Mz_OnGUIManager.viewPort_rect.width / 2 - 200, 0, 400, 64);
+                if (_isNullUsernameNotification)
+                    GUI.Box(notification_Rect, notificationText);
+                if (_isDuplicateUsername)
+                    GUI.Box(notification_Rect, dublicateNoticeText);
+
+                #endregion
             }
-            else if (sceneState == SceneState.showLoadGame)
-            {
-                // Call ShowSaveGameSlot Method.
-                this.DrawSaveGameSlot(_isFullSaveGameSlot);
-            }
-
-            #region Show Notification When Username have a problem.
-
-            string notificationText = "";
-            string dublicateNoticeText = "";
-
-            if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                notificationText = "Please Fill Your Username. \n กรุณาใส่ชื่อผู้เล่น";
-                dublicateNoticeText = "This name already exists. \n ซื่อนี้มีอยู่แล้ว";
-            }
-            else if (Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android)
-            {
-                notificationText = "Please Fill Your Username.";
-                dublicateNoticeText = "This name already exists.";
-            }
-
-            Rect notification_Rect = new Rect(Mz_OnGUIManager.viewPort_rect.width / 2 - 200, 0, 400, 64);
-            if (_isNullUsernameNotification)
-                GUI.Box(notification_Rect, notificationText);
-            if (_isDuplicateUsername)
-                GUI.Box(notification_Rect, dublicateNoticeText);
-
-            #endregion
+            GUI.EndGroup();
         }
-        GUI.EndGroup();
-		
 		
 		base.OnGUI();
     }
 
-    private void DrawMainMenu()
+    private void DrawMainMenuWindow()
     {
-        GUI.BeginGroup(mainMenuGroup_rect, "Main Menu", GUI.skin.window);
+        //<@-- Main menu.
+        GUI.BeginGroup(mainMenuGroup_rect, GUIContent.none , GUI.skin.box);
         {
-            if (GUI.Button(new Rect(20, 40, 120, 50), "New Player")) {
+            if (GUI.Button(newPlayer_rect, "New Player")) {
                 sceneState = SceneState.showNewGame;
             }
-            else if (GUI.Button(new Rect(20, 140, 120, 50), "Load game")) {
+            else if (GUI.Button(loadGameButton_rect, "Load game")) {
                 sceneState = SceneState.showLoadGame;
             }
-            else if (GUI.Button(new Rect(20, 240, 120, 50), "Multiplayer")) { 
+            else if (GUI.Button(thirdButton_rect, "Multiplayer")) { 
                 
             }
-            else if (GUI.Button(new Rect(20, 340, 120, 50), "About")) { 
+            else if (GUI.Button(fourthButton_rect, "About")) { 
             
             }
         }
         GUI.EndGroup();
     }
 
-    private void DrawNewGameTextField()
-    {
-        float newGameGroup_width = 500 * Mz_OnGUIManager.Extend_heightScale, newGameGroupHeight = 400f;
-        Rect newGameGroup_rect = new Rect(Mz_OnGUIManager.viewPort_rect.width / 2 - newGameGroup_width/2, Mz_OnGUIManager.viewPort_rect.height / 2 - newGameGroupHeight / 2, newGameGroup_width, newGameGroupHeight);
-        Rect usernameTextfield_rect = new Rect((newGameGroup_rect.width / 2) - ((250 * Mz_OnGUIManager.Extend_heightScale) / 2), newGameGroup_rect.height / 2 - 50, 250 * Mz_OnGUIManager.Extend_heightScale, 50);
-        Rect startButton_rect = new Rect(50 * Mz_OnGUIManager.Extend_heightScale, 300, 150 * Mz_OnGUIManager.Extend_heightScale, 40);
-        Rect cancelButton_rect = new Rect(300 * Mz_OnGUIManager.Extend_heightScale, 300, 150 * Mz_OnGUIManager.Extend_heightScale, 40);
-		
-        GUI.BeginGroup(newGameGroup_rect, "New Player", GUI.skin.window);
+    private void DrawNewGameWindow()
+    {		
+        GUI.BeginGroup(midCenterWindowGroup_rect, "New Player", GUI.skin.window);
         {
             if (Event.current.isKey && Event.current.keyCode == KeyCode.Return)
             {
@@ -175,7 +185,7 @@ public class MainMenu : Mz_BaseScene
 
             //<!-- "Please Insert Username !".
             GUI.SetNextControlName("Username");
-            username = GUI.TextField(usernameTextfield_rect, username, 13, GUI.skin.textArea);
+            username = GUI.TextField(usernameTextInput_rect, username, 13, GUI.skin.textArea);
 
             if (GUI.GetNameOfFocusedControl() == string.Empty || GUI.GetNameOfFocusedControl() == "")
             {
@@ -243,13 +253,6 @@ public class MainMenu : Mz_BaseScene
     //<!-- Show save game slot. If slot is full.
     void DrawSaveGameSlot(bool _toSaveGame)
     {
-        float group_width = 500 * Mz_OnGUIManager.Extend_heightScale, group_height = 380;
-        float slot_width = 300 * Mz_OnGUIManager.Extend_heightScale;
-        Rect slot_1Rect = new Rect(group_width/2 - (slot_width/2), 140, slot_width, 48);
-        Rect slot_2Rect = new Rect(group_width / 2 - (slot_width / 2), 205, slot_width, 48);
-        Rect slot_3Rect = new Rect(group_width / 2 - (slot_width / 2), 270, slot_width, 48);
-        Rect textbox_header_rect = new Rect((group_width / 2) - ((200 * Mz_OnGUIManager.Extend_heightScale) /2), 50, 200 * Mz_OnGUIManager.Extend_heightScale, 30);
-
         if (_toSaveGame)
         {
             //<!-- Full save game slot. Show notice message.
@@ -257,38 +260,37 @@ public class MainMenu : Mz_BaseScene
             //message = "เลือกช่องที่ต้องการ เพื่อลบข้อมูลเก่า และทับด้วยข้อมูลใหม่";
             message = "Select Data Slot To Replace New Data";
 
-            GUI.Box(new Rect(Mz_OnGUIManager.viewPort_rect.width / 2 - 200, 0, 400, 64), message);
+            GUI.Box(new Rect(Main.FixedGameWidth / 2 - 200, 0, 400, 64), message);
         }
 
-        GUI.BeginGroup(new Rect((Mz_OnGUIManager.viewPort_rect.width / 2) - group_width / 2, (Main.GAMEHEIGHT / 2) - group_height / 2, group_width, group_height), "Load game", GUI.skin.window);
+        GUI.BeginGroup(midCenterWindowGroup_rect, "Load game", GUI.skin.window);
         {
-            if (GUI.Button(new Rect(group_width - (50 * Mz_OnGUIManager.Extend_heightScale), 0, 50 * Mz_OnGUIManager.Extend_heightScale, 50), "X"))
+            if (GUI.Button(new Rect(midCenterWindowGroup_rect.width - 40 , 0, 40, 40), "X"))
             {
                 sceneState = SceneState.none;
             }
 
-            if (_toSaveGame)
-            {
+            if (_toSaveGame) {
                 #region <!-- To Save game.
 
                 // Display To Save Username.
                 GUI.Box(textbox_header_rect, username);
                 /// Choose SaveGame Slot for replace new data.
-                if (GUI.Button(slot_1Rect, new GUIContent(player_1, "button")))
+                if (GUI.Button(saveSlot_1Rect, new GUIContent(player_1, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
 					Mz_StorageManagement.SaveSlot = 1;
                     SaveNewPlayer();
                 }
-                else if (GUI.Button(slot_2Rect, new GUIContent(player_2, "button")))
+                else if (GUI.Button(saveSlot_2Rect, new GUIContent(player_2, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
 					Mz_StorageManagement.SaveSlot = 2;
                     SaveNewPlayer();
                 }
-                else if (GUI.Button(slot_3Rect, new GUIContent(player_3, "button")))
+                else if (GUI.Button(saveSlot_3Rect, new GUIContent(player_3, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
@@ -320,7 +322,7 @@ public class MainMenu : Mz_BaseScene
 
                 #region <!-- GUI data slot button.
 
-                if (GUI.Button(slot_1Rect, new GUIContent(slot_1, "button")))
+                if (GUI.Button(saveSlot_1Rect, new GUIContent(slot_1, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
@@ -331,7 +333,7 @@ public class MainMenu : Mz_BaseScene
 						this.LoadSceneTarget();
                     }
                 }
-                else if (GUI.Button(slot_2Rect, new GUIContent(slot_2, "button")))
+                else if (GUI.Button(saveSlot_2Rect, new GUIContent(slot_2, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
@@ -342,7 +344,7 @@ public class MainMenu : Mz_BaseScene
 						this.LoadSceneTarget();
                     }
                 }
-                else if (GUI.Button(slot_3Rect, new GUIContent(slot_3, "button")))
+                else if (GUI.Button(saveSlot_3Rect, new GUIContent(slot_3, "button")))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
@@ -362,7 +364,7 @@ public class MainMenu : Mz_BaseScene
         GUI.EndGroup();
     }
 
-    void SaveNewPlayer()
+    private void SaveNewPlayer()
     {
 		PlayerPrefs.SetString(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_username, username);
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood, 800);
@@ -371,6 +373,9 @@ public class MainMenu : Mz_BaseScene
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfArmor, 10);
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfWeapon, 10);
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold, 3000);
+
+        for (int i = 8; i < StageManager.buildingArea_Objs.Count; i++)
+            PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + i, 0);
 
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);		
 		

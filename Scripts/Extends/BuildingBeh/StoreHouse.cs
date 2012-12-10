@@ -5,19 +5,31 @@ using System.Collections;
 public class StoreHouse : BuildingBeh {
 
     public const string PathOfResourcesTexture_Icon = "Textures/Resource_icons/";
+	public const int STOREHOUSE_MAX_LEVEL = 21;
 
     //<!--- Requirements Resource.
-    public static GameResource[] RequireResource = new GameResource[10] {
-		new GameResource() {Food = 80, Wood = 120, Gold = 60, Employee = 5},
-        new GameResource() {Food = 160, Wood = 240, Gold = 120, Employee = 10},
-        new GameResource() {Food = 320, Wood = 480, Gold = 240, Employee = 15},
-        new GameResource() {Food = 640, Wood = 960, Gold = 480, Employee = 20},
-        new GameResource() {Food = 1280, Wood = 1920, Gold = 960, Employee = 25},
-        new GameResource() {Food = 2560, Wood = 3840, Gold = 1920, Employee = 30},
-        new GameResource() {Food = 5120, Wood = 7680, Gold = 3840, Employee = 35},
-        new GameResource() {Food = 10240, Wood = 15360, Gold = 7680, Employee = 40},
-        new GameResource() {Food = 20480, Wood = 30720, Gold = 15360, Employee = 45},
-        new GameResource() {Food = 40960, Wood = 61440, Gold = 30720, Employee = 50},
+    public static GameResource[] RequireResource = new GameResource[STOREHOUSE_MAX_LEVEL] {
+		new GameResource() {Food = 80, Wood = 120, Gold = 60, Employee = 3},
+		new GameResource() {Food = 130, Wood = 160, Gold = 90, Employee = 5},
+		new GameResource() {Food = 165, Wood = 205, Gold = 115, Employee = 8},
+		new GameResource() {Food = 215, Wood = 260, Gold = 145, Employee = 12},
+		new GameResource() {Food = 275, Wood = 335, Gold = 190, Employee = 15},
+		new GameResource() {Food = 350, Wood = 430, Gold = 240, Employee = 20},		//5.
+		new GameResource() {Food = 445, Wood = 550, Gold = 310, Employee = 24},
+		new GameResource() {Food = 570, Wood = 705, Gold = 395, Employee = 30},
+		new GameResource() {Food = 730, Wood = 900, Gold = 505, Employee = 36},
+		new GameResource() {Food = 935, Wood = 1115, Gold = 650, Employee = 45},
+		new GameResource() {Food = 1200, Wood = 1475, Gold = 830, Employee = 50},		//10.
+		new GameResource() {Food = 1535, Wood = 1890, Gold = 1065, Employee = 56},
+		new GameResource() {Food = 1965, Wood = 2420, Gold = 1360, Employee = 64},
+		new GameResource() {Food = 2515, Wood = 3195, Gold = 1740, Employee = 72},
+		new GameResource() {Food = 3220, Wood = 3960, Gold = 2230, Employee = 84},
+		new GameResource() {Food = 4120, Wood = 5070, Gold = 2850, Employee = 100},		// 15.
+		new GameResource() {Food = 5275, Wood = 6490, Gold = 3650, Employee = 120},
+		new GameResource() {Food = 6750, Wood = 8310, Gold = 4675, Employee = 144},		
+        new GameResource() {Food = 8640, Wood = 10635, Gold = 5980, Employee = 175},
+        new GameResource() {Food = 11060, Wood = 12610, Gold = 7655, Employee = 200},
+        new GameResource() {Food = 14155, Wood = 17420, Gold = 9800, Employee = 250},		//20.
 	};
 
     //<!--- Static Data.
@@ -107,7 +119,10 @@ public class StoreHouse : BuildingBeh {
         }
     }
 
-    private int[] maxCapacities = new int[10] { 800, 1200, 1800, 2500, 3500, 4800, 6000, 8000, 12000, 15000, };
+    private int[] maxCapacities = new int[STOREHOUSE_MAX_LEVEL] {
+		800, 1200, 1700, 2300, 3100, 4000, 5000, 6300, 7800, 9600, 
+		11800, 14400, 17600, 21400, 25900, 31300, 37900, 45700, 55100, 66400, 80000
+	};
     private int currentMaxCapacity;
 	
     public static void CalculationSumOfMaxCapacity() {

@@ -89,7 +89,13 @@ public class Mz_BaseScene : MonoBehaviour {
 			this.gameObject.AddComponent<Mz_DebugLogingGUI>();
 			textDebug = this.GetComponent<Mz_DebugLogingGUI>();
 			textDebug.debugIsOn = true;
-		}
+        }
+
+        if (smartDeviceInput == null) {
+            this.gameObject.AddComponent<Mz_SmartDeviceInput>();
+            smartDeviceInput = this.gameObject.GetComponent<Mz_SmartDeviceInput>();
+            smartDeviceInput.cam = Camera.main;
+        }
 		
 		this.Initializing();
 	}
@@ -99,12 +105,6 @@ public class Mz_BaseScene : MonoBehaviour {
     // Update is called once per frame
     protected virtual void Update()
     {
-		if (smartDeviceInput == null) {
-			this.gameObject.AddComponent<Mz_SmartDeviceInput>();
-			smartDeviceInput = this.gameObject.GetComponent<Mz_SmartDeviceInput>();
-			smartDeviceInput.cam = Camera.main;
-		}
-
         if (TaskManager.IsShowInteruptGUI == false)
         {
             if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
@@ -213,6 +213,8 @@ public class Mz_BaseScene : MonoBehaviour {
     
     protected virtual void OnGUI()
     {
+        #region <@-- Exit Application Machanism.
+
         GUI.depth = 0;
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
 
@@ -231,16 +233,6 @@ public class Mz_BaseScene : MonoBehaviour {
             }
             GUI.EndGroup();
         }
-
-        #region <@!-- Draw_LogCallback debuging.
-
-//        if (debugLogCallback_style == null) {
-//            debugLogCallback_style = new GUIStyle(GUI.skin.box);
-//            debugLogCallback_style.fontSize = 12;
-//            debugLogCallback_style.alignment = TextAnchor.MiddleLeft;
-//        }
-
-//        GUI.Box(new Rect(0, Main.GAMEHEIGHT - 50, Main.GAMEWIDTH * Mz_OnGUIManager.Extend_heightScale, 50), output, GUI.skin.textArea);
 
         #endregion
     }
