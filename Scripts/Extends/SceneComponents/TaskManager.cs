@@ -12,6 +12,10 @@ public class TaskManager : MonoBehaviour {
     public const string PathOfTribes_Texture = "Textures/Tribes_Icons/";
     public const string PathOf_TroopIcons = "Textures/Troop_Icons/";
 
+	internal const string DISPLAY_MESSAGE_ACTIVITY = "DisplayMessageActivity";
+    internal const string DISPLAY_QUEST_ACTIVITY = "DisplayQuestActivity";
+    internal const string DISPLAY_FOREIGN_ACTIVITY = "DisplayForeignActivity";
+
     public static bool IsShowInteruptGUI = false;
     public enum RightSideState { 
         none = 0, 
@@ -75,7 +79,7 @@ public class TaskManager : MonoBehaviour {
     protected Rect header_button_rect;
 	Rect first_rect, second_rect, third_rect, fourth_rect, fifth_rect, sixth_rect;
     public Rect baseSidebarGroup_rect;
-    Rect sidebarButtonGroup_rect = new Rect(0, 0, 50, Main.GAMEHEIGHT);
+    Rect sidebarButtonGroup_rect = new Rect(0, 0, 50, Main.FixedGameHeight);
     Rect sidebarContentGroup_rect;
 	Rect sidebarContentBox_rect;
     Rect first_button_rect = new Rect(1 * Mz_OnGUIManager.Extend_heightScale, 2, 48 * Mz_OnGUIManager.Extend_heightScale, 56);
@@ -95,8 +99,11 @@ public class TaskManager : MonoBehaviour {
     public Rect exitButton_Rect;
 
 	//<@-- Notification display rectangles.
-	public Rect notificationRect_1 = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 50, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
-	public Rect notificationRect_2 = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 150, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
+	internal Rect leftSidebarGroup_rect;
+    private Rect normalSidebarGroup_rect;
+	private Rect moveOutLeftSidebarGroup_rect;
+    internal Rect notificationRect_1;
+    internal Rect notificationRect_2;
 
     #endregion
 
@@ -128,12 +135,12 @@ public class TaskManager : MonoBehaviour {
         taskbarUI_Skin.button.alignment = TextAnchor.MiddleCenter;
 		taskbarUI_Skin.box.alignment = TextAnchor.MiddleCenter;
 				
-        baseSidebarGroup_rect = new Rect(Screen.width - (Screen.width / 4), 0, Screen.width / 4, Main.GAMEHEIGHT - 240);
+        baseSidebarGroup_rect = new Rect(Screen.width - (Screen.width / 4), 0, Screen.width / 4, Main.FixedGameHeight - 240);
         sidebarContentGroup_rect = new Rect(48 * Mz_OnGUIManager.Extend_heightScale, 0, baseSidebarGroup_rect.width - (48 * Mz_OnGUIManager.Extend_heightScale), baseSidebarGroup_rect.height);
         sidebarContentBox_rect = new Rect(5, 50, sidebarContentGroup_rect.width - 10, 32);
 		
-        header_group_rect = new Rect(0, 0, Screen.width - baseSidebarGroup_rect.width, 40);
-		header_button_rect = new Rect(0, 0, header_group_rect.width / 5, 40);
+        header_group_rect = new Rect(0, 0, Screen.width - baseSidebarGroup_rect.width, 50);
+		header_button_rect = new Rect(0, 0, header_group_rect.width / 5, 50);
 
         first_rect = new Rect(0, header_button_rect.y, header_button_rect.width, header_button_rect.height);
         second_rect = new Rect((header_button_rect.width) * 1, header_button_rect.y, header_button_rect.width, header_button_rect.height);
@@ -149,8 +156,15 @@ public class TaskManager : MonoBehaviour {
         previousButton_rect = new Rect(18 * Mz_OnGUIManager.Extend_heightScale, 85, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
         nextButton_rect = new Rect(sidebarContentBox_rect.width - (50 * Mz_OnGUIManager.Extend_heightScale), 85, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
 
-        standardWindow_rect = new Rect((Screen.width * 3 / 4) / 2 - (350 * Mz_OnGUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 250, 700 * Mz_OnGUIManager.Extend_heightScale, 500);
+        standardWindow_rect = new Rect((Screen.width * 3 / 4) / 2 - (350 * Mz_OnGUIManager.Extend_heightScale), Main.FixedGameHeight / 2 - 250, 700 * Mz_OnGUIManager.Extend_heightScale, 500);
         exitButton_Rect = new Rect(standardWindow_rect.width - (34 * Mz_OnGUIManager.Extend_heightScale), 2, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
+
+        //<@-- Notification display rectangles.
+        moveOutLeftSidebarGroup_rect = new Rect(-100, 50, 90 * Mz_OnGUIManager.Extend_heightScale, 500);
+        normalSidebarGroup_rect = new Rect(0, 50, 90 * Mz_OnGUIManager.Extend_heightScale, 500);
+        leftSidebarGroup_rect = normalSidebarGroup_rect;
+        notificationRect_1 = new Rect(0, 5, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
+        notificationRect_2 = new Rect(0, 90, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
     }
 	
     IEnumerator InitializeTextureResource() 
@@ -196,7 +210,7 @@ public class TaskManager : MonoBehaviour {
 
     void OnGUI()
     {		
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.FixedGameHeight, 1));
 
         GUI.BeginGroup(header_group_rect);
         {
@@ -208,9 +222,64 @@ public class TaskManager : MonoBehaviour {
         }
         GUI.EndGroup();
 		
-		this.DrawRightSidebar(); 
+		this.DrawRightSidebar();
+        this.DrawLeftSideBar();
     }
-	
+
+	#region <@-- Left sidebar group rect.
+
+    private void DrawLeftSideBar()
+    {
+        //<@-- "LeftSideBox".
+        GUI.BeginGroup(leftSidebarGroup_rect, string.Empty, GUIStyle.none);
+        {
+            messageManager.DrawGUI_MessageIcon();
+            questManager.DrawQuestNoticeIcon();
+        }
+        GUI.EndGroup();
+    }
+
+	internal void MoveOutLeftSidebar(string completeParam) {
+		iTween.ValueTo(this.gameObject, iTween.Hash("from", normalSidebarGroup_rect, "to", moveOutLeftSidebarGroup_rect, "time", 0.5f,
+                    "onupdate", "OnMoveLeftSidebarCallBack", "onupdatetarget", this.gameObject,
+                    "oncomplete", "MoveOutLeftSidebarCompleteCallBack", "oncompleteparams", completeParam, "oncompletetarget", this.gameObject));
+	}
+    private void OnMoveLeftSidebarCallBack(Rect callback) {
+        leftSidebarGroup_rect = callback;
+    }
+    private void MoveOutLeftSidebarCompleteCallBack(string completeParam)
+    {
+        TaskManager.IsShowInteruptGUI = true;
+        this.SendMessage(completeParam, SendMessageOptions.DontRequireReceiver);
+    }
+
+    internal void MoveInLeftSidebar()
+    {
+        iTween.ValueTo(this.gameObject, iTween.Hash("from", moveOutLeftSidebarGroup_rect, "to", normalSidebarGroup_rect, "time", 0.5f,
+            "onupdate", "OnMoveLeftSidebarCallBack", "onupdatetarget", this.gameObject,
+            "oncomplete", "MoveInLeftSidebarCompleteCallBack", "oncompletetarget", this.gameObject));
+    }
+    private void MoveInLeftSidebarCompleteCallBack() {
+        TaskManager.IsShowInteruptGUI = false;
+    }
+
+    private void DisplayMessageActivity()
+    {
+        messageManager.currentMessageManagerState = MessageManager.MessageManagetStateBeh.drawActivity;
+    }
+
+    private void DisplayQuestActivity() {
+        questManager.currentQuestManagerStateBeh = QuestManager.QuestManagerStateBeh.DrawActivity;
+    }
+
+    private void DisplayForeignActivity() {
+        foreignManager.currentForeignTabStatus = ForeignManager.ForeignTabStatus.DrawActivity;
+    }
+
+    #endregion
+
+	#region <@-- Right sidebar group rect.
+
 	private void DrawRightSidebar() 
 	{		
 		GUI.BeginGroup(baseSidebarGroup_rect, GUIContent.none, GUI.skin.box);
@@ -292,9 +361,7 @@ public class TaskManager : MonoBehaviour {
 				if (GUI.Button(new Rect(5, 0, label_width, 40), "Pillage"))
 				{
 					if(IsShowInteruptGUI == false) {
-                        foreignManager.currentForeignTabStatus = ForeignManager.ForeignTabStatus.DrawActivity;
-
-						IsShowInteruptGUI = true;
+                        this.MoveOutLeftSidebar(TaskManager.DISPLAY_FOREIGN_ACTIVITY);
 					}
 				}
 				else if (GUI.Button(new Rect(5, 45, label_width, 40), "Conquer")) {
@@ -306,7 +373,6 @@ public class TaskManager : MonoBehaviour {
 		}
 		GUI.EndGroup();
 	}
-
     private void DrawSettingTab()
     {
 		GUI.BeginGroup(sidebarContentGroup_rect, GUIContent.none, GUI.skin.box);
@@ -361,7 +427,7 @@ public class TaskManager : MonoBehaviour {
 		{
 			float label_width = sidebarContentBox_rect.width;
 			float label_height = sidebarContentBox_rect.height;
-            GUI.Box(new Rect(5, 2, label_width, 32), "Commerce", taskbarUI_Skin.textField);
+            GUI.Box(new Rect(5, 2, label_width, 32), new GUIContent("Commerce", commerce_icon), taskbarUI_Skin.box);
             //<!-- Food.
             if (MarketBeh.tradingMaterial_List.Count != 0 && MarketBeh.tradingMaterial_List.Contains(stageManager.gameMaterials[0])) {
                 GUI.Box(sidebarContentBox_rect,
@@ -419,4 +485,6 @@ public class TaskManager : MonoBehaviour {
 		}
 		GUI.EndGroup();	
 	}
+
+	#endregion
 }

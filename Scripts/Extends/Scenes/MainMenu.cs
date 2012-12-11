@@ -20,14 +20,14 @@ public class MainMenu : Mz_BaseScene
     private string player_1;
     private string player_2;
     private string player_3;
-    
 
+    Rect viewport_rect = new Rect(0, 0, Main.FixedGameWidth, Main.FixedGameHeight);
     Rect gameWindow_rect = new Rect((Screen.width / 2) - 200, (Screen.height / 2) - 150, 400, 300);
     Rect mainMenuGroup_rect = new Rect(Main.FixedGameWidth - 300, 0, 300, Main.FixedGameHeight);
-    Rect newPlayer_rect = new Rect(75, 50, 150, 50);
-    private Rect loadGameButton_rect = new Rect(75, 140, 150, 50);
-    private Rect thirdButton_rect = new Rect(75, 240, 150, 50);
-    private Rect fourthButton_rect = new Rect(75, 340, 150, 50);
+    Rect newPlayer_rect = new Rect(75, 50, 150, 60);
+    private Rect loadGameButton_rect = new Rect(75, 140, 150, 60);
+    private Rect thirdButton_rect = new Rect(75, 240, 150, 60);
+    private Rect fourthButton_rect = new Rect(75, 340, 150, 60);
     //<@-- New game data fields.
     float newGameGroup_width = 400f , newGameGroupHeight = 300f;
     Rect midCenterWindowGroup_rect;
@@ -87,8 +87,8 @@ public class MainMenu : Mz_BaseScene
 
     protected override void OnGUI()
     {
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width/Main.FixedGameWidth, Screen.height / Main.GAMEHEIGHT, 1));
-        
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width/Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
+
         //<!--- Draw menu outside viewport.
         if (sceneState == SceneState.none)
         {
@@ -102,7 +102,7 @@ public class MainMenu : Mz_BaseScene
         else
         {
             //@-- Viewport Screen rect.
-            GUI.BeginGroup(new Rect(0, 0, Main.FixedGameWidth, Main.FixedGameHeight), GUIContent.none, GUIStyle.none);
+            GUI.BeginGroup(viewport_rect, GUIContent.none, GUIStyle.none);
             {
                 if (sceneState == SceneState.showNewGame)
                 {
@@ -149,16 +149,16 @@ public class MainMenu : Mz_BaseScene
         //<@-- Main menu.
         GUI.BeginGroup(mainMenuGroup_rect, GUIContent.none , GUI.skin.box);
         {
-            if (GUI.Button(newPlayer_rect, "New Player")) {
+            if (GUI.Button(newPlayer_rect, "New Player", standard_Skin.button)) {
                 sceneState = SceneState.showNewGame;
             }
-            else if (GUI.Button(loadGameButton_rect, "Load game")) {
+            else if (GUI.Button(loadGameButton_rect, "Load game", standard_Skin.button)) {
                 sceneState = SceneState.showLoadGame;
             }
-            else if (GUI.Button(thirdButton_rect, "Multiplayer")) { 
+            else if (GUI.Button(thirdButton_rect, "Multiplayer", standard_Skin.button)) { 
                 
             }
-            else if (GUI.Button(fourthButton_rect, "About")) { 
+            else if (GUI.Button(fourthButton_rect, "About", standard_Skin.button)) { 
             
             }
         }
@@ -167,7 +167,7 @@ public class MainMenu : Mz_BaseScene
 
     private void DrawNewGameWindow()
     {		
-        GUI.BeginGroup(midCenterWindowGroup_rect, "New Player", GUI.skin.window);
+        GUI.BeginGroup(midCenterWindowGroup_rect, "New Player", standard_Skin.window);
         {
             if (Event.current.isKey && Event.current.keyCode == KeyCode.Return)
             {
@@ -176,16 +176,16 @@ public class MainMenu : Mz_BaseScene
                 this.CheckUserNameFormInput();
             }
 
-            if (GUI.Button(startButton_rect, "Start")) {
+            if (GUI.Button(startButton_rect, "Start", standard_Skin.button)) {
                 this.CheckUserNameFormInput();
             }
-            else if (GUI.Button(cancelButton_rect, "Cancel")) {
+            else if (GUI.Button(cancelButton_rect, "Cancel", standard_Skin.button)) {
                 sceneState = SceneState.none;
             }
 
             //<!-- "Please Insert Username !".
             GUI.SetNextControlName("Username");
-            username = GUI.TextField(usernameTextInput_rect, username, 13, GUI.skin.textArea);
+            username = GUI.TextField(usernameTextInput_rect, username, 24, standard_Skin.textField);
 
             if (GUI.GetNameOfFocusedControl() == string.Empty || GUI.GetNameOfFocusedControl() == "")
             {
@@ -260,10 +260,10 @@ public class MainMenu : Mz_BaseScene
             //message = "เลือกช่องที่ต้องการ เพื่อลบข้อมูลเก่า และทับด้วยข้อมูลใหม่";
             message = "Select Data Slot To Replace New Data";
 
-            GUI.Box(new Rect(Main.FixedGameWidth / 2 - 200, 0, 400, 64), message);
+            GUI.Box(new Rect(Main.FixedGameWidth / 2 - 200, 0, 400, 64), message, standard_Skin.box);
         }
 
-        GUI.BeginGroup(midCenterWindowGroup_rect, "Load game", GUI.skin.window);
+        GUI.BeginGroup(midCenterWindowGroup_rect, "Load game", standard_Skin.window);
         {
             if (GUI.Button(new Rect(midCenterWindowGroup_rect.width - 40 , 0, 40, 40), "X"))
             {
@@ -276,21 +276,21 @@ public class MainMenu : Mz_BaseScene
                 // Display To Save Username.
                 GUI.Box(textbox_header_rect, username);
                 /// Choose SaveGame Slot for replace new data.
-                if (GUI.Button(saveSlot_1Rect, new GUIContent(player_1, "button")))
+                if (GUI.Button(saveSlot_1Rect, new GUIContent(player_1, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
 					Mz_StorageManagement.SaveSlot = 1;
                     SaveNewPlayer();
                 }
-                else if (GUI.Button(saveSlot_2Rect, new GUIContent(player_2, "button")))
+                else if (GUI.Button(saveSlot_2Rect, new GUIContent(player_2, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
 					Mz_StorageManagement.SaveSlot = 2;
                     SaveNewPlayer();
                 }
-                else if (GUI.Button(saveSlot_3Rect, new GUIContent(player_3, "button")))
+                else if (GUI.Button(saveSlot_3Rect, new GUIContent(player_3, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
@@ -307,7 +307,7 @@ public class MainMenu : Mz_BaseScene
                 //headerText = "เลือกช่องที่ต้องการใส่ข้อมูลได้เลยครับ";
                 headerText = "Select Data Slot";
                 // Header.
-                GUI.Box(textbox_header_rect, headerText);
+                GUI.Box(textbox_header_rect, headerText, standard_Skin.box);
                 /// Choose SaveGame Slot for Load Save Data.
                 string slot_1 = string.Empty;
                 string slot_2 = string.Empty;
@@ -322,7 +322,7 @@ public class MainMenu : Mz_BaseScene
 
                 #region <!-- GUI data slot button.
 
-                if (GUI.Button(saveSlot_1Rect, new GUIContent(slot_1, "button")))
+                if (GUI.Button(saveSlot_1Rect, new GUIContent(slot_1, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
@@ -333,7 +333,7 @@ public class MainMenu : Mz_BaseScene
 						this.LoadSceneTarget();
                     }
                 }
-                else if (GUI.Button(saveSlot_2Rect, new GUIContent(slot_2, "button")))
+                else if (GUI.Button(saveSlot_2Rect, new GUIContent(slot_2, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
@@ -344,7 +344,7 @@ public class MainMenu : Mz_BaseScene
 						this.LoadSceneTarget();
                     }
                 }
-                else if (GUI.Button(saveSlot_3Rect, new GUIContent(slot_3, "button")))
+                else if (GUI.Button(saveSlot_3Rect, new GUIContent(slot_3, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 

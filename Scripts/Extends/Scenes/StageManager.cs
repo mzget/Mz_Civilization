@@ -41,8 +41,8 @@ public class StageManager : Mz_BaseScene {
 	public static List<BuildingArea> buildingArea_Objs = new List<BuildingArea>(24);    
     //<!--- Private Data Fields.
     private Vector2 scrollPosition = Vector2.zero;
-    private Rect mainGUIRect = new Rect(Main.GAMEWIDTH / 2 - 300, Main.GAMEHEIGHT - 100, 600, 100);
-    private Rect windowRect = new Rect(Main.GAMEWIDTH / 2 - 300, Main.GAMEHEIGHT / 2 - 150, 600, 320);
+    private Rect mainGUIRect = new Rect(Main.FixedGameWidth / 2 - 300, Main.FixedGameHeight - 100, 600, 100);
+    private Rect windowRect = new Rect(Main.FixedGameWidth / 2 - 300, Main.FixedGameHeight / 2 - 150, 600, 320);
     private Rect imgRect = new Rect(30, 80, 100, 100);
     private Rect contentRect = new Rect(160, 40, 400, 200);
     private Rect buttonRect = new Rect(460, 200, 100, 30);

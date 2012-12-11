@@ -48,10 +48,10 @@ public class FacebookManager : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
 		
 		if(manager.newgameUIState == MainMenu.NewGameUIState.showTextField) {
-            if (GUI.Button(new Rect(Main.GAMEWIDTH / 2 - 150, 32, 300, 50), new GUIContent("", "FacebookConnect"), facebook_Skin.customStyles[0]))
+            if (GUI.Button(new Rect(Main.FixedGameWidth / 2 - 150, 32, 300, 50), new GUIContent("", "FacebookConnect"), facebook_Skin.customStyles[0]))
             {
 	            Application.ExternalCall("GetLoginStatus");
 			}

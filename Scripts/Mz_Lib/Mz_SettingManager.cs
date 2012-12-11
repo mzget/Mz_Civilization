@@ -39,11 +39,11 @@ public class Mz_SettingManager : MonoBehaviour {
 
     void OnGUI()
     {
-        settingGroup_Rect = new Rect(Main.GAMEWIDTH - 128, 0, 128, 34);
-        setting_Rect = new Rect(Main.GAMEWIDTH - 35, 1, 32, 32);
+        settingGroup_Rect = new Rect(Main.FixedGameWidth - 128, 0, 128, 34);
+        setting_Rect = new Rect(Main.FixedGameWidth - 35, 1, 32, 32);
 
 
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
 
         #region Setting Button and relative mechanism.
 

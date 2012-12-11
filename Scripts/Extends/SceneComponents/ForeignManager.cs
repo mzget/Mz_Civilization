@@ -44,7 +44,7 @@ public class ForeignManager : MonoBehaviour
 	}
 
 	void OnGUI() {		
-		GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
+		GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.FixedGameHeight, 1));
 		
 		if(currentForeignTabStatus == ForeignManager.ForeignTabStatus.DrawActivity) {
 			taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, DrawActivityWindow, new GUIContent("Select troops"));
@@ -131,6 +131,7 @@ public class ForeignManager : MonoBehaviour
 	{
 		currentForeignTabStatus = ForeignManager.ForeignTabStatus.None;
 		TaskManager.IsShowInteruptGUI = false;
+		taskManager.MoveInLeftSidebar();
 	}
 }
 

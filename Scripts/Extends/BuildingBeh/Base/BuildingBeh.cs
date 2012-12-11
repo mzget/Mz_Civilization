@@ -77,7 +77,7 @@ public class BuildingBeh : Base_ObjectBeh {
     protected Rect building_background_Rect;
     protected Rect descriptionGroup_Rect;
     protected Rect contentRect = new Rect(170, 20, 590, 160);
-    protected Rect warnningMessage_Rect = new Rect(Main.GAMEWIDTH / 2 - 150, Main.GAMEHEIGHT / 2 - 120, 300, 240);
+    protected Rect warnningMessage_Rect = new Rect(Main.FixedGameWidth / 2 - 150, Main.FixedGameHeight / 2 - 120, 300, 240);
     protected Rect update_requireResource_Rect;
     protected Rect currentJob_Rect;
     protected Rect nextJob_Rect;
@@ -193,7 +193,7 @@ public class BuildingBeh : Base_ObjectBeh {
 		buildingWindowStyle.font = building_Skin.window.font;
 		buildingWindowStyle.fontSize = building_Skin.window.fontSize;
 
-        windowRect = new Rect((Main.GAMEWIDTH * 3 / 4) / 2 - 350, Main.GAMEHEIGHT / 2 - 250, 700, 500);
+        windowRect = new Rect((Main.FixedGameWidth * 3 / 4) / 2 - 350, Main.FixedGameHeight / 2 - 250, 700, 500);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 420);
         building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
         descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 160, background_Rect.height - 45);
@@ -406,7 +406,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	/// </summary>
     protected void OnGUI()
     {
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width / Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
 		
         if (_IsShowInterface) {
             windowRect = GUI.Window(0, windowRect, CreateWindow, new GUIContent(this.name, "GUI window"), buildingWindowStyle);

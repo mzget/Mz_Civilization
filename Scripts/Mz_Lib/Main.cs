@@ -2,10 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public struct Main {
-	
-	public const float GAMEWIDTH = 1024;
-    public const float GAMEHEIGHT = 768;
-	
+		
 	public const float FixedGameWidth = 1024f;
 	public const float FixedGameHeight = 768f;
 

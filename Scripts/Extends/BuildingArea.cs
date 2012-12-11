@@ -111,7 +111,7 @@ public class BuildingArea : Base_ObjectBeh
         requirementBox_style = new GUIStyle(standard_skin.box);
         requirementBox_style.alignment = TextAnchor.MiddleLeft;
 
-		window_rect = new Rect((Main.GAMEWIDTH * 3 / 8) - 350, Main.GAMEHEIGHT / 2 - 250, 700, 500);
+		window_rect = new Rect((Main.FixedGameWidth * 3 / 8) - 350, Main.FixedGameHeight / 2 - 250, 700, 500);
         closeBuildingArea_rect = new Rect(window_rect.width - 34, 2, 32, 32);
         background_Rect = new Rect(0, 0, 680, 420);
         image_rect = new Rect(40, 50, 80, 80);
@@ -132,7 +132,7 @@ public class BuildingArea : Base_ObjectBeh
         fifthBuilding_rect = new Rect(0, 4 * frameHeight, background_Rect.width, frameHeight);
         sixthBuilding_rect = new Rect(0, 5 * frameHeight, background_Rect.width, frameHeight);
         
-        buyArea_rect = new Rect((Main.GAMEWIDTH * 3 / 8) - 300, Main.GAMEHEIGHT / 2 - 300, 600, 600);
+        buyArea_rect = new Rect((Main.FixedGameWidth * 3 / 8) - 300, Main.FixedGameHeight / 2 - 300, 600, 600);
         closeBuyArea_rect = new Rect(buyArea_rect.width - 34, 32, 32, 32);
         advisor_drawRect = new Rect(10, (buyArea_rect.height / 2) - (stageManager.taskManager.elder_advisor.height/2), stageManager.taskManager.elder_advisor.width, stageManager.taskManager.elder_advisor.height);
         float descriptionPosX = (advisor_drawRect.x + advisor_drawRect.width) + 10;
@@ -233,7 +233,7 @@ public class BuildingArea : Base_ObjectBeh
     //<!--- Economy, Military, Utility.
     void OnGUI()
     {
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width/ Main.GAMEWIDTH, Screen.height / Main.GAMEHEIGHT, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width/ Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
         		
         if(guiState != GUIState.none && guiState != GUIState.ShowBuyArea) {
             window_rect = GUI.Window(0, window_rect, this.CreateWindow, new GUIContent("Building Area", "GUI window"), standard_skin.window);

@@ -13,7 +13,7 @@ public class Mz_OnGUIManager {
     /// Return Static Fields. 
     /// </summary>
     public static Rect viewPort_rect;
-	public static Rect midcenterGroup_rect = new Rect(0, 0, Main.GAMEWIDTH, Main.GAMEHEIGHT);	
+	public static Rect midcenterGroup_rect = new Rect(0, 0, Main.FixedGameWidth, Main.FixedGameHeight);	
 	//<!--- Equation finding scale == x = screen.height/ main.fixed.
     public static float Extend_heightScale = 1;
 

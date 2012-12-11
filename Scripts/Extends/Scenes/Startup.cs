@@ -6,13 +6,11 @@ public class Startup : Mz_BaseScene {
 
     public Texture2D mzLogo_Icon;
 
-
-    void Awake() {
-        Mz_OnGUIManager.CalculateViewportScreen();
-    }
-
 	// Use this for initialization
-	IEnumerator Start () {
+    IEnumerator Start()
+    {
+        Mz_OnGUIManager.CalculateViewportScreen();
+
         Application.runInBackground = true;
         QualitySettings.SetQualityLevel(3);
 

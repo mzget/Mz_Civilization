@@ -210,19 +210,20 @@ public class Mz_BaseScene : MonoBehaviour {
     {
         //    	Debug.Log("OnPointerOverName :: " + nameInput);
     }
-    
+
+    public GUISkin standard_Skin;
     protected virtual void OnGUI()
     {
         #region <@-- Exit Application Machanism.
 
         GUI.depth = 0;
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.GAMEHEIGHT, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.FixedGameHeight, 1));
 
         if (_hasQuitCommand)
         {
 			TaskManager.IsShowInteruptGUI = true;
 			
-            GUI.BeginGroup(new Rect(Screen.width / 2 - (200 * Mz_OnGUIManager.Extend_heightScale), Main.GAMEHEIGHT / 2 - 100, 400 * Mz_OnGUIManager.Extend_heightScale, 200), "Do you want to quit ?", GUI.skin.window);
+            GUI.BeginGroup(new Rect(Screen.width / 2 - (200 * Mz_OnGUIManager.Extend_heightScale), Main.FixedGameHeight / 2 - 100, 400 * Mz_OnGUIManager.Extend_heightScale, 200), "Do you want to quit ?", standard_Skin.window);
             {
                 if (GUI.Button(new Rect(60 * Mz_OnGUIManager.Extend_heightScale, 155, 100 * Mz_OnGUIManager.Extend_heightScale, 40), "Yes"))
                     Application.Quit();
