@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[ExecuteInEditMode]
+
 public class TaskManager : MonoBehaviour {
 	
 	public const string PathOfGUISprite = "UI_Sprites/";
@@ -30,6 +30,7 @@ public class TaskManager : MonoBehaviour {
     public RightSideState currentRightSideState = RightSideState.show_domination;
     private StageManager stageManager;
 	public DisplayTroopsActivity displayTroopsActivity;
+    private NotificationManager notificationManager;
     private MessageManager messageManager;
     private ForeignManager foreignManager;
     public QuestManager questManager;
@@ -119,14 +120,15 @@ public class TaskManager : MonoBehaviour {
 
         GameObject gamecontroller = GameObject.FindGameObjectWithTag("GameController");
         stageManager = gamecontroller.GetComponent<StageManager>();
-        messageManager = gamecontroller.GetComponent<MessageManager>();
-        foreignManager = gamecontroller.GetComponent<ForeignManager>();
         displayTroopsActivity = gamecontroller.GetComponent<DisplayTroopsActivity>();
+        foreignManager = gamecontroller.GetComponent<ForeignManager>();
+        notificationManager = gamecontroller.GetComponent<NotificationManager>();
+        messageManager = gamecontroller.GetComponent<MessageManager>();
         questManager = gamecontroller.GetComponent<QuestManager>();
 
         StartCoroutine(InitializeTextureResource());
         this.InitializeOnGUIDataFields();
-		
+
         yield return 0;
     }
 	
@@ -160,11 +162,11 @@ public class TaskManager : MonoBehaviour {
         exitButton_Rect = new Rect(standardWindow_rect.width - (34 * Mz_OnGUIManager.Extend_heightScale), 2, 32 * Mz_OnGUIManager.Extend_heightScale, 32);
 
         //<@-- Notification display rectangles.
-        moveOutLeftSidebarGroup_rect = new Rect(-100, 50, 90 * Mz_OnGUIManager.Extend_heightScale, 500);
-        normalSidebarGroup_rect = new Rect(0, 50, 90 * Mz_OnGUIManager.Extend_heightScale, 500);
+        moveOutLeftSidebarGroup_rect = new Rect(-120, 50, 120 * Mz_OnGUIManager.Extend_heightScale, 500);
+        normalSidebarGroup_rect = new Rect(0, 50, 120 * Mz_OnGUIManager.Extend_heightScale, 500);
         leftSidebarGroup_rect = normalSidebarGroup_rect;
-        notificationRect_1 = new Rect(0, 5, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
-        notificationRect_2 = new Rect(0, 90, 80 * Mz_OnGUIManager.Extend_heightScale, 80);
+        notificationRect_1 = new Rect(0, 5, 120 * Mz_OnGUIManager.Extend_heightScale, 80);
+        notificationRect_2 = new Rect(0, 90, 120 * Mz_OnGUIManager.Extend_heightScale, 80);
     }
 	
     IEnumerator InitializeTextureResource() 
@@ -223,7 +225,9 @@ public class TaskManager : MonoBehaviour {
         GUI.EndGroup();
 		
 		this.DrawRightSidebar();
-        this.DrawLeftSideBar();
+
+        if(notificationManager)
+            this.DrawLeftSideBar();
     }
 
 	#region <@-- Left sidebar group rect.
@@ -265,7 +269,7 @@ public class TaskManager : MonoBehaviour {
 
     private void DisplayMessageActivity()
     {
-        messageManager.currentMessageManagerState = MessageManager.MessageManagetStateBeh.drawActivity;
+        MessageManager.CurrentMessageManagerState = MessageManager.MessageManagetStateBeh.drawActivity;
     }
 
     private void DisplayQuestActivity() {

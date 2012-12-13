@@ -13,7 +13,7 @@ public class ObjectName : MonoBehaviour {
         if (Application.platform == RuntimePlatform.WindowsWebPlayer)
         {
             nameIns = Instantiate(nameObj) as GameObject;
-            nameIns.gameObject.active = false;
+            nameIns.gameObject.SetActive(false);
             nameIns.GetComponent<TextMesh>().text = name;
             nameIns.transform.position = this.transform.position + new Vector3(0, 80, 0);
         }

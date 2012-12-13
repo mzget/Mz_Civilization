@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
 
@@ -35,19 +36,32 @@ public class MainMenu : Mz_BaseScene
     Rect startButton_rect;
     Rect cancelButton_rect;
     //<@-- Savegame slot data fields.
-    float group_width = 400f, group_height = 300f;
+    float group_width = 400f;
     float slot_width = 200f;
     Rect saveSlot_1Rect;
     Rect saveSlot_2Rect;
     Rect saveSlot_3Rect;
     Rect textbox_header_rect;
 
+    #region <@-- Events handle.
+
+    public event EventHandler NewPlayer_Event;
+    public void OnNewPlayer_Event(EventArgs e)
+    {
+        if (NewPlayer_Event != null)
+            NewPlayer_Event(this, e);
+    }
+
+    #endregion
+    
 
     // Use this for initialization
 	protected override void Initializing ()
 	{
 		base.Initializing ();
         StartCoroutine(this.InitializeAudio());
+
+        NewPlayer_Event += MessageManager.Handle_MainMenu_NewPlayer_Event;
 
         player_1 = PlayerPrefs.GetString(1 + ":" + "username");
         player_2 = PlayerPrefs.GetString(2 + ":" + "username");
@@ -78,6 +92,11 @@ public class MainMenu : Mz_BaseScene
 		//    }
 		//}
 	}
+
+    private void MessageManager_NewPlayer_Event(object sender, EventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 
     private new IEnumerator InitializeAudio() {
         base.InitializeAudio();
@@ -229,16 +248,19 @@ public class MainMenu : Mz_BaseScene
         {
 			Mz_StorageManagement.SaveSlot = 1;
             this.SaveNewPlayer();
+            this.OnNewPlayer_Event(EventArgs.Empty);
         }
         else if (player_2 == string.Empty)
         {
 			Mz_StorageManagement.SaveSlot = 2;
             this.SaveNewPlayer();
+            this.OnNewPlayer_Event(EventArgs.Empty);
         }
         else if (player_3 == string.Empty)
         {
 			Mz_StorageManagement.SaveSlot = 3;
             this.SaveNewPlayer();
+            this.OnNewPlayer_Event(EventArgs.Empty);
         }
         else
         {
@@ -281,21 +303,24 @@ public class MainMenu : Mz_BaseScene
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
 					Mz_StorageManagement.SaveSlot = 1;
-                    SaveNewPlayer();
+                    this.SaveNewPlayer();
+            		this.OnNewPlayer_Event(EventArgs.Empty);
                 }
                 else if (GUI.Button(saveSlot_2Rect, new GUIContent(player_2, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
 					Mz_StorageManagement.SaveSlot = 2;
-                    SaveNewPlayer();
+                    this.SaveNewPlayer();
+            		this.OnNewPlayer_Event(EventArgs.Empty);
                 }
                 else if (GUI.Button(saveSlot_3Rect, new GUIContent(player_3, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
 					Mz_StorageManagement.SaveSlot = 3;
-                    SaveNewPlayer();
+                    this.SaveNewPlayer();
+            		this.OnNewPlayer_Event(EventArgs.Empty);
                 }
 
                 #endregion
