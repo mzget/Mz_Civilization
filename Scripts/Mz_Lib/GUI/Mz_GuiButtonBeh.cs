@@ -50,11 +50,11 @@ public class Mz_GuiButtonBeh : Base_ObjectBeh {
 
         iTween.ShakeScale(this.gameObject, new Vector3(0.1f, 0.1f, 0), 0.3f);
 	}
-	protected override void OnMouseDown ()
+	protected override void OnTouchDown ()
 	{
         gameController.OnInput(this.gameObject.name);
 		
-		base.OnMouseDown ();
+		base.OnTouchDown ();
 	}
 	protected override void OnTouchEnded ()
 	{

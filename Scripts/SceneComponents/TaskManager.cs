@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class TaskManager : MonoBehaviour {
 	
+	public const string PATH_OF_GUISKIN = "GUISkins/";
 	public const string PathOfGUISprite = "UI_Sprites/";
     public const string PathOfMainGUI = "Textures/MainGUI/";
     public const string PathOfGameItemTextures = "Textures/GameItems/";
@@ -14,9 +15,12 @@ public class TaskManager : MonoBehaviour {
 
 	internal const string DISPLAY_MESSAGE_ACTIVITY = "DisplayMessageActivity";
     internal const string DISPLAY_QUEST_ACTIVITY = "DisplayQuestActivity";
+	internal const string DISPLAY_MISSION_COMPLETE_ACTIVITY = "DisplayMissionCompleteActivity";
     internal const string DISPLAY_FOREIGN_ACTIVITY = "DisplayForeignActivity";
 
     public static bool IsShowInteruptGUI = false;
+	public static bool _TaskbarInitialized = false;
+
     public enum RightSideState { 
         none = 0, 
         show_domination, 
@@ -28,19 +32,24 @@ public class TaskManager : MonoBehaviour {
         show_setting,
     };
     public RightSideState currentRightSideState = RightSideState.show_domination;
-    private StageManager stageManager;
+
+	public enum BaseGUIStateBeh { None = 0, UserQuitApplication, }
+	public BaseGUIStateBeh baseGUIState;
+
+    public StageManager stageManager;
 	public DisplayTroopsActivity displayTroopsActivity;
-    private NotificationManager notificationManager;
-    private MessageManager messageManager;
-    private ForeignManager foreignManager;
+    //public NotificationManager notificationManager;
+    public MessageManager messageManager;
+    public ForeignManager foreignManager;
     public QuestManager questManager;
 
     public GUISkin taskbarUI_Skin;
     public GUIStyle left_button_Style;
     public GUIStyle right_button_Style;
 
-    #region <@!-- Textures.
-
+    #region <@!-- Fields.
+	
+	//<@-- Textures.
     public Texture2D food_icon;
     public Texture2D wood_icon;
     public Texture2D stone_icon;
@@ -72,10 +81,7 @@ public class TaskManager : MonoBehaviour {
     public Texture2D PersianIcon_Texture;
     public Texture2D CelticIcon_Texture;
 
-    #endregion
-
-    #region <@!-- Rectangles.
-
+	//<@!-- Rectangles.
     protected Rect header_group_rect;
     protected Rect header_button_rect;
 	Rect first_rect, second_rect, third_rect, fourth_rect, fifth_rect, sixth_rect;
@@ -105,37 +111,54 @@ public class TaskManager : MonoBehaviour {
 	private Rect moveOutLeftSidebarGroup_rect;
     internal Rect notificationRect_1;
     internal Rect notificationRect_2;
+	
+	#endregion
 
-    #endregion
 
-    #region <@-- Events.
-
-    #endregion
-
+	void Awake() {
+		TaskManager._TaskbarInitialized = false;
+	}
 	
 	// Use this for initialization
-	IEnumerator Start ()
+    IEnumerator Start()
     {
+        while (Mz_BaseScene._StageInitialized == false)
+        {
+            yield return null;
+        }
+		
+        yield return null;
+		
+
         TaskManager.IsShowInteruptGUI = false;
+		
+        this.InitializeOnGUIDataFields();
+        this.InitializeTextureResource();
 
         GameObject gamecontroller = GameObject.FindGameObjectWithTag("GameController");
         stageManager = gamecontroller.GetComponent<StageManager>();
         displayTroopsActivity = gamecontroller.GetComponent<DisplayTroopsActivity>();
+		
+		gamecontroller.AddComponent<ForeignManager>();
         foreignManager = gamecontroller.GetComponent<ForeignManager>();
-        notificationManager = gamecontroller.GetComponent<NotificationManager>();
+        //notificationManager = gamecontroller.GetComponent<NotificationManager>();
+		gamecontroller.AddComponent<MessageManager>();
         messageManager = gamecontroller.GetComponent<MessageManager>();
+		
+		gamecontroller.AddComponent<QuestManager>();
         questManager = gamecontroller.GetComponent<QuestManager>();
-
-        StartCoroutine(InitializeTextureResource());
-        this.InitializeOnGUIDataFields();
-
-        yield return 0;
+		
+		_TaskbarInitialized = true;
     }
 	
     void InitializeOnGUIDataFields()
     {
+		taskbarUI_Skin = Resources.Load(PATH_OF_GUISKIN + "TaskbarUI_Skin", typeof(GUISkin)) as GUISkin;
         taskbarUI_Skin.button.alignment = TextAnchor.MiddleCenter;
 		taskbarUI_Skin.box.alignment = TextAnchor.MiddleCenter;
+		
+		left_button_Style = new GUIStyle(taskbarUI_Skin.button);
+		right_button_Style = new GUIStyle(taskbarUI_Skin.button);
 				
         baseSidebarGroup_rect = new Rect(Screen.width - (Screen.width / 4), 0, Screen.width / 4, Main.FixedGameHeight - 240);
         sidebarContentGroup_rect = new Rect(48 * Mz_OnGUIManager.Extend_heightScale, 0, baseSidebarGroup_rect.width - (48 * Mz_OnGUIManager.Extend_heightScale), baseSidebarGroup_rect.height);
@@ -169,7 +192,7 @@ public class TaskManager : MonoBehaviour {
         notificationRect_2 = new Rect(0, 90, 120 * Mz_OnGUIManager.Extend_heightScale, 80);
     }
 	
-    IEnumerator InitializeTextureResource() 
+    void InitializeTextureResource() 
     {
         left_button_Style.normal.background = Resources.Load(PathOfMainGUI + "Back_up", typeof(Texture2D)) as Texture2D;
         left_button_Style.active.background = Resources.Load(PathOfMainGUI + "Back_down", typeof(Texture2D)) as Texture2D;
@@ -203,31 +226,69 @@ public class TaskManager : MonoBehaviour {
         hypaspistUnitIcon = Resources.Load(PathOf_TroopIcons + "Hypaspist", typeof(Texture2D)) as Texture2D;
         hopliteUnitIcon = Resources.Load(PathOf_TroopIcons + "Hoplite", typeof(Texture2D)) as Texture2D;
         ToxotesUnitIcon = Resources.Load(PathOf_TroopIcons + "Toxotai", typeof(Texture2D)) as Texture2D;
-
-        yield return 0;
     }
 
 	// Update is called once per frame
-	void Update () { }
+	void Update () { 		
+		if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Menu))
+		{
+			//Application.Quit();
+			baseGUIState = BaseGUIStateBeh.UserQuitApplication;
+		}
+	}
 
-    void OnGUI()
-    {		
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.FixedGameHeight, 1));
-
-        GUI.BeginGroup(header_group_rect);
-        {
-            GUI.Box(first_rect, new GUIContent(StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity, food_icon), taskbarUI_Skin.button);
-            GUI.Box(second_rect, new GUIContent(StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity, wood_icon), taskbarUI_Skin.button);
-            GUI.Box(third_rect, new GUIContent(StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, stone_icon), taskbarUI_Skin.button);
-            GUI.Box(fourth_rect, new GUIContent(StoreHouse.sumOfGold.ToString(), gold_icon), taskbarUI_Skin.button);
-            GUI.Box(fifth_rect, new GUIContent(HouseBeh.SumOfPopulation.ToString(), employee_icon), taskbarUI_Skin.button);
-        }
-        GUI.EndGroup();
+    void OnGUI ()
+	{		
+		if(StageManager._StageInitialized == false || TaskManager._TaskbarInitialized == false)
+			return;
 		
-		this.DrawRightSidebar();
+		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (1, Screen.height / Main.FixedGameHeight, 1));
 
-        if(notificationManager)
-            this.DrawLeftSideBar();
+		if (baseGUIState == BaseGUIStateBeh.UserQuitApplication) 
+		{			
+			#region <@-- Exit Application Machanism.
+			
+			TaskManager.IsShowInteruptGUI = true;
+
+			GUI.BeginGroup (new Rect (Screen.width / 2 - (200 * Mz_OnGUIManager.Extend_heightScale), Main.FixedGameHeight / 2 - 100, 400 * Mz_OnGUIManager.Extend_heightScale, 200), "Do you want to quit ?", GUI.skin.window);
+			{
+				if (GUI.Button (new Rect (60 * Mz_OnGUIManager.Extend_heightScale, 155, 100 * Mz_OnGUIManager.Extend_heightScale, 40), "Yes"))
+				{
+					this.GoToMainMenu();
+				}
+				else if (GUI.Button (new Rect (240 * Mz_OnGUIManager.Extend_heightScale, 155, 100 * Mz_OnGUIManager.Extend_heightScale, 40), "No")) {
+					baseGUIState = BaseGUIStateBeh.None;			
+					TaskManager.IsShowInteruptGUI = false;
+				}
+			}
+			GUI.EndGroup ();
+
+			#endregion
+		} 
+
+		GUI.BeginGroup (header_group_rect);
+		{
+			GUI.Box (first_rect, new GUIContent (StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity, food_icon), taskbarUI_Skin.button);
+			GUI.Box (second_rect, new GUIContent (StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity, wood_icon), taskbarUI_Skin.button);
+			GUI.Box (third_rect, new GUIContent (StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, stone_icon), taskbarUI_Skin.button);
+			GUI.Box (fourth_rect, new GUIContent (StoreHouse.sumOfGold.ToString (), gold_icon), taskbarUI_Skin.button);
+			GUI.Box (fifth_rect, new GUIContent (HouseBeh.SumOfPopulation.ToString (), employee_icon), taskbarUI_Skin.button);
+		}
+		GUI.EndGroup ();
+		
+		this.DrawRightSidebar ();
+        this.DrawLeftSideBar ();
+    }
+
+    private void GoToMainMenu()
+    {
+		stageManager.saveManager.Save();
+        stageManager.OnDispose();
+        if (Application.isLoadingLevel == false)
+        {
+            Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.MainMenu.ToString();
+            Application.LoadLevel(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
+        }
     }
 
 	#region <@-- Left sidebar group rect.
@@ -267,14 +328,20 @@ public class TaskManager : MonoBehaviour {
         TaskManager.IsShowInteruptGUI = false;
     }
 
+    #region <@-- Call by const string method name HookUp.
+
     private void DisplayMessageActivity()
     {
-        MessageManager.CurrentMessageManagerState = MessageManager.MessageManagetStateBeh.drawActivity;
+        messageManager.InitializeMessageMechanism();
     }
 
     private void DisplayQuestActivity() {
-        questManager.currentQuestManagerStateBeh = QuestManager.QuestManagerStateBeh.DrawActivity;
+        questManager.InitializeMessageMechanism(QuestManager.QuestManagerStateBeh.DrawMissionActivity);
     }
+
+	private void DisplayMissionCompleteActivity() {
+		questManager.InitializeMessageMechanism(QuestManager.QuestManagerStateBeh.DrawCompleteMissionActivity);
+	}
 
     private void DisplayForeignActivity() {
         foreignManager.currentForeignTabStatus = ForeignManager.ForeignTabStatus.DrawActivity;
@@ -282,9 +349,11 @@ public class TaskManager : MonoBehaviour {
 
     #endregion
 
-	#region <@-- Right sidebar group rect.
+    #endregion
 
-	private void DrawRightSidebar() 
+    #region <@-- Right sidebar group rect.
+
+    private void DrawRightSidebar() 
 	{		
 		GUI.BeginGroup(baseSidebarGroup_rect, GUIContent.none, GUI.skin.box);
         {
@@ -384,21 +453,9 @@ public class TaskManager : MonoBehaviour {
 			float label_width = sidebarContentGroup_rect.width - 10;
             GUI.Box(new Rect(5, 2, label_width, 32), "Options", taskbarUI_Skin.textField);
 
-            if (GUI.Button(new Rect(5, 100, label_width, 32), "Main Menu")) {
-                Mz_SaveData.Save();
-                stageManager.OnDispose();
-                if (Application.isLoadingLevel == false) {
-                    Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.MainMenu.ToString();
-                    Application.LoadLevel(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
-                }
+            if (GUI.Button(new Rect(5, 100, label_width, 32), "Quit")) {
+                this.GoToMainMenu();
             }
-
-			if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer) {
-	            if (GUI.Button(new Rect(5, 145, label_width, 32), "Quit")) {
-	                Mz_SaveData.Save();
-	                stageManager._hasQuitCommand = true;
-	            }
-			}
 		}
 		GUI.EndGroup();		
     }

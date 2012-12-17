@@ -11,7 +11,8 @@ public class StageManager : Mz_BaseScene {
 
     public GUISkin mainBuildingSkin;
     public TaskManager taskManager;
-    public List<GameMaterial> gameMaterials = new List<GameMaterial>();
+	public Mz_SaveData saveManager;
+    public List<GameMaterialData> gameMaterials = new List<GameMaterialData>();
     // Map and building area.
     public Texture2D mapTex;
     private OTFilledSprite background;
@@ -69,10 +70,15 @@ public class StageManager : Mz_BaseScene {
 	// Use this for initialization
 	protected override void Initializing ()
 	{
-        base.Initializing();
+		base.Initializing ();
 
-        if (taskManager == null)
-            taskManager = this.gameObject.GetComponent<TaskManager>();
+		if (taskManager == null) {
+			this.gameObject.AddComponent<TaskManager>();
+			taskManager = this.gameObject.GetComponent<TaskManager> ();
+		}
+		if (saveManager == null) {
+			saveManager = new Mz_SaveData ();
+		}
 
 		this.StartCoroutine(this.InitializeAudio());
 		this.StartCoroutine(this.CreateGameMaterials());
@@ -102,6 +108,8 @@ public class StageManager : Mz_BaseScene {
 		AdBannerObserver.Initialize("a150c2e14a5d753", "DIAT-GE5P-2J5H-2", 30f);
 
 #endif
+
+        _StageInitialized = true;
     }
 
 	private new IEnumerator InitializeAudio ()
@@ -113,12 +121,12 @@ public class StageManager : Mz_BaseScene {
 
     private IEnumerator CreateGameMaterials()
     {
-        gameMaterials.Add(new GameMaterial() { name = "food" });	/// 0.
-        gameMaterials.Add(new GameMaterial() { name = "wood" });	// 1.
-        gameMaterials.Add(new GameMaterial() { name = "stone" });	// 2.
-        gameMaterials.Add(new GameMaterial() { name = "copper" });	// 3.
-        gameMaterials.Add(new GameMaterial() { name = "armor" });	// 4.
-        gameMaterials.Add(new GameMaterial() { name = "weapon" });	// 5.
+        gameMaterials.Add(new GameMaterialData() { name = "food" });	/// 0.
+        gameMaterials.Add(new GameMaterialData() { name = "wood" });	// 1.
+        gameMaterials.Add(new GameMaterialData() { name = "stone" });	// 2.
+        gameMaterials.Add(new GameMaterialData() { name = "copper" });	// 3.
+        gameMaterials.Add(new GameMaterialData() { name = "armor" });	// 4.
+        gameMaterials.Add(new GameMaterialData() { name = "weapon" });	// 5.
 
         yield return 0;
     }
@@ -526,12 +534,13 @@ public class StageManager : Mz_BaseScene {
     }
 
     void OnApplicationQuit() {
-        Mz_SaveData.Save();
+		saveManager.Save();
     }
 
     void OnApplicationPause()
     {
-        Mz_SaveData.Save();
+		if(saveManager != null)
+			this.saveManager.Save();
     }
 
     public override void OnDispose()

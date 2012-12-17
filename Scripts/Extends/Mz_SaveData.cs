@@ -9,7 +9,7 @@ public class Mz_StorageManagement {
 	public static string Username = string.Empty;	//<!-- User Name.
 }
 
-public class Mz_SaveData
+public class Mz_SaveData : ISaveData
 {		
 	public const string KEY_username = "username";
 	public const string KEY_sumoffood = "sumoffood";
@@ -39,9 +39,9 @@ public class Mz_SaveData
 	public const string BuildingAreaState = "BuildingAreaState";
 	public const string TownCenter_level = "TownCenter_level";
 	
-	/// <summary>
-	/// Utility Section.
-	/// </summary>
+	#region <@-- Utility Section.
+
+	//<!-- House data key.
 	public const string numberOfHouse_Instance = "numberOfHouse_Instance";
 	public const string house_position_ = "house_position_";
 	public const string house_level_ = "house_level_";
@@ -49,11 +49,11 @@ public class Mz_SaveData
 	public const string KEY_AcademyInstance = "AcademyInstance";
 	public const string KEY_AcademyPosition = "AcademyPosition";
 	public const string KEY_AcademyLevel = "AcademyLevel";
-	
-    /// <summary>
-    /// Economy Section.
-    /// </summary>
-   
+
+	#endregion
+
+	#region <@-- Economy Section.
+       
     //<!-- Storehouse key. 
 	public const string numberOfStorehouseInstance = "numberOfStorehouseInstance";
 	public const string storehouse_position_ = "storehouse_position_";
@@ -63,13 +63,23 @@ public class Mz_SaveData
     public const string KEY_MarketPosition = "positionOfMarket";
     public const string KEY_MarketLevel = "levelOfMarket";
 
-    /// <summary>
-    /// Military Section.
-    /// </summary>
+	#endregion
+
+	#region <@-- Military Section.
+    
+	//<!-- Barrack data key.
 	public const string numberOf_BarracksInstancs = "numberOf_BarracksInstancs";
 	public const string barracks_position_ = "barracks_position_";
 	public const string barracks_level_ = "barracks_level_";
 
+	#endregion
+
+	#region <@-- Mission storage key.
+
+	public const string KEY_CURRENT_MISSION_ID = "KEY_CURRENT_MISSION_ID";
+	public const string KEY_ARRAY_MISSION_COMPLETE = "KEY_ARRAY_MISSION_COMPLETE";
+
+	#endregion
 
 	public class GreekAI_DataStore {
 		public const string KEY_GREEK_AI_SPEARMAN = "GREEK_AI_SPEARMAN";
@@ -78,7 +88,7 @@ public class Mz_SaveData
 	}
 
 
-    public static void Save()
+    public void Save()
     {
         Debug.LogWarning("Starting Saving...");
 		
@@ -94,6 +104,9 @@ public class Mz_SaveData
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_SPEARMAN, BarracksBeh.AmountOfSpearman);
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_HAPASPIST, BarracksBeh.AmountOfHapaspist);
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_HOPLITE, BarracksBeh.AmountOfHoplite);
+			//<@-- Mission data.
+            PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_CURRENT_MISSION_ID, QuestManager.CurrentMissionTopic_ID);
+			PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + KEY_ARRAY_MISSION_COMPLETE, QuestManager.arr_isMissionComplete);
 			//<!-- TownCenter.
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
 			
@@ -176,6 +189,7 @@ public class Mz_SaveData
 			#endregion
 		
 		    #region <!-- GAME AI section.
+
 		    //<@!-- Greek tribe AI data.
 		    PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN, StageManager.list_AICity[0].AmountOfUnits[0]);
 		    PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST, StageManager.list_AICity[0].AmountOfUnits[1]);
@@ -193,4 +207,25 @@ public class Mz_SaveData
 			Debug.LogWarning("Saving failed.");
 		}
     }
+
+	public void Load() {
+		
+		Mz_StorageManagement.Username = PlayerPrefs.GetString(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_username);
+		StoreHouse.SumOfFood = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood);
+		StoreHouse.SumOfWood = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood);
+		StoreHouse.SumOfStone = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone);
+		StoreHouse.SumOfCopper = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_SUMOFCOPPER);
+		StoreHouse.sumOfArmor = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfArmor);
+		StoreHouse.sumOfWeapon = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfWeapon);
+		StoreHouse.sumOfGold = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold);
+		BarracksBeh.AmountOfSpearman = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_SPEARMAN, 0);
+		BarracksBeh.AmountOfHapaspist = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HAPASPIST, 0);
+		BarracksBeh.AmountOfHoplite = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HOPLITE, 0);
+		
+        //<@-- Load mission id.
+        QuestManager.CurrentMissionTopic_ID = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
+		QuestManager.arr_isMissionComplete = PlayerPrefsX.GetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, false, 8);
+		
+        Debug.Log("Load storage data to static variable complete.");
+	}
 }

@@ -8,7 +8,7 @@ public class GroupCaravan : ScriptableObject {
     
     public MarketBeh MarketInstance { get; set; }
     public List<CaravanBeh> GroupList = new List<CaravanBeh>();
-	public List<GameMaterial> tradingMaterial = new List<GameMaterial>();
+	public List<GameMaterialData> tradingMaterial = new List<GameMaterialData>();
 	
     private int travelingDay = 0;
     private int travelDayCounter = 0;
@@ -54,7 +54,7 @@ public class GroupCaravan : ScriptableObject {
 		travelingDay = 0;
 		travelDayCounter = 0;
 	
-		foreach (GameMaterial material in tradingMaterial) {			
+		foreach (GameMaterialData material in tradingMaterial) {			
 			MarketBeh.tradingMaterial_List.Remove(material);
 		}
 		MarketInstance.SendingCaravanEvent -= HandleMarketSendingCaravanEvent;

@@ -14,8 +14,8 @@ public class Mz_BaseScene : MonoBehaviour {
         MainMenu,
         Town,
     }
-    public static ScenesInstance SceneInstance;
-    public bool _hasQuitCommand = false;
+    public static bool _StageInitialized = false;
+    public GUISkin standard_Skin;
 	
     #region <@-- Detect Touch and Input Data Fields.
 	
@@ -96,7 +96,8 @@ public class Mz_BaseScene : MonoBehaviour {
             smartDeviceInput = this.gameObject.GetComponent<Mz_SmartDeviceInput>();
             smartDeviceInput.cam = Camera.main;
         }
-		
+
+        _StageInitialized = false;
 		this.Initializing();
 	}
 
@@ -109,14 +110,8 @@ public class Mz_BaseScene : MonoBehaviour {
         {
             if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
                 smartDeviceInput.ImplementTouchInput();
-            //if (Application.isWebPlayer || Application.isEditor)
-            //    smartDeviceInput.ImplementMouseInput();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Menu))
-        {
-            //Application.Quit();
-            _hasQuitCommand = true;
+            if (Application.isWebPlayer || Application.isEditor)
+                smartDeviceInput.ImplementMouseInput();
         }
     }
 
@@ -209,38 +204,6 @@ public class Mz_BaseScene : MonoBehaviour {
     public virtual void OnPointerOverName(string nameInput)
     {
         //    	Debug.Log("OnPointerOverName :: " + nameInput);
-    }
-
-    public GUISkin standard_Skin;
-    protected virtual void OnGUI()
-    {
-        #region <@-- Exit Application Machanism.
-
-        GUI.depth = 0;
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.FixedGameHeight, 1));
-
-        if (_hasQuitCommand)
-        {
-			TaskManager.IsShowInteruptGUI = true;
-			
-            GUI.BeginGroup(new Rect(Screen.width / 2 - (200 * Mz_OnGUIManager.Extend_heightScale), Main.FixedGameHeight / 2 - 100, 400 * Mz_OnGUIManager.Extend_heightScale, 200), "Do you want to quit ?", standard_Skin.window);
-            {
-                if (GUI.Button(new Rect(60 * Mz_OnGUIManager.Extend_heightScale, 155, 100 * Mz_OnGUIManager.Extend_heightScale, 40), "Yes"))
-                    Application.Quit();
-                else if (GUI.Button(new Rect(240 * Mz_OnGUIManager.Extend_heightScale, 155, 100 * Mz_OnGUIManager.Extend_heightScale, 40), "No")) {
-                    _hasQuitCommand = false; 
-					TaskManager.IsShowInteruptGUI = false;
-				}
-            }
-            GUI.EndGroup();
-        }
-
-        #endregion
-    }
-
-    void OnApplicationQuit()
-    {
-        Mz_SaveData.Save();
     }
 
     public virtual void OnDispose() { }

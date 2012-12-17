@@ -166,9 +166,9 @@ public class HouseBeh : BuildingBeh {
 		BuildingBeh.House_Instances.Remove(this);
 	}
 
-	protected override void OnMouseDown ()
+	protected override void OnTouchDown ()
 	{
-		base.OnMouseDown ();
+		base.OnTouchDown ();
 		
 		stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
 	}

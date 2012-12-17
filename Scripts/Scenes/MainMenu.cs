@@ -29,6 +29,7 @@ public class MainMenu : Mz_BaseScene
     private Rect loadGameButton_rect = new Rect(75, 140, 150, 60);
     private Rect thirdButton_rect = new Rect(75, 240, 150, 60);
     private Rect fourthButton_rect = new Rect(75, 340, 150, 60);
+    private Rect fifthButton_rect;
     //<@-- New game data fields.
     float newGameGroup_width = 400f , newGameGroupHeight = 300f;
     Rect midCenterWindowGroup_rect;
@@ -54,13 +55,15 @@ public class MainMenu : Mz_BaseScene
 
     #endregion
     
+	private Mz_SaveData saveData_Obj;
 
     // Use this for initialization
 	protected override void Initializing ()
 	{
 		base.Initializing ();
-        StartCoroutine(this.InitializeAudio());
 
+        StartCoroutine(this.InitializeAudio());
+		StartCoroutine(this.CreateSaveData_Obj());
         NewPlayer_Event += MessageManager.Handle_MainMenu_NewPlayer_Event;
 
         player_1 = PlayerPrefs.GetString(1 + ":" + "username");
@@ -76,6 +79,9 @@ public class MainMenu : Mz_BaseScene
         usernameTextInput_rect = new Rect((midCenterWindowGroup_rect.width / 2) - 150, 100, 300, 60);
         startButton_rect = new Rect(30, 200, 150, 60);
         cancelButton_rect = new Rect(newGameGroup_width - 180, 200, 150, 60);
+
+        fifthButton_rect = fourthButton_rect;
+        fifthButton_rect.y += 100;
 
 
         //mainMenuGroup_rect.width = mainMenuGroup_rect.width * Mz_OnGUIManager.Extend_heightScale;
@@ -104,7 +110,15 @@ public class MainMenu : Mz_BaseScene
         yield return null;
     }
 
-    protected override void OnGUI()
+	IEnumerator CreateSaveData_Obj ()
+	{
+		if(saveData_Obj == null)
+			saveData_Obj = new Mz_SaveData();
+
+		yield return null;
+	}
+
+    private void OnGUI()
     {
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width/Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
 
@@ -159,8 +173,6 @@ public class MainMenu : Mz_BaseScene
             }
             GUI.EndGroup();
         }
-		
-		base.OnGUI();
     }
 
     private void DrawMainMenuWindow()
@@ -179,6 +191,9 @@ public class MainMenu : Mz_BaseScene
             }
             else if (GUI.Button(fourthButton_rect, "About", standard_Skin.button)) { 
             
+            }
+            else if (GUI.Button(fifthButton_rect, "Exit", standard_Skin.button)) {
+                Application.Quit();
             }
         }
         GUI.EndGroup();
@@ -354,7 +369,7 @@ public class MainMenu : Mz_BaseScene
                     if (player_1 != string.Empty)
                     {
 						Mz_StorageManagement.SaveSlot = 1;
-                        this.LoadDataToSaveStorage();
+                        this.saveData_Obj.Load();
 						this.LoadSceneTarget();
                     }
                 }
@@ -365,7 +380,7 @@ public class MainMenu : Mz_BaseScene
                     if (player_2 != string.Empty)
                     {
 						Mz_StorageManagement.SaveSlot = 2;
-                        this.LoadDataToSaveStorage();
+						this.saveData_Obj.Load();
 						this.LoadSceneTarget();
                     }
                 }
@@ -376,7 +391,7 @@ public class MainMenu : Mz_BaseScene
                     if (player_3 != string.Empty)
                     {
 						Mz_StorageManagement.SaveSlot = 3;
-                        this.LoadDataToSaveStorage();
+						this.saveData_Obj.Load();
 						this.LoadSceneTarget();
                     }
                 }
@@ -398,10 +413,15 @@ public class MainMenu : Mz_BaseScene
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfArmor, 10);
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfWeapon, 10);
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold, 3000);
+		
+		//<@-- Mission data.
+		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
+		PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, new bool[8]);
 
+		//<@-- Building area state data.
         for (int i = 8; i < StageManager.buildingArea_Objs.Count; i++)
             PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + i, 0);
-
+		//<@-- Town center level.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);		
 		
 		//<!--- House instance data. --->>
@@ -438,7 +458,7 @@ public class MainMenu : Mz_BaseScene
 		
 		#endregion 
 
-        this.LoadDataToSaveStorage();
+		saveData_Obj.Load();
 		this.LoadSceneTarget();
     }
     private void LoadSceneTarget()
@@ -448,22 +468,5 @@ public class MainMenu : Mz_BaseScene
             Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.Town.ToString();
             Application.LoadLevelAsync(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
         }
-    }
-
-    private void LoadDataToSaveStorage()
-    {
-		Mz_StorageManagement.Username = PlayerPrefs.GetString(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_username);
-		StoreHouse.SumOfFood = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood);
-		StoreHouse.SumOfWood = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood);
-		StoreHouse.SumOfStone = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone);
-		StoreHouse.SumOfCopper = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_SUMOFCOPPER);
-		StoreHouse.sumOfArmor = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfArmor);
-		StoreHouse.sumOfWeapon = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfWeapon);
-		StoreHouse.sumOfGold = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold);
-		BarracksBeh.AmountOfSpearman = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_SPEARMAN, 0);
-		BarracksBeh.AmountOfHapaspist = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HAPASPIST, 0);
-		BarracksBeh.AmountOfHoplite = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HOPLITE, 0);
-
-        Debug.Log("Load storage data to static variable complete.");
     }
 }

@@ -9,7 +9,7 @@ public class NotificationManager : MonoBehaviour {
     protected Texture2D message_icon;
     protected Texture2D questAdvisor_icon;
 	
-    protected GUIStyle noticeButton_style;
+    protected GUIStyle NoticeButton_style;
 	protected GUIStyle noticeMessageContent_boxStyle;
 	protected GUIStyle completeSessionMessage_buttonStyle;
 
@@ -21,7 +21,7 @@ public class NotificationManager : MonoBehaviour {
 
     protected TaskManager taskManager;
 	protected MessageDataStore messageDataStore;
-
+    protected MissionMassageDataStore questMessageData;
 
 
     void Awake()
@@ -29,7 +29,8 @@ public class NotificationManager : MonoBehaviour {
         taskManager = this.gameObject.GetComponent<TaskManager>();
 		
 		messageDataStore = new MessageDataStore();
-        messageDataStore.list_questBeh.Add(new QuestBeh() { QuestName = "" });
+        questMessageData = new MissionMassageDataStore();
+        //messageDataStore.list_questBeh.Add(new QuestBeh() { QuestName = "" });
 
         noticeMessageBox_img = Resources.Load(TaskManager.PathOfMainGUI + "GUI_box", typeof(Texture2D)) as Texture2D;
         quest_icon = Resources.Load(TaskManager.PathOfMainGUI + "Quest_icon", typeof(Texture2D)) as Texture2D;
@@ -39,14 +40,13 @@ public class NotificationManager : MonoBehaviour {
         drawAdvisorRect = new Rect(0, (taskManager.standardWindow_rect.height / 2) - 100, 200 * Mz_OnGUIManager.Extend_heightScale, 200);
         drawNoticeTopicRect = new Rect(225 * Mz_OnGUIManager.Extend_heightScale, 40, 400 * Mz_OnGUIManager.Extend_heightScale, 40);
 		drawNoticeMessageContentRect = new Rect(190 * Mz_OnGUIManager.Extend_heightScale, 90, 500 * Mz_OnGUIManager.Extend_heightScale, 300);
-		completeSessionMessage_Rect = new Rect(190 * Mz_OnGUIManager.Extend_heightScale, 440, 180 * Mz_OnGUIManager.Extend_heightScale, 40);
+		completeSessionMessage_Rect = new Rect(190 * Mz_OnGUIManager.Extend_heightScale, 440, 200 * Mz_OnGUIManager.Extend_heightScale, 40);
 		
-        if (noticeButton_style == null)
-        {
-            noticeButton_style = new GUIStyle(taskManager.taskbarUI_Skin.button);
-            noticeButton_style.normal.textColor = Color.red;
-            noticeButton_style.alignment = TextAnchor.LowerCenter;
-            noticeButton_style.imagePosition = ImagePosition.ImageAbove;
+        if (NoticeButton_style == null) {
+            NoticeButton_style = new GUIStyle(taskManager.taskbarUI_Skin.button);
+            NoticeButton_style.normal.textColor = Color.white;
+            NoticeButton_style.alignment = TextAnchor.LowerCenter;
+            NoticeButton_style.imagePosition = ImagePosition.ImageAbove;
         }
 
 		if(noticeMessageContent_boxStyle == null) {
@@ -58,7 +58,7 @@ public class NotificationManager : MonoBehaviour {
 			noticeMessageContent_boxStyle.fontSize = 16;
 			noticeMessageContent_boxStyle.richText = true;
             noticeMessageContent_boxStyle.contentOffset = new Vector2(10, 20);
-            noticeMessageContent_boxStyle.normal.textColor = Color.grey;
+            noticeMessageContent_boxStyle.normal.textColor = Color.white;
 		}
 
 		if(completeSessionMessage_buttonStyle == null) {
@@ -70,13 +70,11 @@ public class NotificationManager : MonoBehaviour {
 		}
     }
 
-	// Use this for initialization
-	void Start () {
+    internal virtual void ActiveBeh_NoticeButton() {
+        NoticeButton_style.normal.textColor = Color.red;
+    }
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	internal virtual void UnActive_NoticeButton() {
+		NoticeButton_style.normal.textColor = Color.white;
 	}
 }

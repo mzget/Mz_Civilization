@@ -391,14 +391,14 @@ public class BuildingBeh : Base_ObjectBeh {
 	/// <summary>
 	/// Raises the mouse down event.
 	/// </summary>
-    protected override void OnMouseDown()
+    protected override void OnTouchDown()
     {
 		if(TaskManager.IsShowInteruptGUI == false) {
             _IsShowInterface = true;
             TaskManager.IsShowInteruptGUI = true;
         }
 
-        base.OnMouseDown();
+        base.OnTouchDown();
     }
 
 	/// <summary>

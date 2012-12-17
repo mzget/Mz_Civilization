@@ -77,8 +77,12 @@ public class BuildingArea : Base_ObjectBeh
 	}
 	
 	// Use this for initialization
-	void Start () 
+	IEnumerator Start () 
 	{
+		while (StageManager._StageInitialized == false || TaskManager._TaskbarInitialized == false) {
+            yield return null;
+		}
+		
         stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         StartCoroutine(this.LoadTextureResource());
         this.InitializeGUI();
@@ -86,8 +90,6 @@ public class BuildingArea : Base_ObjectBeh
         if(areaState == AreaState.UnActive) {
             Sprite.frameIndex = 4;
 			Sprite.tintColor = Color.gray;
-			
-            return;
         }
 
         //<!--- Static building type.
@@ -181,7 +183,7 @@ public class BuildingArea : Base_ObjectBeh
     
     #region <!-- OnMouse Event.
 	
-    protected override void OnMouseDown()
+    protected override void OnTouchDown()
     {
         if(areaState == AreaState.Active) {
 		    if(TaskManager.IsShowInteruptGUI == false) {
@@ -196,7 +198,7 @@ public class BuildingArea : Base_ObjectBeh
             }
         }
 
-        base.OnMouseDown();
+        base.OnTouchDown();
     }
 
     #endregion

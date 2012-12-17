@@ -9,15 +9,14 @@ public class MessageManager : NotificationManager {
 
 
 	// Use this for initialization
-    void Start()
-    {
+    void Start() {
 
 	}
 
     internal static void Handle_MainMenu_NewPlayer_Event(object sender, System.EventArgs e)
     {
+		Debug.Log("MessageManager :: Handle_MainMenu_NewPlayer_Event");
         CurrentMessageManagerState = MessageManager.MessageManagetStateBeh.drawNewPlayerMessage;
-        Debug.Log("MessageManager :: Handle_MainMenu_NewPlayer_Event");
     }
 	
 	// Update is called once per frame
@@ -25,14 +24,22 @@ public class MessageManager : NotificationManager {
 		
 	}
 
+
+    internal void InitializeMessageMechanism()
+    {
+        CurrentMessageManagerState = MessageManagetStateBeh.drawActivity;
+
+        if (messageDataStore.currentMessageTopic == string.Empty) {
+            messageDataStore.currentMessageTopic = MessageDataStore.NULL_MESSAGE_TOPIC;
+        } 
+    }
+
 	void OnGUI ()
 	{
 		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (1, Screen.height / Main.FixedGameHeight, 1));
 
 		if (CurrentMessageManagerState == MessageManagetStateBeh.drawActivity) {
-			taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, this.DrawMessageListsWindow, 
-                new GUIContent("Message"), taskManager.taskbarUI_Skin.window);
-
+            this.DrawMessageListsWindow();
             TaskManager.IsShowInteruptGUI = true;
 		}
         else if (CurrentMessageManagerState == MessageManagetStateBeh.drawNewPlayerMessage)
@@ -52,42 +59,47 @@ public class MessageManager : NotificationManager {
 		GUI.Box(base.drawNoticeMessageContentRect, base.messageDataStore.newPlayerGreetingMessage, base.noticeMessageContent_boxStyle);
 
 		if(GUI.Button(base.completeSessionMessage_Rect, "The first mission", base.completeSessionMessage_buttonStyle)) {
-			CloseGUIWindow();
 			if (base.taskManager.questManager.currentQuestManagerStateBeh == QuestManager.QuestManagerStateBeh.none) {
 				taskManager.MoveOutLeftSidebar (TaskManager.DISPLAY_QUEST_ACTIVITY);
+                QuestManager.CurrentMissionTopic_ID = 1;
+                taskManager.questManager.ActiveBeh_NoticeButton();
 			}
+			CloseGUIWindow();
 		}
     }
 
-	internal void DrawGUI_MessageIcon ()
+	internal void DrawGUI_MessageIcon()
 	{
 		GUI.enabled = !TaskManager.IsShowInteruptGUI ? true : false;
 		{
-			if (GUI.Button (taskManager.notificationRect_1,new GUIContent("Message",taskManager.messageFormSystem_icon), noticeButton_style)) {
+			if (GUI.Button (taskManager.notificationRect_1,new GUIContent("Message",taskManager.messageFormSystem_icon), NoticeButton_style)) {
 				taskManager.MoveOutLeftSidebar (TaskManager.DISPLAY_MESSAGE_ACTIVITY);
 			}
 		}
 		GUI.enabled = true;
 	}
 
-	void DrawMessageListsWindow (int id)
-	{
-		//<!-- Exit Button.
-		if (GUI.Button(taskManager.exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskManager.taskbarUI_Skin.customStyles[6]))
-		{
-			CloseGUIWindow();
+	void DrawMessageListsWindow ()
+    {
+        GUI.BeginGroup(taskManager.standardWindow_rect, "Message", taskManager.taskbarUI_Skin.window);
+        {
+            //<!-- Exit Button.
+            if (GUI.Button(taskManager.exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskManager.taskbarUI_Skin.customStyles[6]))
+            {
+                CloseGUIWindow();
+            }
+
+            GUI.Box(drawMessageRect, taskManager.messageFormSystem_icon);
+            GUI.DrawTexture(drawAdvisorRect, questAdvisor_icon, ScaleMode.ScaleToFit);
+            GUI.Box(base.drawNoticeTopicRect, base.messageDataStore.currentMessageTopic, base.taskManager.taskbarUI_Skin.box);
+            GUI.Box(base.drawNoticeMessageContentRect, base.messageDataStore.currentMessage, base.noticeMessageContent_boxStyle);
         }
-		
-		GUI.Box(drawMessageRect, taskManager.messageFormSystem_icon);
-		GUI.DrawTexture(drawAdvisorRect, questAdvisor_icon, ScaleMode.ScaleToFit);
-		GUI.Box(base.drawNoticeTopicRect, MessageDataStore.NEW_PLAYER_GREETING_MESSAGE_TOPIC, base.taskManager.taskbarUI_Skin.box);
-		GUI.Box(base.drawNoticeMessageContentRect, base.messageDataStore.newPlayerGreetingMessage, base.noticeMessageContent_boxStyle);
-	}
+        GUI.EndGroup();
+    }
 
 	void CloseGUIWindow ()
 	{
 		CurrentMessageManagerState = MessageManagetStateBeh.none;
 		taskManager.MoveInLeftSidebar();
 	}
-
 }

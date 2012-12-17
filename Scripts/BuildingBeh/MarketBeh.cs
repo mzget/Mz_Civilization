@@ -68,7 +68,7 @@ public class MarketBeh : BuildingBeh {
         }
     }
 	
-    public static List<GameMaterial> tradingMaterial_List = new List<GameMaterial>();
+    public static List<GameMaterialData> tradingMaterial_List = new List<GameMaterialData>();
     public List<CaravanBeh> caravanList;
 	public List<CaravanBeh> idleCaravanList;
 	public GroupCaravan caravan_group; 
@@ -385,9 +385,9 @@ public class MarketBeh : BuildingBeh {
 		}
     }
 
-	protected override void OnMouseDown ()
+	protected override void OnTouchDown ()
 	{
-		base.OnMouseDown ();
+		base.OnTouchDown ();
 		
 		stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
 	}

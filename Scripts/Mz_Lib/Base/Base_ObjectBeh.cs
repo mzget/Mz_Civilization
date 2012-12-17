@@ -10,7 +10,7 @@ public class Base_ObjectBeh : MonoBehaviour {
 //        Debug.Log(this.name + " : update");
 
         if (_OnTouchBegin && _OnTouchRelease) {
-            OnMouseDown();
+            OnTouchDown();
         }
 	}
 
@@ -19,16 +19,19 @@ public class Base_ObjectBeh : MonoBehaviour {
         if (_OnTouchBegin == false)
             _OnTouchBegin = true;
     }
-    protected virtual void OnMouseDown()
+    protected virtual void OnTouchDown()
     {
+		//Debug.Log("Class : Base_ObjectBeh." + "OnTouchDown");
+
         /// do something.
 		
         _OnTouchBegin = false;
         _OnTouchRelease = false;
+//		_OnTouchMove = false;
     }
     protected virtual void OnTouchEnded()
     {
-        if (_OnTouchRelease == false)
+        if (_OnTouchRelease == false && _OnTouchBegin)
             _OnTouchRelease = true;
     }
 }
