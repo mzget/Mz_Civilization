@@ -81,9 +81,6 @@ public class AcademyBeh : BuildingBeh {
         base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
-
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
     }
 
     #region <!-- Events Handle.
@@ -98,9 +95,9 @@ public class AcademyBeh : BuildingBeh {
     {
         base.CreateWindow(windowID);
 
-        if (base.notificationText == "")
-            base.notificationText = base.currentBuildingStatus.ToString();
-        GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
+        //if (base.notificationText == "")
+        //    base.notificationText = base.currentBuildingStatus.ToString();
+        GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
 			scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height), false, false);
@@ -124,13 +121,13 @@ public class AcademyBeh : BuildingBeh {
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
                         GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
-                            stageManager.taskManager.food_icon), standard_Skin.box);
+                            sceneController.taskManager.food_icon), standard_Skin.box);
                         GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
-                            stageManager.taskManager.wood_icon), standard_Skin.box);
+                            sceneController.taskManager.wood_icon), standard_Skin.box);
                         GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
-                            stageManager.taskManager.gold_icon), standard_Skin.box);
+                            sceneController.taskManager.gold_icon), standard_Skin.box);
                         GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
-                            stageManager.taskManager.employee_icon), standard_Skin.box);
+                            sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
                 }
@@ -140,13 +137,11 @@ public class AcademyBeh : BuildingBeh {
 
                 #region <!--- Upgrade Button mechanichm.
 
-                bool enableUpgrade = false;
-                if (base.CheckingCanUpgradeLevel() && base.CheckingEnoughUpgradeResource(RequireResource[Level]))
-                    enableUpgrade = true;
-
-                GUI.enabled = enableUpgrade;
-                if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
+                GUI.enabled = base.CheckingCanUpgradeLevel() && base.CheckingEnoughUpgradeResource(RequireResource[Level]) ? true : false;
+                if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade"), standard_Skin.button))
                 {
+                    sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
                     GameResource.UsedResource(RequireResource[Level]);
 
                     base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
@@ -160,7 +155,7 @@ public class AcademyBeh : BuildingBeh {
 				#region <!--- Destruction button.
 				
 		        GUI.enabled = this.CheckingCanDestructionBuilding();
-		        if (GUI.Button(destruction_Button_Rect, new GUIContent("Destruct")))
+		        if (GUI.Button(destruction_Button_Rect, new GUIContent("Destruct"), standard_Skin.button))
 		        {
 		            this.currentBuildingStatus = BuildingStatus.OnDestructionProcess;
                     base.DestructionBuilding();

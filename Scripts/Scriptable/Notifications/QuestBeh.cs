@@ -9,7 +9,7 @@ public class QuestBeh {
 	// Rewards.
 
 	public string QuestName;
-	public string QuestObjectives;
+	public string QuestDescription;
 	public bool _IsComplete = false;
     public List<GameMaterialData> reward;
     //public Texture2D reward_2 = null;

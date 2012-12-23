@@ -11,7 +11,7 @@ public class BuildingBeh : Base_ObjectBeh {
 
 	//<!-- Font, Skin, Styles.
     public Font showG_font;
-    protected Font ubuntu_font;
+    public Font ubuntu_font;
     public GUISkin standard_Skin;
     public GUISkin building_Skin;
     public GUISkin taskbar_Skin;
@@ -19,10 +19,11 @@ public class BuildingBeh : Base_ObjectBeh {
     protected GUIStyle status_style;
     protected GUIStyle closeButton_Style;
 	protected GUIStyle buildingWindowStyle;
+    protected GUIStyle notification_Style;
     //<!-- Building Icon.
     protected Texture2D buildingIcon_Texture;
 	
-    public StageManager stageManager;
+    public StageManager sceneController;
 	protected GameObject processbar_Obj_parent;
     private OTSprite processBarBackground;
     private OTSprite processBar_Scolling;
@@ -83,11 +84,12 @@ public class BuildingBeh : Base_ObjectBeh {
     protected Rect nextJob_Rect;
     protected Rect upgrade_Button_Rect = new Rect(25, 174, 120, 32);
     protected Rect destruction_Button_Rect = new Rect(25, 260, 120, 32);
-	
+	protected string notificationText = string.Empty;
+	protected DateTime startingContruction_datetime;
 
 
 
-    public static bool CheckingCanCreateBuilding() {
+    public static bool CheckingOnBuildingList() {
         if (onBuilding_Obj.Count < 2)
             return true;
         else
@@ -110,8 +112,6 @@ public class BuildingBeh : Base_ObjectBeh {
 	public class NoEnoughResourceNotificationArg : EventArgs {
 		public string notification_args { get; set; }
 	}
-	
-	protected string notificationText = ""; 
 	protected event EventHandler<NoEnoughResourceNotificationArg> NotEnoughResource_Notification_event;
 	private void OnCheckingResource(NoEnoughResourceNotificationArg e) {
 		if(NotEnoughResource_Notification_event != null)
@@ -160,8 +160,8 @@ public class BuildingBeh : Base_ObjectBeh {
 
     protected virtual void Awake()
     {
-        if (stageManager == null)
-            stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        if (sceneController == null)
+            sceneController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
 
         if (standard_Skin == null)
             standard_Skin = Resources.Load("GUISkins/Standard_Skin", typeof(GUISkin)) as GUISkin;
@@ -192,6 +192,9 @@ public class BuildingBeh : Base_ObjectBeh {
 		buildingWindowStyle = new GUIStyle(standard_Skin.window);
 		buildingWindowStyle.font = building_Skin.window.font;
 		buildingWindowStyle.fontSize = building_Skin.window.fontSize;
+
+        notification_Style = new GUIStyle(standard_Skin.box);
+        notification_Style.normal.textColor = Color.red;
 
         windowRect = new Rect((Main.FixedGameWidth * 3 / 4) / 2 - 350, Main.FixedGameHeight / 2 - 250, 700, 500);
         background_Rect = new Rect(0, 0, windowRect.width - 16, 420);
@@ -329,7 +332,8 @@ public class BuildingBeh : Base_ObjectBeh {
                 scaleData.Add("oncompleteparams", this);
                 scaleData.Add("oncompletetarget", this.gameObject);
             }
-
+			
+			startingContruction_datetime = DateTime.UtcNow;
             iTween.ValueTo(this.gameObject, scaleData);
         }
         else
@@ -345,6 +349,11 @@ public class BuildingBeh : Base_ObjectBeh {
         this.Level += 1;
         buildingLevel_textmesh.text = this.Level.ToString();
         onBuilding_Obj.Remove(obj);
+
+        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none) {
+            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
+            notificationText = string.Empty;
+        }
 	}
 	
 	protected bool CheckingCanDestructionBuilding()
@@ -388,6 +397,23 @@ public class BuildingBeh : Base_ObjectBeh {
         Destroy(this.processbar_Obj_parent.gameObject);
 	}
 	
+	protected override void Update ()
+	{
+		base.Update ();
+
+        if (currentBuildingStatus == BuildingStatus.onBuildingProcess || currentBuildingStatus == BuildingStatus.onUpgradeProcess)
+        {
+            TimeSpan elapsedTime = DateTime.UtcNow - startingContruction_datetime;
+            TimeSpan constructionTime = TimeSpan.FromSeconds(buildingTimeData.arrBuildingTimesData[this.level]);
+            TimeSpan contructionRemainingTime = constructionTime - elapsedTime;
+            string remainingTime = new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss");
+            if (elapsedTime < constructionTime)
+                notificationText = currentBuildingStatus + " :: Time remain " + remainingTime + " m.";
+            else
+                notificationText = string.Empty;
+        }
+	}
+	
 	/// <summary>
 	/// Raises the mouse down event.
 	/// </summary>
@@ -423,6 +449,9 @@ public class BuildingBeh : Base_ObjectBeh {
     }
 	
     protected void CloseGUIWindow() {
+        sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
+        notificationText = string.Empty;
         _IsShowInterface = false;
         TaskManager.IsShowInteruptGUI = false;
     }

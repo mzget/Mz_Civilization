@@ -41,7 +41,7 @@ public class TaskManager : MonoBehaviour {
     //public NotificationManager notificationManager;
     public MessageManager messageManager;
     public ForeignManager foreignManager;
-    public QuestManager questManager;
+    public QuestSystemManager questManager;
 
     public GUISkin taskbarUI_Skin;
     public GUIStyle left_button_Style;
@@ -68,7 +68,9 @@ public class TaskManager : MonoBehaviour {
 
     public Texture2D marketTradingIcon;
 
-    public Texture2D elder_advisor;
+    public Texture2D advisor_villageElder;
+	internal Texture2D newQuestAdvisor_img;
+	internal Texture2D completeQuestAdvisor_img;
 	public Texture2D messageFormSystem_icon;
     //@!-- Troops units.
     public Texture2D spearmanUnitIcon;
@@ -145,8 +147,8 @@ public class TaskManager : MonoBehaviour {
 		gamecontroller.AddComponent<MessageManager>();
         messageManager = gamecontroller.GetComponent<MessageManager>();
 		
-		gamecontroller.AddComponent<QuestManager>();
-        questManager = gamecontroller.GetComponent<QuestManager>();
+		gamecontroller.AddComponent<QuestSystemManager>();
+        questManager = gamecontroller.GetComponent<QuestSystemManager>();
 		
 		_TaskbarInitialized = true;
     }
@@ -219,7 +221,10 @@ public class TaskManager : MonoBehaviour {
 
         marketTradingIcon = Resources.Load(PathOfMainGUI + "Market", typeof(Texture2D)) as Texture2D;
 
-        elder_advisor = Resources.Load(Advisor_ResourcePath + "VillageElder", typeof(Texture2D)) as Texture2D;
+		advisor_villageElder = Resources.Load(Advisor_ResourcePath + "VillageElder_newQuest", typeof(Texture2D)) as Texture2D;
+		newQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_newQuest", typeof(Texture2D)) as Texture2D;
+		completeQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_finished", typeof(Texture2D)) as Texture2D;
+
 		messageFormSystem_icon = Resources.Load(PathOfMainGUI + "MessageIcon", typeof(Texture2D)) as Texture2D;
         //<!-- Load troop icon.
         spearmanUnitIcon = Resources.Load(PathOf_TroopIcons + "Spearman", typeof(Texture2D)) as Texture2D;
@@ -336,11 +341,11 @@ public class TaskManager : MonoBehaviour {
     }
 
     private void DisplayQuestActivity() {
-        questManager.InitializeMessageMechanism(QuestManager.QuestManagerStateBeh.DrawMissionActivity);
+        questManager.InitializeMessageMechanism(QuestSystemManager.QuestManagerStateBeh.DrawMissionActivity);
     }
 
 	private void DisplayMissionCompleteActivity() {
-		questManager.InitializeMessageMechanism(QuestManager.QuestManagerStateBeh.DrawCompleteMissionActivity);
+		questManager.InitializeMessageMechanism(QuestSystemManager.QuestManagerStateBeh.DrawCompleteMissionActivity);
 	}
 
     private void DisplayForeignActivity() {

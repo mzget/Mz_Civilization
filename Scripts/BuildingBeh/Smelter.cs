@@ -55,7 +55,7 @@ public class Smelter : BuildingBeh {
     void Start() {
 		this.InitializeTexturesResource();
 		
-		base.stageManager.resourceCycle_Event += this.HaveResourceCycle_Event;
+		base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
 	}
 	
 	protected override void InitializeTexturesResource ()
@@ -109,7 +109,7 @@ public class Smelter : BuildingBeh {
 	{
 		base.ClearStorageData ();
 		
-		stageManager.resourceCycle_Event -= HaveResourceCycle_Event;
+		sceneController.resourceCycle_Event -= HaveResourceCycle_Event;
 		BuildingBeh.SmelterInstance.Remove(this);
 	}
 	
@@ -128,7 +128,7 @@ public class Smelter : BuildingBeh {
     {
         base.CreateWindow(windowID);
 
-        GUI.Box(new Rect(48, 24, 256, 48), base.currentBuildingStatus.ToString(), standard_Skin.box);
+        GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
             scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height));
@@ -152,15 +152,15 @@ public class Smelter : BuildingBeh {
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
                         GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
-                            base.stageManager.taskManager.food_icon), standard_Skin.box);
+                            base.sceneController.taskManager.food_icon), standard_Skin.box);
                         //GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
                         //    base.stageManager.taskbarManager.wood_icon), standard_Skin.box);
                         GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
-                            base.stageManager.taskManager.stone_icon), standard_Skin.box);
+                            base.sceneController.taskManager.stone_icon), standard_Skin.box);
                         GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
-                            base.stageManager.taskManager.gold_icon), standard_Skin.box);
+                            base.sceneController.taskManager.gold_icon), standard_Skin.box);
                         GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
-                            base.stageManager.taskManager.employee_icon), standard_Skin.box);
+                            base.sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
                 }
@@ -170,13 +170,7 @@ public class Smelter : BuildingBeh {
 
                 #region <!--- Upgrade Button mechanichm.
 
-                bool enableUpgrade = false;
-                if (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]))
-                {
-                    enableUpgrade = true;
-                }
-
-                GUI.enabled = enableUpgrade;
+				GUI.enabled = (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level])) ? true:false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
                     GameResource.UsedResource(RequireResource[Level]);

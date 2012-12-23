@@ -71,7 +71,7 @@ public class HouseBeh : BuildingBeh {
 		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResourceNotification_event;
 		
 		if(_IsAddEvent == false) {
-			stageManager.dayCycle_Event += Handle_dayCycle_Event;
+			sceneController.dayCycle_Event += Handle_dayCycle_Event;
 			_IsAddEvent = true;
 		}
     }
@@ -146,12 +146,12 @@ public class HouseBeh : BuildingBeh {
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);
+        Destroy(base.processbar_Obj_parent);		
+		this.CheckingQuestComplete();
 
         if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
         {
             this.CalculationCurrentDweller();
-
             this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
         }
     }
@@ -166,21 +166,35 @@ public class HouseBeh : BuildingBeh {
 		BuildingBeh.House_Instances.Remove(this);
 	}
 
+	void CheckingQuestComplete ()
+	{
+		if(BuildingBeh.House_Instances.Count >= 2) {
+			if(QuestSystemManager.arr_isMissionComplete[3] == false) {
+				sceneController.taskManager.questManager.list_questBeh[3]._IsComplete = true;
+				QuestSystemManager.arr_isMissionComplete[3] = true;
+				
+				if (QuestSystemManager.CurrentMissionTopic_ID == 3) {
+					sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
+				}
+			}
+		}
+	}
+
 	protected override void OnTouchDown ()
 	{
 		base.OnTouchDown ();
 		
-		stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
+		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
 	}
 
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);
 
-        if(base.notificationText == "") {
-            base.notificationText = base.currentBuildingStatus.ToString();
-        }
-        GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
+        //if(base.notificationText == "") {
+        //    base.notificationText = base.currentBuildingStatus.ToString();
+        //}
+        GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 		
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
             scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height));
@@ -203,11 +217,11 @@ public class HouseBeh : BuildingBeh {
                         //<!-- Requirements Resource.
                         GUI.BeginGroup(update_requireResource_Rect);
                         {
-                            GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), stageManager.taskManager.food_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), stageManager.taskManager.wood_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), stageManager.taskManager.stone_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), stageManager.taskManager.gold_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Fifth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), stageManager.taskManager.employee_icon), standard_Skin.box);
+                            GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), sceneController.taskManager.food_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), sceneController.taskManager.wood_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), sceneController.taskManager.stone_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), sceneController.taskManager.gold_icon), standard_Skin.box);
+                            GUI.Box(GameResource.Fifth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), sceneController.taskManager.employee_icon), standard_Skin.box);
                         }
                         GUI.EndGroup();
                     }
@@ -223,18 +237,14 @@ public class HouseBeh : BuildingBeh {
 
                 #region <!--- Upgrade Button mechanichm.
 
-                bool enableUpgrade = false;
-                if (base.Level < RequireResource.Length && base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]))
-                    enableUpgrade = true;
-				
-                GUI.enabled = enableUpgrade;
+                GUI.enabled = base.Level < RequireResource.Length && base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
                     GameResource.UsedResource(RequireResource[Level]);
 
                     base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                     base.OnUpgradeProcess(this);
-                    base.CloseGUIWindow();                    
+                    base.CloseGUIWindow();
                 }
                 GUI.enabled = true;
 

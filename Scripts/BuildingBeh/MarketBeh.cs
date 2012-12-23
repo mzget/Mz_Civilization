@@ -72,7 +72,7 @@ public class MarketBeh : BuildingBeh {
     public List<CaravanBeh> caravanList;
 	public List<CaravanBeh> idleCaravanList;
 	public GroupCaravan caravan_group; 
-	public static int carryAbility = 32;
+	public const int carryAbility = 32;
 
     private GUIStyle goods_Label_style;
 	
@@ -119,7 +119,7 @@ public class MarketBeh : BuildingBeh {
         StartCoroutine(LoadtexturesResources());
 
         base.NotEnoughResource_Notification_event += MarketBeh_NotEnoughResourceNotification_event;
-        stageManager.dayCycle_Event += Handle_dayCycle_Event;
+        sceneController.dayCycle_Event += Handle_dayCycle_Event;
 		Handle_dayCycle_Event(this, System.EventArgs.Empty);
 		
         yield return 0;
@@ -186,22 +186,35 @@ public class MarketBeh : BuildingBeh {
         base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
+		this.CheckingQuestComplete();
 
         if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none) {
             caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
-            CheckingIdleCaravan();
+            this.CheckingIdleCaravan();
                 
             this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
         }
     }
 
     #endregion
+	
+	void CheckingQuestComplete ()
+	{		
+		if(QuestSystemManager.arr_isMissionComplete[5] == false) {
+			sceneController.taskManager.questManager.list_questBeh[5]._IsComplete = true;
+			QuestSystemManager.arr_isMissionComplete[5] = true;
+			
+			if (QuestSystemManager.CurrentMissionTopic_ID == 5) {
+				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
+			}
+		}
+	}
 
     protected override void ClearStorageData()
     {
         base.ClearStorageData();
 		
-		stageManager.dayCycle_Event -= this.Handle_dayCycle_Event;
+		sceneController.dayCycle_Event -= this.Handle_dayCycle_Event;
         base.NotEnoughResource_Notification_event -= this.MarketBeh_NotEnoughResourceNotification_event;
 
         BuildingBeh.MarketInstance = null;
@@ -222,10 +235,10 @@ public class MarketBeh : BuildingBeh {
 		float slot_1_used = 0;
 		float slot_2_used = 0;
 		if(var_a > 0) {
-			slot_1_used = var_a / carryAbility;
+			slot_1_used = (float)var_a / (float)carryAbility;
 		}	
 		if(var_b > 0) {
-			slot_2_used = var_b / carryAbility;
+			slot_2_used = (float)var_b / (float)carryAbility;
 		}
 		
 		usedCaravan = slot_1_used + slot_2_used;
@@ -257,146 +270,162 @@ public class MarketBeh : BuildingBeh {
     }
 	
 	public event System.EventHandler SendingCaravanEvent;
-    internal void Checking_HaveSendCaravanEvent()
+    internal void CaravanArriveToVillage(AICities returnFrom)
     {
-        if (SendingCaravanEvent == null)
-        {
-            TradingMechanism();
+        if (returnFrom == StageManager.list_AICity[0]) {
+            _IsGreekTrading = false;
         }
-        else return;
     }
 
     private void TradingMechanism()
-    {        		
-		if(caravanList.Count != 0) 
-		{
-			#region <!-- greek trading mechanism.
-			
-			if(_IsGreekTrading == true)
-			{
-				#region <!-- Sell Copper, Stoneblock.
-				
-				if(numberOf_CopperIngots > 0 || numberOf_StoneBlocks > 0)
-				{
-					int UsedCaravan = Mathf.CeilToInt(this.CheckUsedCaravan(numberOf_CopperIngots, numberOf_StoneBlocks));
-					int getGold = this.CheckCollectingGold(numberOf_CopperIngots, pricePerUnitOf_CopperIngots, numberOf_StoneBlocks, pricePerUnitOf_StoneBlocks);
-					
+    {
+        if (caravanList.Count != 0)
+        {
+            #region <!-- greek trading mechanism.
+
+            if (_IsGreekTrading == true)
+            {
+                #region <!-- Sell Copper, Stoneblock.
+
+                if (numberOf_CopperIngots > 0 || numberOf_StoneBlocks > 0)
+                {
+                    int UsedCaravan = Mathf.CeilToInt(this.CheckUsedCaravan(numberOf_CopperIngots, numberOf_StoneBlocks));
+                    int getGold = this.CheckCollectingGold(numberOf_CopperIngots, pricePerUnitOf_CopperIngots, numberOf_StoneBlocks, pricePerUnitOf_StoneBlocks);
+
                     if (idleCaravanList.Count >= UsedCaravan)
                     {
-						caravan_group = new GroupCaravan() { MarketInstance = this, };
+                        caravan_group = new GroupCaravan() { MarketInstance = this, TargetCity = StageManager.list_AICity[0], };
 
-                        for (int i = 0; i < UsedCaravan; i++) {
+                        for (int i = 0; i < UsedCaravan; i++)
+                        {
+                            /// Add IdleCaravan to GroupCaravan.
                             caravan_group.GroupList.Add(idleCaravanList[0]);
+                            /// Remove Idle Caravan.
                             idleCaravanList.RemoveAt(0);
                         }
-						//<!-- Remove resource form storehouse.
-						StoreHouse.Remove_sumOfCopper(numberOf_CopperIngots);
-						StoreHouse.Remove_sumOfStone(numberOf_StoneBlocks);
-						//<!-- Sending caravan.
-						caravan_group.TravelingCaravan(3, getGold);
-                        //<!-- Add material to trading list.
-                        if (numberOf_StoneBlocks > 0) {
-                            tradingMaterial_List.Add(stageManager.gameMaterials[2]);
-							caravan_group.tradingMaterial.Add(stageManager.gameMaterials[2]);
-						}
-                        if (numberOf_CopperIngots > 0) {
-                            tradingMaterial_List.Add(stageManager.gameMaterials[3]);
-							caravan_group.tradingMaterial.Add(stageManager.gameMaterials[3]);
-						}
+                        //<!-- Remove resource form storehouse.
+                        StoreHouse.Remove_sumOfCopper(numberOf_CopperIngots);
+                        StoreHouse.Remove_sumOfStone(numberOf_StoneBlocks);
+                        //<!-- Sending caravan.
+                        caravan_group.TravelingCaravan(3, getGold);
+						///<@-- Cutting Trading session.
+//						_IsGreekTrading = false;
 						
+                        //<!-- Add material to trading list.
+                        if (numberOf_StoneBlocks > 0)
+                        {
+                            tradingMaterial_List.Add(sceneController.gameMaterials[2]);
+                            caravan_group.tradingMaterial.Add(sceneController.gameMaterials[2]);
+                        }
+                        if (numberOf_CopperIngots > 0)
+                        {
+                            tradingMaterial_List.Add(sceneController.gameMaterials[3]);
+                            caravan_group.tradingMaterial.Add(sceneController.gameMaterials[3]);
+                        }
+
                         Debug.Log("Sending " + UsedCaravan + " Cavavan, " + "collect gold = " + getGold);
                     }
                     else
+                    {
                         _IsGreekTrading = false;
-				}
-				
-				#endregion
-				#region <@-- Buy Armor, Weapon.
-				
-				if(numberOf_Armor > 0 || numberOf_Weapon > 0) {
-					///<!-- Cash advance.
-					int collectGold = (numberOf_Armor * pricePerUnitOf_Armor) + (numberOf_Weapon * pricePerUnitOf_Weapon);
-					///<! Checking availabel gold.
-					if(StoreHouse.sumOfGold >= collectGold) {
-						///<!-- Paying.
-						StoreHouse.sumOfGold -= collectGold;
-			
-						/// Create Greek caraven  traveling to this town.
-						GreekCaravanBeh greekCaravan = new GreekCaravanBeh() { 
-							marketInstance = this,
-							goods = new GameResource() { Weapon = numberOf_Weapon, Armor = numberOf_Armor },
-						};
-						greekCaravan.Traveling();
-						
-						///<!-- Add material to trading list.
-						tradingMaterial_List.Add(stageManager.gameMaterials[4]);
-						tradingMaterial_List.Add(stageManager.gameMaterials[5]);
-						
-						Debug.Log("TradingMechanism :: " + "Paying GreekCaravan = " + collectGold);
-					}
-					else {
-						Debug.Log("TradingMechanism :: " + "Not enough gold! : collectGold = " + collectGold);
-					}
-				}
-				
-				#endregion
+                        Debug.LogWarning("idleCaravanList.Count < UsedCaravan");
+                    }
+                }
 
-				if(numberOf_StoneBlocks == 0 && numberOf_CopperIngots == 0 && numberOf_Armor == 0 && numberOf_Weapon == 0)
-					_IsGreekTrading = false;
-			}
-			Debug.Log("TradingMechanism :: return _IsGreekTrading == " + _IsGreekTrading);
-			
-			#endregion
-			
-			#region <!-- Persian Trading.
-			
-			if(_IsPersianTrading == true) 
-			{
-				if(numberOf_Food > 0 || numberOf_Wood > 0)
-				{
-					int UsedCaravan = Mathf.CeilToInt(this.CheckUsedCaravan(numberOf_Food, numberOf_Wood));
-					int getGold = this.CheckCollectingGold(numberOf_Food, pricePerUnitOf_Food, numberOf_Wood, pricePerUnitOf_Wood);
-					
+                #endregion
+                #region <@-- Buy Armor, Weapon.
+
+                if (numberOf_Armor > 0 || numberOf_Weapon > 0)
+                {
+                    ///<!-- Cash advance.
+                    int collectGold = (numberOf_Armor * pricePerUnitOf_Armor) + (numberOf_Weapon * pricePerUnitOf_Weapon);
+                    ///<! Checking availabel gold.
+                    if (StoreHouse.sumOfGold >= collectGold)
+                    {
+                        ///<!-- Paying.
+                        StoreHouse.sumOfGold -= collectGold;
+
+                        /// Create Greek caraven  traveling to this town.
+                        GreekCaravanBeh greekCaravan = new GreekCaravanBeh()
+                        {
+                            marketInstance = this,
+                            goods = new GameResource() { Weapon = numberOf_Weapon, Armor = numberOf_Armor },
+                        };
+                        greekCaravan.Traveling();
+
+                        ///<!-- Add material to trading list.
+                        tradingMaterial_List.Add(sceneController.gameMaterials[4]);
+                        tradingMaterial_List.Add(sceneController.gameMaterials[5]);
+
+                        Debug.Log("TradingMechanism :: " + "Paying GreekCaravan = " + collectGold);
+                    }
+                    else
+                    {
+                        Debug.Log("TradingMechanism :: " + "Not enough gold! : collectGold = " + collectGold);
+                    }
+                }
+
+                #endregion
+
+                if (numberOf_StoneBlocks == 0 && numberOf_CopperIngots == 0 && numberOf_Armor == 0 && numberOf_Weapon == 0)
+                    _IsGreekTrading = false;
+            }
+            Debug.Log("TradingMechanism :: return _IsGreekTrading == " + _IsGreekTrading);
+
+            #endregion
+
+            #region <!-- Persian Trading.
+
+            if (_IsPersianTrading == true)
+            {
+                if (numberOf_Food > 0 || numberOf_Wood > 0)
+                {
+                    int UsedCaravan = Mathf.CeilToInt(this.CheckUsedCaravan(numberOf_Food, numberOf_Wood));
+                    int getGold = this.CheckCollectingGold(numberOf_Food, pricePerUnitOf_Food, numberOf_Wood, pricePerUnitOf_Wood);
+
                     if (idleCaravanList.Count >= UsedCaravan)
                     {
-						caravan_group = new GroupCaravan() { MarketInstance = this };
-						
+                        caravan_group = new GroupCaravan() { MarketInstance = this };
+
                         for (int i = 0; i < UsedCaravan; i++)
                         {
                             caravan_group.GroupList.Add(idleCaravanList[0]);
                             idleCaravanList.RemoveAt(0);
                         }
-						//<!-- Remove resource form storehouse.
-						StoreHouse.Remove_sumOfFood(numberOf_Food);
-						StoreHouse.Remove_sumOfWood(numberOf_Wood);
-						//<!-- Sending caravan.
-						caravan_group.TravelingCaravan(6, getGold);
-						
+                        //<!-- Remove resource form storehouse.
+                        StoreHouse.Remove_sumOfFood(numberOf_Food);
+                        StoreHouse.Remove_sumOfWood(numberOf_Wood);
+                        //<!-- Sending caravan.
+                        caravan_group.TravelingCaravan(6, getGold);
+
                         Debug.Log("Sending " + UsedCaravan + " Cavavan, " + "collect gold = " + getGold);
                     }
                     else
                         _IsPersianTrading = false;
-				}
-				else
-					_IsPersianTrading = false;
-			}
-			
-			#endregion
-		}
+                }
+                else
+                    _IsPersianTrading = false;
+            }
+
+            #endregion
+        }
+        else {
+            Debug.LogWarning("caravanList.Count == 0");
+        }
     }
 
 	protected override void OnTouchDown ()
 	{
 		base.OnTouchDown ();
 		
-		stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
+		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
 	}
 
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);
 
-        GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
+        GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
             scrollPosition, new Rect(0, 0, base.background_Rect.width, base.background_Rect.height * 4), false, false);
@@ -431,10 +460,10 @@ public class MarketBeh : BuildingBeh {
                 //<!-- Requirements Resource.
                 GUI.BeginGroup(update_requireResource_Rect);
                 {
-                    GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.stageManager.taskManager.food_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.stageManager.taskManager.wood_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.stageManager.taskManager.gold_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), base.stageManager.taskManager.employee_icon), standard_Skin.box);
+                    GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.sceneController.taskManager.food_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.sceneController.taskManager.wood_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.sceneController.taskManager.gold_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), base.sceneController.taskManager.employee_icon), standard_Skin.box);
                 }
                 GUI.EndGroup();
             }
@@ -444,11 +473,7 @@ public class MarketBeh : BuildingBeh {
 
             #region <!--- Upgrade Button mechanichm.
 
-            bool enableUpgrade = false;
-            if (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]))
-                enableUpgrade = true;
-
-            GUI.enabled = enableUpgrade;
+            GUI.enabled = base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]) ? true : false;
             if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
             {
                 GameResource.UsedResource(RequireResource[Level]);
@@ -482,12 +507,12 @@ public class MarketBeh : BuildingBeh {
     private int numberOf_StoneBlocks = 0;
     private int numberOf_Armor = 0;
     private int numberOf_Weapon = 0;
-    public static bool _IsGreekTrading = false;
+    private bool _IsGreekTrading = false;
     private void DrawGreekTradeUI()
     {
         GUI.BeginGroup(new Rect(0, 1 * base.background_Rect.height, background_Rect.width, base.background_Rect.height), GUIContent.none, building_Skin.box);
         {
-            GUI.DrawTexture(base.imgIcon_Rect, stageManager.taskManager.GreekIcon_Texture);
+            GUI.DrawTexture(base.imgIcon_Rect, sceneController.taskManager.GreekIcon_Texture);
             GUI.Label(base.levelLable_Rect, "Greek", base.status_style);
 			
             #region <!-- Trade button.
@@ -496,8 +521,11 @@ public class MarketBeh : BuildingBeh {
             Rect stop_button_rect = new Rect(base.levelLable_Rect.x, trade_button_rect.y + trade_button_rect.height + 2, base.levelLable_Rect.width, base.levelLable_Rect.height);
 
             GUI.enabled = !_IsGreekTrading;
-            if (GUI.Button(trade_button_rect, "Trade"))
+            if (GUI.Button(trade_button_rect, "Trade", standard_Skin.button))
             {
+                sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+                sceneController.audioEffect.PlayOnecWithOutStop(sceneController.audioEffect.storageCart_clip);
+
                 if (numberOf_CopperIngots <= StoreHouse.SumOfCopper && numberOf_StoneBlocks <= StoreHouse.SumOfStone)
                 {
                     _IsGreekTrading = true;
@@ -505,16 +533,17 @@ public class MarketBeh : BuildingBeh {
                 }
             }
             GUI.enabled = true;
+
             GUI.enabled = _IsGreekTrading;
             if (GUI.Button(stop_button_rect, "Cancel"))
             {
                 _IsGreekTrading = false;
-				tradingMaterial_List.Remove(stageManager.gameMaterials[2]);
-				tradingMaterial_List.Remove(stageManager.gameMaterials[3]);
-				if(tradingMaterial_List.Contains(stageManager.gameMaterials[4]))
-					tradingMaterial_List.Remove(stageManager.gameMaterials[4]);
-				if(tradingMaterial_List.Contains(stageManager.gameMaterials[5]))
-					tradingMaterial_List.Remove(stageManager.gameMaterials[5]);
+				tradingMaterial_List.Remove(sceneController.gameMaterials[2]);
+				tradingMaterial_List.Remove(sceneController.gameMaterials[3]);
+				if(tradingMaterial_List.Contains(sceneController.gameMaterials[4]))
+					tradingMaterial_List.Remove(sceneController.gameMaterials[4]);
+				if(tradingMaterial_List.Contains(sceneController.gameMaterials[5]))
+					tradingMaterial_List.Remove(sceneController.gameMaterials[5]);
             }
             GUI.enabled = true;
 			
@@ -530,18 +559,18 @@ public class MarketBeh : BuildingBeh {
 					
                     #region <!-- Copper ingots.
 					
-                    GUI.Box(displayGoods_rect, new GUIContent("Copper ingots", stageManager.taskManager.copper_icon), goods_Label_style); 
-                    GUI.Box(displayPrice_rect, new GUIContent(pricePerUnitOf_CopperIngots.ToString(), stageManager.taskManager.gold_icon), goods_Label_style); 					
+                    GUI.Box(displayGoods_rect, new GUIContent("Copper ingots", sceneController.taskManager.copper_icon), goods_Label_style); 
+                    GUI.Box(displayPrice_rect, new GUIContent(pricePerUnitOf_CopperIngots.ToString(), sceneController.taskManager.gold_icon), goods_Label_style); 					
 					GUI.BeginGroup(selectedGoods1Group_rect);
 					{
 	                    GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_CopperIngots.ToString(), GUI.skin.textField);
 						// <!--- Selected number of button.
 						if(StoreHouse.SumOfCopper > 0) {
-		                    if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
+		                    if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style)) {
 		                        if (numberOf_CopperIngots > 0)
 		                            numberOf_CopperIngots -= 8;
 		                    }
-		                    else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style)) {
+		                    else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style)) {
 		                        if (numberOf_CopperIngots < (carryAbility * idleCaravanList.Count))
 		                            numberOf_CopperIngots += 8;
 		                    }
@@ -552,18 +581,18 @@ public class MarketBeh : BuildingBeh {
                     #endregion					
                     #region <!-- Stone blocks.
 					
-                    GUI.Box(displayGoods_rect2, new GUIContent("Stone blocks", stageManager.taskManager.stone_icon), goods_Label_style); 
-                    GUI.Box(displayPrice_rect2, new GUIContent(pricePerUnitOf_StoneBlocks.ToString(), stageManager.taskManager.gold_icon), goods_Label_style); 
+                    GUI.Box(displayGoods_rect2, new GUIContent("Stone blocks", sceneController.taskManager.stone_icon), goods_Label_style); 
+                    GUI.Box(displayPrice_rect2, new GUIContent(pricePerUnitOf_StoneBlocks.ToString(), sceneController.taskManager.gold_icon), goods_Label_style); 
 					GUI.BeginGroup(selectedGoods2Group_rect);
 					{
 	                    GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_StoneBlocks.ToString(), GUI.skin.textField);
 						/// Draw selected number button.
 						if(StoreHouse.SumOfStone > 0) {
-		                    if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
+		                    if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style)) {
 		                        if (numberOf_StoneBlocks > 0)
 									numberOf_StoneBlocks -= 8;
 		                    }
-		                    else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style)) {
+		                    else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style)) {
 		                        if (numberOf_StoneBlocks < (carryAbility * idleCaravanList.Count))
 		                            numberOf_StoneBlocks += 8;
 		                    }
@@ -582,17 +611,17 @@ public class MarketBeh : BuildingBeh {
 					
                     #region <!--- "Armor".
 					
-                    GUI.Box(displayGoods_rect, new GUIContent("Armor", stageManager.taskManager.armor_icon), goods_Label_style);
-                    GUI.Box(displayPrice_rect, new GUIContent(pricePerUnitOf_Armor.ToString(), stageManager.taskManager.gold_icon), goods_Label_style); 					
+                    GUI.Box(displayGoods_rect, new GUIContent("Armor", sceneController.taskManager.armor_icon), goods_Label_style);
+                    GUI.Box(displayPrice_rect, new GUIContent(pricePerUnitOf_Armor.ToString(), sceneController.taskManager.gold_icon), goods_Label_style); 					
                     GUI.BeginGroup(selectedGoods1Group_rect);
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_Armor.ToString(), GUI.skin.textField);
                         /// <!--- Selected number button.
-                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
+                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style)) {
                             if (numberOf_Armor > 0)
                                 numberOf_Armor -= 8;
                         }
-                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style)) {
+                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style)) {
                             if (numberOf_Armor < 32)
                                 numberOf_Armor += 8;
                         }
@@ -602,17 +631,17 @@ public class MarketBeh : BuildingBeh {
                     #endregion							
                     #region <!--- "Weapon".
 					
-                    GUI.Box(displayGoods_rect2, new GUIContent("Weapon", base.stageManager.taskManager.weapon_icon), goods_Label_style);
-					GUI.Box(displayPrice_rect2, new GUIContent(pricePerUnitOf_Weapon.ToString(), base.stageManager.taskManager.gold_icon), goods_Label_style);
+                    GUI.Box(displayGoods_rect2, new GUIContent("Weapon", base.sceneController.taskManager.weapon_icon), goods_Label_style);
+					GUI.Box(displayPrice_rect2, new GUIContent(pricePerUnitOf_Weapon.ToString(), base.sceneController.taskManager.gold_icon), goods_Label_style);
                     GUI.BeginGroup(selectedGoods2Group_rect);
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_Weapon.ToString(), GUI.skin.textField);
 						/// Draw selected number button.
-                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
+                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style)) {
                             if (numberOf_Weapon > 0)
                                 numberOf_Weapon -= 8;
                         }
-                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style)) {
+                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style)) {
                             if (numberOf_Weapon < 32)
                                 numberOf_Weapon += 8;
                         }
@@ -633,12 +662,12 @@ public class MarketBeh : BuildingBeh {
 	private int numberOf_Wood = 0;
     private int numberOfMeats = 0;
     private int numberOfOliveOil = 0;
-    public static bool _IsPersianTrading = false;
+    private bool _IsPersianTrading = false;
     private void DrawPersiaTradeUI()
     {
         GUI.BeginGroup(new Rect(0, 2 * base.background_Rect.height, background_Rect.width, base.background_Rect.height), GUIContent.none, building_Skin.box);
         {
-            GUI.DrawTexture(base.imgIcon_Rect, stageManager.taskManager.PersianIcon_Texture);
+            GUI.DrawTexture(base.imgIcon_Rect, sceneController.taskManager.PersianIcon_Texture);
             GUI.Label(base.levelLable_Rect, "Persian", base.status_style);
             
 			#region <!-- Trade button.
@@ -647,8 +676,11 @@ public class MarketBeh : BuildingBeh {
             Rect stop_button_rect = new Rect(base.levelLable_Rect.x, trade_button_rect.y + trade_button_rect.height + 2, base.levelLable_Rect.width, base.levelLable_Rect.height);
 
             GUI.enabled = !_IsPersianTrading;
-            if (GUI.Button(trade_button_rect, "Trade"))
+            if (GUI.Button(trade_button_rect, "Trade", standard_Skin.button))
             {
+                sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+                sceneController.audioEffect.PlayOnecWithOutStop(sceneController.audioEffect.storageCart_clip);
+
                 _IsPersianTrading = true;
                 TradingMechanism();
             }
@@ -672,18 +704,18 @@ public class MarketBeh : BuildingBeh {
 
                     #region <!--- Food.
 
-                    GUI.Box(displayGoods_rect, new GUIContent("Food", stageManager.taskManager.food_icon), goods_Label_style);
-                    GUI.Box(displayPrice_rect, new GUIContent(pricePerUnitOf_Food.ToString(), stageManager.taskManager.gold_icon), goods_Label_style);
+                    GUI.Box(displayGoods_rect, new GUIContent("Food", sceneController.taskManager.food_icon), goods_Label_style);
+                    GUI.Box(displayPrice_rect, new GUIContent(pricePerUnitOf_Food.ToString(), sceneController.taskManager.gold_icon), goods_Label_style);
                     GUI.BeginGroup(selectedGoods1Group_rect);
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_Food.ToString(), GUI.skin.textField);
 						/// Draw selected number button.
 						if(StoreHouse.SumOfFood > 0) {
-	                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style)) {
+	                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style)) {
 	                            if (numberOf_Food > 0)
 	                                numberOf_Food -= 8;
 	                        }
-	                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style)) {
+	                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style)) {
 	                            if (numberOf_Food < (carryAbility * idleCaravanList.Count))
 	                                numberOf_Food += 8;
 	                        }
@@ -694,19 +726,19 @@ public class MarketBeh : BuildingBeh {
                     #endregion					
                     #region <!--- Wood.
 
-                    GUI.Box(displayGoods_rect2, new GUIContent("Wood", stageManager.taskManager.wood_icon), goods_Label_style);
-                    GUI.Box(displayPrice_rect2, new GUIContent(pricePerUnitOf_Wood.ToString(), stageManager.taskManager.gold_icon), goods_Label_style);
+                    GUI.Box(displayGoods_rect2, new GUIContent("Wood", sceneController.taskManager.wood_icon), goods_Label_style);
+                    GUI.Box(displayPrice_rect2, new GUIContent(pricePerUnitOf_Wood.ToString(), sceneController.taskManager.gold_icon), goods_Label_style);
                     GUI.BeginGroup(selectedGoods2Group_rect);
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_Wood.ToString(), GUI.skin.textField);
 						/// Draw selected number button.
 						if(StoreHouse.SumOfWood > 0) {
-	                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style))
+	                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style))
 	                        {
 	                            if (numberOf_Wood > 0)
 	                                numberOf_Wood -= 8;
 	                        }
-	                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style))
+	                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style))
 	                        {
 	                            if (numberOf_Wood < (carryAbility * idleCaravanList.Count))
 	                                numberOf_Wood += 8;
@@ -726,17 +758,17 @@ public class MarketBeh : BuildingBeh {
                     #region <!--- "Meats".
 
                     GUI.Box(displayGoods_rect, new GUIContent("Meats"), standard_Skin.textField);
-                    GUI.Box(displayPrice_rect, new GUIContent(numberOfMeats.ToString(), base.stageManager.taskManager.gold_icon), goods_Label_style);
+                    GUI.Box(displayPrice_rect, new GUIContent(numberOfMeats.ToString(), base.sceneController.taskManager.gold_icon), goods_Label_style);
                     GUI.BeginGroup(selectedGoods1Group_rect);
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOfMeats.ToString(), GUI.skin.textField);
                         // <!--- Selected number of goods.
-                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style))
+                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style))
                         {
                             if (numberOfMeats > 0)
                                 numberOfMeats -= 8;
                         }
-                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style))
+                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style))
                         {
                             if (numberOfMeats < 64)
                                 numberOfMeats += 8;
@@ -748,16 +780,16 @@ public class MarketBeh : BuildingBeh {
                     #region <!--- "".
 
                     GUI.Box(displayGoods_rect2, new GUIContent(""), standard_Skin.textField);
-                    GUI.Box(displayPrice_rect2, new GUIContent(numberOfOliveOil.ToString(), base.stageManager.taskManager.gold_icon), goods_Label_style);
+                    GUI.Box(displayPrice_rect2, new GUIContent(numberOfOliveOil.ToString(), base.sceneController.taskManager.gold_icon), goods_Label_style);
                     GUI.BeginGroup(selectedGoods2Group_rect);
                     {
                         GUI.Box(selectedNumberOfGoods_GroupRect, numberOf_Weapon.ToString(), GUI.skin.textField);
-                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.stageManager.taskManager.left_button_Style))
+                        if (GUI.Button(selectedLeft_rect, GUIContent.none, base.sceneController.taskManager.left_button_Style))
                         {
                             if (numberOf_Weapon > 0)
                                 numberOf_Weapon -= 8;
                         }
-                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.stageManager.taskManager.right_button_Style))
+                        else if (GUI.Button(selectedRight_rect, GUIContent.none, base.sceneController.taskManager.right_button_Style))
                         {
                             if (numberOf_Weapon < 64)
                                 numberOf_Weapon += 8;
@@ -773,4 +805,8 @@ public class MarketBeh : BuildingBeh {
         }
         GUI.EndGroup();
     }
+	
+	internal void OnDestroy() {
+
+	}
 }

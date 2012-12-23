@@ -12,7 +12,7 @@ public class Mz_BaseScene : MonoBehaviour {
         LoadingScreen = 0,
         Startup = 1,
         MainMenu,
-        Town,
+        Village,
     }
     public static bool _StageInitialized = false;
     public GUISkin standard_Skin;
@@ -36,6 +36,7 @@ public class Mz_BaseScene : MonoBehaviour {
     public AudioEffectManager audioEffect;
     public AudioDescribeManager audioDescribe;
     public GameObject audioBackground_Obj;
+    public AudioClip background_clip;
     protected void InitializeAudio()
     {
         Debug.Log("Scene :: InitializeAudio");
@@ -71,6 +72,7 @@ public class Mz_BaseScene : MonoBehaviour {
             audioBackground_Obj = new GameObject("AudioBackground", typeof(AudioSource));
             audioBackground_Obj.tag = "AudioBackground";
             audioBackground_Obj.audio.playOnAwake = true;
+            audioBackground_Obj.audio.volume = 1f;
             audioBackground_Obj.audio.mute = !ToggleAudioActive;
 
             DontDestroyOnLoad(audioBackground_Obj);

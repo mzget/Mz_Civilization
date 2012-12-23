@@ -107,6 +107,10 @@ public class MainMenu : Mz_BaseScene
     private new IEnumerator InitializeAudio() {
         base.InitializeAudio();
 
+        audioBackground_Obj.audio.clip = base.background_clip;
+        audioBackground_Obj.audio.loop = true;
+        audioBackground_Obj.audio.Play();
+
         yield return null;
     }
 
@@ -182,18 +186,21 @@ public class MainMenu : Mz_BaseScene
         {
             if (GUI.Button(newPlayer_rect, "New Player", standard_Skin.button)) {
                 sceneState = SceneState.showNewGame;
+				audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
             else if (GUI.Button(loadGameButton_rect, "Load game", standard_Skin.button)) {
                 sceneState = SceneState.showLoadGame;
+                audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
-            else if (GUI.Button(thirdButton_rect, "Multiplayer", standard_Skin.button)) { 
-                
+            else if (GUI.Button(thirdButton_rect, "Multiplayer", standard_Skin.button)) {
+                audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
-            else if (GUI.Button(fourthButton_rect, "About", standard_Skin.button)) { 
-            
+            else if (GUI.Button(fourthButton_rect, "About", standard_Skin.button)) {
+                audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
             else if (GUI.Button(fifthButton_rect, "Exit", standard_Skin.button)) {
                 Application.Quit();
+                audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
         }
         GUI.EndGroup();
@@ -206,15 +213,16 @@ public class MainMenu : Mz_BaseScene
             if (Event.current.isKey && Event.current.keyCode == KeyCode.Return)
             {
                 audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
-
                 this.CheckUserNameFormInput();
             }
 
             if (GUI.Button(startButton_rect, "Start", standard_Skin.button)) {
                 this.CheckUserNameFormInput();
+                audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
             }
             else if (GUI.Button(cancelButton_rect, "Cancel", standard_Skin.button)) {
                 sceneState = SceneState.none;
+                audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
             }
 
             //<!-- "Please Insert Username !".
@@ -305,6 +313,7 @@ public class MainMenu : Mz_BaseScene
             if (GUI.Button(new Rect(midCenterWindowGroup_rect.width - 40 , 0, 40, 40), "X"))
             {
                 sceneState = SceneState.none;
+                audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
             }
 
             if (_toSaveGame) {
@@ -360,8 +369,7 @@ public class MainMenu : Mz_BaseScene
                 if (player_3 == string.Empty) slot_3 = "Empty";
                 else slot_3 = player_3;
 
-                #region <!-- GUI data slot button.
-
+                //<!-- Draw data slot button.
                 if (GUI.Button(saveSlot_1Rect, new GUIContent(slot_1, "button"), standard_Skin.button))
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
@@ -395,8 +403,6 @@ public class MainMenu : Mz_BaseScene
 						this.LoadSceneTarget();
                     }
                 }
-
-                #endregion
 
                 #endregion
             }
@@ -465,7 +471,7 @@ public class MainMenu : Mz_BaseScene
     {
         if (Application.isLoadingLevel == false)
         {
-            Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.Town.ToString();
+            Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.Village.ToString();
             Application.LoadLevelAsync(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
         }
     }

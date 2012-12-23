@@ -116,6 +116,10 @@ public class StageManager : Mz_BaseScene {
 	{
 		base.InitializeAudio();
 
+        base.audioBackground_Obj.audio.clip = base.background_clip;
+        base.audioBackground_Obj.audio.loop = false;
+        audioBackground_Obj.audio.Play();
+
 		yield return null;
 	}
 

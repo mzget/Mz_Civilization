@@ -105,8 +105,8 @@ public class Mz_SaveData : ISaveData
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_HAPASPIST, BarracksBeh.AmountOfHapaspist);
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_HOPLITE, BarracksBeh.AmountOfHoplite);
 			//<@-- Mission data.
-            PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_CURRENT_MISSION_ID, QuestManager.CurrentMissionTopic_ID);
-			PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + KEY_ARRAY_MISSION_COMPLETE, QuestManager.arr_isMissionComplete);
+            PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_CURRENT_MISSION_ID, QuestSystemManager.CurrentMissionTopic_ID);
+			PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + KEY_ARRAY_MISSION_COMPLETE, QuestSystemManager.arr_isMissionComplete);
 			//<!-- TownCenter.
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
 			
@@ -223,8 +223,8 @@ public class Mz_SaveData : ISaveData
 		BarracksBeh.AmountOfHoplite = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_HOPLITE, 0);
 		
         //<@-- Load mission id.
-        QuestManager.CurrentMissionTopic_ID = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
-		QuestManager.arr_isMissionComplete = PlayerPrefsX.GetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, false, 8);
+        QuestSystemManager.CurrentMissionTopic_ID = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
+		QuestSystemManager.arr_isMissionComplete = PlayerPrefsX.GetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, false, 8);
 		
         Debug.Log("Load storage data to static variable complete.");
 	}

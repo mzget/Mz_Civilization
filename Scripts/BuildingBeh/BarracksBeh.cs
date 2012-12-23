@@ -38,7 +38,6 @@ public class BarracksBeh : BuildingBeh
 	public static int AmountOfHapaspist = 0;
 	public static int AmountOfHoplite = 0;
     private List<TrainingQueue> list_trainingUnit = new List<TrainingQueue>();
-    private DateTime counterTimer;
 	private DateTime startingCounterTimer;
     public enum BarracksStatus { None = 0, TrainingUnit, };
     public BarracksStatus currentBarracksStatus;
@@ -190,8 +189,7 @@ public class BarracksBeh : BuildingBeh
             
 			list_trainingUnit[0].RemainingTime = remainTime;
 
-            counterTimer = DateTime.UtcNow;
-			TimeSpan counter = counterTimer - startingCounterTimer;
+			TimeSpan counter = DateTime.UtcNow - startingCounterTimer;
             if (counter.TotalSeconds >= list_trainingUnit[0].Unit.TimeTraining.TotalSeconds) {
 				startingCounterTimer = DateTime.UtcNow;
 
@@ -210,7 +208,7 @@ public class BarracksBeh : BuildingBeh
 	{
 		base.OnTouchDown ();
 		
-        stageManager.taskManager.currentRightSideState = TaskManager.RightSideState.show_military;
+        sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_military;
 	}
 
 	protected override void CreateWindow (int windowID)
@@ -266,11 +264,11 @@ public class BarracksBeh : BuildingBeh
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.stageManager.taskManager.food_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.stageManager.taskManager.wood_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Copper.ToString(), base.stageManager.taskManager.copper_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.stageManager.taskManager.gold_icon), standard_Skin.box);
-                        GUI.Box(GameResource.Fifth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), base.stageManager.taskManager.employee_icon), standard_Skin.box);
+                        GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.sceneController.taskManager.food_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.sceneController.taskManager.wood_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Copper.ToString(), base.sceneController.taskManager.copper_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.sceneController.taskManager.gold_icon), standard_Skin.box);
+                        GUI.Box(GameResource.Fifth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), base.sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
                 }
@@ -324,7 +322,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 2 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);
         {
             GUI.Label(base.tagName_Rect, new GUIContent("Spearman", "สเปียร์แมน"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.spearmanUnitIcon);      //<!-- Spearman Images.
+            GUI.DrawTexture(this.troopsIcon_Rect, sceneController.taskManager.spearmanUnitIcon);      //<!-- Spearman Images.
 
             GUI.BeginGroup(soldierDescriptionRect, new GUIContent(spearman_describe, "content"), mainBuildingSkin.textArea);
             {
@@ -337,10 +335,10 @@ public class BarracksBeh : BuildingBeh
 
                 GUI.BeginGroup(requireResource_rect, GUIContent.none, standard_Skin.box);
                 {
-                    GUI.Box(GameResource.First_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Food.ToString(), stageManager.taskManager.food_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Second_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Armor.ToString(), stageManager.taskManager.armor_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Third_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Weapon.ToString(), stageManager.taskManager.weapon_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Fourth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Gold.ToString(), stageManager.taskManager.gold_icon), standard_Skin.box);
+                    GUI.Box(GameResource.First_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Food.ToString(), sceneController.taskManager.food_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Second_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Armor.ToString(), sceneController.taskManager.armor_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Third_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Weapon.ToString(), sceneController.taskManager.weapon_icon), standard_Skin.box);
+                    GUI.Box(GameResource.Fourth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanResource.Gold.ToString(), sceneController.taskManager.gold_icon), standard_Skin.box);
                     GUI.Box(GameResource.Fifth_Rect, new GUIContent(UnitDataStore.GreekUnitData.SpearmanTraining_timer.ToString()), standard_Skin.box);
                 }
                 GUI.EndGroup();
@@ -399,7 +397,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 3 * height, background_Rect.width, height), new GUIContent("", "Background"), mainBuildingSkin.box);
         {
             GUI.Label(base.tagName_Rect, new GUIContent("Hypaspist", "พลดาบสองมือ"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.hypaspistUnitIcon);    //<!-- Hypaspist Images.
+            GUI.DrawTexture(this.troopsIcon_Rect, sceneController.taskManager.hypaspistUnitIcon);    //<!-- Hypaspist Images.
             GUI.Box(soldierDescriptionRect, new GUIContent(hypaspist_describe, "content"), mainBuildingSkin.textArea);
             if (GUI.Button(createButton_rect, "Create"))
             {
@@ -413,7 +411,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 4 * height, background_Rect.width, height), new GUIContent("", "Backgroud"), mainBuildingSkin.box);
         {
             GUI.Label(base.tagName_Rect, new GUIContent("Hoplite", "พลหุ้มเกราะ"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.hopliteUnitIcon);      //<!-- Hoplite Images.
+            GUI.DrawTexture(this.troopsIcon_Rect, sceneController.taskManager.hopliteUnitIcon);      //<!-- Hoplite Images.
             GUI.Box(soldierDescriptionRect, new GUIContent(hoplite_describe, "content"), mainBuildingSkin.textArea);
             if (GUI.Button(createButton_rect, "Create"))
             {
@@ -427,7 +425,7 @@ public class BarracksBeh : BuildingBeh
         GUI.BeginGroup(new Rect(0, 5 * height, background_Rect.width, height), new GUIContent("", "background"), mainBuildingSkin.box);
         {
             GUI.Label(tagName_Rect, new GUIContent("Toxotes", "พลธนู"), standard_Skin.label);
-            GUI.DrawTexture(this.troopsIcon_Rect, stageManager.taskManager.ToxotesUnitIcon);    //<!-- Toxotes images icons.
+            GUI.DrawTexture(this.troopsIcon_Rect, sceneController.taskManager.ToxotesUnitIcon);    //<!-- Toxotes images icons.
             GUI.Box(soldierDescriptionRect, new GUIContent("Toxotes เป็นหน่วยจู่โจมด้วยธนู \n พวกเขามีความชำนาญในการโจมตีจากระยะไกล", "content"), mainBuildingSkin.textArea);
             if (GUI.Button(createButton_rect, "Create"))
             {

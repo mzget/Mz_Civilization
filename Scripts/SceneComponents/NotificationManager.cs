@@ -1,13 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class NotificationManager : MonoBehaviour {
+public class NotificationSystem : MonoBehaviour {
 
 	private Texture2D noticeMessageBox_img;
 
     protected Texture2D quest_icon;
     protected Texture2D message_icon;
-    protected Texture2D questAdvisor_icon;
 	
     protected GUIStyle NoticeButton_style;
 	protected GUIStyle noticeMessageContent_boxStyle;
@@ -18,7 +17,8 @@ public class NotificationManager : MonoBehaviour {
     protected Rect drawNoticeTopicRect;
 	protected Rect drawNoticeMessageContentRect;
 	protected Rect completeSessionMessage_Rect;
-
+	
+	protected StageManager sceneController;
     protected TaskManager taskManager;
 	protected MessageDataStore messageDataStore;
     protected MissionMassageDataStore questMessageData;
@@ -27,6 +27,7 @@ public class NotificationManager : MonoBehaviour {
     void Awake()
     {
         taskManager = this.gameObject.GetComponent<TaskManager>();
+		sceneController = this.gameObject.GetComponent<StageManager>();
 		
 		messageDataStore = new MessageDataStore();
         questMessageData = new MissionMassageDataStore();
@@ -34,7 +35,6 @@ public class NotificationManager : MonoBehaviour {
 
         noticeMessageBox_img = Resources.Load(TaskManager.PathOfMainGUI + "GUI_box", typeof(Texture2D)) as Texture2D;
         quest_icon = Resources.Load(TaskManager.PathOfMainGUI + "Quest_icon", typeof(Texture2D)) as Texture2D;
-        questAdvisor_icon = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder", typeof(Texture2D)) as Texture2D;
 
         drawMessageRect = new Rect(40 * Mz_OnGUIManager.Extend_heightScale, 40, 100 * Mz_OnGUIManager.Extend_heightScale, 100);
         drawAdvisorRect = new Rect(0, (taskManager.standardWindow_rect.height / 2) - 100, 200 * Mz_OnGUIManager.Extend_heightScale, 200);

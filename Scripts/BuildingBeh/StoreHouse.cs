@@ -157,7 +157,6 @@ public class StoreHouse : BuildingBeh {
 
         Debug.Log("StoreHouse.ReachDayCycle event");
     }
-	
 
 	/// <summary>
 	/// Awake this instance.
@@ -243,6 +242,7 @@ public class StoreHouse : BuildingBeh {
         base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
+		this.CheckingQuestComplete();
 
         if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none) 
 		{
@@ -254,11 +254,23 @@ public class StoreHouse : BuildingBeh {
 
     #endregion
 	
+	void CheckingQuestComplete ()
+	{		
+		if(QuestSystemManager.arr_isMissionComplete[4] == false) {
+			sceneController.taskManager.questManager.list_questBeh[4]._IsComplete = true;
+			QuestSystemManager.arr_isMissionComplete[4] = true;
+			
+			if (QuestSystemManager.CurrentMissionTopic_ID == 4) {
+				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
+			}
+		}
+	}
+	
 	protected override void ClearStorageData ()
 	{
 		base.ClearStorageData ();
 
-        base.stageManager.dayCycle_Event -= StoreHouse.ReachDayCycle;
+        base.sceneController.dayCycle_Event -= StoreHouse.ReachDayCycle;
 		BuildingBeh.StoreHouseInstance.Remove(this);
 	}
 
@@ -266,10 +278,10 @@ public class StoreHouse : BuildingBeh {
     {
         base.CreateWindow(windowID);
 
-        if(base.notificationText == "") {
-            base.notificationText = base.currentBuildingStatus.ToString();
-        }
-        GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
+//        if(base.notificationText == "") {
+//            base.notificationText = base.currentBuildingStatus.ToString();
+//        }
+        GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
 			scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height));
@@ -293,15 +305,15 @@ public class StoreHouse : BuildingBeh {
 	                    GUI.BeginGroup(update_requireResource_Rect);
                         {
                             GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
-                                base.stageManager.taskManager.food_icon), standard_Skin.box);
+                                base.sceneController.taskManager.food_icon), standard_Skin.box);
                             GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
-                                base.stageManager.taskManager.wood_icon), standard_Skin.box);
+                                base.sceneController.taskManager.wood_icon), standard_Skin.box);
                             //GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
                             //    base.stageManager.taskbarManager.stone_icon), standard_Skin.box);
                             GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
-                                base.stageManager.taskManager.gold_icon), standard_Skin.box);
+                                base.sceneController.taskManager.gold_icon), standard_Skin.box);
                             GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
-                                base.stageManager.taskManager.employee_icon), standard_Skin.box);
+                                base.sceneController.taskManager.employee_icon), standard_Skin.box);
 	                    }
 	                    GUI.EndGroup();
 					}
@@ -316,11 +328,7 @@ public class StoreHouse : BuildingBeh {
 
                 #region <!--- Upgrade Button mechanichm.
 
-                bool enableUpgrade = false;
-                if (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]))
-                    enableUpgrade = true;
-
-                GUI.enabled = enableUpgrade;
+                GUI.enabled = (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level])) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
                     GameResource.UsedResource(RequireResource[Level]);

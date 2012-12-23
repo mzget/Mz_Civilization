@@ -50,7 +50,7 @@ public class Farm : BuildingBeh
     {
 		this.InitializeTexturesResource();
 
-        base.stageManager.resourceCycle_Event += HaveResourceCycle_Event;
+        base.sceneController.resourceCycle_Event += HaveResourceCycle_Event;
         base.NotEnoughResource_Notification_event += Farm_NotEnoughResource_Notification_event;
     }
   
@@ -92,28 +92,32 @@ public class Farm : BuildingBeh
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);
+        Destroy(base.processbar_Obj_parent);		
+		this.CheckingQuestComplete();
 
         if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
             this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
-
-		if(QuestManager.arr_isMissionComplete[2] == false) {
-	        stageManager.taskManager.questManager.list_questBeh[2]._IsComplete = true;
-			QuestManager.arr_isMissionComplete[2] = true;
-			
-			if(QuestManager.CurrentMissionTopic_ID == 2) {
-				stageManager.taskManager.questManager.ActiveBeh_NoticeButton();
-			}
-		}
     }
 
     #endregion
+
+	void CheckingQuestComplete ()
+	{		
+		if(QuestSystemManager.arr_isMissionComplete[2] == false) {
+			sceneController.taskManager.questManager.list_questBeh[2]._IsComplete = true;
+			QuestSystemManager.arr_isMissionComplete[2] = true;
+			
+			if(QuestSystemManager.CurrentMissionTopic_ID == 2) {
+				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
+			}
+		}
+	}
 	
 	protected override void ClearStorageData ()
 	{
 		base.ClearStorageData ();
 
-        base.stageManager.resourceCycle_Event -= this.HaveResourceCycle_Event;
+        base.sceneController.resourceCycle_Event -= this.HaveResourceCycle_Event;
         base.NotEnoughResource_Notification_event -= this.Farm_NotEnoughResource_Notification_event;
 
 		BuildingBeh.Farm_Instance.Remove(this);
@@ -139,10 +143,9 @@ public class Farm : BuildingBeh
     {
         base.CreateWindow(windowID);
         
-        if(base.notificationText == "") {
-            base.notificationText = base.currentBuildingStatus.ToString();
-        }
-        GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
+        //if(base.notificationText == "")
+        //    base.notificationText = base.currentBuildingStatus.ToString();
+        GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
 			scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height), false, false);
@@ -166,15 +169,15 @@ public class Farm : BuildingBeh
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
                         GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
-                            stageManager.taskManager.food_icon), standard_Skin.box);
+                            sceneController.taskManager.food_icon), standard_Skin.box);
                         GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
-                            stageManager.taskManager.wood_icon), standard_Skin.box);
+                            sceneController.taskManager.wood_icon), standard_Skin.box);
                         //GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
                         //    stageManager.taskbarManager.stone_icon), standard_Skin.box);
                         GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
-                            stageManager.taskManager.gold_icon), standard_Skin.box);
+                            sceneController.taskManager.gold_icon), standard_Skin.box);
                         GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
-                            stageManager.taskManager.employee_icon), standard_Skin.box);
+                            sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
                 }
@@ -184,11 +187,7 @@ public class Farm : BuildingBeh
 
                 #region <!--- Upgrade Button mechanichm.
 
-                bool enableUpgrade = false;
-                if (base.CheckingCanUpgradeLevel() && base.CheckingEnoughUpgradeResource(RequireResource[Level]))
-                    enableUpgrade = true;
-
-                GUI.enabled = enableUpgrade;
+                GUI.enabled = base.CheckingCanUpgradeLevel() && base.CheckingEnoughUpgradeResource(RequireResource[Level]) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
                     GameResource.UsedResource(RequireResource[Level]);

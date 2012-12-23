@@ -8,16 +8,12 @@ public class AudioEffectManager : MonoBehaviour {
     public AudioClip buttonDown_Clip;
 	public AudioClip buttonUp_Clip;
 	public AudioClip buttonHover_Clip;
-	public AudioClip correct_Clip;
-	public AudioClip wrong_Clip;
-	public AudioClip tick_Clip;
-    //<!-- Bakery scene.
-    public AudioClip dingdong_clip;
-	public AudioClip calc_clip;
-    public AudioClip receiptCash_clip;
-	public AudioClip giveTheChange_clip;
-	public AudioClip longBring_clip;
-	public AudioClip mutter_clip;
+//	public AudioClip correct_Clip;
+//	public AudioClip wrong_Clip;
+//	public AudioClip tick_Clip;
+//	public AudioClip mutter_clip;
+    public AudioClip displayUI_clip;
+    public AudioClip storageCart_clip;
 	
 	
 	void Awake() {

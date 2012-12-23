@@ -36,7 +36,7 @@ public class BuildingArea : Base_ObjectBeh
     public enum AreaState { Active = 1, UnActive = 0, };
     public AreaState areaState; 
     private GUIState guiState;
-    private StageManager stageManager;
+    private StageManager sceneController;
 	private static BuildingBeh buildingBeh;
 
     private Rect window_rect;
@@ -83,7 +83,7 @@ public class BuildingArea : Base_ObjectBeh
             yield return null;
 		}
 		
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        sceneController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
         StartCoroutine(this.LoadTextureResource());
         this.InitializeGUI();
 
@@ -136,7 +136,7 @@ public class BuildingArea : Base_ObjectBeh
         
         buyArea_rect = new Rect((Main.FixedGameWidth * 3 / 8) - 300, Main.FixedGameHeight / 2 - 300, 600, 600);
         closeBuyArea_rect = new Rect(buyArea_rect.width - 34, 32, 32, 32);
-        advisor_drawRect = new Rect(10, (buyArea_rect.height / 2) - (stageManager.taskManager.elder_advisor.height/2), stageManager.taskManager.elder_advisor.width, stageManager.taskManager.elder_advisor.height);
+        advisor_drawRect = new Rect(10, (buyArea_rect.height / 2) - (sceneController.taskManager.advisor_villageElder.height/2), sceneController.taskManager.advisor_villageElder.width, sceneController.taskManager.advisor_villageElder.height);
         float descriptionPosX = (advisor_drawRect.x + advisor_drawRect.width) + 10;
         buyAreaDescription_rect = new Rect(descriptionPosX, 50, buyArea_rect.width - descriptionPosX, 500);
         
@@ -185,6 +185,8 @@ public class BuildingArea : Base_ObjectBeh
 	
     protected override void OnTouchDown()
     {
+        sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.displayUI_clip);
+
         if(areaState == AreaState.Active) {
 		    if(TaskManager.IsShowInteruptGUI == false) {
                 guiState = GUIState.ShowUtiltyUI;
@@ -212,9 +214,7 @@ public class BuildingArea : Base_ObjectBeh
     private bool CheckBasicRequire()
     {
         if (BuildingBeh.TownCenter.Level >= 3 && StoreHouse.sumOfGold >= 500)
-        {
             return true;
-        }
         else
             return false;
     }
@@ -224,12 +224,23 @@ public class BuildingArea : Base_ObjectBeh
         StoreHouse.sumOfGold -= 500;
 
         this.areaState = AreaState.Active;
-        Sprite.materialReference = "transparent";
+        Sprite.tintColor = Color.white;
         Sprite.frameIndex = 3;
 		
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
 
         this.CloseGUIWindow();
+        this.CheckingMissionComplete();
+    }
+
+    private void CheckingMissionComplete()
+    {
+        if (QuestSystemManager.arr_isMissionComplete[7] == false)
+        {
+            QuestSystemManager.arr_isMissionComplete[7] = true;
+            sceneController.taskManager.questManager.list_questBeh[7]._IsComplete = true;
+            sceneController.taskManager.questManager.CheckingOnCompleteMission();
+        }
     }
 	
     //<!--- Economy, Military, Utility.
@@ -250,7 +261,7 @@ public class BuildingArea : Base_ObjectBeh
         GUI.BeginGroup(buyArea_rect);
         {
             //<!--- Draw advisor.
-            GUI.DrawTexture(advisor_drawRect, stageManager.taskManager.elder_advisor);
+            GUI.DrawTexture(advisor_drawRect, sceneController.taskManager.advisor_villageElder);
             //<!--- Draw Description.
             GUI.BeginGroup(buyAreaDescription_rect, "Expand empire.", GUI.skin.window);
             {           
@@ -270,14 +281,11 @@ public class BuildingArea : Base_ObjectBeh
                 GUI.EndGroup();
             }
             GUI.EndGroup();
+
             //<!-- Close button.
             if (GUI.Button(closeBuyArea_rect, new GUIContent(string.Empty, "Close Button"), buildingArea_Skin.customStyles[0]))
             {
-                if (guiState != GUIState.none)
-                {
-                    guiState = GUIState.none;
-                    TaskManager.IsShowInteruptGUI = false;
-                }
+                this.CloseGUIWindow();
             }
         }
         GUI.EndGroup();
@@ -287,6 +295,8 @@ public class BuildingArea : Base_ObjectBeh
     {
         if (guiState != GUIState.none)
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             guiState = GUIState.none;
             TaskManager.IsShowInteruptGUI = false;
         }
@@ -435,13 +445,13 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(HouseBeh.RequireResource[0].Food.ToString(),
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(HouseBeh.RequireResource[0].Wood.ToString(),
-                    stageManager.taskManager.wood_icon), standard_skin.box);
+                    sceneController.taskManager.wood_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(HouseBeh.RequireResource[0].Stone.ToString(),
-                    stageManager.taskManager.stone_icon), standard_skin.box);
+                    sceneController.taskManager.stone_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(HouseBeh.RequireResource[0].Gold.ToString(), 
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -449,17 +459,15 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() &&
-			buildingBeh.CheckingEnoughUpgradeResource(HouseBeh.RequireResource[0]))
-            enableUpgrade = true;
-
-        GUI.enabled = enableUpgrade;
-        if (GUI.Button(createButton_rect, "Build"))
+		GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
+		               buildingBeh.CheckingEnoughUpgradeResource(HouseBeh.RequireResource[0])) ? true:false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(HouseBeh.RequireResource[0]);
 
-            GameObject temp_House = Instantiate(stageManager.house_prefab) as GameObject;
+            GameObject temp_House = Instantiate(sceneController.house_prefab) as GameObject;
             HouseBeh housebeh = temp_House.GetComponent<HouseBeh>();
             housebeh.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             housebeh.OnBuildingProcess(housebeh);
@@ -483,13 +491,13 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(AcademyBeh.RequireResource[0].Food.ToString(),
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(AcademyBeh.RequireResource[0].Wood.ToString(),
-                    stageManager.taskManager.wood_icon), standard_skin.box);
+                    sceneController.taskManager.wood_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(AcademyBeh.RequireResource[0].Gold.ToString(),
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(AcademyBeh.RequireResource[0].Employee.ToString(), 
-                    stageManager.taskManager.employee_icon), standard_skin.box);
+                    sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -497,18 +505,17 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!-- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() && 
-			buildingBeh.CheckingEnoughUpgradeResource(AcademyBeh.RequireResource[0]) &&
-			BuildingBeh.TownCenter.Level >= 5)
-            enableUpgrade = true;
-
-        GUI.enabled = enableUpgrade;
-        if (GUI.Button(createButton_rect, "Build"))
+        GUI.enabled = (BuildingBeh.CheckingOnBuildingList()
+            && buildingBeh.CheckingEnoughUpgradeResource(AcademyBeh.RequireResource[0])
+            && BuildingBeh.TownCenter.Level >= 5
+            && BuildingBeh.AcademyInstance == null) ? true : false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(AcademyBeh.RequireResource[0]);
 
-            GameObject temp_Academy = Instantiate(stageManager.academy_prefab) as GameObject;
+            GameObject temp_Academy = Instantiate(sceneController.academy_prefab) as GameObject;
             AcademyBeh academy = temp_Academy.GetComponent<AcademyBeh>();
             academy.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             academy.OnBuildingProcess(academy);
@@ -531,17 +538,15 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() &&
-			buildingBeh.CheckingEnoughUpgradeResource(Farm.RequireResource[0]))
-            enableUpgrade = true;
-		
-		GUI.enabled = enableUpgrade;
-        if (GUI.Button(createButton_rect, "Build"))
+        GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
+            buildingBeh.CheckingEnoughUpgradeResource(Farm.RequireResource[0])) ? true : false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(Farm.RequireResource[0]);
 
-            GameObject temp = Instantiate(stageManager.farm_prefab) as GameObject;				
+            GameObject temp = Instantiate(sceneController.farm_prefab) as GameObject;				
 			Farm farm = temp.GetComponent<Farm>();
             farm.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
 			farm.OnBuildingProcess((BuildingBeh)farm);
@@ -558,15 +563,15 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(Farm.RequireResource[0].Food.ToString(), 
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(Farm.RequireResource[0].Wood.ToString(), 
-                    stageManager.taskManager.wood_icon), standard_skin.box);
+                    sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(Farm.RequireResource[0].Stone.ToString(), 
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(Farm.RequireResource[0].Gold.ToString(), 
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(Farm.RequireResource[0].Employee.ToString(), 
-                    stageManager.taskManager.employee_icon), standard_skin.box);
+                    sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -580,17 +585,15 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() &&
-			buildingBeh.CheckingEnoughUpgradeResource(Sawmill.RequireResource[0]))
-            enableUpgrade = true;
-
-        GUI.enabled = enableUpgrade;
-        if (GUI.Button(createButton_rect, "Build"))
+        GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
+            buildingBeh.CheckingEnoughUpgradeResource(Sawmill.RequireResource[0])) ? true : false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(Sawmill.RequireResource[0]);
 
-            GameObject new_sawmill = Instantiate(stageManager.sawmill_prefab) as GameObject;
+            GameObject new_sawmill = Instantiate(sceneController.sawmill_prefab) as GameObject;
             Sawmill sawmill = new_sawmill.GetComponent<Sawmill>();
             sawmill.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             sawmill.OnBuildingProcess((BuildingBeh)sawmill);
@@ -607,15 +610,15 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(Sawmill.RequireResource[0].Food.ToString(),
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(Sawmill.RequireResource[0].Wood.ToString(),
-                    stageManager.taskManager.wood_icon), standard_skin.box);
+                    sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(Sawmill.RequireResource[0].Stone.ToString(),
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(Sawmill.RequireResource[0].Gold.ToString(),
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(Sawmill.RequireResource[0].Employee.ToString(),
-                    stageManager.taskManager.employee_icon), standard_skin.box);
+                    sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -629,17 +632,15 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() && 
-			buildingBeh.CheckingEnoughUpgradeResource(MillStone.RequireResource[0]))
-            enableUpgrade = true;
-
-        GUI.enabled = enableUpgrade;
-        if (GUI.Button(createButton_rect, "Build"))
+        GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
+            buildingBeh.CheckingEnoughUpgradeResource(MillStone.RequireResource[0])) ? true : false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(MillStone.RequireResource[0]);
 
-            GameObject new_millstone = Instantiate(stageManager.millstone_prefab) as GameObject;
+            GameObject new_millstone = Instantiate(sceneController.millstone_prefab) as GameObject;
             MillStone millstone = new_millstone.GetComponent<MillStone>();
             millstone.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
             millstone.OnBuildingProcess((BuildingBeh)millstone);
@@ -656,15 +657,15 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(MillStone.RequireResource[0].Food.ToString(), 
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(MillStone.RequireResource[0].Wood.ToString(),
-                    stageManager.taskManager.wood_icon), standard_skin.box);
+                    sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(MillStone.RequireResource[0].Stone.ToString(),
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(MillStone.RequireResource[0].Gold.ToString(),
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(MillStone.RequireResource[0].Employee.ToString(),
-                    stageManager.taskManager.employee_icon), standard_skin.box);
+                    sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -678,18 +679,16 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() && 
-			buildingBeh.CheckingEnoughUpgradeResource(Smelter.RequireResource[0]) &&
-			BuildingBeh.TownCenter.Level >= 5)
-			enableUpgrade = true;
-
-        GUI.enabled = enableUpgrade;
-        if (GUI.Button(createButton_rect, "Build"))
+        GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
+            buildingBeh.CheckingEnoughUpgradeResource(Smelter.RequireResource[0]) &&
+            BuildingBeh.TownCenter.Level >= 5) ? true : false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(Smelter.RequireResource[0]);
 
-            GameObject new_smelter = Instantiate(stageManager.smelter_prefab) as GameObject;
+            GameObject new_smelter = Instantiate(sceneController.smelter_prefab) as GameObject;
             Smelter smelter = new_smelter.GetComponent<Smelter>();
             smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
             smelter.OnBuildingProcess((BuildingBeh)smelter);
@@ -707,15 +706,15 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(Smelter.RequireResource[0].Food.ToString(),
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 //GUI.Label(GameResource.Second_Rect, new GUIContent(Smelter.RequireResource[0].Wood.ToString(), 
                 //    stageManager.taskbarManager.wood_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(Smelter.RequireResource[0].Stone.ToString(), 
-                    stageManager.taskManager.stone_icon), standard_skin.box);
+                    sceneController.taskManager.stone_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(Smelter.RequireResource[0].Gold.ToString(),
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(Smelter.RequireResource[0].Employee.ToString(),
-                    stageManager.taskManager.employee_icon), standard_skin.box);
+                    sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -729,18 +728,15 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableBuild = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() && 
-		    buildingBeh.CheckingEnoughUpgradeResource(MarketBeh.RequireResource[0]) &&
-		    BuildingBeh.MarketInstance == null)
-			enableBuild = true;
-
-        GUI.enabled = enableBuild;
-        if (GUI.Button(createButton_rect, "Create"))
+        GUI.enabled = (BuildingBeh.CheckingOnBuildingList() && buildingBeh.CheckingEnoughUpgradeResource(MarketBeh.RequireResource[0]) 
+            && BuildingBeh.MarketInstance == null) ? true : false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(MarketBeh.RequireResource[0]);
 
-            GameObject market_obj = Instantiate(stageManager.market_prefab) as GameObject;
+            GameObject market_obj = Instantiate(sceneController.market_prefab) as GameObject;
             MarketBeh market = market_obj.GetComponent<MarketBeh>();
             market.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             market.OnBuildingProcess(market);
@@ -757,15 +753,15 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(MarketBeh.RequireResource[0].Food.ToString(),
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(MarketBeh.RequireResource[0].Wood.ToString(), 
-                    stageManager.taskManager.wood_icon), standard_skin.box);
+                    sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(MarketBeh.RequireResource[0].Stone.ToString(), 
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(MarketBeh.RequireResource[0].Gold.ToString(),
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(MarketBeh.RequireResource[0].Employee.ToString(),
-                    stageManager.taskManager.employee_icon), standard_skin.box);
+                    sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -779,17 +775,15 @@ public class BuildingArea : Base_ObjectBeh
 
         #region <!--- Build Button mechanichm.
 
-        bool enableUpgrade = false;
-        if (BuildingBeh.CheckingCanCreateBuilding() && 
-			buildingBeh.CheckingEnoughUpgradeResource(StoreHouse.RequireResource[0]))
-            enableUpgrade = true;
-
-        GUI.enabled = enableUpgrade;
-        if (GUI.Button(createButton_rect, "Build"))
+        GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
+            buildingBeh.CheckingEnoughUpgradeResource(StoreHouse.RequireResource[0])) ? true : false;
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(StoreHouse.RequireResource[0]);
 
-            GameObject new_storehouse = Instantiate(stageManager.storehouse_prefab) as GameObject;
+            GameObject new_storehouse = Instantiate(sceneController.storehouse_prefab) as GameObject;
             StoreHouse storeHouse = new_storehouse.GetComponent<StoreHouse>();
             storeHouse.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
             storeHouse.OnBuildingProcess(storeHouse);
@@ -806,15 +800,15 @@ public class BuildingArea : Base_ObjectBeh
             GUI.BeginGroup(RequireResource_Rect);
             {
                 GUI.Label(GameResource.First_Rect, new GUIContent(StoreHouse.RequireResource[0].Food.ToString(), 
-                    stageManager.taskManager.food_icon), standard_skin.box);
+                    sceneController.taskManager.food_icon), standard_skin.box);
                 GUI.Label(GameResource.Second_Rect, new GUIContent(StoreHouse.RequireResource[0].Wood.ToString(),
-                    stageManager.taskManager.wood_icon), standard_skin.box);
+                    sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(StoreHouse.RequireResource[0].Stone.ToString(),
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
                 GUI.Label(GameResource.Third_Rect, new GUIContent(StoreHouse.RequireResource[0].Gold.ToString(),
-                    stageManager.taskManager.gold_icon), standard_skin.box);
+                    sceneController.taskManager.gold_icon), standard_skin.box);
                 GUI.Label(GameResource.Fourth_Rect, new GUIContent(StoreHouse.RequireResource[0].Employee.ToString(),
-                    stageManager.taskManager.employee_icon), standard_skin.box);
+                    sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -836,10 +830,10 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(BarracksBeh.RequireResource[0].Food.ToString(), stageManager.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(BarracksBeh.RequireResource[0].Wood.ToString(), stageManager.taskManager.wood_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(BarracksBeh.RequireResource[0].Copper.ToString(), stageManager.taskManager.copper_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(BarracksBeh.RequireResource[0].Gold.ToString(), stageManager.taskManager.gold_icon), standard_skin.box);
+                GUI.Label(GameResource.First_Rect, new GUIContent(BarracksBeh.RequireResource[0].Food.ToString(), sceneController.taskManager.food_icon), standard_skin.box);
+                GUI.Label(GameResource.Second_Rect, new GUIContent(BarracksBeh.RequireResource[0].Wood.ToString(), sceneController.taskManager.wood_icon), standard_skin.box);
+                GUI.Label(GameResource.Third_Rect, new GUIContent(BarracksBeh.RequireResource[0].Copper.ToString(), sceneController.taskManager.copper_icon), standard_skin.box);
+                GUI.Label(GameResource.Fourth_Rect, new GUIContent(BarracksBeh.RequireResource[0].Gold.ToString(), sceneController.taskManager.gold_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -848,17 +842,21 @@ public class BuildingArea : Base_ObjectBeh
         #region <!-- Build Button mechanichm.
 
 		bool enableBuildingButton  = false;
-		if(BuildingBeh.CheckingCanCreateBuilding() && buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]) &&
-		   BuildingBeh.AcademyInstance != null) {
+		if(BuildingBeh.CheckingOnBuildingList() && 
+            buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]) &&
+		   BuildingBeh.AcademyInstance != null) 
+        {
 			enableBuildingButton = (BuildingBeh.AcademyInstance.Level >= 3) ? true : false;
 		}
 
         GUI.enabled = enableBuildingButton;
-        if (GUI.Button(createButton_rect, "Build"))
+        if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+
             GameResource.UsedResource(BarracksBeh.RequireResource[0]);
 
-            GameObject barracks_obj = Instantiate(stageManager.barracks_prefab) as GameObject;
+            GameObject barracks_obj = Instantiate(sceneController.barracks_prefab) as GameObject;
             BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
             barracks.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             barracks.OnBuildingProcess(barracks);

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class GroupCaravan : ScriptableObject {
     
     public MarketBeh MarketInstance { get; set; }
+    public AICities TargetCity { get; set; }
     public List<CaravanBeh> GroupList = new List<CaravanBeh>();
 	public List<GameMaterialData> tradingMaterial = new List<GameMaterialData>();
 	
@@ -58,6 +59,6 @@ public class GroupCaravan : ScriptableObject {
 			MarketBeh.tradingMaterial_List.Remove(material);
 		}
 		MarketInstance.SendingCaravanEvent -= HandleMarketSendingCaravanEvent;
-        MarketInstance.Checking_HaveSendCaravanEvent();
+        MarketInstance.CaravanArriveToVillage(TargetCity);
 	}
 }

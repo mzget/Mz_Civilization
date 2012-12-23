@@ -35,6 +35,6 @@ public class GreekCaravanBeh : ScriptableObject {
 
 	void OnDestroy () {
 		marketInstance.SendingCaravanEvent -= Handle_SendingCaravanEvent;
-        marketInstance.Checking_HaveSendCaravanEvent();
+        //marketInstance.CaravanArriveToVillage();
 	}
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class MessageManager : NotificationManager {
+public class MessageManager : NotificationSystem {
 
 	public enum MessageManagetStateBeh { none = 0, drawNewPlayerMessage = 1, drawActivity = 2,};
 	public static MessageManagetStateBeh CurrentMessageManagerState;
@@ -23,7 +23,6 @@ public class MessageManager : NotificationManager {
 	void Update () {
 		
 	}
-
 
     internal void InitializeMessageMechanism()
     {
@@ -54,17 +53,18 @@ public class MessageManager : NotificationManager {
     private void Draw_NewPlayerMessageWindow(int id)
     {
         GUI.Box(drawMessageRect, taskManager.messageFormSystem_icon);
-        GUI.DrawTexture(drawAdvisorRect, questAdvisor_icon, ScaleMode.ScaleToFit);
+        GUI.DrawTexture(drawAdvisorRect, taskManager.newQuestAdvisor_img, ScaleMode.ScaleToFit);
         GUI.Box(base.drawNoticeTopicRect, MessageDataStore.NEW_PLAYER_GREETING_MESSAGE_TOPIC, base.taskManager.taskbarUI_Skin.box);
 		GUI.Box(base.drawNoticeMessageContentRect, base.messageDataStore.newPlayerGreetingMessage, base.noticeMessageContent_boxStyle);
 
 		if(GUI.Button(base.completeSessionMessage_Rect, "The first mission", base.completeSessionMessage_buttonStyle)) {
-			if (base.taskManager.questManager.currentQuestManagerStateBeh == QuestManager.QuestManagerStateBeh.none) {
+			if (base.taskManager.questManager.currentQuestManagerStateBeh == QuestSystemManager.QuestManagerStateBeh.none) {
 				taskManager.MoveOutLeftSidebar (TaskManager.DISPLAY_QUEST_ACTIVITY);
-                QuestManager.CurrentMissionTopic_ID = 1;
+                QuestSystemManager.CurrentMissionTopic_ID = 1;
                 taskManager.questManager.ActiveBeh_NoticeButton();
-			}
-			CloseGUIWindow();
+            }
+            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+            CloseGUIWindow();
 		}
     }
 
@@ -74,6 +74,7 @@ public class MessageManager : NotificationManager {
 		{
 			if (GUI.Button (taskManager.notificationRect_1,new GUIContent("Message",taskManager.messageFormSystem_icon), NoticeButton_style)) {
 				taskManager.MoveOutLeftSidebar (TaskManager.DISPLAY_MESSAGE_ACTIVITY);
+                sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 			}
 		}
 		GUI.enabled = true;
@@ -86,11 +87,12 @@ public class MessageManager : NotificationManager {
             //<!-- Exit Button.
             if (GUI.Button(taskManager.exitButton_Rect, new GUIContent(string.Empty, "Close Button"), taskManager.taskbarUI_Skin.customStyles[6]))
             {
+                sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
                 CloseGUIWindow();
             }
 
             GUI.Box(drawMessageRect, taskManager.messageFormSystem_icon);
-            GUI.DrawTexture(drawAdvisorRect, questAdvisor_icon, ScaleMode.ScaleToFit);
+			GUI.DrawTexture(drawAdvisorRect, taskManager.newQuestAdvisor_img, ScaleMode.ScaleToFit);
             GUI.Box(base.drawNoticeTopicRect, base.messageDataStore.currentMessageTopic, base.taskManager.taskbarUI_Skin.box);
             GUI.Box(base.drawNoticeMessageContentRect, base.messageDataStore.currentMessage, base.noticeMessageContent_boxStyle);
         }
