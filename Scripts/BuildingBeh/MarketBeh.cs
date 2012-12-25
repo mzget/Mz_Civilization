@@ -186,14 +186,10 @@ public class MarketBeh : BuildingBeh {
         base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
-		this.CheckingQuestComplete();
+        caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
+        this.CheckingIdleCaravan();
 
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none) {
-            caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
-            this.CheckingIdleCaravan();
-                
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
-        }
+        this.CheckingQuestComplete();
     }
 
     #endregion
@@ -272,8 +268,14 @@ public class MarketBeh : BuildingBeh {
 	public event System.EventHandler SendingCaravanEvent;
     internal void CaravanArriveToVillage(AICities returnFrom)
     {
-        if (returnFrom == StageManager.list_AICity[0]) {
-            _IsGreekTrading = false;
+        //<@-- if not use automatic trading.
+        //if (returnFrom == StageManager.list_AICity[0]) {
+        //    _IsGreekTrading = false;
+        //}
+
+        //<@-- Use automatic trading.
+        if (SendingCaravanEvent == null) {
+            TradingMechanism();
         }
     }
 

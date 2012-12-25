@@ -235,10 +235,9 @@ public class BuildingArea : Base_ObjectBeh
 
     private void CheckingMissionComplete()
     {
-        if (QuestSystemManager.arr_isMissionComplete[7] == false)
-        {
-            QuestSystemManager.arr_isMissionComplete[7] = true;
-            sceneController.taskManager.questManager.list_questBeh[7]._IsComplete = true;
+        if (QuestSystemManager.arr_isMissionComplete[8] == false) {
+            QuestSystemManager.arr_isMissionComplete[8] = true;
+            sceneController.taskManager.questManager.list_questBeh[8]._IsComplete = true;
             sceneController.taskManager.questManager.CheckingOnCompleteMission();
         }
     }

@@ -242,14 +242,8 @@ public class StoreHouse : BuildingBeh {
         base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
+        this.ReCalculationCapacityData();
 		this.CheckingQuestComplete();
-
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none) 
-		{
-            this.ReCalculationCapacityData();
-			
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
-        }
     }
 
     #endregion

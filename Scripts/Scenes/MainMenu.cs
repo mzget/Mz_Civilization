@@ -434,8 +434,6 @@ public class MainMenu : Mz_BaseScene
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance, 0);
         //<!-- Academy instance data.
 		PlayerPrefsX.SetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_AcademyInstance, false);
-
-        #region <!-- Resource section.
         
         //<!-- Farm Data.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_farm_instance, 0);
@@ -446,8 +444,6 @@ public class MainMenu : Mz_BaseScene
 		//<!-- Smelter Data.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance, 0);
 
-        #endregion
-
         //<!-- Save Storehouse data.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfStorehouseInstance, 0);
 		//<!-- Set default value of "MarketInstance".
@@ -455,14 +451,15 @@ public class MainMenu : Mz_BaseScene
 		
 		//<!-- Save Barracks data.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs, 0);
-		
-		#region <!-- GAME AI section.
+
 		//<@!-- Greek tribe AI data.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN, 500);
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST, 500);
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HOPLITE, 500);
-		
-		#endregion 
+
+        //<@-- Mission data.
+        PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
+        PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, new bool[16]);
 
 		saveData_Obj.Load();
 		this.LoadSceneTarget();
@@ -472,7 +469,7 @@ public class MainMenu : Mz_BaseScene
         if (Application.isLoadingLevel == false)
         {
             Mz_LoadingScreen.TargetSceneName = Mz_BaseScene.ScenesInstance.Village.ToString();
-            Application.LoadLevelAsync(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
+            Application.LoadLevel(Mz_BaseScene.ScenesInstance.LoadingScreen.ToString());
         }
     }
 }

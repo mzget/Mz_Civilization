@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class QuestSystemManager : NotificationSystem {
 
-    public static bool[] arr_isMissionComplete = new bool[8];
+    public static bool[] arr_isMissionComplete = new bool[16];
     public static int CurrentMissionTopic_ID = 0;
 
     public List<QuestBeh> list_questBeh = new List<QuestBeh>();
@@ -109,6 +109,17 @@ public class QuestSystemManager : NotificationSystem {
 		quest_7.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
 		quest_7.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
 		list_questBeh.Add(quest_7);
+
+        QuestBeh quest_8 = new QuestBeh() {
+            QuestName = MissionMassageDataStore.LV8_TOPIC,
+            QuestDescription = MissionMassageDataStore.LV8_DESCRIPTION,
+            reward = new List<GameMaterialData>(3),
+            _IsComplete = arr_isMissionComplete[8],
+        };
+        quest_8.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_8.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_8.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        list_questBeh.Add(quest_8);
 
         yield return null;
     }

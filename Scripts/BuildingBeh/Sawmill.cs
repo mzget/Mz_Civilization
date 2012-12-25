@@ -110,9 +110,6 @@ public class Sawmill : BuildingBeh {
 
 		Destroy(processbar_Obj_parent);	
 		this.CheckingQuestComplete();
-
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
     }
 
     #endregion

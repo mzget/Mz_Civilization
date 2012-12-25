@@ -53,10 +53,17 @@ public class MissionMassageDataStore
 
 	#endregion
 
-	#region <@-- 7. Expand more building area.
+    #region <@-- 7. Send Caravan to Argos city.
 
-	public const string LV7_TOPIC = "Mission 7 : Expand village";
-	public const string LV7_DESCRIPTION = "Buy once building area to expand your village.";
+    public const string LV7_TOPIC = "Mission 7 : Send 1 Caravan to Argos city";
+    public const string LV7_DESCRIPTION = "Raise the economy level of your village.";
+
+    #endregion
+
+	#region <@-- 8. Expand more building area.
+
+	public const string LV8_TOPIC = "Mission 8 : Expand village";
+	public const string LV8_DESCRIPTION = "Buy once building area to expand your village.";
 
 	#endregion
 }

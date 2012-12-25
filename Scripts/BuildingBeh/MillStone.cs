@@ -107,9 +107,6 @@ public class MillStone : BuildingBeh {
         base.BuildingProcessComplete(obj);
 
         Destroy(processbar_Obj_parent);
-		
-		if(this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
-			this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
     }
 
     #endregion

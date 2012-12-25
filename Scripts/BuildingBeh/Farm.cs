@@ -94,9 +94,6 @@ public class Farm : BuildingBeh
 
         Destroy(base.processbar_Obj_parent);		
 		this.CheckingQuestComplete();
-
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
     }
 
     #endregion

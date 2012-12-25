@@ -146,14 +146,9 @@ public class HouseBeh : BuildingBeh {
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);		
+        Destroy(base.processbar_Obj_parent);	
+        this.CalculationCurrentDweller();	
 		this.CheckingQuestComplete();
-
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
-        {
-            this.CalculationCurrentDweller();
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
-        }
     }
 
     #endregion

@@ -406,9 +406,11 @@ public class BuildingBeh : Base_ObjectBeh {
             TimeSpan elapsedTime = DateTime.UtcNow - startingContruction_datetime;
             TimeSpan constructionTime = TimeSpan.FromSeconds(buildingTimeData.arrBuildingTimesData[this.level]);
             TimeSpan contructionRemainingTime = constructionTime - elapsedTime;
-            string remainingTime = new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss");
-            if (elapsedTime < constructionTime)
-                notificationText = currentBuildingStatus + " :: Time remain " + remainingTime + " m.";
+			if(contructionRemainingTime.TotalSeconds >= 0)
+                notificationText = currentBuildingStatus + " :: Time remain " + new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss") + " m.";
+            //    string remainingTime = new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss");
+            //if (elapsedTime < constructionTime)
+            //    notificationText = currentBuildingStatus + " :: Time remain " + remainingTime + " m.";
             else
                 notificationText = string.Empty;
         }

@@ -141,9 +141,6 @@ public class BarracksBeh : BuildingBeh
         base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
-
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none)
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
     }
 
     #endregion
