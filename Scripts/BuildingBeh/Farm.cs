@@ -92,23 +92,13 @@ public class Farm : BuildingBeh
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);		
-		this.CheckingQuestComplete();
+        Destroy(base.processbar_Obj_parent);
+
+        if(QuestSystemManager.arr_isMissionComplete[2] == false)
+            sceneController.taskManager.questManager.CheckingQuestComplete(2);	
     }
 
     #endregion
-
-	void CheckingQuestComplete ()
-	{		
-		if(QuestSystemManager.arr_isMissionComplete[2] == false) {
-			sceneController.taskManager.questManager.list_questBeh[2]._IsComplete = true;
-			QuestSystemManager.arr_isMissionComplete[2] = true;
-			
-			if(QuestSystemManager.CurrentMissionTopic_ID == 2) {
-				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
-			}
-		}
-	}
 	
 	protected override void ClearStorageData ()
 	{

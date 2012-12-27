@@ -39,7 +39,8 @@ public class StageManager : Mz_BaseScene {
 		new Vector2(280, 180),
         new Vector2(280, -180),
 	};
-	public static List<BuildingArea> buildingArea_Objs = new List<BuildingArea>(24);    
+	public static List<BuildingArea> buildingArea_Objs = new List<BuildingArea>(24);
+    public static bool[] arr_buildingAreaState = new bool[24];
     //<!--- Private Data Fields.
     private Vector2 scrollPosition = Vector2.zero;
     private Rect mainGUIRect = new Rect(Main.FixedGameWidth / 2 - 300, Main.FixedGameHeight - 100, 600, 100);
@@ -190,9 +191,9 @@ public class StageManager : Mz_BaseScene {
     void CreateBuildingArea()
     {
         GameObject building_area_group = GameObject.Find("Building_Area_Group");
+        arr_buildingAreaState = PlayerPrefsX.GetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BuildingAreaState, false, 24);
 
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 8; i++) {
 			GameObject Temp_obj = OT.CreateObject("Building_Area");
             Temp_obj.transform.parent = building_area_group.transform;
 
@@ -201,11 +202,10 @@ public class StageManager : Mz_BaseScene {
             buildingArea_Objs[i].Sprite.size = new Vector2(128, 128);
             buildingArea_Objs[i].IndexOfAreaPosition = i;
             buildingArea_Objs[i].Sprite.rotation = 45f;
-            buildingArea_Objs[i].areaState = BuildingArea.AreaState.Active;
+            buildingArea_Objs[i].areaActiveState = true;
         }
 
-        for (int i = 8; i < buildingArea_Pos.Count; i++)
-        {
+        for (int i = 8; i < buildingArea_Pos.Count; i++) {
 			GameObject Temp_obj = OT.CreateObject("Building_Area");
             Temp_obj.transform.parent = building_area_group.transform;
 
@@ -214,12 +214,7 @@ public class StageManager : Mz_BaseScene {
             buildingArea_Objs[i].Sprite.size = new Vector2(128, 128);
             buildingArea_Objs[i].IndexOfAreaPosition = i;
             buildingArea_Objs[i].Sprite.rotation = 45f;
-
-			int state = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + i);
-            if (state == 0)
-                buildingArea_Objs[i].areaState = BuildingArea.AreaState.UnActive;
-            else if (state == 1)
-                buildingArea_Objs[i].areaState = BuildingArea.AreaState.Active;
+            buildingArea_Objs[i].areaActiveState = arr_buildingAreaState[i];
         }
     }
     void PrepareBuildingPrefabsFromResource()
@@ -341,7 +336,7 @@ public class StageManager : Mz_BaseScene {
 				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.millstone_position_ + i);
 
                 GameObject new_millstone = Instantiate(millstone_prefab) as GameObject;
-                MillStone millstone = new_millstone.GetComponent<MillStone>();
+                StoneCrushingPlant millstone = new_millstone.GetComponent<StoneCrushingPlant>();
                 millstone.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
             }
         }

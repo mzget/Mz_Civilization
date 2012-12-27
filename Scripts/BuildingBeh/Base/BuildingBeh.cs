@@ -59,7 +59,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	//<!-- Resource.
     public static List<Farm> Farm_Instance = new List<Farm>();
 	public static List<Sawmill> Sawmill_Instance = new List<Sawmill>();
-	public static List<MillStone> MillStoneInstance = new List<MillStone>();
+	public static List<StoneCrushingPlant> MillStoneInstance = new List<StoneCrushingPlant>();
 	public static List<Smelter> SmelterInstance = new List<Smelter>();
 	//<!-- Economy.
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
@@ -86,8 +86,6 @@ public class BuildingBeh : Base_ObjectBeh {
     protected Rect destruction_Button_Rect = new Rect(25, 260, 120, 32);
 	protected string notificationText = string.Empty;
 	protected DateTime startingContruction_datetime;
-
-
 
     public static bool CheckingOnBuildingList() {
         if (onBuilding_Obj.Count < 2)

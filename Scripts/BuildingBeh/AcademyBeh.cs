@@ -81,6 +81,9 @@ public class AcademyBeh : BuildingBeh {
         base.BuildingProcessComplete(obj);
 
         Destroy(base.processbar_Obj_parent);
+
+        if (QuestSystemManager.arr_isMissionComplete[9] == false)
+            sceneController.taskManager.questManager.CheckingQuestComplete(9);
     }
 
     #region <!-- Events Handle.

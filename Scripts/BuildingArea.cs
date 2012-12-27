@@ -33,8 +33,9 @@ public class BuildingArea : Base_ObjectBeh
 	private int indexOfAreaPosition;
     public int IndexOfAreaPosition { get { return indexOfAreaPosition; } set { indexOfAreaPosition = value; } }
     private enum GUIState { none = 0, ShowMainUI, ShowUtiltyUI, ShowEconomyUI, ShowMilitaryUI, ShowBuyArea, };
-    public enum AreaState { Active = 1, UnActive = 0, };
-    public AreaState areaState; 
+    //public enum AreaState { Active = 1, UnActive = 0, };
+    //public AreaState areaState; 
+    internal bool areaActiveState = false;
     private GUIState guiState;
     private StageManager sceneController;
 	private static BuildingBeh buildingBeh;
@@ -87,7 +88,7 @@ public class BuildingArea : Base_ObjectBeh
         StartCoroutine(this.LoadTextureResource());
         this.InitializeGUI();
 
-        if(areaState == AreaState.UnActive) {
+        if(!areaActiveState) {
             Sprite.frameIndex = 4;
 			Sprite.tintColor = Color.gray;
         }
@@ -187,13 +188,13 @@ public class BuildingArea : Base_ObjectBeh
     {
         sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.displayUI_clip);
 
-        if(areaState == AreaState.Active) {
+        if(areaActiveState) {
 		    if(TaskManager.IsShowInteruptGUI == false) {
                 guiState = GUIState.ShowUtiltyUI;
                 TaskManager.IsShowInteruptGUI = true;
             }
         }
-        else if(areaState == AreaState.UnActive) {
+        else if(areaActiveState == false) {
             if (TaskManager.IsShowInteruptGUI == false) {
                 guiState = GUIState.ShowBuyArea;
                 TaskManager.IsShowInteruptGUI = true;
@@ -223,23 +224,16 @@ public class BuildingArea : Base_ObjectBeh
     {
         StoreHouse.sumOfGold -= 500;
 
-        this.areaState = AreaState.Active;
+        this.areaActiveState = true;
+        StageManager.arr_buildingAreaState[indexOfAreaPosition] = true;
+
         Sprite.tintColor = Color.white;
         Sprite.frameIndex = 3;
-		
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + this.indexOfAreaPosition, (int)areaState);
 
         this.CloseGUIWindow();
-        this.CheckingMissionComplete();
-    }
 
-    private void CheckingMissionComplete()
-    {
-        if (QuestSystemManager.arr_isMissionComplete[8] == false) {
-            QuestSystemManager.arr_isMissionComplete[8] = true;
-            sceneController.taskManager.questManager.list_questBeh[8]._IsComplete = true;
-            sceneController.taskManager.questManager.CheckingOnCompleteMission();
-        }
+        if(QuestSystemManager.arr_isMissionComplete[8] == false)
+            sceneController.taskManager.questManager.CheckingQuestComplete(8);
     }
 	
     //<!--- Economy, Military, Utility.
@@ -627,22 +621,22 @@ public class BuildingArea : Base_ObjectBeh
 	private void DrawIntroduceMillStone()
     {
         GUI.Box(image_rect, new GUIContent(millStone_Icon, "IconTexture"));
-        GUI.Label(tagName_rect, new GUIContent(MillStone.BuildingName), tagname_Style);
+        GUI.Label(tagName_rect, new GUIContent(StoneCrushingPlant.BuildingName), tagname_Style);
 
         #region <!--- Build Button mechanichm.
 
         GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
-            buildingBeh.CheckingEnoughUpgradeResource(MillStone.RequireResource[0])) ? true : false;
+            buildingBeh.CheckingEnoughUpgradeResource(StoneCrushingPlant.RequireResource[0])) ? true : false;
         if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(MillStone.RequireResource[0]);
+            GameResource.UsedResource(StoneCrushingPlant.RequireResource[0]);
 
-            GameObject new_millstone = Instantiate(sceneController.millstone_prefab) as GameObject;
-            MillStone millstone = new_millstone.GetComponent<MillStone>();
-            millstone.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
-            millstone.OnBuildingProcess((BuildingBeh)millstone);
+            GameObject new_building = Instantiate(sceneController.millstone_prefab) as GameObject;
+            StoneCrushingPlant stoneCrushing = new_building.GetComponent<StoneCrushingPlant>();
+            stoneCrushing.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
+            stoneCrushing.OnBuildingProcess((BuildingBeh)stoneCrushing);
 
             ActiveManager();
         }
@@ -650,20 +644,20 @@ public class BuildingArea : Base_ObjectBeh
 
         #endregion
 		
-        GUI.BeginGroup(content_rect, new GUIContent(MillStone.CurrentDescription, "content"), buildingArea_Skin.textArea);
+        GUI.BeginGroup(content_rect, new GUIContent(StoneCrushingPlant.CurrentDescription, "content"), buildingArea_Skin.textArea);
         {
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(MillStone.RequireResource[0].Food.ToString(), 
+                GUI.Label(GameResource.First_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Food.ToString(), 
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(MillStone.RequireResource[0].Wood.ToString(),
+                GUI.Label(GameResource.Second_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Wood.ToString(),
                     sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(MillStone.RequireResource[0].Stone.ToString(),
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(MillStone.RequireResource[0].Gold.ToString(),
+                GUI.Label(GameResource.Third_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Gold.ToString(),
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(MillStone.RequireResource[0].Employee.ToString(),
+                GUI.Label(GameResource.Fourth_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Employee.ToString(),
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();

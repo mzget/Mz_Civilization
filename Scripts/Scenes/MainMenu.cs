@@ -425,8 +425,9 @@ public class MainMenu : Mz_BaseScene
 		PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, new bool[8]);
 
 		//<@-- Building area state data.
-        for (int i = 8; i < StageManager.buildingArea_Objs.Count; i++)
-            PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.BuildingAreaState + i, 0);
+        bool[] areaState_array = new bool[24];
+        PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BuildingAreaState, areaState_array);
+
 		//<@-- Town center level.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);		
 		

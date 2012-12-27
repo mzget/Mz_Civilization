@@ -243,22 +243,12 @@ public class StoreHouse : BuildingBeh {
 
         Destroy(base.processbar_Obj_parent);
         this.ReCalculationCapacityData();
-		this.CheckingQuestComplete();
+
+        if (QuestSystemManager.arr_isMissionComplete[4] == false)
+            sceneController.taskManager.questManager.CheckingQuestComplete(4);
     }
 
     #endregion
-	
-	void CheckingQuestComplete ()
-	{		
-		if(QuestSystemManager.arr_isMissionComplete[4] == false) {
-			sceneController.taskManager.questManager.list_questBeh[4]._IsComplete = true;
-			QuestSystemManager.arr_isMissionComplete[4] = true;
-			
-			if (QuestSystemManager.CurrentMissionTopic_ID == 4) {
-				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
-			}
-		}
-	}
 	
 	protected override void ClearStorageData ()
 	{

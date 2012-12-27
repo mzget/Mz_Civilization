@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class MillStone : BuildingBeh {
+public class StoneCrushingPlant : BuildingBeh {
 
     //<!-- Static Data.
     public static GameResource[] RequireResource = new GameResource[10] {
@@ -18,7 +18,7 @@ public class MillStone : BuildingBeh {
     };
 
     //<!-- Data.
-    public static string BuildingName = "MillStone";
+    public static string BuildingName = "Stone crushing plant";
     private static string Description_TH = "โรงโม่หิน มีช่างหินเป็นผู้เชี่ยวชาญในการตัดหิน ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้หินมากขึ้นไปด้วย";
     private static string Description_EN = "Stone block can be gathered from stone mining. Upgrade millstone to increase stone block production.";
     public static string CurrentDescription {

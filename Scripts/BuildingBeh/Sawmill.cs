@@ -108,23 +108,13 @@ public class Sawmill : BuildingBeh {
     {
         base.BuildingProcessComplete(obj);
 
-		Destroy(processbar_Obj_parent);	
-		this.CheckingQuestComplete();
+		Destroy(processbar_Obj_parent);
+
+        if (QuestSystemManager.arr_isMissionComplete[1] == false)
+            sceneController.taskManager.questManager.CheckingQuestComplete(1);
     }
 
     #endregion
-
-	void CheckingQuestComplete ()
-	{		
-		if(QuestSystemManager.arr_isMissionComplete[1] == false) {
-			sceneController.taskManager.questManager.list_questBeh[1]._IsComplete = true;
-			QuestSystemManager.arr_isMissionComplete[1] = true;
-			
-			if (QuestSystemManager.CurrentMissionTopic_ID == 1) {
-				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
-			}
-		}
-	}
 	
 	protected override void ClearStorageData ()
 	{

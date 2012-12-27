@@ -21,7 +21,7 @@ public class NotificationSystem : MonoBehaviour {
 	protected StageManager sceneController;
     protected TaskManager taskManager;
 	protected MessageDataStore messageDataStore;
-    protected MissionMassageDataStore questMessageData;
+    protected MissionMessageData questMessageData;
 
 
     void Awake()
@@ -30,7 +30,7 @@ public class NotificationSystem : MonoBehaviour {
 		sceneController = this.gameObject.GetComponent<StageManager>();
 		
 		messageDataStore = new MessageDataStore();
-        questMessageData = new MissionMassageDataStore();
+        questMessageData = new MissionMessageData();
         //messageDataStore.list_questBeh.Add(new QuestBeh() { QuestName = "" });
 
         noticeMessageBox_img = Resources.Load(TaskManager.PathOfMainGUI + "GUI_box", typeof(Texture2D)) as Texture2D;

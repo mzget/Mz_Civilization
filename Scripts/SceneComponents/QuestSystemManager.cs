@@ -28,12 +28,12 @@ public class QuestSystemManager : NotificationSystem {
 
     private IEnumerator InitializeMissionList()
     {
-        list_questBeh.Add(new QuestBeh() { QuestName = MissionMassageDataStore.NULL_MISSION_MESSAGE, QuestDescription = "", });
+        list_questBeh.Add(new QuestBeh() { QuestName = MissionMessageData.NULL_MISSION_MESSAGE, QuestDescription = "", });
 
         QuestBeh level_1 = new QuestBeh()
         {
-            QuestName = MissionMassageDataStore.TOPIC_CREATE_SAWMILL,
-            QuestDescription = MissionMassageDataStore.CREATE_SAWMILL_DESCRIPTION,
+            QuestName = MissionMessageData.TOPIC_CREATE_SAWMILL,
+            QuestDescription = MissionMessageData.CREATE_SAWMILL_DESCRIPTION,
             reward = new List<GameMaterialData>(3), 
             _IsComplete = arr_isMissionComplete[1],
         };
@@ -44,8 +44,8 @@ public class QuestSystemManager : NotificationSystem {
 
         var level_2 = new QuestBeh()
         {
-            QuestName = MissionMassageDataStore.TOPIC_CREATE_FARM,
-            QuestDescription = MissionMassageDataStore.CREATE_FARM_DESCRIPTION,
+            QuestName = MissionMessageData.TOPIC_CREATE_FARM,
+            QuestDescription = MissionMessageData.CREATE_FARM_DESCRIPTION,
             reward = new List<GameMaterialData>(3),
             _IsComplete = arr_isMissionComplete[2],
         };
@@ -56,8 +56,8 @@ public class QuestSystemManager : NotificationSystem {
 
         QuestBeh quest_3 = new QuestBeh()
         {
-            QuestName = MissionMassageDataStore.TOPIC_CREATE_HOUSE,
-            QuestDescription = MissionMassageDataStore.CREATE_HOUSE_DESCRIPTION,
+            QuestName = MissionMessageData.TOPIC_CREATE_HOUSE,
+            QuestDescription = MissionMessageData.CREATE_HOUSE_DESCRIPTION,
             reward = new List<GameMaterialData>(3),
             _IsComplete = arr_isMissionComplete[3],
         };
@@ -67,8 +67,8 @@ public class QuestSystemManager : NotificationSystem {
         list_questBeh.Add(quest_3);
 		
 		QuestBeh quest_4 = new QuestBeh() {
-			QuestName = MissionMassageDataStore.TOPIC_CREATE_STOREHOUSE, 
-			QuestDescription = MissionMassageDataStore.CREATE_STOREHOUSE_DESCRIPTION, 
+			QuestName = MissionMessageData.TOPIC_CREATE_STOREHOUSE, 
+			QuestDescription = MissionMessageData.CREATE_STOREHOUSE_DESCRIPTION, 
             reward = new List<GameMaterialData>(3),
             _IsComplete = arr_isMissionComplete[4],
 		};
@@ -78,8 +78,8 @@ public class QuestSystemManager : NotificationSystem {
         list_questBeh.Add(quest_4);
 
 		QuestBeh quest_5 = new QuestBeh() { 
-			QuestName = MissionMassageDataStore.TOPIC_CREATE_MARKET, 
-			QuestDescription = MissionMassageDataStore.CREATE_MARKET_DESCRIPTION,
+			QuestName = MissionMessageData.TOPIC_CREATE_MARKET, 
+			QuestDescription = MissionMessageData.CREATE_MARKET_DESCRIPTION,
 			reward = new List<GameMaterialData>(3),
 			_IsComplete = arr_isMissionComplete[5],
 		};
@@ -89,8 +89,8 @@ public class QuestSystemManager : NotificationSystem {
 		list_questBeh.Add(quest_5);
 
 		QuestBeh quest_6 = new QuestBeh() { 
-			QuestName = MissionMassageDataStore.TOPIC_UPGRADE_TOWNCENTER, 
-			QuestDescription = MissionMassageDataStore.UPGRADE_TOWNCENTER_DESCRIPTION,
+			QuestName = MissionMessageData.TOPIC_UPGRADE_TOWNCENTER, 
+			QuestDescription = MissionMessageData.UPGRADE_TOWNCENTER_DESCRIPTION,
 			reward = new List<GameMaterialData>(3),
 			_IsComplete = arr_isMissionComplete[6],
 		};
@@ -100,8 +100,8 @@ public class QuestSystemManager : NotificationSystem {
 		list_questBeh.Add(quest_6);
 
 		QuestBeh quest_7 = new QuestBeh() {
-			QuestName = MissionMassageDataStore.LV7_TOPIC, 
-			QuestDescription = MissionMassageDataStore.LV7_DESCRIPTION,
+			QuestName = MissionMessageData.LV7_TOPIC, 
+			QuestDescription = MissionMessageData.LV7_DESCRIPTION,
 			reward = new List<GameMaterialData>(3),
 			_IsComplete = arr_isMissionComplete[7],
 		};
@@ -111,8 +111,8 @@ public class QuestSystemManager : NotificationSystem {
 		list_questBeh.Add(quest_7);
 
         QuestBeh quest_8 = new QuestBeh() {
-            QuestName = MissionMassageDataStore.LV8_TOPIC,
-            QuestDescription = MissionMassageDataStore.LV8_DESCRIPTION,
+            QuestName = MissionMessageData.LV8_TOPIC,
+            QuestDescription = MissionMessageData.LV8_DESCRIPTION,
             reward = new List<GameMaterialData>(3),
             _IsComplete = arr_isMissionComplete[8],
         };
@@ -120,6 +120,30 @@ public class QuestSystemManager : NotificationSystem {
         quest_8.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
         quest_8.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(quest_8);
+
+        QuestBeh quest_9 = new QuestBeh()
+        {
+            QuestName = MissionMessageData.LV9_TOPIC,
+            QuestDescription = MissionMessageData.LV9_DESCRIPTION,
+            reward = new List<GameMaterialData>(3),
+            _IsComplete = arr_isMissionComplete[9],
+        };
+        quest_9.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_9.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_9.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        list_questBeh.Add(quest_9);
+
+        QuestBeh quest_10 = new QuestBeh()
+        {
+            QuestName = MissionMessageData.LV10_TOPIC,
+            QuestDescription = MissionMessageData.LV10_DESCRIPTION,
+            reward = new List<GameMaterialData>(3),
+            _IsComplete = arr_isMissionComplete[10],
+        };
+        quest_10.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_10.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_10.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        list_questBeh.Add(quest_10);
 
         yield return null;
     }
@@ -301,11 +325,13 @@ public class QuestSystemManager : NotificationSystem {
 			UnActive_NoticeButton();
 		}
     }
-
-    internal void CheckingOnCompleteMission()
-    {
-        if (list_questBeh[CurrentMissionTopic_ID]._IsComplete == true) {
+	
+	internal void CheckingQuestComplete (int mission_id)
+	{		
+		QuestSystemManager.arr_isMissionComplete[mission_id] = true;
+		sceneController.taskManager.questManager.list_questBeh[mission_id]._IsComplete = true;
+			
+        if (list_questBeh[CurrentMissionTopic_ID]._IsComplete == true) 
             this.ActiveBeh_NoticeButton();
-        }
-    }
+	}
 }

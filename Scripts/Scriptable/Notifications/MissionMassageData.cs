@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
 
-public class MissionMassageDataStore
+public class MissionMessageData
 {
 
-    public MissionMassageDataStore() { }
+    public MissionMessageData() { }
 
     public void OnDestroy() { }
 
@@ -55,7 +55,7 @@ public class MissionMassageDataStore
 
     #region <@-- 7. Send Caravan to Argos city.
 
-    public const string LV7_TOPIC = "Mission 7 : Send 1 Caravan to Argos city";
+    public const string LV7_TOPIC = "Mission 7 : Send 1 Caravan to Greek city";
     public const string LV7_DESCRIPTION = "Raise the economy level of your village.";
 
     #endregion
@@ -66,5 +66,19 @@ public class MissionMassageDataStore
 	public const string LV8_DESCRIPTION = "Buy once building area to expand your village.";
 
 	#endregion
+
+    #region <@-- 9. Create Academy.
+
+    public const string LV9_TOPIC = "Mission 9 : Academy";
+	public const string LV9_DESCRIPTION = "Create Academy.";
+
+    #endregion
+
+    #region <@-- 10. Create Barrack.
+
+	public const string LV10_TOPIC = "Mission 10 : Barrack";
+	public const string LV10_DESCRIPTION = "Create Barrack.";
+
+    #endregion
 }
 

@@ -36,7 +36,7 @@ public class Mz_SaveData : ISaveData
     public const string smelter_position_ = "smelter_position_";
     public const string smelter_level_ = "smelter_level_";
 	
-	public const string BuildingAreaState = "BuildingAreaState";
+	public const string KEY_BuildingAreaState = "BuildingAreaState";
 	public const string TownCenter_level = "TownCenter_level";
 	
 	#region <@-- Utility Section.
@@ -104,9 +104,14 @@ public class Mz_SaveData : ISaveData
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_SPEARMAN, BarracksBeh.AmountOfSpearman);
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_HAPASPIST, BarracksBeh.AmountOfHapaspist);
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_AMOUNT_OF_HOPLITE, BarracksBeh.AmountOfHoplite);
+
 			//<@-- Mission data.
             PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + KEY_CURRENT_MISSION_ID, QuestSystemManager.CurrentMissionTopic_ID);
-			PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + KEY_ARRAY_MISSION_COMPLETE, QuestSystemManager.arr_isMissionComplete);
+            PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + KEY_ARRAY_MISSION_COMPLETE, QuestSystemManager.arr_isMissionComplete);
+
+            //<@-- Building area state data.
+            PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BuildingAreaState, StageManager.arr_buildingAreaState);
+
 			//<!-- TownCenter.
 			PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + TownCenter_level, BuildingBeh.TownCenter.Level);
 			

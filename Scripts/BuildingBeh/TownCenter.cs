@@ -89,23 +89,13 @@ public class TownCenter : BuildingBeh {
 
         Destroy(base.processbar_Obj_parent);
 
-		if(BuildingBeh.TownCenter.Level == 3)
-			this.CheckingQuestComplete();
+        if (BuildingBeh.TownCenter.Level == 3) {
+            if(QuestSystemManager.arr_isMissionComplete[6] == false)
+                sceneController.taskManager.questManager.CheckingQuestComplete(6);
+        }
 	}
 	
 	#endregion
-	
-	void CheckingQuestComplete ()
-	{		
-		if(QuestSystemManager.arr_isMissionComplete[6] == false) {
-			sceneController.taskManager.questManager.list_questBeh[6]._IsComplete = true;
-			QuestSystemManager.arr_isMissionComplete[6] = true;
-			
-			if (QuestSystemManager.CurrentMissionTopic_ID == 6) {
-				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
-			}
-		}
-	}
 
     protected override void CreateWindow(int windowID)
     {

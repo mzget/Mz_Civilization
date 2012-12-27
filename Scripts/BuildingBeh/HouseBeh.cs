@@ -146,9 +146,11 @@ public class HouseBeh : BuildingBeh {
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);	
-        this.CalculationCurrentDweller();	
-		this.CheckingQuestComplete();
+        Destroy(base.processbar_Obj_parent);
+        this.CalculationCurrentDweller();
+
+        if (QuestSystemManager.CurrentMissionTopic_ID == 3)
+            sceneController.taskManager.questManager.CheckingQuestComplete(3);
     }
 
     #endregion
@@ -159,20 +161,6 @@ public class HouseBeh : BuildingBeh {
 		
 		base.NotEnoughResource_Notification_event -= HandleBaseNotEnoughResourceNotification_event;
 		BuildingBeh.House_Instances.Remove(this);
-	}
-
-	void CheckingQuestComplete ()
-	{
-		if(BuildingBeh.House_Instances.Count >= 2) {
-			if(QuestSystemManager.arr_isMissionComplete[3] == false) {
-				sceneController.taskManager.questManager.list_questBeh[3]._IsComplete = true;
-				QuestSystemManager.arr_isMissionComplete[3] = true;
-				
-				if (QuestSystemManager.CurrentMissionTopic_ID == 3) {
-					sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
-				}
-			}
-		}
 	}
 
 	protected override void OnTouchDown ()

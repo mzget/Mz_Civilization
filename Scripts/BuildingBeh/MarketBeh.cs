@@ -189,22 +189,11 @@ public class MarketBeh : BuildingBeh {
         caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
         this.CheckingIdleCaravan();
 
-        this.CheckingQuestComplete();
+        if (QuestSystemManager.arr_isMissionComplete[5] == false)
+            sceneController.taskManager.questManager.CheckingQuestComplete(5);
     }
 
     #endregion
-	
-	void CheckingQuestComplete ()
-	{		
-		if(QuestSystemManager.arr_isMissionComplete[5] == false) {
-			sceneController.taskManager.questManager.list_questBeh[5]._IsComplete = true;
-			QuestSystemManager.arr_isMissionComplete[5] = true;
-			
-			if (QuestSystemManager.CurrentMissionTopic_ID == 5) {
-				sceneController.taskManager.questManager.ActiveBeh_NoticeButton();
-			}
-		}
-	}
 
     protected override void ClearStorageData()
     {
@@ -285,8 +274,7 @@ public class MarketBeh : BuildingBeh {
         {
             #region <!-- greek trading mechanism.
 
-            if (_IsGreekTrading == true)
-            {
+            if (_IsGreekTrading == true) {
                 #region <!-- Sell Copper, Stoneblock.
 
                 if (numberOf_CopperIngots > 0 || numberOf_StoneBlocks > 0)
@@ -298,8 +286,7 @@ public class MarketBeh : BuildingBeh {
                     {
                         caravan_group = new GroupCaravan() { MarketInstance = this, TargetCity = StageManager.list_AICity[0], };
 
-                        for (int i = 0; i < UsedCaravan; i++)
-                        {
+                        for (int i = 0; i < UsedCaravan; i++) {
                             /// Add IdleCaravan to GroupCaravan.
                             caravan_group.GroupList.Add(idleCaravanList[0]);
                             /// Remove Idle Caravan.
@@ -310,20 +297,21 @@ public class MarketBeh : BuildingBeh {
                         StoreHouse.Remove_sumOfStone(numberOf_StoneBlocks);
                         //<!-- Sending caravan.
                         caravan_group.TravelingCaravan(3, getGold);
-						///<@-- Cutting Trading session.
-//						_IsGreekTrading = false;
 						
                         //<!-- Add material to trading list.
-                        if (numberOf_StoneBlocks > 0)
-                        {
+                        if (numberOf_StoneBlocks > 0) {
                             tradingMaterial_List.Add(sceneController.gameMaterials[2]);
                             caravan_group.tradingMaterial.Add(sceneController.gameMaterials[2]);
                         }
-                        if (numberOf_CopperIngots > 0)
-                        {
+                        if (numberOf_CopperIngots > 0) {
                             tradingMaterial_List.Add(sceneController.gameMaterials[3]);
                             caravan_group.tradingMaterial.Add(sceneController.gameMaterials[3]);
                         }
+
+                        sceneController.audioEffect.PlayOnecWithOutStop(sceneController.audioEffect.storageCart_clip);
+
+                        if(QuestSystemManager.arr_isMissionComplete[7] == false)
+                            sceneController.taskManager.questManager.CheckingQuestComplete(7);
 
                         Debug.Log("Sending " + UsedCaravan + " Cavavan, " + "collect gold = " + getGold);
                     }
@@ -335,6 +323,7 @@ public class MarketBeh : BuildingBeh {
                 }
 
                 #endregion
+
                 #region <@-- Buy Armor, Weapon.
 
                 if (numberOf_Armor > 0 || numberOf_Weapon > 0)
@@ -371,6 +360,13 @@ public class MarketBeh : BuildingBeh {
 
                 if (numberOf_StoneBlocks == 0 && numberOf_CopperIngots == 0 && numberOf_Armor == 0 && numberOf_Weapon == 0)
                     _IsGreekTrading = false;
+            } else {
+                tradingMaterial_List.Remove(sceneController.gameMaterials[2]);
+                tradingMaterial_List.Remove(sceneController.gameMaterials[3]);
+                if (tradingMaterial_List.Contains(sceneController.gameMaterials[4]))
+                    tradingMaterial_List.Remove(sceneController.gameMaterials[4]);
+                if (tradingMaterial_List.Contains(sceneController.gameMaterials[5]))
+                    tradingMaterial_List.Remove(sceneController.gameMaterials[5]);
             }
             Debug.Log("TradingMechanism :: return _IsGreekTrading == " + _IsGreekTrading);
 
@@ -399,6 +395,8 @@ public class MarketBeh : BuildingBeh {
                         StoreHouse.Remove_sumOfWood(numberOf_Wood);
                         //<!-- Sending caravan.
                         caravan_group.TravelingCaravan(6, getGold);
+
+                        sceneController.audioEffect.PlayOnecWithOutStop(sceneController.audioEffect.storageCart_clip);
 
                         Debug.Log("Sending " + UsedCaravan + " Cavavan, " + "collect gold = " + getGold);
                     }
@@ -526,7 +524,6 @@ public class MarketBeh : BuildingBeh {
             if (GUI.Button(trade_button_rect, "Trade", standard_Skin.button))
             {
                 sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
-                sceneController.audioEffect.PlayOnecWithOutStop(sceneController.audioEffect.storageCart_clip);
 
                 if (numberOf_CopperIngots <= StoreHouse.SumOfCopper && numberOf_StoneBlocks <= StoreHouse.SumOfStone)
                 {
@@ -540,12 +537,6 @@ public class MarketBeh : BuildingBeh {
             if (GUI.Button(stop_button_rect, "Cancel"))
             {
                 _IsGreekTrading = false;
-				tradingMaterial_List.Remove(sceneController.gameMaterials[2]);
-				tradingMaterial_List.Remove(sceneController.gameMaterials[3]);
-				if(tradingMaterial_List.Contains(sceneController.gameMaterials[4]))
-					tradingMaterial_List.Remove(sceneController.gameMaterials[4]);
-				if(tradingMaterial_List.Contains(sceneController.gameMaterials[5]))
-					tradingMaterial_List.Remove(sceneController.gameMaterials[5]);
             }
             GUI.enabled = true;
 			
