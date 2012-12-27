@@ -168,6 +168,7 @@ public class StoneCrushingPlant : BuildingBeh {
 
                 #region <!--- Upgrade Button mechanichm.
 
+				/// Have to research stonecutter before upgrade.
 				GUI.enabled = (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level])) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {

@@ -34,8 +34,8 @@ public class TownCenter : BuildingBeh {
 	};
 
     // Technology Point.
-    private int[] increaseBuildingSpeed_arr = new int[10] { 800, 1200, 1800, 2500, 3500, 4800, 6000, 8000, 12000, 15000, };
-    private int currentIncreaseBuildingSpeed;
+    private int[] increaseBuildingSpeed_arr = new int[10] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 10, };
+    private int currentBuildingTimeAcceleration;
 	
 	
 	protected override void Awake ()
@@ -73,16 +73,8 @@ public class TownCenter : BuildingBeh {
         base.buildingIcon_Texture = Resources.Load(BuildingIcons_TextureResourcePath + "TownCenter", typeof(Texture2D)) as Texture2D;
     }
 	
-	#region <!--- Building && Upgrade processing.
-	
-    public override void OnBuildingProcess(BuildingBeh p_buildind)
-    {
-        base.OnBuildingProcess(p_buildind);
-    }
-    protected override void OnUpgradeProcess(BuildingBeh p_building)
-    {
-        base.OnUpgradeProcess(p_building);
-    }
+	#region <!--- Inherit Functions.
+
 	protected override void BuildingProcessComplete (BuildingBeh obj)
 	{
 		base.BuildingProcessComplete(obj);
@@ -93,6 +85,11 @@ public class TownCenter : BuildingBeh {
             if(QuestSystemManager.arr_isMissionComplete[6] == false)
                 sceneController.taskManager.questManager.CheckingQuestComplete(6);
         }
+	}
+	protected override void DecreaseBuildingLevel ()
+	{
+		base.DecreaseBuildingLevel ();
+		buildingLevel_textmesh.text = this.Level.ToString();
 	}
 	
 	#endregion
@@ -120,7 +117,7 @@ public class TownCenter : BuildingBeh {
                     //<!-- Current Production rate.
                     if (base.Level < 10)
                     {
-                        GUI.Label(currentJob_Rect, "Current Max Capacity : " + this.currentIncreaseBuildingSpeed, base.job_style);
+                        GUI.Label(currentJob_Rect, "Current Job : " + this.currentBuildingTimeAcceleration, base.job_style);
                         GUI.Label(nextJob_Rect, "Next level: " + this.increaseBuildingSpeed_arr[base.Level], base.job_style);
 
                         //<!-- Requirements Resource.
@@ -141,7 +138,7 @@ public class TownCenter : BuildingBeh {
                     }
                     else
                     {
-                        GUI.Label(currentJob_Rect, "Current Max Capacity : " + this.currentIncreaseBuildingSpeed, base.job_style);
+                        GUI.Label(currentJob_Rect, "Current Max Capacity : " + this.currentBuildingTimeAcceleration, base.job_style);
                         GUI.Label(nextJob_Rect, "Max upgrade building.", base.job_style);
                     }
                 }

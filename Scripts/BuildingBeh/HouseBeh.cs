@@ -48,7 +48,7 @@ public class HouseBeh : BuildingBeh {
 		HouseBeh.SumOfUnemployed = 0;
 	}
 	
-    private int[] maxDweller = new int[5] { 10, 20, 30, 40, 50, };
+    private int[] maxDweller = new int[5] { 10, 25, 50, 90, 150, };
     private int currentMaxDweller;
 
 
@@ -132,16 +132,14 @@ public class HouseBeh : BuildingBeh {
 		HouseBeh.SumOfEmployee += sumOfEmployed;
 	}
 
-    #region <!--- Building Processing.
+    #region <!--- Inherite functions.
 
-    public override void OnBuildingProcess(BuildingBeh obj)
-    {
-        base.OnBuildingProcess(obj);
-    }
-    protected override void CreateProcessBar(BuildingBeh.BuildingStatus buildingState)
-    {
-        base.CreateProcessBar(buildingState);
-    }
+	/// <summary>
+	/// Buildings the process complete.
+	/// </summary>
+	/// <param name='obj'>
+	/// Object.
+	/// </param>
     protected override void BuildingProcessComplete(BuildingBeh obj)
     {
         base.BuildingProcessComplete(obj);
@@ -152,6 +150,14 @@ public class HouseBeh : BuildingBeh {
         if (QuestSystemManager.CurrentMissionTopic_ID == 3)
             sceneController.taskManager.questManager.CheckingQuestComplete(3);
     }
+	/// <summary>
+	/// Decreases the building level.
+	/// </summary>
+	protected override void DecreaseBuildingLevel ()
+	{
+		base.DecreaseBuildingLevel ();
+		buildingLevel_textmesh.text = this.Level.ToString();
+	}
 
     #endregion
 	

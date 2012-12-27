@@ -93,17 +93,11 @@ public class Sawmill : BuildingBeh {
 		
 		HouseBeh.SumOfEmployee += sumOfEmployed;
 	}
-
-    #region <!--- Building Processing.
-
-    public override void OnBuildingProcess(BuildingBeh obj)
-    {
-        base.OnBuildingProcess(obj);
-    }
-    protected override void CreateProcessBar(BuildingBeh.BuildingStatus buildingState)
-    {
-        base.CreateProcessBar(buildingState);
-    }
+    
+    /// <summary>
+    /// Building Processing.
+    /// </summary>
+    /// <param name="obj"></param>
     protected override void BuildingProcessComplete(BuildingBeh obj)
     {
         base.BuildingProcessComplete(obj);
@@ -113,8 +107,14 @@ public class Sawmill : BuildingBeh {
         if (QuestSystemManager.arr_isMissionComplete[1] == false)
             sceneController.taskManager.questManager.CheckingQuestComplete(1);
     }
-
-    #endregion
+    /// <summary>
+    /// Destruction building.
+    /// </summary>
+    protected override void DecreaseBuildingLevel()
+    {
+        base.DecreaseBuildingLevel();
+        buildingLevel_textmesh.text = this.Level.ToString();
+    }
 	
 	protected override void ClearStorageData ()
 	{

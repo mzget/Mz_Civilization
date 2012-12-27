@@ -39,10 +39,10 @@ public class BuildingArea : Base_ObjectBeh
     private GUIState guiState;
     private StageManager sceneController;
 	private static BuildingBeh buildingBeh;
-
+	
+	private Vector2 scrollPosition = Vector2.zero;
     private Rect window_rect;
     private Rect closeBuildingArea_rect;
-    private Vector2 scrollPosition = Vector2.zero;
     private Rect background_Rect;
     private Rect image_rect;
     private Rect tagName_rect;
@@ -51,7 +51,6 @@ public class BuildingArea : Base_ObjectBeh
     private Rect economy_rect;
     private Rect utility_rect;
     private Rect military_rect;
-
     private Rect buyArea_rect;
     private Rect closeBuyArea_rect;
     private Rect advisor_drawRect;
@@ -136,39 +135,10 @@ public class BuildingArea : Base_ObjectBeh
         sixthBuilding_rect = new Rect(0, 5 * frameHeight, background_Rect.width, frameHeight);
         
         buyArea_rect = new Rect((Main.FixedGameWidth * 3 / 8) - 300, Main.FixedGameHeight / 2 - 300, 600, 600);
-        closeBuyArea_rect = new Rect(buyArea_rect.width - 34, 32, 32, 32);
+        closeBuyArea_rect = new Rect(buyArea_rect.width - 34, 48, 32, 32);
         advisor_drawRect = new Rect(10, (buyArea_rect.height / 2) - (sceneController.taskManager.advisor_villageElder.height/2), sceneController.taskManager.advisor_villageElder.width, sceneController.taskManager.advisor_villageElder.height);
         float descriptionPosX = (advisor_drawRect.x + advisor_drawRect.width) + 10;
         buyAreaDescription_rect = new Rect(descriptionPosX, 50, buyArea_rect.width - descriptionPosX, 500);
-        
-        
-        //if(Screen.height != Main.GAMEHEIGHT) {
-        //    window_rect.height *= MzCalculateScaleRectGUI.ScaleHeightRatio;
-        //    window_rect.width *= MzCalculateScaleRectGUI.ScaleHeightRatio;
-        //    window_rect.x = (Screen.width * 3 / 8) - window_rect.width / 2;
-        //    window_rect.y = Screen.height / 2 - window_rect.height / 2;
-			
-        //    background_Rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(background_Rect);			
-        //    exitButton_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(exitButton_rect);
-			
-        //    utility_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(utility_rect);
-        //    economy_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(economy_rect);
-        //    military_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(military_rect);
-			
-        //    positionOfScrolling = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(positionOfScrolling);
-        //    viewRectOfScrolling = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(viewRectOfScrolling);
-			
-        //    firstBuilding_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(firstBuilding_rect);
-        //    secondBuilding_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(secondBuilding_rect);
-        //    thirdBuilding_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(thirdBuilding_rect);
-        //    fourthBuilding_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(fourthBuilding_rect);
-        //    fifthBuilding_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(fifthBuilding_rect);
-        //    sixthBuilding_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(sixthBuilding_rect);
-			
-        //    image_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(image_rect);
-        //    tagName_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(tagName_rect);
-        //    content_rect = MzCalculateScaleRectGUI.CalculateScale_TopLeft_GUIRect(content_rect);
-        //}
 	}
 
     private IEnumerator LoadTextureResource()
@@ -256,7 +226,7 @@ public class BuildingArea : Base_ObjectBeh
             //<!--- Draw advisor.
             GUI.DrawTexture(advisor_drawRect, sceneController.taskManager.advisor_villageElder);
             //<!--- Draw Description.
-            GUI.BeginGroup(buyAreaDescription_rect, "Expand empire.", GUI.skin.window);
+            GUI.BeginGroup(buyAreaDescription_rect, "Expand empire.", buildingArea_Skin.window);
             {           
                 requirementGroup_rect = new Rect(5, buyAreaDescription_rect.height / 2, buyAreaDescription_rect.width - 10, (buyAreaDescription_rect.height / 2) -5);
                 GUI.BeginGroup(requirementGroup_rect, "Requirement", requirementGroup_style);
@@ -265,7 +235,7 @@ public class BuildingArea : Base_ObjectBeh
                     GUI.Box(new Rect(5, 85, requirementGroup_rect.width - 10, 30), "Gold :: 500", requirementBox_style);
 
                     GUI.enabled = CheckBasicRequire();
-                    if (GUI.Button(new Rect(requirementGroup_rect.width / 2 - 60, requirementGroup_rect.height - 38, 120, 35), "Expand !"))
+                    if (GUI.Button(new Rect(requirementGroup_rect.width / 2 - 60, requirementGroup_rect.height - 40, 120, 35), "Expand !"))
                     { 
 						buyArea();
                     }
@@ -627,6 +597,7 @@ public class BuildingArea : Base_ObjectBeh
 
         GUI.enabled = (BuildingBeh.CheckingOnBuildingList() &&
             buildingBeh.CheckingEnoughUpgradeResource(StoneCrushingPlant.RequireResource[0])) ? true : false;
+		/// Have to research stonecutter before building.
         if (GUI.Button(createButton_rect, "Build", standard_skin.button))
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);

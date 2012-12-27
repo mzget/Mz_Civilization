@@ -10,7 +10,6 @@ public class BuildingBeh : Base_ObjectBeh {
 	public const int MAX_LEVEL = 10;
 
 	//<!-- Font, Skin, Styles.
-    public Font showG_font;
     public Font ubuntu_font;
     public GUISkin standard_Skin;
     public GUISkin building_Skin;
@@ -69,7 +68,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	
     protected Vector2 scrollPosition = Vector2.zero;
     protected Rect windowRect;
-    private Rect exitButton_Rect;
+    protected Rect exitButton_Rect;
     protected Rect background_Rect;
     protected Rect tagName_Rect = new Rect(20, 16, 120, 32);    //<!-- Tag name rect.
     protected Rect imgIcon_Rect = new Rect(40, 40, 80, 80);     //<!-- Images Icon rect.
@@ -167,8 +166,6 @@ public class BuildingBeh : Base_ObjectBeh {
             taskbar_Skin = Resources.Load("GUISkins/TaskbarUI_Skin", typeof(GUISkin)) as GUISkin;
         if (building_Skin == null)
             building_Skin = Resources.Load("GUISkins/Building_Skin", typeof(GUISkin)) as GUISkin;
-        if (showG_font == null)
-            showG_font = Resources.Load("Fonts/SHOWG", typeof(Font)) as Font;
         if (ubuntu_font == null)
             ubuntu_font = Resources.Load("Fonts/Ubuntu-R", typeof(Font)) as Font;
 
@@ -232,6 +229,7 @@ public class BuildingBeh : Base_ObjectBeh {
         this.sprite.position = StageManager.buildingArea_Pos[indexOfPosition];
         StageManager.buildingArea_Objs[indexOfPosition].gameObject.active = false;
     }
+
 	protected virtual void CalculateNumberOfEmployed(int p_level) {	}
 
     protected virtual void OnUpgradeProcess(BuildingBeh p_building) 
@@ -381,12 +379,21 @@ public class BuildingBeh : Base_ObjectBeh {
         Debug.Log("DestructionBuildingComplete");
 
         if (Level > 1)
-            this.Level -= 1;
+			this.DecreaseBuildingLevel();
         else if (Level <= 1)
 			ClearStorageData();
-		
-        OnDestruction_Obj = null;
+
+		//<@-- Release employed to unemployee.
+		this.CalculateNumberOfEmployed(this.level);
+		OnDestruction_Obj = null;
     }
+
+    protected virtual void DecreaseBuildingLevel()
+    {
+        this.level -= 1;
+        Destroy(this.processbar_Obj_parent.gameObject);
+    }
+
 	protected virtual void ClearStorageData() {		
 		Debug.Log("ClearStorageData");
 		

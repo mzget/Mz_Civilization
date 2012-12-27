@@ -69,9 +69,9 @@ public class TaskManager : MonoBehaviour {
     public Texture2D marketTradingIcon;
 
     public Texture2D advisor_villageElder;
+	public Texture2D messageFormSystem_icon;
 	internal Texture2D newQuestAdvisor_img;
 	internal Texture2D completeQuestAdvisor_img;
-	public Texture2D messageFormSystem_icon;
     //@!-- Troops units.
     public Texture2D spearmanUnitIcon;
     public Texture2D hypaspistUnitIcon;

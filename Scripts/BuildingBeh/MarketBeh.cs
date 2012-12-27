@@ -171,16 +171,14 @@ public class MarketBeh : BuildingBeh {
 		HouseBeh.SumOfEmployee += sumOfEmployed;
 	}
 
-    #region <!--- Building Processing.
-
-    public override void OnBuildingProcess(BuildingBeh obj)
-    {
-        base.OnBuildingProcess(obj);
-    }
-    protected override void CreateProcessBar(BuildingBeh.BuildingStatus buildingState)
-    {
-        base.CreateProcessBar(buildingState);
-    }
+    #region <!--- Inherite Functions.
+	
+	/// <summary>
+	/// Buildings the process complete.
+	/// </summary>
+	/// <param name='obj'>
+	/// Object.
+	/// </param>
     protected override void BuildingProcessComplete(BuildingBeh obj)
     {
         base.BuildingProcessComplete(obj);
@@ -191,6 +189,14 @@ public class MarketBeh : BuildingBeh {
 
         if (QuestSystemManager.arr_isMissionComplete[5] == false)
             sceneController.taskManager.questManager.CheckingQuestComplete(5);
+    }
+	/// <summary>
+	/// Decreases the building level.
+	/// </summary>
+    protected override void DecreaseBuildingLevel()
+    {
+        base.DecreaseBuildingLevel();
+        buildingLevel_textmesh.text = this.Level.ToString();
     }
 
     #endregion

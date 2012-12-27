@@ -70,7 +70,7 @@ public class MissionMessageData
     #region <@-- 9. Create Academy.
 
     public const string LV9_TOPIC = "Mission 9 : Academy";
-	public const string LV9_DESCRIPTION = "Create Academy.";
+	public const string LV9_DESCRIPTION = "Create level 3 Academy.";
 
     #endregion
 
