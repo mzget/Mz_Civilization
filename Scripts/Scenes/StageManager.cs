@@ -12,7 +12,7 @@ public class StageManager : Mz_BaseScene {
     public GUISkin mainBuildingSkin;
     public TaskManager taskManager;
 	public Mz_SaveData saveManager;
-    public List<GameMaterialData> gameMaterials = new List<GameMaterialData>();
+    public List<GameMaterial> gameMaterials = new List<GameMaterial>();
     // Map and building area.
     public Texture2D mapTex;
     private OTFilledSprite background;
@@ -83,12 +83,12 @@ public class StageManager : Mz_BaseScene {
 
 		this.StartCoroutine(this.InitializeAudio());
 		this.StartCoroutine(this.CreateGameMaterials());
-		StartCoroutine(this.CreateAIbeh());
+		StartCoroutine(this.InitializeAICities());
 		
 		this.GenerateBackground();
 		this.CreateBuildingArea();
 		this.PrepareBuildingPrefabsFromResource();
-		this.LoadingAmountOfBuildingInstance();
+		this.Load_AmountOfBuildingInstance();
 		this.LoadingDataStorage();
 		
 		if (BuildingBeh.StoreHouseInstance.Count == 0) {
@@ -126,37 +126,37 @@ public class StageManager : Mz_BaseScene {
 
     private IEnumerator CreateGameMaterials()
     {
-        gameMaterials.Add(new GameMaterialData() { name = "food" });	/// 0.
-        gameMaterials.Add(new GameMaterialData() { name = "wood" });	// 1.
-        gameMaterials.Add(new GameMaterialData() { name = "stone" });	// 2.
-        gameMaterials.Add(new GameMaterialData() { name = "copper" });	// 3.
-        gameMaterials.Add(new GameMaterialData() { name = "armor" });	// 4.
-        gameMaterials.Add(new GameMaterialData() { name = "weapon" });	// 5.
+        gameMaterials.Add(new GameMaterial() { name = "food" });	/// 0.
+        gameMaterials.Add(new GameMaterial() { name = "wood" });	// 1.
+        gameMaterials.Add(new GameMaterial() { name = "stone" });	// 2.
+        gameMaterials.Add(new GameMaterial() { name = "copper" });	// 3.
+        gameMaterials.Add(new GameMaterial() { name = "armor" });	// 4.
+        gameMaterials.Add(new GameMaterial() { name = "weapon" });	// 5.
 
         yield return 0;
     }
     
     public static List<AICities> list_AICity;
-    private IEnumerator CreateAIbeh() {
+    private IEnumerator InitializeAICities() {
         taskManager.GreekIcon_Texture = Resources.Load(TaskManager.PathOfTribes_Texture + "Greek", typeof(Texture2D)) as Texture2D;
         taskManager.PersianIcon_Texture = Resources.Load(TaskManager.PathOfTribes_Texture + "Persian", typeof(Texture2D)) as Texture2D;
-		
-		AICities greek = new AICities() {
-			name = "Greek", 
-			symbols = taskManager.GreekIcon_Texture, 
-			tribe = UnitDataStore.Tribes.Greek,
-			distance = 10,
-		};
-        greek.AmountOfUnits[0] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN);
-        greek.AmountOfUnits[1] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST);
-        greek.AmountOfUnits[2] = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HOPLITE);
-        greek.TraceUnitData();
+
+        GreekBeh greek = new GreekBeh();
+        greek.name = GreekBeh.NAME;
+        greek.symbols = taskManager.GreekIcon_Texture;
+        greek.tribe = AICities.Tribes.Greek;
+        greek.distance = 30;
+        greek.defenseBonus = 30;
+        greek.attackBonus = 20;
+        GreekBeh.Spearman_unit = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN);
+        GreekBeh.Hapaspist_unit = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST);
+        GreekBeh.Hoplite_unit = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HOPLITE);
         
 		list_AICity = new List<AICities>();
         list_AICity.Add(greek);
-        list_AICity.Add(new AICities() { name = "Egyptian", symbols = taskManager.EgyptianIcon_Texture, tribe = UnitDataStore.Tribes.Egyptian, });
-        list_AICity.Add(new AICities() { name = "Persian", symbols = taskManager.PersianIcon_Texture, tribe = UnitDataStore.Tribes.Persian, });
-        list_AICity.Add(new AICities() { name = "Celtic", symbols = taskManager.CelticIcon_Texture, tribe = UnitDataStore.Tribes.Celtic, });
+        list_AICity.Add(new AICities() { name = "Egyptian", symbols = taskManager.EgyptianIcon_Texture, tribe = AICities.Tribes.Egyptian, });
+        list_AICity.Add(new AICities() { name = "Persian", symbols = taskManager.PersianIcon_Texture, tribe = AICities.Tribes.Persian, });
+        list_AICity.Add(new AICities() { name = "Celtic", symbols = taskManager.CelticIcon_Texture, tribe = AICities.Tribes.Celtic, });
 
         yield return 0;
     }
@@ -244,9 +244,9 @@ public class StageManager : Mz_BaseScene {
 	int numberOfStoreHouseInstances = 0;
 	bool marketInstance = false;
 	
-	int numberOf_BarracksInstance = 0;
+	bool barracksInstance = false;
 
-    void LoadingAmountOfBuildingInstance() {
+    void Load_AmountOfBuildingInstance() {
         //<!-- Utility --->>
 		numberOfHouse_Instance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance);
 		academyInstance = PlayerPrefsX.GetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_AcademyInstance);
@@ -259,7 +259,7 @@ public class StageManager : Mz_BaseScene {
 		numberOfStoreHouseInstances = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfStorehouseInstance);
 		marketInstance = PlayerPrefsX.GetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_MarketInstance);
         //<!-- Millitary --->>
-		numberOf_BarracksInstance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs);
+		barracksInstance = PlayerPrefsX.GetBool(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BarracksInstance);
     }
 	void LoadingDataStorage()
     {
@@ -390,16 +390,13 @@ public class StageManager : Mz_BaseScene {
 
         #region <!--- Barracks Data.
 
-        if (numberOf_BarracksInstance != 0) {
-            for (int i = 0; i < numberOf_BarracksInstance; i++) 
-            {
-				int level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.barracks_level_ + i);
-				int position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.barracks_position_ + i);
-				
-                GameObject barracks_obj = Instantiate(barracks_prefab) as GameObject;
-				BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
-                barracks.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, position, level);
-            }
+        if (barracksInstance) {
+			int level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BarracksLevel);
+			int position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BarracksPosition);
+			
+			GameObject barracks_obj = Instantiate(barracks_prefab) as GameObject;
+			BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
+			barracks.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, position, level);
         }
 
         #endregion
@@ -486,8 +483,10 @@ public class StageManager : Mz_BaseScene {
 	void UpdateJoystick() {
 		moveCamSpeed = Time.deltaTime * 360f;
 		
-		if(joystickManager.joystick.touchCount != 0) {
-			if(joystickManager.joystick._isMoveGUI) {
+		if(joystickManager.joystick.touchCount != 0)
+		{
+			if(joystickManager.joystick._isMoveGUI)
+			{
 				if(joystickManager.joystick.position.x > 0.2f) {
 					Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
 				}
@@ -514,7 +513,7 @@ public class StageManager : Mz_BaseScene {
             if (Camera.main.transform.position.x > -640)
                 Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
         }
-        else if (nameInput == "Right_button")
+        if (nameInput == "Right_button")
         {
             if (Camera.main.transform.position.x < 640)
                 Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
@@ -525,7 +524,7 @@ public class StageManager : Mz_BaseScene {
             if (Camera.main.transform.position.y < 400)
                 Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
         }
-        else if (nameInput == "Down_button")
+        if (nameInput == "Down_button")
         {
             if (Camera.main.transform.position.y > -400)
                 Camera.main.transform.Translate(Vector3.down * moveCamSpeed);

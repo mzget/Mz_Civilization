@@ -46,6 +46,7 @@ public class TaskManager : MonoBehaviour {
     public GUISkin taskbarUI_Skin;
     public GUIStyle left_button_Style;
     public GUIStyle right_button_Style;
+    internal GUIStyle foreignActivityStyle;
 
     #region <@!-- Fields.
 	
@@ -137,8 +138,10 @@ public class TaskManager : MonoBehaviour {
         this.InitializeOnGUIDataFields();
         this.InitializeTextureResource();
 
-        GameObject gamecontroller = GameObject.FindGameObjectWithTag("GameController");
+        GameObject gamecontroller = this.gameObject;
         stageManager = gamecontroller.GetComponent<StageManager>();
+		
+		gamecontroller.AddComponent<DisplayTroopsActivity>();
         displayTroopsActivity = gamecontroller.GetComponent<DisplayTroopsActivity>();
 		
 		gamecontroller.AddComponent<ForeignManager>();
@@ -160,7 +163,9 @@ public class TaskManager : MonoBehaviour {
 		taskbarUI_Skin.box.alignment = TextAnchor.MiddleCenter;
 		
 		left_button_Style = new GUIStyle(taskbarUI_Skin.button);
-		right_button_Style = new GUIStyle(taskbarUI_Skin.button);
+        right_button_Style = new GUIStyle(taskbarUI_Skin.button);
+        foreignActivityStyle = new GUIStyle(taskbarUI_Skin.box);
+        foreignActivityStyle.alignment = TextAnchor.UpperCenter;
 				
         baseSidebarGroup_rect = new Rect(Screen.width - (Screen.width / 4), 0, Screen.width / 4, Main.FixedGameHeight - 240);
         sidebarContentGroup_rect = new Rect(48 * Mz_OnGUIManager.Extend_heightScale, 0, baseSidebarGroup_rect.width - (48 * Mz_OnGUIManager.Extend_heightScale), baseSidebarGroup_rect.height);
@@ -428,21 +433,21 @@ public class TaskManager : MonoBehaviour {
 			float label_width = sidebarContentGroup_rect.width - 20;
 			GUI.Box(new Rect(5, 10, label_width + 10, 40), "Foreign land", taskbarUI_Skin.box);
 			
-			if (GUI.Button(previousButton_rect, "", left_button_Style)) { }
-            else if (GUI.Button(nextButton_rect, "", right_button_Style)) { }
+			if (GUI.Button(previousButton_rect, "<")) { }
+            else if (GUI.Button(nextButton_rect, ">")) { }
 
 			GUI.DrawTexture(showSymbol_rect, StageManager.list_AICity[0].symbols);
 			GUI.Box(showNameOfAIcity_rect, StageManager.list_AICity[0].name, taskbarUI_Skin.box);
 			
 			GUI.BeginGroup(new Rect(5, sidebarContentGroup_rect.height - 205, sidebarContentGroup_rect.width - 10, 200));
 			{
-				if (GUI.Button(new Rect(5, 0, label_width, 40), "Pillage"))
+				if (GUI.Button(new Rect(5, 0, label_width, 40), "Pillage", taskbarUI_Skin.button))
 				{
 					if(IsShowInteruptGUI == false) {
                         this.MoveOutLeftSidebar(TaskManager.DISPLAY_FOREIGN_ACTIVITY);
 					}
 				}
-				else if (GUI.Button(new Rect(5, 45, label_width, 40), "Conquer")) {
+				else if (GUI.Button(new Rect(5, 45, label_width, 40), "Conquer", taskbarUI_Skin.button)) {
 
 				}
 				GUI.Button(new Rect(5, 90, label_width, 40), "");
@@ -482,9 +487,9 @@ public class TaskManager : MonoBehaviour {
             float label_width = sidebarContentGroup_rect.width - 10;
             GUI.Box(new Rect(5, 2, label_width, 32), "troops", taskbarUI_Skin.box);
 
-            GUI.Box(new Rect(5, 100, label_width, 32), UnitDataStore.GreekUnitData.Spearman + " : " + BarracksBeh.AmountOfSpearman, taskbarUI_Skin.box);
-            GUI.Box(new Rect(5, 145, label_width, 32), UnitDataStore.GreekUnitData.Hapaspist + " : " + BarracksBeh.AmountOfHapaspist, taskbarUI_Skin.box);
-            GUI.Box(new Rect(5, 190, label_width, 32), UnitDataStore.GreekUnitData.Hoplite + " : " + BarracksBeh.AmountOfHoplite, taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 100, label_width, 32), UnitDatabase.GreekUnitDatabase.Spearman_Unit.NAME + " : " + BarracksBeh.AmountOfSpearman, taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 145, label_width, 32), UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.NAME + " : " + BarracksBeh.AmountOfHapaspist, taskbarUI_Skin.box);
+            GUI.Box(new Rect(5, 190, label_width, 32), UnitDatabase.GreekUnitDatabase.Hoplite_Unit.NAME + " : " + BarracksBeh.AmountOfHoplite, taskbarUI_Skin.box);
         }
         GUI.EndGroup();	
     }

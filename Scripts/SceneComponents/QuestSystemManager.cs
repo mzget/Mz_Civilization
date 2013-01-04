@@ -34,115 +34,115 @@ public class QuestSystemManager : NotificationSystem {
         {
             QuestName = MissionMessageData.TOPIC_CREATE_SAWMILL,
             QuestDescription = MissionMessageData.CREATE_SAWMILL_DESCRIPTION,
-            reward = new List<GameMaterialData>(3), 
+            reward = new List<GameMaterial>(3), 
             _IsComplete = arr_isMissionComplete[1],
         };
-        level_1.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-        level_1.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-        level_1.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        level_1.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        level_1.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        level_1.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(level_1);
 
         var level_2 = new QuestBeh()
         {
             QuestName = MissionMessageData.TOPIC_CREATE_FARM,
             QuestDescription = MissionMessageData.CREATE_FARM_DESCRIPTION,
-            reward = new List<GameMaterialData>(3),
+            reward = new List<GameMaterial>(3),
             _IsComplete = arr_isMissionComplete[2],
         };
-        level_2.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-        level_2.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-        level_2.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        level_2.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        level_2.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        level_2.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(level_2);
 
         QuestBeh quest_3 = new QuestBeh()
         {
             QuestName = MissionMessageData.TOPIC_CREATE_HOUSE,
             QuestDescription = MissionMessageData.CREATE_HOUSE_DESCRIPTION,
-            reward = new List<GameMaterialData>(3),
+            reward = new List<GameMaterial>(3),
             _IsComplete = arr_isMissionComplete[3],
         };
-        quest_3.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-        quest_3.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-        quest_3.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        quest_3.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_3.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_3.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(quest_3);
 		
 		QuestBeh quest_4 = new QuestBeh() {
 			QuestName = MissionMessageData.TOPIC_CREATE_STOREHOUSE, 
 			QuestDescription = MissionMessageData.CREATE_STOREHOUSE_DESCRIPTION, 
-            reward = new List<GameMaterialData>(3),
+            reward = new List<GameMaterial>(3),
             _IsComplete = arr_isMissionComplete[4],
 		};
-        quest_4.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-        quest_4.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-        quest_4.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        quest_4.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_4.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_4.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(quest_4);
 
 		QuestBeh quest_5 = new QuestBeh() { 
 			QuestName = MissionMessageData.TOPIC_CREATE_MARKET, 
 			QuestDescription = MissionMessageData.CREATE_MARKET_DESCRIPTION,
-			reward = new List<GameMaterialData>(3),
+			reward = new List<GameMaterial>(3),
 			_IsComplete = arr_isMissionComplete[5],
 		};
-		quest_5.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-		quest_5.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-		quest_5.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+		quest_5.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+		quest_5.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+		quest_5.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
 		list_questBeh.Add(quest_5);
 
 		QuestBeh quest_6 = new QuestBeh() { 
 			QuestName = MissionMessageData.TOPIC_UPGRADE_TOWNCENTER, 
 			QuestDescription = MissionMessageData.UPGRADE_TOWNCENTER_DESCRIPTION,
-			reward = new List<GameMaterialData>(3),
+			reward = new List<GameMaterial>(3),
 			_IsComplete = arr_isMissionComplete[6],
 		};
-		quest_6.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-		quest_6.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-		quest_6.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+		quest_6.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+		quest_6.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+		quest_6.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
 		list_questBeh.Add(quest_6);
 
 		QuestBeh quest_7 = new QuestBeh() {
 			QuestName = MissionMessageData.LV7_TOPIC, 
 			QuestDescription = MissionMessageData.LV7_DESCRIPTION,
-			reward = new List<GameMaterialData>(3),
+			reward = new List<GameMaterial>(3),
 			_IsComplete = arr_isMissionComplete[7],
 		};
-		quest_7.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-		quest_7.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-		quest_7.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+		quest_7.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+		quest_7.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+		quest_7.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
 		list_questBeh.Add(quest_7);
 
         QuestBeh quest_8 = new QuestBeh() {
             QuestName = MissionMessageData.LV8_TOPIC,
             QuestDescription = MissionMessageData.LV8_DESCRIPTION,
-            reward = new List<GameMaterialData>(3),
+            reward = new List<GameMaterial>(3),
             _IsComplete = arr_isMissionComplete[8],
         };
-        quest_8.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-        quest_8.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-        quest_8.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        quest_8.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_8.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_8.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(quest_8);
 
         QuestBeh quest_9 = new QuestBeh()
         {
             QuestName = MissionMessageData.LV9_TOPIC,
             QuestDescription = MissionMessageData.LV9_DESCRIPTION,
-            reward = new List<GameMaterialData>(3),
+            reward = new List<GameMaterial>(3),
             _IsComplete = arr_isMissionComplete[9],
         };
-        quest_9.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-        quest_9.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-        quest_9.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        quest_9.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_9.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_9.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(quest_9);
 
         QuestBeh quest_10 = new QuestBeh()
         {
             QuestName = MissionMessageData.LV10_TOPIC,
             QuestDescription = MissionMessageData.LV10_DESCRIPTION,
-            reward = new List<GameMaterialData>(3),
+            reward = new List<GameMaterial>(3),
             _IsComplete = arr_isMissionComplete[10],
         };
-        quest_10.reward.Add(new GameMaterialData() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
-        quest_10.reward.Add(new GameMaterialData() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
-        quest_10.reward.Add(new GameMaterialData() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
+        quest_10.reward.Add(new GameMaterial() { name = "Food", materialIcon = taskManager.food_icon, materialNumber = 20 });
+        quest_10.reward.Add(new GameMaterial() { name = "Wood", materialIcon = taskManager.wood_icon, materialNumber = 10 });
+        quest_10.reward.Add(new GameMaterial() { name = "Gold", materialIcon = taskManager.gold_icon, materialNumber = 20 });
         list_questBeh.Add(quest_10);
 
         yield return null;
@@ -259,7 +259,7 @@ public class QuestSystemManager : NotificationSystem {
         GUI.EndGroup();
     }
 
-	void DrawMissionCompleteWindow ()
+	private void DrawMissionCompleteWindow ()
 	{
 		GUI.BeginGroup(taskManager.standardWindow_rect, "Mission", taskManager.taskbarUI_Skin.window);
 		{			
@@ -269,11 +269,11 @@ public class QuestSystemManager : NotificationSystem {
 			GUI.Box(base.drawNoticeMessageContentRect, list_questBeh[QuestSystemManager.CurrentMissionTopic_ID].QuestDescription, base.noticeMessageContent_boxStyle);
 			GUI.Box(rewardBoxRect, "Reward", taskManager.taskbarUI_Skin.box);
 			GUI.Box(rewardItemRect_0, new GUIContent(list_questBeh[CurrentMissionTopic_ID].reward[0].materialNumber.ToString(),
-			                                         list_questBeh[CurrentMissionTopic_ID].reward[0].materialIcon), taskManager.taskbarUI_Skin.box);
+                list_questBeh[CurrentMissionTopic_ID].reward[0].materialIcon), taskManager.taskbarUI_Skin.box);
 			GUI.Box(rewardItemRect_1, new GUIContent(list_questBeh[CurrentMissionTopic_ID].reward[1].materialNumber.ToString(),
-			                                         list_questBeh[CurrentMissionTopic_ID].reward[1].materialIcon), taskManager.taskbarUI_Skin.box);
+                list_questBeh[CurrentMissionTopic_ID].reward[1].materialIcon), taskManager.taskbarUI_Skin.box);
 			GUI.Box(rewardItemRect_2, new GUIContent(list_questBeh[CurrentMissionTopic_ID].reward[2].materialNumber.ToString(),
-			                                         list_questBeh[CurrentMissionTopic_ID].reward[2].materialIcon), taskManager.taskbarUI_Skin.box);
+                list_questBeh[CurrentMissionTopic_ID].reward[2].materialIcon), taskManager.taskbarUI_Skin.box);
 
             //Get reward and go to next mission
             GUI.Box(new Rect(210 * Mz_OnGUIManager.Extend_heightScale, 320, 460 * Mz_OnGUIManager.Extend_heightScale, 40), "Get reward and go to next mission", taskManager.taskbarUI_Skin.box);
@@ -326,7 +326,7 @@ public class QuestSystemManager : NotificationSystem {
 		}
     }
 	
-	internal void CheckingQuestComplete (int mission_id)
+	internal void MissionComplete (int mission_id)
 	{		
 		QuestSystemManager.arr_isMissionComplete[mission_id] = true;
 		sceneController.taskManager.questManager.list_questBeh[mission_id]._IsComplete = true;

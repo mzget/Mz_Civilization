@@ -4,12 +4,12 @@ using System.Collections;
 public class HouseBeh : BuildingBeh {
 
 	//<!--- The require resource.
-    public static GameResource[] RequireResource = new GameResource[5] {
-		new GameResource(80, 120, 40, 60, 0),
-        new GameResource(160, 240, 80, 120, 0),
-        new GameResource(320, 480, 160, 240, 0),
-        new GameResource(640, 960, 320, 480, 0),
-        new GameResource(1280, 1920, 640, 960, 0),
+    public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[5] {
+		new GameMaterialDatabase(80, 120, 40, 60, 0),
+        new GameMaterialDatabase(160, 240, 80, 120, 0),
+        new GameMaterialDatabase(320, 480, 160, 240, 0),
+        new GameMaterialDatabase(640, 960, 320, 480, 0),
+        new GameMaterialDatabase(1280, 1920, 640, 960, 0),
 //        new GameResource(600, 600, 600, 600, 0),
 //        new GameResource(700, 700, 700, 700, 0),
 //        new GameResource(800, 800, 800, 800, 0),
@@ -50,7 +50,6 @@ public class HouseBeh : BuildingBeh {
 	
     private int[] maxDweller = new int[5] { 10, 25, 50, 90, 150, };
     private int currentMaxDweller;
-
 
     //<!--- Awake --->
     protected override void Awake()
@@ -103,15 +102,15 @@ public class HouseBeh : BuildingBeh {
 
     private void CalculationCurrentDweller()
     {
-        for (int i = 1; i <= maxDweller.Length; i++)
-        {
-            if (base.Level == i)
-            {
+        for (int i = 1; i <= maxDweller.Length; i++) {
+            if (base.Level == i) {
                 this.currentMaxDweller = this.maxDweller[i - 1];
 				HouseBeh.CalculationSumOfPopulation();
                 return;
             }
         }
+
+        Debug.Log("CalculationCurrentDweller");
     }
 	
 	public override void InitializingBuildingBeh (BuildingStatus p_buildingState, int p_indexPosition, int p_level)
@@ -123,7 +122,8 @@ public class HouseBeh : BuildingBeh {
 	}
 	protected override void CalculateNumberOfEmployed (int p_level)
 	{
-//		base.CalculateNumberOfEmployed (p_level);
+		base.CalculateNumberOfEmployed (p_level);
+		
 		int sumOfEmployed = 0;
 		for (int i = 0; i < p_level; i++) {
 			sumOfEmployed += RequireResource[i].Employee;
@@ -131,8 +131,6 @@ public class HouseBeh : BuildingBeh {
 		
 		HouseBeh.SumOfEmployee += sumOfEmployed;
 	}
-
-    #region <!--- Inherite functions.
 
 	/// <summary>
 	/// Buildings the process complete.
@@ -148,25 +146,26 @@ public class HouseBeh : BuildingBeh {
         this.CalculationCurrentDweller();
 
         if (QuestSystemManager.CurrentMissionTopic_ID == 3)
-            sceneController.taskManager.questManager.CheckingQuestComplete(3);
+            sceneController.taskManager.questManager.MissionComplete(3);
     }
 	/// <summary>
 	/// Decreases the building level.
 	/// </summary>
 	protected override void DecreaseBuildingLevel ()
-	{
+	{	
 		base.DecreaseBuildingLevel ();
+		
 		buildingLevel_textmesh.text = this.Level.ToString();
+		this.CalculationCurrentDweller();
 	}
 
-    #endregion
-	
 	protected override void ClearStorageData ()
 	{
 		base.ClearStorageData ();
-		
+
 		base.NotEnoughResource_Notification_event -= HandleBaseNotEnoughResourceNotification_event;
 		BuildingBeh.House_Instances.Remove(this);
+		HouseBeh.CalculationSumOfPopulation();
 	}
 
 	protected override void OnTouchDown ()
@@ -206,11 +205,11 @@ public class HouseBeh : BuildingBeh {
                         //<!-- Requirements Resource.
                         GUI.BeginGroup(update_requireResource_Rect);
                         {
-                            GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), sceneController.taskManager.food_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), sceneController.taskManager.wood_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), sceneController.taskManager.stone_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), sceneController.taskManager.gold_icon), standard_Skin.box);
-                            GUI.Box(GameResource.Fifth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), sceneController.taskManager.employee_icon), standard_Skin.box);
+                            GUI.Box(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), sceneController.taskManager.food_icon), standard_Skin.box);
+                            GUI.Box(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), sceneController.taskManager.wood_icon), standard_Skin.box);
+                            GUI.Box(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), sceneController.taskManager.stone_icon), standard_Skin.box);
+                            GUI.Box(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), sceneController.taskManager.gold_icon), standard_Skin.box);
+                            GUI.Box(GameMaterialDatabase.Fifth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), sceneController.taskManager.employee_icon), standard_Skin.box);
                         }
                         GUI.EndGroup();
                     }
@@ -229,7 +228,7 @@ public class HouseBeh : BuildingBeh {
                 GUI.enabled = base.Level < RequireResource.Length && base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
-                    GameResource.UsedResource(RequireResource[Level]);
+                    GameMaterialDatabase.UsedResource(RequireResource[Level]);
 
                     base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                     base.OnUpgradeProcess(this);

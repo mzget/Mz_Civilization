@@ -18,24 +18,23 @@ public class DisplayTroopsActivity : MonoBehaviour {
 	private Rect drawRemainingTime;
     private Rect[] arr_showGroupUnitBox = new Rect[4];
 
-    #region <@-- Events.
-    
-    public event System.EventHandler troopsReachTOTarget_Event;
-    private void OnTroopsReachToTargetEvent(System.EventArgs e) {
+    /// <summary>
+    /// Occurs when troops reach TO target_ event.
+    /// </summary>
+    public event System.EventHandler<MilitaryActivity_EventArg> troopsReachTOTarget_Event;
+    private void OnTroopsReachToTargetEvent(MilitaryActivity_EventArg e) {
         if (troopsReachTOTarget_Event != null)
             troopsReachTOTarget_Event(this, e);
     }
-
-    #endregion
+	public class MilitaryActivity_EventArg : EventArgs {
+		public int activity_id = 0;
+	};
 
     private TaskManager taskManager;
     private GUIStyle labelStyle;
     public enum DrawGUIState { None = 0, DrawDetailWindow = 1, };
     public DrawGUIState currentDrawGUIState;
-    
-
-    //private DateTime counterTimer;
-    //private DateTime startingCounterTimer;
+  
 
 
 	void Awake ()
@@ -46,6 +45,19 @@ public class DisplayTroopsActivity : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.InitializeDataFields();
+		this.troopsReachTOTarget_Event += Handle_troopsReachTOTarget_Event;
+	}
+
+	void Handle_troopsReachTOTarget_Event (object sender, MilitaryActivity_EventArg e)
+	{
+		Debug.Log("Handle_troopsReachTOTarget_Event");
+
+        WarfareSystem warfare = new WarfareSystem();
+        warfare.WarfareProcessing(MilitaryActivityList[e.activity_id]);
+
+		BarracksBeh.AmountOfSpearman += MilitaryActivityList[e.activity_id].groupOfUnitBeh.members[0];
+		BarracksBeh.AmountOfHapaspist += MilitaryActivityList[e.activity_id].groupOfUnitBeh.members[1];
+		BarracksBeh.AmountOfHoplite += MilitaryActivityList[e.activity_id].groupOfUnitBeh.members[2];
 	}
 
     private void InitializeDataFields()
@@ -75,22 +87,8 @@ public class DisplayTroopsActivity : MonoBehaviour {
 			    MilitaryActivityList[i].RemainingTime = remainTime;
                 if(MilitaryActivityList[i].RemainingTime.Ticks <= 0) {
                     currentDrawGUIState = DrawGUIState.None;
-                    this.OnTroopsReachToTargetEvent(EventArgs.Empty);
+					this.OnTroopsReachToTargetEvent(new MilitaryActivity_EventArg() { activity_id = i });
                 }
-
-                //counterTimer = DateTime.UtcNow;
-                //TimeSpan counter = counterTimer - startingCounterTimer;
-                //if (counter.TotalSeconds >= list_trainingUnit[0].Unit.TimeTraining.TotalSeconds) {
-                //    startingCounterTimer = DateTime.UtcNow;
-
-                //    AmountOfSpearman += 1;
-                //    list_trainingUnit[0].Number -= 1;
-                //}
-			
-                //if(list_trainingUnit[0].Number == 0) { 
-                //    list_trainingUnit.RemoveAt(0); 
-                //    this.TrainingUnitMechanism();
-                //}
             }
         }
     }
@@ -119,8 +117,7 @@ public class DisplayTroopsActivity : MonoBehaviour {
                             }
 						}
 						else {
-							MilitaryActivityList.RemoveAt(i);
-							
+							MilitaryActivityList.RemoveAt(i);							
 							Debug.Log("MilitaryActivityList.Count : " + MilitaryActivityList.Count);
 						}
 				    }
@@ -129,7 +126,7 @@ public class DisplayTroopsActivity : MonoBehaviour {
 		    }
         }
         else if(currentDrawGUIState == DrawGUIState.DrawDetailWindow) {
-			taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, DrawActivityWindow, new GUIContent("Troops activity detail."));
+			taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, DrawActivityWindow, new GUIContent("Troops status detail."), taskManager.foreignActivityStyle);
         }
 	}
 
@@ -142,9 +139,9 @@ public class DisplayTroopsActivity : MonoBehaviour {
 		
 		string queueTime = new DateTime(MilitaryActivityList[0].RemainingTime.Ticks).ToString("HH:mm:ss");
         GUI.Box(drawRemainingTime, MilitaryActivityList[0].currentTroopsStatus + " : " + MilitaryActivityList[0].targetCity.name + " in " + queueTime, taskManager.taskbarUI_Skin.box);
-        for (int i = 0; i < MilitaryActivityList[0].groupUnits.unitName.Count; i++)
+        for (int i = 0; i < MilitaryActivityList[0].groupOfUnitBeh.unitBehs.Count; i++)
         {
-            GUI.Box(arr_showGroupUnitBox[i], MilitaryActivityList[0].groupUnits.unitName[i] + " : " + MilitaryActivityList[0].groupUnits.member[i], taskManager.taskbarUI_Skin.box);
+            GUI.Box(arr_showGroupUnitBox[i], MilitaryActivityList[0].groupOfUnitBeh.unitBehs[i] + " : " + MilitaryActivityList[0].groupOfUnitBeh.members[i], taskManager.taskbarUI_Skin.box);
         }
     }
 

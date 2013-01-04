@@ -8,28 +8,28 @@ public class StoreHouse : BuildingBeh {
 	public const int STOREHOUSE_MAX_LEVEL = 21;
 
     //<!--- Requirements Resource.
-    public static GameResource[] RequireResource = new GameResource[STOREHOUSE_MAX_LEVEL] {
-		new GameResource() {Food = 80, Wood = 120, Gold = 60, Employee = 3},
-		new GameResource() {Food = 130, Wood = 160, Gold = 90, Employee = 5},
-		new GameResource() {Food = 165, Wood = 205, Gold = 115, Employee = 8},
-		new GameResource() {Food = 215, Wood = 260, Gold = 145, Employee = 12},
-		new GameResource() {Food = 275, Wood = 335, Gold = 190, Employee = 15},
-		new GameResource() {Food = 350, Wood = 430, Gold = 240, Employee = 20},		//5.
-		new GameResource() {Food = 445, Wood = 550, Gold = 310, Employee = 24},
-		new GameResource() {Food = 570, Wood = 705, Gold = 395, Employee = 30},
-		new GameResource() {Food = 730, Wood = 900, Gold = 505, Employee = 36},
-		new GameResource() {Food = 935, Wood = 1115, Gold = 650, Employee = 45},
-		new GameResource() {Food = 1200, Wood = 1475, Gold = 830, Employee = 50},		//10.
-		new GameResource() {Food = 1535, Wood = 1890, Gold = 1065, Employee = 56},
-		new GameResource() {Food = 1965, Wood = 2420, Gold = 1360, Employee = 64},
-		new GameResource() {Food = 2515, Wood = 3195, Gold = 1740, Employee = 72},
-		new GameResource() {Food = 3220, Wood = 3960, Gold = 2230, Employee = 84},
-		new GameResource() {Food = 4120, Wood = 5070, Gold = 2850, Employee = 100},		// 15.
-		new GameResource() {Food = 5275, Wood = 6490, Gold = 3650, Employee = 120},
-		new GameResource() {Food = 6750, Wood = 8310, Gold = 4675, Employee = 144},		
-        new GameResource() {Food = 8640, Wood = 10635, Gold = 5980, Employee = 175},
-        new GameResource() {Food = 11060, Wood = 12610, Gold = 7655, Employee = 200},
-        new GameResource() {Food = 14155, Wood = 17420, Gold = 9800, Employee = 250},		//20.
+    public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[STOREHOUSE_MAX_LEVEL] {
+		new GameMaterialDatabase() {Food = 80, Wood = 120, Gold = 60, Employee = 3},
+		new GameMaterialDatabase() {Food = 130, Wood = 160, Gold = 90, Employee = 5},
+		new GameMaterialDatabase() {Food = 165, Wood = 205, Gold = 115, Employee = 8},
+		new GameMaterialDatabase() {Food = 215, Wood = 260, Gold = 145, Employee = 12},
+		new GameMaterialDatabase() {Food = 275, Wood = 335, Gold = 190, Employee = 15},
+		new GameMaterialDatabase() {Food = 350, Wood = 430, Gold = 240, Employee = 20},		//5.
+		new GameMaterialDatabase() {Food = 445, Wood = 550, Gold = 310, Employee = 24},
+		new GameMaterialDatabase() {Food = 570, Wood = 705, Gold = 395, Employee = 30},
+		new GameMaterialDatabase() {Food = 730, Wood = 900, Gold = 505, Employee = 36},
+		new GameMaterialDatabase() {Food = 935, Wood = 1115, Gold = 650, Employee = 45},
+		new GameMaterialDatabase() {Food = 1200, Wood = 1475, Gold = 830, Employee = 50},		//10.
+		new GameMaterialDatabase() {Food = 1535, Wood = 1890, Gold = 1065, Employee = 56},
+		new GameMaterialDatabase() {Food = 1965, Wood = 2420, Gold = 1360, Employee = 64},
+		new GameMaterialDatabase() {Food = 2515, Wood = 3195, Gold = 1740, Employee = 72},
+		new GameMaterialDatabase() {Food = 3220, Wood = 3960, Gold = 2230, Employee = 84},
+		new GameMaterialDatabase() {Food = 4120, Wood = 5070, Gold = 2850, Employee = 100},		// 15.
+		new GameMaterialDatabase() {Food = 5275, Wood = 6490, Gold = 3650, Employee = 120},
+		new GameMaterialDatabase() {Food = 6750, Wood = 8310, Gold = 4675, Employee = 144},		
+        new GameMaterialDatabase() {Food = 8640, Wood = 10635, Gold = 5980, Employee = 175},
+        new GameMaterialDatabase() {Food = 11060, Wood = 12610, Gold = 7655, Employee = 200},
+        new GameMaterialDatabase() {Food = 14155, Wood = 17420, Gold = 9800, Employee = 250},		//20.
 	};
 
     //<!--- Static Data.
@@ -245,7 +245,7 @@ public class StoreHouse : BuildingBeh {
         this.ReCalculationCapacityData();
 
         if (QuestSystemManager.arr_isMissionComplete[4] == false)
-            sceneController.taskManager.questManager.CheckingQuestComplete(4);
+            sceneController.taskManager.questManager.MissionComplete(4);
     }
 
     #endregion
@@ -288,15 +288,15 @@ public class StoreHouse : BuildingBeh {
 	                    //<!-- Requirements Resource.
 	                    GUI.BeginGroup(update_requireResource_Rect);
                         {
-                            GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
+                            GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
                                 base.sceneController.taskManager.food_icon), standard_Skin.box);
-                            GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
+                            GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
                                 base.sceneController.taskManager.wood_icon), standard_Skin.box);
                             //GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
                             //    base.stageManager.taskbarManager.stone_icon), standard_Skin.box);
-                            GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
+                            GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
                                 base.sceneController.taskManager.gold_icon), standard_Skin.box);
-                            GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
+                            GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
                                 base.sceneController.taskManager.employee_icon), standard_Skin.box);
 	                    }
 	                    GUI.EndGroup();
@@ -315,7 +315,7 @@ public class StoreHouse : BuildingBeh {
                 GUI.enabled = (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level])) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
-                    GameResource.UsedResource(RequireResource[Level]);
+                    GameMaterialDatabase.UsedResource(RequireResource[Level]);
 
                     base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                     base.OnUpgradeProcess(this);

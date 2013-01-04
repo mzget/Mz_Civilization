@@ -1,13 +1,18 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UnitBeh : ScriptableObject {
 
-    public System.TimeSpan TimeTraining;
+[System.Serializable]
+public class UnitBeh {
+	public string name = string.Empty;
+    public TimeSpan TimeTraining;
+    public UnitAbility ability;
+
 
 	// Use this for initialization
-    void OnEnable() {
+    public UnitBeh() {
         Debug.Log("UnitBeh :: Starting... ");
 	}
 	
@@ -15,12 +20,4 @@ public class UnitBeh : ScriptableObject {
 	void OnDestroy() {
         Debug.Log("UnitBeh :: OnDestroy");
     }
-}
-
-public class GroupOFUnitBeh {
-
-    public List<string> unitName = new List<string>();
-    public List<int> member = new List<int>();
-	
-	public GroupOFUnitBeh() { }
 }

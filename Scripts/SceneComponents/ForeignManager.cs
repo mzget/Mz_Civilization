@@ -9,8 +9,7 @@ public class ForeignManager : MonoBehaviour
 	};
 	public ForeignTabStatus currentForeignTabStatus;
 
-	private TaskManager taskManager;	
-
+	private TaskManager taskManager;
 	private Rect citiesSymbol_rect = new Rect(24 * Mz_OnGUIManager.Extend_heightScale, 24, 100 * Mz_OnGUIManager.Extend_heightScale, 100);
 	private Rect citiesTagName_rect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 130, 120 * Mz_OnGUIManager.Extend_heightScale, 32);
 	private Rect sendButton_rect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, 170, 120 * Mz_OnGUIManager.Extend_heightScale, 32);
@@ -31,11 +30,14 @@ public class ForeignManager : MonoBehaviour
 	private string numberOFUnit_01 = string.Empty;
 	private string numberOFUnit_02 = string.Empty;
 
+
+    void Awake() {
+        GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
+        taskManager = gameController.GetComponent<TaskManager>();
+    }
+
 	// Use this for initialization
-	void Start ()
-	{
-		GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
-		taskManager = gameController.GetComponent<TaskManager>();
+	void Start () {
 	}
 	
 	// Update is called once per frame
@@ -47,7 +49,7 @@ public class ForeignManager : MonoBehaviour
 		GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.FixedGameHeight, 1));
 		
 		if(currentForeignTabStatus == ForeignManager.ForeignTabStatus.DrawActivity) {
-			taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, DrawActivityWindow, new GUIContent("Select troops"));
+			taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, DrawActivityWindow, new GUIContent("Select troops"), taskManager.foreignActivityStyle);
 		}		
 		if(taskManager.currentRightSideState != TaskManager.RightSideState.show_ForeignTab && currentForeignTabStatus != ForeignManager.ForeignTabStatus.None) {
 			currentForeignTabStatus = ForeignManager.ForeignTabStatus.None;
@@ -89,44 +91,92 @@ public class ForeignManager : MonoBehaviour
 		
 		/// Draw cities symbol.
 		GUI.DrawTexture(citiesSymbol_rect, StageManager.list_AICity[0].symbols);
-		GUI.Box(citiesTagName_rect, StageManager.list_AICity[0].name);
+		GUI.Box(citiesTagName_rect, StageManager.list_AICity[0].name, taskManager.taskbarUI_Skin.box);
 		
-		if (GUI.Button(sendButton_rect, "Send")) {
-			try{
-				int unit_0 = numberOFUnit_00 != string.Empty ? int.Parse(numberOFUnit_00) : 0;
-				int unit_1 = numberOFUnit_01 != string.Empty ? int.Parse(numberOFUnit_01) : 0;
-				int unit_2 = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
+		if (GUI.Button(sendButton_rect, "Send", taskManager.taskbarUI_Skin.button)) {
+            this.SendTroopMechanism();
+		}
+	}
+
+    private void SendTroopMechanism()
+    {
+        try{
+				int selectedSpearman = numberOFUnit_00 != string.Empty ? int.Parse(numberOFUnit_00) : 0;
+				int selectedHapaspist = numberOFUnit_01 != string.Empty ? int.Parse(numberOFUnit_01) : 0;
+				int selectedHoplite = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
 				
-				GroupOFUnitBeh groupTemp = new GroupOFUnitBeh();
-				groupTemp.unitName.Add(UnitDataStore.GreekUnitData.Spearman);
-				groupTemp.unitName.Add(UnitDataStore.GreekUnitData.Hapaspist);
-				groupTemp.unitName.Add(UnitDataStore.GreekUnitData.Hoplite);
-				groupTemp.member.Add(unit_0);
-				groupTemp.member.Add(unit_1);
-				groupTemp.member.Add(unit_2);
-				
-				if(unit_0 + unit_1 + unit_2 > 0) {
-					taskManager.displayTroopsActivity.MilitaryActivityList.Add(new TroopsActivity() {
-						currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage,
-						targetCity = StageManager.list_AICity[0],
-						timeToTravel = System.TimeSpan.FromSeconds(StageManager.list_AICity[0].distance),
-						startTime = System.DateTime.UtcNow,
-						groupUnits = groupTemp,
-					});
+				GroupOFUnitBeh groupOfUnitBehs = new GroupOFUnitBeh();
+                groupOfUnitBehs.unitBehs.Add(new UnitBeh() { 
+                    name = UnitDatabase.GreekUnitDatabase.Spearman_Unit.NAME,
+                    ability = UnitDatabase.GreekUnitDatabase.Spearman_Unit.Ability,
+                });
+                groupOfUnitBehs.members.Add(selectedSpearman);
+                groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Spearman_Unit.Ability.capacity * selectedSpearman);
+
+                groupOfUnitBehs.unitBehs.Add(new UnitBeh() { 
+                    name = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.NAME,
+                    ability = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.Ability,
+                });
+                groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.Ability.capacity * selectedHapaspist);      
+				groupOfUnitBehs.members.Add(selectedHapaspist);
+
+                groupOfUnitBehs.unitBehs.Add(new UnitBeh() {
+                    name = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.NAME,
+                    ability = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.Ability,
+                });
+				groupOfUnitBehs.members.Add(selectedHoplite);
+                groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Hoplite_Unit.Ability.capacity * selectedHoplite);
+
+				if(selectedSpearman + selectedHapaspist + selectedHoplite > 0)
+				{
+					TroopsActivity newTroopsActivity = new TroopsActivity();
+					newTroopsActivity.currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage;
+					newTroopsActivity.targetCity = StageManager.list_AICity[0];
+					newTroopsActivity.timeToTravel = System.TimeSpan.FromSeconds(StageManager.list_AICity[0].distance);
+					newTroopsActivity.startTime = System.DateTime.UtcNow;
+					newTroopsActivity.groupOfUnitBeh = groupOfUnitBehs;
+                    newTroopsActivity.attackBonus = WarfareSystem.AttackBonus;
+                    newTroopsActivity.totalAttackScore = this.CalculationTotalAttackScore(groupOfUnitBehs);
+					foreach (int capa in groupOfUnitBehs.capacities) {
+						newTroopsActivity.totalCapacity += capa;
+					}
+					
+					taskManager.displayTroopsActivity.MilitaryActivityList.Add(newTroopsActivity);
+
+					BarracksBeh.AmountOfSpearman -= selectedSpearman;
+					BarracksBeh.AmountOfHapaspist -= selectedHapaspist;
+					BarracksBeh.AmountOfHoplite -= selectedHoplite;
 					
 					Debug.Log ("displayTroopsActivity.MilitaryActivityList.Count : " + taskManager.displayTroopsActivity.MilitaryActivityList.Count);
 					
 					CloseGUIWindow();
 				}
 			}catch {
-				
+				Debug.LogWarning("Cannot send your troops !");
 			}finally {
 				numberOFUnit_00 = string.Empty;
 				numberOFUnit_01 = string.Empty;
 				numberOFUnit_02 = string.Empty;
-			}
-		}
-	}
+        }
+    }
+
+    private int CalculationTotalAttackScore(GroupOFUnitBeh groupOfUnitBehs)
+    {
+        int totalATKScore = 0;
+        int[] arr_temp_attackScore = new int[groupOfUnitBehs.unitBehs.Count];
+
+        for (int i = 0; i < groupOfUnitBehs.unitBehs.Count; i++)
+        {
+            arr_temp_attackScore[i] = groupOfUnitBehs.unitBehs[i].ability.attack * groupOfUnitBehs.members[i];
+            float tempCalc = arr_temp_attackScore[i] + (arr_temp_attackScore[i] * (WarfareSystem.AttackBonus / 100f));
+            totalATKScore += (int)tempCalc;
+        }
+
+        Debug.Log("totalATKScore : " + totalATKScore);
+
+        return totalATKScore;
+    }
+
 	private void CloseGUIWindow()
 	{
 		currentForeignTabStatus = ForeignManager.ForeignTabStatus.None;

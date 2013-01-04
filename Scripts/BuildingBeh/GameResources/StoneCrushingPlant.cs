@@ -4,17 +4,17 @@ using System.Collections;
 public class StoneCrushingPlant : BuildingBeh {
 
     //<!-- Static Data.
-    public static GameResource[] RequireResource = new GameResource[10] {
-        new GameResource(80, 80, 0, 120, 3),
-        new GameResource(160, 160, 0, 240, 5),
-        new GameResource(320, 320, 0, 480, 8),
-        new GameResource(640, 640, 0, 960, 12),
-        new GameResource(1280, 1280, 0, 1920, 17),
-        new GameResource(2560, 2560, 0, 3840, 23),
-        new GameResource(3840, 3840, 0, 5760, 30),
-        new GameResource(5760, 5760, 0, 7680, 38),
-        new GameResource(7680, 7680, 0, 9600, 47),
-        new GameResource(9600, 9600, 0, 12000, 60),
+    public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[10] {
+        new GameMaterialDatabase(80, 80, 0, 120, 3),
+        new GameMaterialDatabase(160, 160, 0, 240, 5),
+        new GameMaterialDatabase(320, 320, 0, 480, 8),
+        new GameMaterialDatabase(640, 640, 0, 960, 12),
+        new GameMaterialDatabase(1280, 1280, 0, 1920, 17),
+        new GameMaterialDatabase(2560, 2560, 0, 3840, 23),
+        new GameMaterialDatabase(3840, 3840, 0, 5760, 30),
+        new GameMaterialDatabase(5760, 5760, 0, 7680, 38),
+        new GameMaterialDatabase(7680, 7680, 0, 9600, 47),
+        new GameMaterialDatabase(9600, 9600, 0, 12000, 60),
     };
 
     //<!-- Data.
@@ -149,15 +149,15 @@ public class StoneCrushingPlant : BuildingBeh {
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
+                        GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
                             base.sceneController.taskManager.food_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(),
+                        GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(),
                             base.sceneController.taskManager.wood_icon), standard_Skin.box);
                         //GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
                         //    base.stageManager.taskbarManager.stone_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
+                        GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
                             base.sceneController.taskManager.gold_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(),
+                        GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(),
                             base.sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
@@ -172,7 +172,7 @@ public class StoneCrushingPlant : BuildingBeh {
 				GUI.enabled = (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level])) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
-                    GameResource.UsedResource(RequireResource[Level]);
+                    GameMaterialDatabase.UsedResource(RequireResource[Level]);
 
                     base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                     base.OnUpgradeProcess(this);

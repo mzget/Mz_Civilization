@@ -13,17 +13,17 @@ public class MarketBeh : BuildingBeh {
     public const int pricePerUnitOf_Weapon = 50;
 
 
-    public static GameResource[] RequireResource = new GameResource[10] {
-        new GameResource() {Food = 120, Wood = 80, Stone = 80, Employee = 10},
-        new GameResource() {Food = 240, Wood = 160, Gold = 160, Employee = 20},
-        new GameResource() {Food = 480, Wood = 320, Gold = 320, Employee = 30},
-        new GameResource() {Food = 960, Wood = 640, Gold = 640, Employee = 40},
-        new GameResource() {Food = 1920, Wood = 1280, Gold = 1280, Employee = 50},
-        new GameResource() {Food = 3840, Wood = 2560, Gold = 2560, Employee = 60},
-        new GameResource() {Food = 7680, Wood = 5120, Gold = 5120, Employee = 70},
-        new GameResource() {Food = 14000, Wood = 10000, Gold = 10000, Employee = 80},
-        new GameResource() {Food = 25000, Wood = 20000, Gold = 20000, Employee = 90},
-        new GameResource() {Food = 50000, Wood = 40000, Gold = 40000, Employee = 100},
+    public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[10] {
+        new GameMaterialDatabase() {Food = 120, Wood = 80, Stone = 80, Employee = 10},
+        new GameMaterialDatabase() {Food = 240, Wood = 160, Gold = 160, Employee = 20},
+        new GameMaterialDatabase() {Food = 480, Wood = 320, Gold = 320, Employee = 30},
+        new GameMaterialDatabase() {Food = 960, Wood = 640, Gold = 640, Employee = 40},
+        new GameMaterialDatabase() {Food = 1920, Wood = 1280, Gold = 1280, Employee = 50},
+        new GameMaterialDatabase() {Food = 3840, Wood = 2560, Gold = 2560, Employee = 60},
+        new GameMaterialDatabase() {Food = 7680, Wood = 5120, Gold = 5120, Employee = 70},
+        new GameMaterialDatabase() {Food = 14000, Wood = 10000, Gold = 10000, Employee = 80},
+        new GameMaterialDatabase() {Food = 25000, Wood = 20000, Gold = 20000, Employee = 90},
+        new GameMaterialDatabase() {Food = 50000, Wood = 40000, Gold = 40000, Employee = 100},
 	};
 
     public const string BuildingName = "Market";
@@ -68,7 +68,7 @@ public class MarketBeh : BuildingBeh {
         }
     }
 	
-    public static List<GameMaterialData> tradingMaterial_List = new List<GameMaterialData>();
+    public static List<GameMaterial> tradingMaterial_List = new List<GameMaterial>();
     public List<CaravanBeh> caravanList;
 	public List<CaravanBeh> idleCaravanList;
 	public GroupCaravan caravan_group; 
@@ -188,7 +188,7 @@ public class MarketBeh : BuildingBeh {
         this.CheckingIdleCaravan();
 
         if (QuestSystemManager.arr_isMissionComplete[5] == false)
-            sceneController.taskManager.questManager.CheckingQuestComplete(5);
+            sceneController.taskManager.questManager.MissionComplete(5);
     }
 	/// <summary>
 	/// Decreases the building level.
@@ -317,7 +317,7 @@ public class MarketBeh : BuildingBeh {
                         sceneController.audioEffect.PlayOnecWithOutStop(sceneController.audioEffect.storageCart_clip);
 
                         if(QuestSystemManager.arr_isMissionComplete[7] == false)
-                            sceneController.taskManager.questManager.CheckingQuestComplete(7);
+                            sceneController.taskManager.questManager.MissionComplete(7);
 
                         Debug.Log("Sending " + UsedCaravan + " Cavavan, " + "collect gold = " + getGold);
                     }
@@ -346,7 +346,7 @@ public class MarketBeh : BuildingBeh {
                         GreekCaravanBeh greekCaravan = new GreekCaravanBeh()
                         {
                             marketInstance = this,
-                            goods = new GameResource() { Weapon = numberOf_Weapon, Armor = numberOf_Armor },
+                            goods = new GameMaterialDatabase() { Weapon = numberOf_Weapon, Armor = numberOf_Armor },
                         };
                         greekCaravan.Traveling();
 
@@ -466,10 +466,10 @@ public class MarketBeh : BuildingBeh {
                 //<!-- Requirements Resource.
                 GUI.BeginGroup(update_requireResource_Rect);
                 {
-                    GUI.Box(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.sceneController.taskManager.food_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.sceneController.taskManager.wood_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.sceneController.taskManager.gold_icon), standard_Skin.box);
-                    GUI.Box(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), base.sceneController.taskManager.employee_icon), standard_Skin.box);
+                    GUI.Box(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), base.sceneController.taskManager.food_icon), standard_Skin.box);
+                    GUI.Box(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), base.sceneController.taskManager.wood_icon), standard_Skin.box);
+                    GUI.Box(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), base.sceneController.taskManager.gold_icon), standard_Skin.box);
+                    GUI.Box(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), base.sceneController.taskManager.employee_icon), standard_Skin.box);
                 }
                 GUI.EndGroup();
             }
@@ -482,7 +482,7 @@ public class MarketBeh : BuildingBeh {
             GUI.enabled = base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]) ? true : false;
             if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
             {
-                GameResource.UsedResource(RequireResource[Level]);
+                GameMaterialDatabase.UsedResource(RequireResource[Level]);
 
                 base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                 base.OnUpgradeProcess(this);

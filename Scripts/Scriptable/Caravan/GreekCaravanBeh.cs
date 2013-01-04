@@ -4,7 +4,7 @@ using System.Collections;
 public class GreekCaravanBeh : ScriptableObject {
 	
 	public MarketBeh marketInstance { get; set; }
-	public GameResource goods { get; set; }
+	public GameMaterialDatabase goods { get; set; }
 	
 	private int timeToTravel = 3;
 	private int dayTravalCounter = 0;

@@ -64,7 +64,7 @@ public class BuildingBeh : Base_ObjectBeh {
     public static List<StoreHouse> StoreHouseInstance = new List<StoreHouse>();
 	public static MarketBeh MarketInstance;
     //<!-- Military.
-    public static List<BarracksBeh> Barrack_Instances = new List<BarracksBeh>();
+    public static BarracksBeh Barrack_Instance;
 	
     protected Vector2 scrollPosition = Vector2.zero;
     protected Rect windowRect;
@@ -114,7 +114,7 @@ public class BuildingBeh : Base_ObjectBeh {
 		if(NotEnoughResource_Notification_event != null)
 			NotEnoughResource_Notification_event(this, e);
 	}
-	public bool CheckingEnoughUpgradeResource(GameResource upgradeResource)
+	public bool CheckingEnoughUpgradeResource(GameMaterialDatabase upgradeResource)
 	{
 		if (StoreHouse.SumOfFood >= upgradeResource.Food && 
 			StoreHouse.SumOfWood >= upgradeResource.Wood &&
@@ -351,6 +351,8 @@ public class BuildingBeh : Base_ObjectBeh {
             notificationText = string.Empty;
         }
 	}
+
+	#region <@-- Destruction system.
 	
 	protected bool CheckingCanDestructionBuilding()
 	{
@@ -371,11 +373,13 @@ public class BuildingBeh : Base_ObjectBeh {
         {
             OnDestruction_Obj = this;
             this.CreateProcessBar(currentBuildingStatus);
+			currentBuildingStatus = BuildingStatus.OnDestructionProcess;
         }
         else
             return;
     }
-    private void DestructionBuildingComplete() {
+    protected virtual void DestructionBuildingComplete() {
+
         Debug.Log("DestructionBuildingComplete");
 
         if (Level > 1)
@@ -383,24 +387,27 @@ public class BuildingBeh : Base_ObjectBeh {
         else if (Level <= 1)
 			ClearStorageData();
 
-		//<@-- Release employed to unemployee.
 		this.CalculateNumberOfEmployed(this.level);
 		OnDestruction_Obj = null;
+		currentBuildingStatus = BuildingStatus.none;
     }
-
+    /// <summary>
+    /// Release employed to unemployee. Before call this method.
+    /// </summary>
     protected virtual void DecreaseBuildingLevel()
     {
         this.level -= 1;
         Destroy(this.processbar_Obj_parent.gameObject);
     }
-
-	protected virtual void ClearStorageData() {		
+	protected virtual void ClearStorageData() {
 		Debug.Log("ClearStorageData");
 		
 		StageManager.buildingArea_Objs[this.indexOfPosition].gameObject.SetActiveRecursively(true);
         Destroy(this.gameObject);
         Destroy(this.processbar_Obj_parent.gameObject);
 	}
+
+	#endregion
 	
 	protected override void Update ()
 	{
@@ -478,6 +485,6 @@ public class BuildingBeh : Base_ObjectBeh {
 		StoreHouseInstance.Clear();
 		MarketInstance = null;
 
-		Barrack_Instances.Clear();
+		Barrack_Instance = null;
 	}
 }

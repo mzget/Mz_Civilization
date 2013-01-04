@@ -4,17 +4,17 @@ using System.Collections;
 
 public class AcademyBeh : BuildingBeh {
 	
-    public static GameResource[] RequireResource = new GameResource[10] {
-        new GameResource(40, 80, 0, 50, 3),
-        new GameResource() {Food = 80, Wood = 120, Gold = 100, Employee = 5},
-        new GameResource() {Food = 120, Wood = 240, Gold = 150, Employee = 8},
-        new GameResource() {Food = 240, Wood = 480, Gold = 300, Employee = 12},
-        new GameResource() {Food = 480, Wood = 960, Gold = 600, Employee = 18},
-        new GameResource() {Food = 960, Wood = 1920, Gold = 1200, Employee = 24},
-        new GameResource() {Food = 1920, Wood = 3840, Gold = 2400, Employee = 32},
-        new GameResource() {Food = 3840, Wood = 7680, Gold = 4800, Employee = 40},
-        new GameResource() {Food = 7680, Wood = 15000, Gold = 9600, Employee = 50},
-        new GameResource() {Food = 15000, Wood = 30000, Gold = 19000, Employee = 64},
+    public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[10] {
+        new GameMaterialDatabase(40, 80, 0, 50, 3),
+        new GameMaterialDatabase() {Food = 80, Wood = 120, Gold = 100, Employee = 5},
+        new GameMaterialDatabase() {Food = 120, Wood = 240, Gold = 150, Employee = 8},
+        new GameMaterialDatabase() {Food = 240, Wood = 480, Gold = 300, Employee = 12},
+        new GameMaterialDatabase() {Food = 480, Wood = 960, Gold = 600, Employee = 18},
+        new GameMaterialDatabase() {Food = 960, Wood = 1920, Gold = 1200, Employee = 24},
+        new GameMaterialDatabase() {Food = 1920, Wood = 3840, Gold = 2400, Employee = 32},
+        new GameMaterialDatabase() {Food = 3840, Wood = 7680, Gold = 4800, Employee = 40},
+        new GameMaterialDatabase() {Food = 7680, Wood = 15000, Gold = 9600, Employee = 50},
+        new GameMaterialDatabase() {Food = 15000, Wood = 30000, Gold = 19000, Employee = 64},
     };
 	
     //<!-- Data.
@@ -84,7 +84,7 @@ public class AcademyBeh : BuildingBeh {
 		
 		if(this.Level == 3) {
         	if (QuestSystemManager.arr_isMissionComplete[9] == false)
-            	sceneController.taskManager.questManager.CheckingQuestComplete(9);
+            	sceneController.taskManager.questManager.MissionComplete(9);
     	}
 	}
 
@@ -125,13 +125,13 @@ public class AcademyBeh : BuildingBeh {
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
+                        GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
                             sceneController.taskManager.food_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
                             sceneController.taskManager.wood_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
                             sceneController.taskManager.gold_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
                             sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
@@ -147,7 +147,7 @@ public class AcademyBeh : BuildingBeh {
                 {
                     sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-                    GameResource.UsedResource(RequireResource[Level]);
+                    GameMaterialDatabase.UsedResource(RequireResource[Level]);
 
                     base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                     base.OnUpgradeProcess(this);

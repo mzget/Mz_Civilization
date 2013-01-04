@@ -34,4 +34,9 @@ public class Base_ObjectBeh : MonoBehaviour {
         if (_OnTouchRelease == false && _OnTouchBegin)
             _OnTouchRelease = true;
     }
+	
+	protected virtual void OnMouseExit() {
+		_OnTouchBegin = false;
+		_OnTouchRelease = false;
+	}
 }

@@ -451,7 +451,7 @@ public class MainMenu : Mz_BaseScene
 		PlayerPrefsX.SetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_MarketInstance, false);
 		
 		//<!-- Save Barracks data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOf_BarracksInstancs, 0);
+		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_BarracksInstance, 0);
 
 		//<@!-- Greek tribe AI data.
 		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN, 500);

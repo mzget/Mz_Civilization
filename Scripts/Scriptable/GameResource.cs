@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Game resource. food, wood, stone, gold, employee,
 /// </summary>
-public class GameResource
+public class GameMaterialDatabase
 {
     public int Food { get; set; }
     public int Wood { get; set; }
@@ -24,10 +24,10 @@ public class GameResource
     public static Rect Fourth_Rect = new Rect(rectWidth * 3, 1, rectWidth, 40);
     public static Rect Fifth_Rect = new Rect(rectWidth * 4, 1, rectWidth, 40);
 
-    public GameResource() {}
+    public GameMaterialDatabase() { }
 	
 	/// <summary>
-	/// Initializes a new instance of the <see cref="GameResource"/> class.
+	/// Initializes a new instance of the <see cref="GameMaterialDatabase"/> class.
 	/// </summary>
 	/// <param name='food'>
 	/// Food.
@@ -44,7 +44,7 @@ public class GameResource
 	/// <param name='employee'>
 	/// Employee.
 	/// </param>
-    public GameResource(int food, int wood, int stone, int gold, int employee)
+    public GameMaterialDatabase(int food, int wood, int stone, int gold, int employee)
     {
         this.Food = food;
         this.Wood = wood;
@@ -59,7 +59,7 @@ public class GameResource
 	/// <param name='usedResource'>
 	/// Used resource.
 	/// </param>
-    public static void UsedResource(GameResource usedResource)
+    public static void UsedResource(GameMaterialDatabase usedResource)
     {
         StoreHouse.Remove_sumOfFood(usedResource.Food);
         StoreHouse.Remove_sumOfWood(usedResource.Wood);

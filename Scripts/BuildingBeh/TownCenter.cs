@@ -20,17 +20,17 @@ public class TownCenter : BuildingBeh {
         }
     }
     //<!--- Requirements Resource.
-    public static GameResource[] RequireResource = new GameResource[10] {
-		new GameResource() {Food = 80, Wood = 120, Gold = 60, Employee = 0},
-        new GameResource() {Food = 160, Wood = 240, Gold = 120, Employee = 0},
-        new GameResource() {Food = 320, Wood = 480, Gold = 240, Employee = 0},
-        new GameResource() {Food = 640, Wood = 960, Gold = 480, Employee = 0},
-        new GameResource() {Food = 1280, Wood = 1920, Gold = 960, Employee = 0},
-        new GameResource() {Food = 2560, Wood = 3840, Gold = 1920, Employee = 0},
-        new GameResource() {Food = 5120, Wood = 7680, Gold = 3840, Employee = 0},
-        new GameResource() {Food = 10240, Wood = 15360, Gold = 7680, Employee = 0},
-        new GameResource() {Food = 20480, Wood = 30720, Gold = 15360, Employee = 0},
-        new GameResource() {Food = 40960, Wood = 61440, Gold = 30720, Employee = 0},
+    public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[10] {
+		new GameMaterialDatabase() {Food = 80, Wood = 120, Gold = 60, Employee = 0},
+        new GameMaterialDatabase() {Food = 160, Wood = 240, Gold = 120, Employee = 0},
+        new GameMaterialDatabase() {Food = 320, Wood = 480, Gold = 240, Employee = 0},
+        new GameMaterialDatabase() {Food = 640, Wood = 960, Gold = 480, Employee = 0},
+        new GameMaterialDatabase() {Food = 1280, Wood = 1920, Gold = 960, Employee = 0},
+        new GameMaterialDatabase() {Food = 2560, Wood = 3840, Gold = 1920, Employee = 0},
+        new GameMaterialDatabase() {Food = 5120, Wood = 7680, Gold = 3840, Employee = 0},
+        new GameMaterialDatabase() {Food = 10240, Wood = 15360, Gold = 7680, Employee = 0},
+        new GameMaterialDatabase() {Food = 20480, Wood = 30720, Gold = 15360, Employee = 0},
+        new GameMaterialDatabase() {Food = 40960, Wood = 61440, Gold = 30720, Employee = 0},
 	};
 
     // Technology Point.
@@ -83,7 +83,7 @@ public class TownCenter : BuildingBeh {
 
         if (BuildingBeh.TownCenter.Level == 3) {
             if(QuestSystemManager.arr_isMissionComplete[6] == false)
-                sceneController.taskManager.questManager.CheckingQuestComplete(6);
+                sceneController.taskManager.questManager.MissionComplete(6);
         }
 	}
 	protected override void DecreaseBuildingLevel ()
@@ -123,15 +123,15 @@ public class TownCenter : BuildingBeh {
                         //<!-- Requirements Resource.
                         GUI.BeginGroup(update_requireResource_Rect);
                         {
-                            GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(),
+                            GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(),
                                 base.sceneController.taskManager.food_icon), standard_Skin.box);
-                            GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(),
+                            GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(),
                                 base.sceneController.taskManager.wood_icon), standard_Skin.box);
                             //GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
                             //    base.stageManager.taskbarManager.stone_icon), standard_Skin.box);
-                            GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
+                            GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
                                 base.sceneController.taskManager.gold_icon), standard_Skin.box);
-                            GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(),
+                            GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(),
                                 base.sceneController.taskManager.employee_icon), standard_Skin.box);
                         }
                         GUI.EndGroup();
@@ -153,7 +153,7 @@ public class TownCenter : BuildingBeh {
                 {
                     if (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level]))
                     {
-                        GameResource.UsedResource(RequireResource[Level]);
+                        GameMaterialDatabase.UsedResource(RequireResource[Level]);
 
                         base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                         base.OnUpgradeProcess(this);

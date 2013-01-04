@@ -4,17 +4,17 @@ using System.Collections;
 public class Smelter : BuildingBeh {
 	
     //<!-- Static Data.
-    public static GameResource[] RequireResource = new GameResource[10] {
-        new GameResource(50, 0, 80, 60, 3),
-        new GameResource(200, 0, 200, 200, 5),    //...2
-        new GameResource(300, 0, 300, 300, 8),    //...3
-        new GameResource(400, 0, 400, 400, 12),   //...4
-        new GameResource(500, 0, 500, 500, 17),
-        new GameResource(600, 0, 600, 600, 23),
-        new GameResource(700, 0, 700, 700, 30),   //...7
-        new GameResource(800, 0, 800, 800, 38),   //...8
-        new GameResource(900, 0, 900, 900, 47),   //...9
-        new GameResource(1000, 0, 1000, 1000, 60),   //...10
+    public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[10] {
+        new GameMaterialDatabase(50, 0, 80, 60, 3),
+        new GameMaterialDatabase(200, 0, 200, 200, 5),    //...2
+        new GameMaterialDatabase(300, 0, 300, 300, 8),    //...3
+        new GameMaterialDatabase(400, 0, 400, 400, 12),   //...4
+        new GameMaterialDatabase(500, 0, 500, 500, 17),
+        new GameMaterialDatabase(600, 0, 600, 600, 23),
+        new GameMaterialDatabase(700, 0, 700, 700, 30),   //...7
+        new GameMaterialDatabase(800, 0, 800, 800, 38),   //...8
+        new GameMaterialDatabase(900, 0, 900, 900, 47),   //...9
+        new GameMaterialDatabase(1000, 0, 1000, 1000, 60),   //...10
 	};
 
     //<!-- Data.
@@ -148,15 +148,15 @@ public class Smelter : BuildingBeh {
                     //<!-- Requirements Resource.
                     GUI.BeginGroup(update_requireResource_Rect);
                     {
-                        GUI.Label(GameResource.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
+                        GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
                             base.sceneController.taskManager.food_icon), standard_Skin.box);
                         //GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
                         //    base.stageManager.taskbarManager.wood_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Second_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
                             base.sceneController.taskManager.stone_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
                             base.sceneController.taskManager.gold_icon), standard_Skin.box);
-                        GUI.Label(GameResource.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
                             base.sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
@@ -170,7 +170,7 @@ public class Smelter : BuildingBeh {
 				GUI.enabled = (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level])) ? true:false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
-                    GameResource.UsedResource(RequireResource[Level]);
+                    GameMaterialDatabase.UsedResource(RequireResource[Level]);
 
                     base.currentBuildingStatus = BuildingBeh.BuildingStatus.onUpgradeProcess;
                     base.OnUpgradeProcess(this);

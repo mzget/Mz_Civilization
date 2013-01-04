@@ -1,16 +1,16 @@
 using UnityEngine;
 using System.Collections;
 
-
-public class TrainingQueue : ScriptableObject
+[System.Serializable]
+public class TrainingQueue
 {
-    public UnitBeh Unit { get; set; }
-    public int Number { get; set; }
-    public System.TimeSpan RemainingTime;
-	public System.TimeSpan ToTalQueueTime;
+    public UnitBeh unitBeh { get; set; }
+    public int number { get; set; }
+    public System.TimeSpan remainingTime;
+	public System.TimeSpan totalQueueTime;
     public System.DateTime startTime;
 
-    void OnEnable() {
+    public TrainingQueue() {
 		Debug.Log("Starting... :: TrainingQueue");
 	}
 

@@ -203,7 +203,7 @@ public class BuildingArea : Base_ObjectBeh
         this.CloseGUIWindow();
 
         if(QuestSystemManager.arr_isMissionComplete[8] == false)
-            sceneController.taskManager.questManager.CheckingQuestComplete(8);
+            sceneController.taskManager.questManager.MissionComplete(8);
     }
 	
     //<!--- Economy, Military, Utility.
@@ -407,13 +407,13 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(HouseBeh.RequireResource[0].Food.ToString(),
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(HouseBeh.RequireResource[0].Food.ToString(),
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(HouseBeh.RequireResource[0].Wood.ToString(),
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(HouseBeh.RequireResource[0].Wood.ToString(),
                     sceneController.taskManager.wood_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(HouseBeh.RequireResource[0].Stone.ToString(),
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(HouseBeh.RequireResource[0].Stone.ToString(),
                     sceneController.taskManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(HouseBeh.RequireResource[0].Gold.ToString(), 
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(HouseBeh.RequireResource[0].Gold.ToString(), 
                     sceneController.taskManager.gold_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -428,7 +428,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(HouseBeh.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(HouseBeh.RequireResource[0]);
 
             GameObject temp_House = Instantiate(sceneController.house_prefab) as GameObject;
             HouseBeh housebeh = temp_House.GetComponent<HouseBeh>();
@@ -453,13 +453,13 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(AcademyBeh.RequireResource[0].Food.ToString(),
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(AcademyBeh.RequireResource[0].Food.ToString(),
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(AcademyBeh.RequireResource[0].Wood.ToString(),
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(AcademyBeh.RequireResource[0].Wood.ToString(),
                     sceneController.taskManager.wood_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(AcademyBeh.RequireResource[0].Gold.ToString(),
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(AcademyBeh.RequireResource[0].Gold.ToString(),
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(AcademyBeh.RequireResource[0].Employee.ToString(), 
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(AcademyBeh.RequireResource[0].Employee.ToString(), 
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -476,7 +476,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(AcademyBeh.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(AcademyBeh.RequireResource[0]);
 
             GameObject temp_Academy = Instantiate(sceneController.academy_prefab) as GameObject;
             AcademyBeh academy = temp_Academy.GetComponent<AcademyBeh>();
@@ -507,7 +507,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(Farm.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(Farm.RequireResource[0]);
 
             GameObject temp = Instantiate(sceneController.farm_prefab) as GameObject;				
 			Farm farm = temp.GetComponent<Farm>();
@@ -525,15 +525,15 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(Farm.RequireResource[0].Food.ToString(), 
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(Farm.RequireResource[0].Food.ToString(), 
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(Farm.RequireResource[0].Wood.ToString(), 
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(Farm.RequireResource[0].Wood.ToString(), 
                     sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(Farm.RequireResource[0].Stone.ToString(), 
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(Farm.RequireResource[0].Gold.ToString(), 
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(Farm.RequireResource[0].Gold.ToString(), 
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(Farm.RequireResource[0].Employee.ToString(), 
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(Farm.RequireResource[0].Employee.ToString(), 
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -554,7 +554,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(Sawmill.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(Sawmill.RequireResource[0]);
 
             GameObject new_sawmill = Instantiate(sceneController.sawmill_prefab) as GameObject;
             Sawmill sawmill = new_sawmill.GetComponent<Sawmill>();
@@ -572,15 +572,15 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(Sawmill.RequireResource[0].Food.ToString(),
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(Sawmill.RequireResource[0].Food.ToString(),
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(Sawmill.RequireResource[0].Wood.ToString(),
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(Sawmill.RequireResource[0].Wood.ToString(),
                     sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(Sawmill.RequireResource[0].Stone.ToString(),
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(Sawmill.RequireResource[0].Gold.ToString(),
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(Sawmill.RequireResource[0].Gold.ToString(),
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(Sawmill.RequireResource[0].Employee.ToString(),
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(Sawmill.RequireResource[0].Employee.ToString(),
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -602,7 +602,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(StoneCrushingPlant.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(StoneCrushingPlant.RequireResource[0]);
 
             GameObject new_building = Instantiate(sceneController.millstone_prefab) as GameObject;
             StoneCrushingPlant stoneCrushing = new_building.GetComponent<StoneCrushingPlant>();
@@ -620,15 +620,15 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Food.ToString(), 
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Food.ToString(), 
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Wood.ToString(),
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Wood.ToString(),
                     sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(MillStone.RequireResource[0].Stone.ToString(),
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Gold.ToString(),
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Gold.ToString(),
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Employee.ToString(),
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(StoneCrushingPlant.RequireResource[0].Employee.ToString(),
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -650,7 +650,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(Smelter.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(Smelter.RequireResource[0]);
 
             GameObject new_smelter = Instantiate(sceneController.smelter_prefab) as GameObject;
             Smelter smelter = new_smelter.GetComponent<Smelter>();
@@ -669,15 +669,15 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(Smelter.RequireResource[0].Food.ToString(),
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(Smelter.RequireResource[0].Food.ToString(),
                     sceneController.taskManager.food_icon), standard_skin.box);
                 //GUI.Label(GameResource.Second_Rect, new GUIContent(Smelter.RequireResource[0].Wood.ToString(), 
                 //    stageManager.taskbarManager.wood_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(Smelter.RequireResource[0].Stone.ToString(), 
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(Smelter.RequireResource[0].Stone.ToString(), 
                     sceneController.taskManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(Smelter.RequireResource[0].Gold.ToString(),
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(Smelter.RequireResource[0].Gold.ToString(),
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(Smelter.RequireResource[0].Employee.ToString(),
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(Smelter.RequireResource[0].Employee.ToString(),
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -698,7 +698,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(MarketBeh.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(MarketBeh.RequireResource[0]);
 
             GameObject market_obj = Instantiate(sceneController.market_prefab) as GameObject;
             MarketBeh market = market_obj.GetComponent<MarketBeh>();
@@ -716,15 +716,15 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(MarketBeh.RequireResource[0].Food.ToString(),
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(MarketBeh.RequireResource[0].Food.ToString(),
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(MarketBeh.RequireResource[0].Wood.ToString(), 
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(MarketBeh.RequireResource[0].Wood.ToString(), 
                     sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(MarketBeh.RequireResource[0].Stone.ToString(), 
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(MarketBeh.RequireResource[0].Gold.ToString(),
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(MarketBeh.RequireResource[0].Gold.ToString(),
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(MarketBeh.RequireResource[0].Employee.ToString(),
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(MarketBeh.RequireResource[0].Employee.ToString(),
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -745,7 +745,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(StoreHouse.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(StoreHouse.RequireResource[0]);
 
             GameObject new_storehouse = Instantiate(sceneController.storehouse_prefab) as GameObject;
             StoreHouse storeHouse = new_storehouse.GetComponent<StoreHouse>();
@@ -763,15 +763,15 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(StoreHouse.RequireResource[0].Food.ToString(), 
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(StoreHouse.RequireResource[0].Food.ToString(), 
                     sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(StoreHouse.RequireResource[0].Wood.ToString(),
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(StoreHouse.RequireResource[0].Wood.ToString(),
                     sceneController.taskManager.wood_icon), standard_skin.box);
                 //GUI.Label(GameResource.Third_Rect, new GUIContent(StoreHouse.RequireResource[0].Stone.ToString(),
                 //    stageManager.taskbarManager.stone_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(StoreHouse.RequireResource[0].Gold.ToString(),
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(StoreHouse.RequireResource[0].Gold.ToString(),
                     sceneController.taskManager.gold_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(StoreHouse.RequireResource[0].Employee.ToString(),
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(StoreHouse.RequireResource[0].Employee.ToString(),
                     sceneController.taskManager.employee_icon), standard_skin.box);
             }
             GUI.EndGroup();
@@ -794,10 +794,10 @@ public class BuildingArea : Base_ObjectBeh
             //<!-- Requirements Resource.
             GUI.BeginGroup(RequireResource_Rect);
             {
-                GUI.Label(GameResource.First_Rect, new GUIContent(BarracksBeh.RequireResource[0].Food.ToString(), sceneController.taskManager.food_icon), standard_skin.box);
-                GUI.Label(GameResource.Second_Rect, new GUIContent(BarracksBeh.RequireResource[0].Wood.ToString(), sceneController.taskManager.wood_icon), standard_skin.box);
-                GUI.Label(GameResource.Third_Rect, new GUIContent(BarracksBeh.RequireResource[0].Copper.ToString(), sceneController.taskManager.copper_icon), standard_skin.box);
-                GUI.Label(GameResource.Fourth_Rect, new GUIContent(BarracksBeh.RequireResource[0].Gold.ToString(), sceneController.taskManager.gold_icon), standard_skin.box);
+                GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(BarracksBeh.RequireResource[0].Food.ToString(), sceneController.taskManager.food_icon), standard_skin.box);
+                GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(BarracksBeh.RequireResource[0].Wood.ToString(), sceneController.taskManager.wood_icon), standard_skin.box);
+                GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(BarracksBeh.RequireResource[0].Stone.ToString(), sceneController.taskManager.stone_icon), standard_skin.box);
+                GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(BarracksBeh.RequireResource[0].Gold.ToString(), sceneController.taskManager.gold_icon), standard_skin.box);
             }
             GUI.EndGroup();
         }
@@ -807,8 +807,8 @@ public class BuildingArea : Base_ObjectBeh
 
 		bool enableBuildingButton  = false;
 		if(BuildingBeh.CheckingOnBuildingList() && 
-            buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]) &&
-		   BuildingBeh.AcademyInstance != null) 
+            buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]) && 
+            BuildingBeh.Barrack_Instance == null && BuildingBeh.AcademyInstance != null) 
         {
 			enableBuildingButton = (BuildingBeh.AcademyInstance.Level >= 3) ? true : false;
 		}
@@ -818,7 +818,7 @@ public class BuildingArea : Base_ObjectBeh
         {
             sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
 
-            GameResource.UsedResource(BarracksBeh.RequireResource[0]);
+            GameMaterialDatabase.UsedResource(BarracksBeh.RequireResource[0]);
 
             GameObject barracks_obj = Instantiate(sceneController.barracks_prefab) as GameObject;
             BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
