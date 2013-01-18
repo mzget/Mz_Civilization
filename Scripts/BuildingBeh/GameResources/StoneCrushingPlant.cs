@@ -118,6 +118,16 @@ public class StoneCrushingPlant : BuildingBeh {
         sceneController.resourceCycle_Event -= HaveResourceCycle_Event;
 		BuildingBeh.MillStoneInstance.Remove(this);
 	}
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
+	}
 
     protected override void CreateWindow(int windowID)
     {

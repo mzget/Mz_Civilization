@@ -22,14 +22,14 @@ public class BuildingArea : Base_ObjectBeh
     //<!--- Economic.
     public Texture2D market_icon;
     public Texture2D storeHouse_icon;
-    public Texture2D farm_Icon;
+    private Texture2D farm_Icon;
     public Texture2D sawmill_Icon;
     public Texture2D millStone_Icon;
     public Texture2D smelter_icon;
     //<!--- Militaly.
-    public Texture2D barrackNotation;
+    public Texture2D barracks_icon;
 
-    public OTSprite Sprite;
+    internal tk2dSprite Sprite;
 	private int indexOfAreaPosition;
     public int IndexOfAreaPosition { get { return indexOfAreaPosition; } set { indexOfAreaPosition = value; } }
     private enum GUIState { none = 0, ShowMainUI, ShowUtiltyUI, ShowEconomyUI, ShowMilitaryUI, ShowBuyArea, };
@@ -73,12 +73,11 @@ public class BuildingArea : Base_ObjectBeh
 
 	
 	void Awake() {		
-        Sprite = this.gameObject.GetComponent<OTSprite>();
+        Sprite = this.gameObject.GetComponent<tk2dSprite>();
 	}
 	
 	// Use this for initialization
-	IEnumerator Start () 
-	{
+	IEnumerator Start () {
 		while (StageManager._StageInitialized == false || TaskManager._TaskbarInitialized == false) {
             yield return null;
 		}
@@ -88,13 +87,13 @@ public class BuildingArea : Base_ObjectBeh
         this.InitializeGUI();
 
         if(!areaActiveState) {
-            Sprite.frameIndex = 4;
-			Sprite.tintColor = Color.gray;
+//            Sprite.frameIndex = 4;
+//			Sprite.tintColor = Color.gray;
+			Sprite.color = Color.grey;
         }
 
         //<!--- Static building type.
-        if (buildingBeh == null)
-        {
+        if (buildingBeh == null) {
             GameObject towncenter = GameObject.Find(TownCenter.BuildingName);
             buildingBeh = towncenter.GetComponent<BuildingBeh>();
         }
@@ -114,7 +113,7 @@ public class BuildingArea : Base_ObjectBeh
         requirementBox_style.alignment = TextAnchor.MiddleLeft;
 
 		window_rect = new Rect((Main.FixedGameWidth * 3 / 8) - 350, Main.FixedGameHeight / 2 - 250, 700, 500);
-        closeBuildingArea_rect = new Rect(window_rect.width - 34, 2, 32, 32);
+        closeBuildingArea_rect = new Rect(window_rect.width - 50, 2, 48, 48);
         background_Rect = new Rect(0, 0, 680, 420);
         image_rect = new Rect(40, 50, 80, 80);
         tagName_rect = new Rect(0, 15, 160, 30);
@@ -135,7 +134,7 @@ public class BuildingArea : Base_ObjectBeh
         sixthBuilding_rect = new Rect(0, 5 * frameHeight, background_Rect.width, frameHeight);
         
         buyArea_rect = new Rect((Main.FixedGameWidth * 3 / 8) - 300, Main.FixedGameHeight / 2 - 300, 600, 600);
-        closeBuyArea_rect = new Rect(buyArea_rect.width - 34, 48, 32, 32);
+        closeBuyArea_rect = new Rect(buyArea_rect.width - 50, 48, 48, 48);
         advisor_drawRect = new Rect(10, (buyArea_rect.height / 2) - (sceneController.taskManager.advisor_villageElder.height/2), sceneController.taskManager.advisor_villageElder.width, sceneController.taskManager.advisor_villageElder.height);
         float descriptionPosX = (advisor_drawRect.x + advisor_drawRect.width) + 10;
         buyAreaDescription_rect = new Rect(descriptionPosX, 50, buyArea_rect.width - descriptionPosX, 500);
@@ -143,11 +142,18 @@ public class BuildingArea : Base_ObjectBeh
 
     private IEnumerator LoadTextureResource()
     {
+		farm_Icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Farm", typeof(Texture2D)) as Texture2D;
+		sawmill_Icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Woodsman", typeof(Texture2D)) as Texture2D;
+		millStone_Icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "StoneCarver", typeof(Texture2D)) as Texture2D;
+		smelter_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Miner", typeof(Texture2D)) as Texture2D;
+
         house_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "House", typeof(Texture2D)) as Texture2D;
         academy_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Academy", typeof(Texture2D)) as Texture2D;
 
         storeHouse_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Storehouse", typeof(Texture2D)) as Texture2D;
         market_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Market", typeof(Texture2D)) as Texture2D;
+
+		barracks_icon = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Barracks", typeof(Texture2D)) as Texture2D;
 
         yield return 0;
     }
@@ -176,9 +182,8 @@ public class BuildingArea : Base_ObjectBeh
 
     #endregion
     
-    void ActiveManager()
+    void DeActivateArea()
 	{
-        this.gameObject.active = false;
         TaskManager.IsShowInteruptGUI = false;
     }
 
@@ -197,13 +202,14 @@ public class BuildingArea : Base_ObjectBeh
         this.areaActiveState = true;
         StageManager.arr_buildingAreaState[indexOfAreaPosition] = true;
 
-        Sprite.tintColor = Color.white;
-        Sprite.frameIndex = 3;
+//        Sprite.tintColor = Color.white;
+//        Sprite.frameIndex = 3;
+		Sprite.color = Color.white;
+		
+		if(QuestSystemManager.arr_isMissionComplete[8] == false)
+			sceneController.taskManager.questManager.MissionComplete(8);
 
         this.CloseGUIWindow();
-
-        if(QuestSystemManager.arr_isMissionComplete[8] == false)
-            sceneController.taskManager.questManager.MissionComplete(8);
     }
 	
     //<!--- Economy, Military, Utility.
@@ -435,7 +441,7 @@ public class BuildingArea : Base_ObjectBeh
             housebeh.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             housebeh.OnBuildingProcess(housebeh);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 
@@ -483,7 +489,7 @@ public class BuildingArea : Base_ObjectBeh
             academy.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             academy.OnBuildingProcess(academy);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 
@@ -514,7 +520,7 @@ public class BuildingArea : Base_ObjectBeh
             farm.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
 			farm.OnBuildingProcess((BuildingBeh)farm);
 
-            ActiveManager();
+            DeActivateArea();
         }
 		GUI.enabled = true;
 		
@@ -561,7 +567,7 @@ public class BuildingArea : Base_ObjectBeh
             sawmill.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             sawmill.OnBuildingProcess((BuildingBeh)sawmill);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 
@@ -609,7 +615,7 @@ public class BuildingArea : Base_ObjectBeh
             stoneCrushing.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
             stoneCrushing.OnBuildingProcess((BuildingBeh)stoneCrushing);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 
@@ -657,7 +663,7 @@ public class BuildingArea : Base_ObjectBeh
             smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
             smelter.OnBuildingProcess((BuildingBeh)smelter);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 
@@ -705,7 +711,7 @@ public class BuildingArea : Base_ObjectBeh
             market.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             market.OnBuildingProcess(market);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 
@@ -752,7 +758,7 @@ public class BuildingArea : Base_ObjectBeh
             storeHouse.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, indexOfAreaPosition, 0);
             storeHouse.OnBuildingProcess(storeHouse);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 
@@ -785,7 +791,7 @@ public class BuildingArea : Base_ObjectBeh
 	
     private void DrawIntroduceBarracks()
     {
-        GUI.DrawTexture(image_rect, barrackNotation);   //<<-- "Draw icon texture".
+        GUI.DrawTexture(image_rect, barracks_icon);   //<<-- "Draw icon texture".
         GUI.Label(tagName_rect, new GUIContent(BarracksBeh.BuildingName), tagname_Style);
 		
         GUI.BeginGroup(content_rect, new GUIContent(BarracksBeh.CurrentDescription, "content"), buildingArea_Skin.textArea);
@@ -825,7 +831,7 @@ public class BuildingArea : Base_ObjectBeh
             barracks.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, this.indexOfAreaPosition, 0);
             barracks.OnBuildingProcess(barracks);
 
-            ActiveManager();
+            DeActivateArea();
         }
         GUI.enabled = true;
 

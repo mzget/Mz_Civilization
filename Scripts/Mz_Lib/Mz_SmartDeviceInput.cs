@@ -2,21 +2,20 @@ using UnityEngine;
 using System.Collections;
 
 public class Mz_SmartDeviceInput : MonoBehaviour {
-
-	internal Camera cam;
+	
 	/// <summary>
 	/// SmartDevice input call with Update or FixUpdate function.
 	/// </summary>
 	public void ImplementTouchInput () {
-		if(cam == null) {
-			Debug.LogWarning("Camera is null");
-			return;
+		if(Camera.main == null) {
+			Debug.Log("MainCamera has null");
+			return;		
 		}
 
 		if(Input.touchCount >= 1)
         {
             Touch touch = Input.GetTouch(0);
-			Ray cursorRay = cam.ScreenPointToRay(touch.position);
+            Ray cursorRay = Camera.main.ScreenPointToRay(touch.position);
             RaycastHit hit;
 
             if (touch.phase == TouchPhase.Began) {
@@ -53,13 +52,13 @@ public class Mz_SmartDeviceInput : MonoBehaviour {
 	public Vector3 originalPos;
 	public Vector3 currentPos;   
     public void ImplementMouseInput () {
-		if(cam == null) {
-			Debug.LogWarning("Camera is null");
-			return;
+		if(Camera.main == null) {
+			Debug.Log("MainCamera has null");
+			return;		
 		}
 
-		mousePos = cam.ScreenToViewportPoint(Input.mousePosition);
-		Ray cursorRay = cam.ScreenPointToRay (Input.mousePosition);
+		mousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+		Ray cursorRay = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hit;
 		
 		if(Input.GetMouseButtonDown(0)) {

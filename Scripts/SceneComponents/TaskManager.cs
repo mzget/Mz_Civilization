@@ -226,9 +226,9 @@ public class TaskManager : MonoBehaviour {
 
         marketTradingIcon = Resources.Load(PathOfMainGUI + "Market", typeof(Texture2D)) as Texture2D;
 
-		advisor_villageElder = Resources.Load(Advisor_ResourcePath + "VillageElder_newQuest", typeof(Texture2D)) as Texture2D;
-		newQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_newQuest", typeof(Texture2D)) as Texture2D;
-		completeQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_finished", typeof(Texture2D)) as Texture2D;
+		advisor_villageElder = Resources.Load(Advisor_ResourcePath + "VillageElder_idle", typeof(Texture2D)) as Texture2D;
+		newQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_idle", typeof(Texture2D)) as Texture2D;
+		completeQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_idle", typeof(Texture2D)) as Texture2D;
 
 		messageFormSystem_icon = Resources.Load(PathOfMainGUI + "MessageIcon", typeof(Texture2D)) as Texture2D;
         //<!-- Load troop icon.

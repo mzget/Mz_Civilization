@@ -50,11 +50,18 @@ public class TownCenter : BuildingBeh {
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 	}
+	
 	// Use this for initialization
-	void Start () {
+	protected override void Start ()
+	{
+		base.Start ();
+
+        base._canDragaable = true;
+        collisionPoint = new Vector2(0, -16f);
+
         InitializeTexturesResource();
         buildingLevel_textmesh.text = Level.ToString();
-		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResource_Notification_event;;
+		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResource_Notification_event;
 	}
 	
 	#region <!-- Event Handle.
@@ -73,8 +80,6 @@ public class TownCenter : BuildingBeh {
         base.buildingIcon_Texture = Resources.Load(BuildingIcons_TextureResourcePath + "TownCenter", typeof(Texture2D)) as Texture2D;
     }
 	
-	#region <!--- Inherit Functions.
-
 	protected override void BuildingProcessComplete (BuildingBeh obj)
 	{
 		base.BuildingProcessComplete(obj);
@@ -92,8 +97,17 @@ public class TownCenter : BuildingBeh {
 		buildingLevel_textmesh.text = this.Level.ToString();
 	}
 	
-	#endregion
-
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
+	}
+	
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);

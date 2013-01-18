@@ -100,63 +100,67 @@ public class ForeignManager : MonoBehaviour
 
     private void SendTroopMechanism()
     {
-        try{
-				int selectedSpearman = numberOFUnit_00 != string.Empty ? int.Parse(numberOFUnit_00) : 0;
-				int selectedHapaspist = numberOFUnit_01 != string.Empty ? int.Parse(numberOFUnit_01) : 0;
-				int selectedHoplite = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
-				
-				GroupOFUnitBeh groupOfUnitBehs = new GroupOFUnitBeh();
-                groupOfUnitBehs.unitBehs.Add(new UnitBeh() { 
-                    name = UnitDatabase.GreekUnitDatabase.Spearman_Unit.NAME,
-                    ability = UnitDatabase.GreekUnitDatabase.Spearman_Unit.Ability,
-                });
-                groupOfUnitBehs.members.Add(selectedSpearman);
-                groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Spearman_Unit.Ability.capacity * selectedSpearman);
+        try {
+            int selectedSpearman = numberOFUnit_00 != string.Empty ? int.Parse(numberOFUnit_00) : 0;
+            int selectedHapaspist = numberOFUnit_01 != string.Empty ? int.Parse(numberOFUnit_01) : 0;
+            int selectedHoplite = numberOFUnit_02 != string.Empty ? int.Parse(numberOFUnit_02) : 0;
 
-                groupOfUnitBehs.unitBehs.Add(new UnitBeh() { 
-                    name = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.NAME,
-                    ability = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.Ability,
-                });
-                groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.Ability.capacity * selectedHapaspist);      
-				groupOfUnitBehs.members.Add(selectedHapaspist);
+            GroupOFUnitBeh groupOfUnitBehs = new GroupOFUnitBeh();
+            groupOfUnitBehs.unitBehs.Add(new UnitBeh()
+            {
+                name = UnitDatabase.GreekUnitDatabase.Spearman_Unit.NAME,
+                ability = UnitDatabase.GreekUnitDatabase.Spearman_Unit.Ability,
+            });
+            groupOfUnitBehs.members.Add(selectedSpearman);
+            groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Spearman_Unit.Ability.capacity * selectedSpearman);
 
-                groupOfUnitBehs.unitBehs.Add(new UnitBeh() {
-                    name = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.NAME,
-                    ability = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.Ability,
-                });
-				groupOfUnitBehs.members.Add(selectedHoplite);
-                groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Hoplite_Unit.Ability.capacity * selectedHoplite);
+            groupOfUnitBehs.unitBehs.Add(new UnitBeh()
+            {
+                name = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.NAME,
+                ability = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.Ability,
+            });
+            groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.Ability.capacity * selectedHapaspist);
+            groupOfUnitBehs.members.Add(selectedHapaspist);
 
-				if(selectedSpearman + selectedHapaspist + selectedHoplite > 0)
-				{
-					TroopsActivity newTroopsActivity = new TroopsActivity();
-					newTroopsActivity.currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage;
-					newTroopsActivity.targetCity = StageManager.list_AICity[0];
-					newTroopsActivity.timeToTravel = System.TimeSpan.FromSeconds(StageManager.list_AICity[0].distance);
-					newTroopsActivity.startTime = System.DateTime.UtcNow;
-					newTroopsActivity.groupOfUnitBeh = groupOfUnitBehs;
-                    newTroopsActivity.attackBonus = WarfareSystem.AttackBonus;
-                    newTroopsActivity.totalAttackScore = this.CalculationTotalAttackScore(groupOfUnitBehs);
-					foreach (int capa in groupOfUnitBehs.capacities) {
-						newTroopsActivity.totalCapacity += capa;
-					}
-					
-					taskManager.displayTroopsActivity.MilitaryActivityList.Add(newTroopsActivity);
+            groupOfUnitBehs.unitBehs.Add(new UnitBeh()
+            {
+                name = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.NAME,
+                ability = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.Ability,
+            });
+            groupOfUnitBehs.members.Add(selectedHoplite);
+            groupOfUnitBehs.capacities.Add(UnitDatabase.GreekUnitDatabase.Hoplite_Unit.Ability.capacity * selectedHoplite);
 
-					BarracksBeh.AmountOfSpearman -= selectedSpearman;
-					BarracksBeh.AmountOfHapaspist -= selectedHapaspist;
-					BarracksBeh.AmountOfHoplite -= selectedHoplite;
-					
-					Debug.Log ("displayTroopsActivity.MilitaryActivityList.Count : " + taskManager.displayTroopsActivity.MilitaryActivityList.Count);
-					
-					CloseGUIWindow();
-				}
-			}catch {
-				Debug.LogWarning("Cannot send your troops !");
-			}finally {
-				numberOFUnit_00 = string.Empty;
-				numberOFUnit_01 = string.Empty;
-				numberOFUnit_02 = string.Empty;
+            if (selectedSpearman + selectedHapaspist + selectedHoplite > 0)
+            {
+                TroopsActivity newTroopsActivity = new TroopsActivity();
+                newTroopsActivity.currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage;
+                newTroopsActivity.targetCity = StageManager.list_AICity[0];
+                newTroopsActivity.timeToTravel = System.TimeSpan.FromSeconds(StageManager.list_AICity[0].distance);
+                newTroopsActivity.startTime = System.DateTime.UtcNow;
+                newTroopsActivity.groupOfUnitBeh = groupOfUnitBehs;
+                newTroopsActivity.attackBonus = WarfareSystem.AttackBonus;
+                newTroopsActivity.totalAttackScore = this.CalculationTotalAttackScore(groupOfUnitBehs);
+                foreach (int capa in groupOfUnitBehs.capacities)
+                {
+                    newTroopsActivity.totalCapacity += capa;
+                }
+
+                taskManager.displayTroopsActivity.MilitaryActivityList.Add(newTroopsActivity);
+
+                BarracksBeh.AmountOfSpearman -= selectedSpearman;
+                BarracksBeh.AmountOfHapaspist -= selectedHapaspist;
+                BarracksBeh.AmountOfHoplite -= selectedHoplite;
+
+                Debug.Log("displayTroopsActivity.MilitaryActivityList.Count : " + taskManager.displayTroopsActivity.MilitaryActivityList.Count);
+
+                CloseGUIWindow();
+            }
+        } catch {
+            Debug.LogWarning("Cannot send your troops !");
+        } finally {
+			numberOFUnit_00 = string.Empty;
+			numberOFUnit_01 = string.Empty;
+			numberOFUnit_02 = string.Empty;
         }
     }
 

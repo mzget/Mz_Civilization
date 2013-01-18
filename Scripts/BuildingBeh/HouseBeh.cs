@@ -63,9 +63,14 @@ public class HouseBeh : BuildingBeh {
     }
 
 	// Use this for initialization
-	void Start () {
-        this.InitializeTexturesResource();
-        this.CalculationCurrentDweller();
+	protected override void Start ()
+	{
+		base.Start ();
+		base.collisionPoint = new Vector2(-4.5f, - 13.75f);
+		base._canDragaable = true;
+
+		this.InitializeTexturesResource();
+		this.CalculationCurrentDweller();
 		
 		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResourceNotification_event;
 		
@@ -73,7 +78,7 @@ public class HouseBeh : BuildingBeh {
 			sceneController.dayCycle_Event += Handle_dayCycle_Event;
 			_IsAddEvent = true;
 		}
-    }
+	}
 	
 	#region <!--- Events Handle.
 	
@@ -117,6 +122,7 @@ public class HouseBeh : BuildingBeh {
 	{
 		base.InitializingBuildingBeh (p_buildingState, p_indexPosition, p_level);
 
+		this.sprite.position += Vector2.up * 20f;
         BuildingBeh.House_Instances.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
 	}
@@ -174,7 +180,17 @@ public class HouseBeh : BuildingBeh {
 		
 		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
 	}
-
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
+	}
+	
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);

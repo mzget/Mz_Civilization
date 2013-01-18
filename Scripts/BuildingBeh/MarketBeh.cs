@@ -152,7 +152,8 @@ public class MarketBeh : BuildingBeh {
     public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
-
+		
+		this.sprite.position += Vector2.up * 20f;
         BuildingBeh.MarketInstance = this;
 		this.CalculateNumberOfEmployed(p_level);
 
@@ -426,7 +427,17 @@ public class MarketBeh : BuildingBeh {
 		
 		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
 	}
-
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
+	}
+	
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);

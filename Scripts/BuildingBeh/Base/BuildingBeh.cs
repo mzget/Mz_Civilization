@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class BuildingBeh : Base_ObjectBeh {
+public class BuildingBeh : ObjectsBeh {
 	
     public const string BuildingIcons_TextureResourcePath = "Textures/Building_Icons/";
 	public const int MAX_LEVEL = 10;
@@ -24,8 +24,9 @@ public class BuildingBeh : Base_ObjectBeh {
 	
     public StageManager sceneController;
 	protected GameObject processbar_Obj_parent;
-    private OTSprite processBarBackground;
-    private OTSprite processBar_Scolling;
+    private tk2dSprite processbarBG_sprite;
+	private tk2dSprite processBar_Scolling;
+	private GameObject scrollingBar_obj;
 
     protected OTSprite sprite;
     protected TextMesh buildingLevel_textmesh;
@@ -47,10 +48,10 @@ public class BuildingBeh : Base_ObjectBeh {
 	public enum BuildingType { general = 0, resource, storehouse, barrack, };
 	protected BuildingType buildingType;
     protected BuildingsTimeData buildingTimeData;
+    internal Vector2 collisionPoint;
 
     //<!-- Static Data.
     public static List<BuildingBeh> onBuilding_Obj = new List<BuildingBeh>();
-    public static BuildingBeh OnDestruction_Obj = null;
     public static TownCenter TownCenter;
     //<!--- Utility.
     public static List<HouseBeh> House_Instances = new List<HouseBeh>();
@@ -155,8 +156,10 @@ public class BuildingBeh : Base_ObjectBeh {
 	
 	#endregion
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
+		base.Awake();
+		
         if (sceneController == null)
             sceneController = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
 
@@ -195,7 +198,7 @@ public class BuildingBeh : Base_ObjectBeh {
         background_Rect = new Rect(0, 0, windowRect.width - 16, 420);
         building_background_Rect = new Rect(background_Rect.x, background_Rect.y, windowRect.width, background_Rect.height);
         descriptionGroup_Rect = new Rect(150, 24, windowRect.width - 160, background_Rect.height - 45);
-        exitButton_Rect = new Rect(windowRect.width - 34, 2, 32, 32);
+        exitButton_Rect = new Rect(windowRect.width - 43, 3, 40, 40);
 		notificationBox_rect = new Rect(50, 32, windowRect.width - 100, 32);
         update_requireResource_Rect = new Rect(10, 320, 500, 40);
 //        upgradeButton_Rect = new Rect(descriptionGroup_Rect.width - 120, update_requireResource_Rect.y, 100, 32);
@@ -207,7 +210,7 @@ public class BuildingBeh : Base_ObjectBeh {
         buildingLevel_textmesh = temp.GetComponent<TextMesh>();
         buildingLevel_textmesh.gameObject.name = "Level_textmesh";
         buildingLevel_textmesh.transform.parent = this.transform;
-        buildingLevel_textmesh.transform.localPosition = new Vector3(0, .6f, 0);
+        buildingLevel_textmesh.transform.localPosition = new Vector3(0, .6f, -8f);
         buildingLevel_textmesh.transform.localScale = new Vector3(.1f, .1f, 1);
     }
 	
@@ -225,9 +228,11 @@ public class BuildingBeh : Base_ObjectBeh {
         
         Level = p_level;
         buildingLevel_textmesh.text = this.level.ToString();
-
-        this.sprite.position = StageManager.buildingArea_Pos[indexOfPosition];
-        StageManager.buildingArea_Objs[indexOfPosition].gameObject.active = false;
+		
+		this.transform.position = StageManager.buildingArea_Pos[indexOfPosition];
+        this.sprite.depth = -1;
+        StageManager.buildingArea_Objs[indexOfPosition].enabled = false;
+        StageManager.buildingArea_Objs[indexOfPosition].collider.enabled = false;
     }
 
 	protected virtual void CalculateNumberOfEmployed(int p_level) {	}
@@ -239,6 +244,7 @@ public class BuildingBeh : Base_ObjectBeh {
         if (onBuilding_Obj.Count < 2)
         {
             p_building.CreateProcessBar(this.currentBuildingStatus);
+			
             onBuilding_Obj.Add(p_building);
         }
 	}
@@ -249,47 +255,41 @@ public class BuildingBeh : Base_ObjectBeh {
         if (onBuilding_Obj.Count < 2)
         {
             p_buildind.CreateProcessBar(this.currentBuildingStatus);
+			
             onBuilding_Obj.Add(p_buildind);
         }
 	}
+	
     protected virtual void CreateProcessBar(BuildingStatus buildingStatus)
     {
         if (processbar_Obj_parent == null)
         {
             processbar_Obj_parent = new GameObject("ProcessbarObj_group");
-            processbar_Obj_parent.transform.position = new Vector3(this.sprite.position.x, this.sprite.position.y - ((this.sprite.size.y / 2) + 24), 0);
+            processbar_Obj_parent.transform.position = new Vector3(this.sprite.position.x, this.sprite.position.y + ((this.sprite.size.y / 2) + 24), -5f);
 
-            GameObject temp_processBar = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Processbar", typeof(GameObject))) as GameObject;
-            temp_processBar.transform.parent = processbar_Obj_parent.transform;
-            temp_processBar.transform.localPosition = Vector3.zero;
-            processBarBackground = temp_processBar.GetComponent<OTSprite>();
-            processBarBackground.spriteContainer = OT.ContainerByName("GUI_Atlas");
-            processBarBackground.frameIndex = 0;
-            processBarBackground.size = new Vector2(128, 28);
+            GameObject processBarBg_obj = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Processbar", typeof(GameObject))) as GameObject;
+            processBarBg_obj.transform.parent = processbar_Obj_parent.transform;
+            processBarBg_obj.transform.localPosition = Vector3.zero;
+
+			processbarBG_sprite = processBarBg_obj.GetComponent<tk2dSprite>();
 
             if (processBar_Scolling == null)
             {
                 if (buildingStatus == BuildingStatus.onBuildingProcess || buildingStatus == BuildingStatus.onUpgradeProcess)
                 {
-                    GameObject scrolling = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "processbar_scroll", typeof(GameObject))) as GameObject;
-                    scrolling.transform.parent = processbar_Obj_parent.transform;
-                    processBar_Scolling = scrolling.GetComponent<OTSprite>();
-					processBar_Scolling.spriteContainer = OT.ContainerByName("GUI_Atlas");
-					processBar_Scolling.frameIndex = 1;
-                    processBar_Scolling.pivot = OTObject.Pivot.Left;
-                    processBar_Scolling.position = new Vector2((-processBarBackground.size.x / 2) + 2, -1);
-                    processBar_Scolling.size = new Vector2(12, 24);
+					Transform scrolling_transform = processBarBg_obj.transform.Find("processbar_scroll");
+					scrolling_transform.localScale = new Vector3(0.01f, 1f, 1f);
+					scrollingBar_obj = scrolling_transform.gameObject;
                 }
                 else if (buildingStatus == BuildingStatus.OnDestructionProcess)
                 {
-                    GameObject scrolling = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Destruction_processbar", typeof(GameObject))) as GameObject;
-                    scrolling.transform.parent = processbar_Obj_parent.transform;
-                    processBar_Scolling = scrolling.GetComponent<OTSprite>();
-					processBar_Scolling.spriteContainer = OT.ContainerByName("GUI_Atlas");
-					processBar_Scolling.frameIndex = 2;
-                    processBar_Scolling.pivot = OTObject.Pivot.Left;
-                    processBar_Scolling.position = new Vector2((-processBarBackground.size.x / 2) + 2, -1);
-                    processBar_Scolling.size = new Vector2(12, 24);
+//                    GameObject scrolling = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Destruction_processbar", typeof(GameObject))) as GameObject;
+//                    scrolling.transform.parent = processbar_Obj_parent.transform;					
+//                    processBar_Scolling = scrolling.GetComponent<tk2dSprite>();
+					processbarBG_sprite.color = Color.red;
+					Transform scrolling_transform = processBarBg_obj.transform.Find("processbar_scroll");
+					scrolling_transform.localScale = new Vector3(1f, 1f, 1f);
+					scrollingBar_obj = scrolling_transform.gameObject;
                 }
             }
 
@@ -297,8 +297,8 @@ public class BuildingBeh : Base_ObjectBeh {
 
             if (buildingStatus == BuildingStatus.onBuildingProcess)
             {
-                scaleData.Add("from", new Vector2(12, 24));
-                scaleData.Add("to", new Vector2(124, 24));
+                scaleData.Add("from", new Vector3(0.01f, 1, 1));
+                scaleData.Add("to", new Vector3(1, 1, 1));
                 scaleData.Add("time", buildingTimeData.arrBuildingTimesData[Level]);
                 scaleData.Add("onupdate", "BuildingProcess");
                 scaleData.Add("easetype", iTween.EaseType.linear);
@@ -308,8 +308,8 @@ public class BuildingBeh : Base_ObjectBeh {
             }
             else if (buildingStatus == BuildingStatus.onUpgradeProcess)
             {
-                scaleData.Add("from", new Vector2(12, 24));
-                scaleData.Add("to", new Vector2(124, 24));
+                scaleData.Add("from", new Vector3(0.01f, 1, 1));
+                scaleData.Add("to", new Vector3(1, 1, 1));
                 scaleData.Add("time", buildingTimeData.arrBuildingTimesData[Level]);
                 scaleData.Add("onupdate", "BuildingProcess");
                 scaleData.Add("easetype", iTween.EaseType.linear);
@@ -319,8 +319,8 @@ public class BuildingBeh : Base_ObjectBeh {
             }
             else if (buildingStatus == BuildingStatus.OnDestructionProcess)
             {
-                scaleData.Add("from", new Vector2(12, 24));
-                scaleData.Add("to", new Vector2(124, 24));
+                scaleData.Add("from", new Vector3(1f, 1, 1));
+                scaleData.Add("to", new Vector3(.01f, 1, 1));
                 scaleData.Add("time", buildingTimeData.arrBuildingTimesData[Level]);
                 scaleData.Add("onupdate", "BuildingProcess");
                 scaleData.Add("easetype", iTween.EaseType.linear);
@@ -335,9 +335,10 @@ public class BuildingBeh : Base_ObjectBeh {
         else
             return;
     }
-	private void BuildingProcess(Vector2 Rvalue) {		
-		if(this.processBar_Scolling)
-			this.processBar_Scolling.size = Rvalue;
+	
+	private void BuildingProcess(Vector3 Rvalue) {		
+		if(this.scrollingBar_obj)
+			this.scrollingBar_obj.transform.localScale = Rvalue;
 	}
 	protected virtual void BuildingProcessComplete(BuildingBeh obj) {
         Debug.Log(obj.name + ": BuildingProcessComplete");
@@ -357,7 +358,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	protected bool CheckingCanDestructionBuilding()
 	{
 		if(this.currentBuildingStatus == BuildingStatus.none) {
-			if(OnDestruction_Obj == null)
+			if(onBuilding_Obj == null)
 				return true;
 			else
 				return false;
@@ -365,15 +366,17 @@ public class BuildingBeh : Base_ObjectBeh {
 		else 
 			return false;
 	}
+	
     protected void DestructionBuilding()
     {
         Debug.Log("DestructionBuilding");
 
-        if (OnDestruction_Obj == null)
-        {
-            OnDestruction_Obj = this;
+        if (onBuilding_Obj.Count < 2)
+        {	
             this.CreateProcessBar(currentBuildingStatus);
 			currentBuildingStatus = BuildingStatus.OnDestructionProcess;
+			
+            onBuilding_Obj.Add(this);
         }
         else
             return;
@@ -388,7 +391,7 @@ public class BuildingBeh : Base_ObjectBeh {
 			ClearStorageData();
 
 		this.CalculateNumberOfEmployed(this.level);
-		OnDestruction_Obj = null;
+		onBuilding_Obj.Remove(this);
 		currentBuildingStatus = BuildingStatus.none;
     }
     /// <summary>
@@ -402,7 +405,8 @@ public class BuildingBeh : Base_ObjectBeh {
 	protected virtual void ClearStorageData() {
 		Debug.Log("ClearStorageData");
 		
-		StageManager.buildingArea_Objs[this.indexOfPosition].gameObject.SetActiveRecursively(true);
+		StageManager.buildingArea_Objs[this.indexOfPosition].gameObject.SetActive(true);
+		StageManager.buildingArea_Objs[this.indexOfPosition].collider.enabled = true;
         Destroy(this.gameObject);
         Destroy(this.processbar_Obj_parent.gameObject);
 	}
@@ -411,7 +415,7 @@ public class BuildingBeh : Base_ObjectBeh {
 	
 	protected override void Update ()
 	{
-		base.Update ();
+        base.Update();
 
         if (currentBuildingStatus == BuildingStatus.onBuildingProcess || currentBuildingStatus == BuildingStatus.onUpgradeProcess)
         {
@@ -419,10 +423,8 @@ public class BuildingBeh : Base_ObjectBeh {
             TimeSpan constructionTime = TimeSpan.FromSeconds(buildingTimeData.arrBuildingTimesData[this.level]);
             TimeSpan contructionRemainingTime = constructionTime - elapsedTime;
 			if(contructionRemainingTime.TotalSeconds >= 0)
-                notificationText = currentBuildingStatus + " :: Time remain " + new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss") + " m.";
-            //    string remainingTime = new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss");
-            //if (elapsedTime < constructionTime)
-            //    notificationText = currentBuildingStatus + " :: Time remain " + remainingTime + " m.";
+				notificationText = new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss") + " m.";
+//                notificationText = currentBuildingStatus + " :: Time remain " + new DateTime(contructionRemainingTime.Ticks).ToString("mm:ss") + " m.";
             else
                 notificationText = string.Empty;
         }
@@ -487,4 +489,44 @@ public class BuildingBeh : Base_ObjectBeh {
 
 		Barrack_Instance = null;
 	}
+
+    protected override void ImplementDraggableObject()
+    {
+        base.ImplementDraggableObject();
+
+        Ray cursorRay;
+        RaycastHit hit;
+        //cursorRay = new Ray(this.transform.position, Vector3.forward);
+        cursorRay = new Ray(new Vector3(this.transform.position.x + collisionPoint.x, this.transform.position.y + collisionPoint.y, this.transform.position.z), Vector3.forward);
+        if (Physics.Raycast(cursorRay, out hit, 100f))
+        {
+            if (hit.collider.tag == "BuildingArea")
+            {
+                Debug.Log(hit.collider.name);
+                string[] slotId = hit.collider.name.Split(':');
+                TileArea newarea = new TileArea() { x = int.Parse(slotId[0]), y = int.Parse(slotId[1]), numSlotWidth = 2, numSlotDepth = 2 };
+                hit.collider.SendMessage(Tile.FUNC_CheckedTileStatus, newarea);
+
+                if (this._isDropObject)
+                {
+                    //this.transform.position = originalPosition;
+                    this._isDropObject = false;
+                    base._isDraggable = false;
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("B");
+            if (this._isDropObject)
+            {
+                //if(_isDraggable == false) {
+                this.transform.position = originalPosition;
+                this._isDropObject = false;
+                base._isDraggable = false;
+            }
+        }
+
+        Debug.DrawRay(cursorRay.origin, Vector3.forward * 100f, Color.red);
+    }
 }

@@ -5,7 +5,11 @@ using System.Collections;
 public class BuildingsTimeData {
 	
 	public float[] arrBuildingTimesData = new float[BuildingBeh.MAX_LEVEL];
-
+	
+	
+	
+	public BuildingsTimeData() {}
+	
     public BuildingsTimeData(BuildingBeh.BuildingType r_buildingType)
     {
         if (r_buildingType == BuildingBeh.BuildingType.general)

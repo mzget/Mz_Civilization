@@ -4,10 +4,6 @@ using System.Collections;
 
 public class Mz_BaseScene : MonoBehaviour {
 
-    public class ResourcePathName {
-        public const string PathOfGUI_PREFABS = "GUI_objects/";
-    }
-
     public enum ScenesInstance { 
         LoadingScreen = 0,
         Startup = 1,
@@ -44,10 +40,16 @@ public class Mz_BaseScene : MonoBehaviour {
         //<!-- Setup All Audio Objects.
         if (audioEffect == null)
         {
-            audioEffect = GameObject.FindGameObjectWithTag("AudioEffect").GetComponent<AudioEffectManager>();
-
-            if (audioEffect)
-            {
+			GameObject audioEffect_Obj = GameObject.FindGameObjectWithTag("AudioEffect");
+			if(audioEffect_Obj) {
+            	audioEffect = audioEffect.GetComponent<AudioEffectManager>();
+			}
+			else {
+				audioEffect_Obj = Instantiate(Resources.Load(ResourcePathName.PATH_OF_AUDIO_OBJECTS + "AudioEffect", typeof(GameObject))) as GameObject;
+				audioEffect = audioEffect_Obj.GetComponent<AudioEffectManager>();
+			}
+			
+            if (audioEffect) {
                 audioEffect.alternativeEffect_source = audioEffect.transform.GetComponentInChildren<AudioSource>();
 
                 audioEffect.audio.mute = !ToggleAudioActive;
@@ -96,7 +98,6 @@ public class Mz_BaseScene : MonoBehaviour {
         if (smartDeviceInput == null) {
             this.gameObject.AddComponent<Mz_SmartDeviceInput>();
             smartDeviceInput = this.gameObject.GetComponent<Mz_SmartDeviceInput>();
-            smartDeviceInput.cam = Camera.main;
         }
 
         _StageInitialized = false;

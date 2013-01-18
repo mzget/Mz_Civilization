@@ -4,9 +4,9 @@ using System.Collections;
 [System.Serializable]
 public class GreekBeh : AICities {
 
-    internal static int Spearman_unit = 500;
-    internal static int Hapaspist_unit = 1000;
-    internal static int Hoplite_unit = 300;
+    internal static int Spearman_unit = 10;
+    internal static int Hapaspist_unit = 10;
+    internal static int Hoplite_unit = 10;
 
     public const string NAME = "Greek";
 
@@ -15,6 +15,22 @@ public class GreekBeh : AICities {
 	public GreekBeh() {
 	
 	}
+
+    internal override GroupOFUnitBeh CreateTroopsActivity()
+    {
+//        base.CreateTroopsActivity();
+
+        GroupOFUnitBeh groupOfUnits = new GroupOFUnitBeh();
+        groupOfUnits.unitBehs.Add(new UnitBeh() { name = UnitDatabase.GreekUnitDatabase.Spearman_Unit.NAME, ability = UnitDatabase.GreekUnitDatabase.Spearman_Unit.Ability, });
+        groupOfUnits.unitBehs.Add(new UnitBeh() { name = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.NAME, ability = UnitDatabase.GreekUnitDatabase.Hapaspist_Unit.Ability });
+        groupOfUnits.unitBehs.Add(new UnitBeh() { name = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.NAME, ability = UnitDatabase.GreekUnitDatabase.Hoplite_Unit.Ability });
+        groupOfUnits.members.Add(Spearman_unit);
+        groupOfUnits.members.Add(Hapaspist_unit);
+        groupOfUnits.members.Add(Hoplite_unit);
+		groupOfUnits.totalDefenseScore = this.CalculationDefenseScore();
+
+        return groupOfUnits;
+    }
 
     public override int CalculationDefenseScore()
     {

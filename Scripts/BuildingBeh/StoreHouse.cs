@@ -168,7 +168,11 @@ public class StoreHouse : BuildingBeh {
 		
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
-        base.buildingTimeData = new BuildingsTimeData(buildingType);
+        base.buildingTimeData = new BuildingsTimeData();
+		base.buildingTimeData.arrBuildingTimesData = new float[] { 
+			30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f,
+			600f, 700f, 800f, 900f, 1000f, 1100f, 1200f, 1300f, 1400f, 1500f, 
+		};
     }
 	
 	// Use this for initialization
@@ -213,7 +217,8 @@ public class StoreHouse : BuildingBeh {
     public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
-
+		
+		this.sprite.position += Vector2.up * 30f;
         BuildingBeh.StoreHouseInstance.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
     }
@@ -225,6 +230,16 @@ public class StoreHouse : BuildingBeh {
 		}
 		
 		HouseBeh.SumOfEmployee += sumOfEmployed;
+	}
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
 	}
 	
     #region <!-- Building Processing.

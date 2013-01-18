@@ -11,9 +11,11 @@ public class StageManager : Mz_BaseScene {
 
     public GUISkin mainBuildingSkin;
     public TaskManager taskManager;
+    public IsometricEngine isomatricEngine;
 	public Mz_SaveData saveManager;
     public List<GameMaterial> gameMaterials = new List<GameMaterial>();
     // Map and building area.
+    public Tile[,] tiles_list = new Tile[25, 25];
     public Texture2D mapTex;
     private OTFilledSprite background;
 	public static List<Vector2> buildingArea_Pos = new List<Vector2>(24) {
@@ -62,6 +64,16 @@ public class StageManager : Mz_BaseScene {
 
     public GameObject barracks_prefab;
 
+    int numberOfHouse_Instance = 0;
+	bool academyInstance = false;
+    int amount_Farm_Instance = 0;
+    int amount_Sawmill_Instance = 0;
+    int amount_MillStone_Instance = 0;
+    int amount_Smelter_Instance = 0;   
+	int numberOfStoreHouseInstances = 0;
+	bool marketInstance = false;
+	bool barracksInstance = false;
+
     public float dayTime = 0;
     public float resourceCycleTime = 0;
     public event System.EventHandler dayCycle_Event;
@@ -73,20 +85,22 @@ public class StageManager : Mz_BaseScene {
 	{
 		base.Initializing ();
 
-		if (taskManager == null) {
-			this.gameObject.AddComponent<TaskManager>();
-			taskManager = this.gameObject.GetComponent<TaskManager> ();
-		}
-		if (saveManager == null) {
-			saveManager = new Mz_SaveData ();
-		}
 
-		this.StartCoroutine(this.InitializeAudio());
+        this.gameObject.AddComponent<TaskManager>();
+        taskManager = this.gameObject.GetComponent<TaskManager>();
+        
+        saveManager = new Mz_SaveData ();
+
+        isomatricEngine = this.GetComponent<IsometricEngine>();
+        isomatricEngine.sceneController = this;
+        StartCoroutine(isomatricEngine.CreateTilemap());
+
+        this.StartCoroutine(this.InitializeAudio());
 		this.StartCoroutine(this.CreateGameMaterials());
-		StartCoroutine(this.InitializeAICities());
+        StartCoroutine(this.InitializeAICities());
 		
-		this.GenerateBackground();
-		this.CreateBuildingArea();
+        //this.GenerateBackground();
+        //this.CreateBuildingArea();
 		this.PrepareBuildingPrefabsFromResource();
 		this.Load_AmountOfBuildingInstance();
 		this.LoadingDataStorage();
@@ -104,7 +118,7 @@ public class StageManager : Mz_BaseScene {
 #endif
 
         //<@-- Admob integration.
-#if UNITY_ANDROID || UNITY_IPHONE
+#if UNITY_ANDROID
 
 		AdBannerObserver.Initialize("a150c2e14a5d753", "DIAT-GE5P-2J5H-2", 30f);
 
@@ -166,8 +180,8 @@ public class StageManager : Mz_BaseScene {
 	public JoystickManager joystickManager;
 	private float moveCamSpeed;
     private IEnumerator InitializeJoystick() {
-        joystick_base_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystickbase", typeof(GameObject))) as GameObject;
-        joystick_obj = Instantiate(Resources.Load(Mz_BaseScene.ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystick", typeof(GameObject))) as GameObject;
+        joystick_base_obj = Instantiate(Resources.Load(ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystickbase", typeof(GameObject))) as GameObject;
+        joystick_obj = Instantiate(Resources.Load(ResourcePathName.PathOfGUI_PREFABS + "GUI_Joystick", typeof(GameObject))) as GameObject;
 		
         yield return 0;
     }
@@ -188,32 +202,33 @@ public class StageManager : Mz_BaseScene {
 
         background.name = "Background";
     }
+	
     void CreateBuildingArea()
     {
         GameObject building_area_group = GameObject.Find("Building_Area_Group");
         arr_buildingAreaState = PlayerPrefsX.GetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BuildingAreaState, false, 24);
 
         for (int i = 0; i < 8; i++) {
-			GameObject Temp_obj = OT.CreateObject("Building_Area");
+//			GameObject Temp_obj = OT.CreateObject("Building_Area");
+			GameObject Temp_obj = Instantiate(Resources.Load("Prototypes/BuildingArea", typeof(GameObject))) as GameObject;
             Temp_obj.transform.parent = building_area_group.transform;
+			Temp_obj.transform.position = buildingArea_Pos[i];
 
             buildingArea_Objs.Add(Temp_obj.GetComponent<BuildingArea>());
-            buildingArea_Objs[i].Sprite.position = buildingArea_Pos[i];
-            buildingArea_Objs[i].Sprite.size = new Vector2(128, 128);
+//            buildingArea_Objs[i].Sprite.position = buildingArea_Pos[i];
             buildingArea_Objs[i].IndexOfAreaPosition = i;
-            buildingArea_Objs[i].Sprite.rotation = 45f;
             buildingArea_Objs[i].areaActiveState = true;
         }
 
         for (int i = 8; i < buildingArea_Pos.Count; i++) {
-			GameObject Temp_obj = OT.CreateObject("Building_Area");
+//			GameObject Temp_obj = OT.CreateObject("Building_Area");
+			GameObject Temp_obj = Instantiate(Resources.Load("Prototypes/BuildingArea", typeof(GameObject))) as GameObject;
             Temp_obj.transform.parent = building_area_group.transform;
+			Temp_obj.transform.position = buildingArea_Pos[i];
 
             buildingArea_Objs.Add(Temp_obj.GetComponent<BuildingArea>());
-            buildingArea_Objs[i].Sprite.position = buildingArea_Pos[i];
-            buildingArea_Objs[i].Sprite.size = new Vector2(128, 128);
+//            buildingArea_Objs[i].Sprite.position = buildingArea_Pos[i];
             buildingArea_Objs[i].IndexOfAreaPosition = i;
-            buildingArea_Objs[i].Sprite.rotation = 45f;
             buildingArea_Objs[i].areaActiveState = arr_buildingAreaState[i];
         }
     }
@@ -233,19 +248,6 @@ public class StageManager : Mz_BaseScene {
         barracks_prefab = Resources.Load(PathOfMilitaryBuilding + "Barracks", typeof(GameObject)) as GameObject;
     }
 
-    int numberOfHouse_Instance = 0;
-	bool academyInstance = false;
-
-    int amount_Farm_Instance = 0;
-    int amount_Sawmill_Instance = 0;
-    int amount_MillStone_Instance = 0;
-    int amount_Smelter_Instance = 0;   
-
-	int numberOfStoreHouseInstances = 0;
-	bool marketInstance = false;
-	
-	bool barracksInstance = false;
-
     void Load_AmountOfBuildingInstance() {
         //<!-- Utility --->>
 		numberOfHouse_Instance = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance);
@@ -261,10 +263,11 @@ public class StageManager : Mz_BaseScene {
         //<!-- Millitary --->>
 		barracksInstance = PlayerPrefsX.GetBool(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BarracksInstance);
     }
+
 	void LoadingDataStorage()
     {
 		//<!--- Load level of towncenter.
-		BuildingBeh.TownCenter.Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.TownCenter_level);
+		BuildingBeh.TownCenter.Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 0);
 		
         #region <!--- House instance data.
 		
@@ -411,14 +414,14 @@ public class StageManager : Mz_BaseScene {
 		
         if(TaskManager.IsShowInteruptGUI == false) 
             base.ImplementTouchPostion();
-        if (Camera.main.transform.position.x > 512)
-            Camera.main.transform.position = new Vector3(512, Camera.main.transform.position.y, Camera.main.transform.position.z); 	//Vector3.left * Time.deltaTime;
-        if (Camera.main.transform.position.x < -512)
-            Camera.main.transform.position = new Vector3(-512, Camera.main.transform.position.y, Camera.main.transform.position.z);	 //Vector3.right * Time.deltaTime;
-        if (Camera.main.transform.position.y > 384)
-            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, 384, Camera.main.transform.position.z);
-        if (Camera.main.transform.position.y < -384)
-            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, -384, Camera.main.transform.position.z);
+        if (Camera.main.transform.position.x > 700)
+            Camera.main.transform.position = new Vector3(700, Camera.main.transform.position.y, Camera.main.transform.position.z); 	//Vector3.left * Time.deltaTime;
+        if (Camera.main.transform.position.x < 220)
+            Camera.main.transform.position = new Vector3(220, Camera.main.transform.position.y, Camera.main.transform.position.z);	 //Vector3.right * Time.deltaTime;
+        if (Camera.main.transform.position.y > 140)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, 140, Camera.main.transform.position.z);
+        if (Camera.main.transform.position.y < -140)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, -140, Camera.main.transform.position.z);
 		
         dayTime += Time.deltaTime;
         if (dayTime >= 60) {
@@ -445,20 +448,16 @@ public class StageManager : Mz_BaseScene {
 	        #region <!-- Detech when used keybroad input.
 	
 	        if (Input.GetKey(KeyCode.LeftArrow)) {
-	            if (Camera.main.transform.position.x > -640)
 	                Camera.main.transform.Translate(Vector3.left * moveCamSpeed);
 	        }
 	        else if (Input.GetKey(KeyCode.RightArrow)) {
-	            if (Camera.main.transform.position.x < 640)
 	                Camera.main.transform.Translate(Vector3.right * moveCamSpeed);
 	        }
 	
 	        if (Input.GetKey(KeyCode.UpArrow)) {
-	            if (Camera.main.transform.position.y < 400)
 	                Camera.main.transform.Translate(Vector3.up * moveCamSpeed);
 	        }
 	        else if (Input.GetKey(KeyCode.DownArrow)) {
-	            if (Camera.main.transform.position.y > -400)
 	                Camera.main.transform.Translate(Vector3.down * moveCamSpeed);
 	        }
 	        #endregion
@@ -471,7 +470,7 @@ public class StageManager : Mz_BaseScene {
 
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            float speed = Time.deltaTime * 60f;
+            float speed = Time.deltaTime * 0.5f;
             // Get movement of the finger since last frame   
             Vector2 touchDeltaPosition = touch.deltaPosition;
             // Move object across XY plane       
@@ -481,8 +480,8 @@ public class StageManager : Mz_BaseScene {
     }
 	
 	void UpdateJoystick() {
-		moveCamSpeed = Time.deltaTime * 360f;
-		
+        //moveCamSpeed = Time.deltaTime * (Application.targetFrameRate * 2);
+        moveCamSpeed = Time.deltaTime * (120);
 		if(joystickManager.joystick.touchCount != 0)
 		{
 			if(joystickManager.joystick._isMoveGUI)

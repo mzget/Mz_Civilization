@@ -46,9 +46,13 @@ public class Farm : BuildingBeh
     }
 
     // Use this for initialization
-    void Start()
+    protected override void Start()
     {
-		this.InitializeTexturesResource();
+        base.Start();
+        collisionPoint = new Vector2(0f, -26f);
+
+        base._canDragaable = true;
+        this.InitializeTexturesResource();
 
         base.sceneController.resourceCycle_Event += HaveResourceCycle_Event;
         base.NotEnoughResource_Notification_event += Farm_NotEnoughResource_Notification_event;
@@ -64,7 +68,8 @@ public class Farm : BuildingBeh
     public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
-
+		
+		this.sprite.position += Vector2.up * 15;
         BuildingBeh.Farm_Instance.Add(this);
 		
 		this.CalculateNumberOfEmployed(p_level);
@@ -127,7 +132,17 @@ public class Farm : BuildingBeh
     }
 	
 	#endregion
-
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
+	}
+	
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);

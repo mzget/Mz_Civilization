@@ -29,6 +29,12 @@ public class Base_ObjectBeh : MonoBehaviour {
         _OnTouchRelease = false;
 //		_OnTouchMove = false;
     }
+    protected virtual void OnTouchDrag()
+    {
+//		Debug.Log("Class : Base_ObjectBeh." + "OnTouchDrag");
+
+//		_OnTouchMove = true;
+    }
     protected virtual void OnTouchEnded()
     {
         if (_OnTouchRelease == false && _OnTouchBegin)

@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class GreekCaravanBeh : ScriptableObject {
+[System.Serializable]
+public class GreekCaravanBeh {
 	
 	public MarketBeh marketInstance { get; set; }
 	public GameMaterialDatabase goods { get; set; }
@@ -29,7 +30,7 @@ public class GreekCaravanBeh : ScriptableObject {
 
 			StoreHouse.sumOfArmor += goods.Armor;
 			StoreHouse.sumOfWeapon += goods.Weapon;
-			Destroy(this);
+            this.OnDestroy();
 		}
 	}
 

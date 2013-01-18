@@ -120,6 +120,16 @@ public class Smelter : BuildingBeh {
     }
 	
 	#endregion
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
+	}
 
     protected override void CreateWindow(int windowID)
     {

@@ -24,5 +24,7 @@ public class AICities {
 
     void OnDestroy() { }
 
+    internal virtual GroupOFUnitBeh CreateTroopsActivity() { return null; }
+
     public virtual int CalculationDefenseScore() { return 0; }
 }

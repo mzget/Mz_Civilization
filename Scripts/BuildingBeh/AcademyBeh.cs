@@ -60,10 +60,12 @@ public class AcademyBeh : BuildingBeh {
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
+        this.sprite.position += Vector2.up * 20f;
         BuildingBeh.AcademyInstance = this;
 
         this.CalculateNumberOfEmployed(p_level);
     }
+    
     protected override void CalculateNumberOfEmployed(int p_level)
     {
         //base.CalculateNumberOfEmployed(p_level);
@@ -95,7 +97,17 @@ public class AcademyBeh : BuildingBeh {
     }
 
     #endregion
-
+	
+	protected override void Update ()
+	{
+		base.Update ();
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
+	}
+	
     protected override void CreateWindow(int windowID)
     {
         base.CreateWindow(windowID);

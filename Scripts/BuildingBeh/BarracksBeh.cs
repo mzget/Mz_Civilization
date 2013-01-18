@@ -86,6 +86,7 @@ public class BarracksBeh : BuildingBeh
 
         buildingIcon_Texture = Resources.Load(BuildingIcons_TextureResourcePath + "Barracks", typeof(Texture2D)) as Texture2D;
 	}
+
     protected override void InitializingData()
     {
         base.InitializingData();
@@ -111,10 +112,12 @@ public class BarracksBeh : BuildingBeh
     {
         base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
 
+		this.sprite.position += Vector2.up * 40f;
         BuildingBeh.Barrack_Instance = this;
 
         this.CalculateNumberOfEmployed(p_level);
     }
+
 	protected override void CalculateNumberOfEmployed (int p_level)
 	{
 //		base.CalculateNumberOfEmployed (p_level);
@@ -203,15 +206,20 @@ public class BarracksBeh : BuildingBeh
 				this.TrainingUnitMechanism();
 			}
         }
+		
+		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
+			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
+			buildingLevel_textmesh.text = base.notificationText;
+		}
     }
 	
-	protected override void OnTouchDown ()
+	protected override void OnTouchDown()
 	{
 		base.OnTouchDown ();
 		
         sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_military;
 	}
-
+	
 	protected override void CreateWindow (int windowID)
 	{
         base.CreateWindow(windowID);
