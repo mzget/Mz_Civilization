@@ -43,20 +43,23 @@ public class Smelter : BuildingBeh {
 	protected override void Awake() {
 		base.Awake();
 		
-        if (sprite == null)
-            sprite = this.GetComponent<OTSprite>();
+        sprite = this.GetComponent<tk2dSprite>();
 		
         this.name = Smelter.BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+
+        base.processbar_offsetPos = Vector3.up * 60;
 	}
 
 	// Use this for initialization
-    void Start() {
-		this.InitializeTexturesResource();
-		
-		base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
-	}
+    protected override void Start()
+    {
+        base.Start();
+
+        this.InitializeTexturesResource();
+        base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
+    }
 	
 	protected override void InitializeTexturesResource ()
 	{
@@ -66,11 +69,11 @@ public class Smelter : BuildingBeh {
 		buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "CopperIngot", typeof(Texture2D)) as Texture2D;
 	}
 
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 
-        BuildingBeh.SmelterInstance.Add(this);
+        BuildingBeh.Smelter_Instances.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
     }
 	protected override void CalculateNumberOfEmployed (int p_level)
@@ -107,7 +110,7 @@ public class Smelter : BuildingBeh {
 		base.ClearStorageData ();
 		
 		sceneController.resourceCycle_Event -= HaveResourceCycle_Event;
-		BuildingBeh.SmelterInstance.Remove(this);
+		BuildingBeh.Smelter_Instances.Remove(this);
 	}
 	
 	#region <!-- Events handle.
@@ -131,9 +134,9 @@ public class Smelter : BuildingBeh {
 		}
 	}
 
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
 
         GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 

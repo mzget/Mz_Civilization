@@ -94,7 +94,7 @@ public class MarketBeh : BuildingBeh {
 	/// Awake this instance.
     protected override void Awake() {
         base.Awake();
-        base.sprite = this.gameObject.GetComponent<OTSprite>();
+        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
 
         this.name = MarketBeh.BuildingName;
         base.buildingType = BuildingBeh.BuildingType.general;
@@ -115,15 +115,16 @@ public class MarketBeh : BuildingBeh {
     }
 
 	// Use this for initialization
-	IEnumerator Start () {
-        StartCoroutine(LoadtexturesResources());
+	protected override void Start ()
+	{
+		base.Start ();
+		
+		StartCoroutine(LoadtexturesResources());
 
         base.NotEnoughResource_Notification_event += MarketBeh_NotEnoughResourceNotification_event;
         sceneController.dayCycle_Event += Handle_dayCycle_Event;
 		Handle_dayCycle_Event(this, System.EventArgs.Empty);
-		
-        yield return 0;
-    }
+	}
 
 	#region <@-- Events handle.
 
@@ -149,11 +150,10 @@ public class MarketBeh : BuildingBeh {
         yield return 0;
     }
 
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 		
-		this.sprite.position += Vector2.up * 20f;
         BuildingBeh.MarketInstance = this;
 		this.CalculateNumberOfEmployed(p_level);
 
@@ -161,6 +161,7 @@ public class MarketBeh : BuildingBeh {
             caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
         }
     }
+	
 	protected override void CalculateNumberOfEmployed (int p_level)
 	{
 		//		base.CalculateNumberOfEmployed (p_level);
@@ -172,8 +173,6 @@ public class MarketBeh : BuildingBeh {
 		HouseBeh.SumOfEmployee += sumOfEmployed;
 	}
 
-    #region <!--- Inherite Functions.
-	
 	/// <summary>
 	/// Buildings the process complete.
 	/// </summary>
@@ -199,8 +198,6 @@ public class MarketBeh : BuildingBeh {
         base.DecreaseBuildingLevel();
         buildingLevel_textmesh.text = this.Level.ToString();
     }
-
-    #endregion
 
     protected override void ClearStorageData()
     {
@@ -291,7 +288,7 @@ public class MarketBeh : BuildingBeh {
 
                     if (idleCaravanList.Count >= UsedCaravan)
                     {
-                        caravan_group = new GroupCaravan() { MarketInstance = this, TargetCity = StageManager.list_AICity[0], };
+                        caravan_group = new GroupCaravan() { MarketInstance = this, TargetCity = CapitalCity.list_AICity[0], };
 
                         for (int i = 0; i < UsedCaravan; i++) {
                             /// Add IdleCaravan to GroupCaravan.
@@ -423,6 +420,9 @@ public class MarketBeh : BuildingBeh {
 
 	protected override void OnTouchDown ()
 	{
+		if(TaskManager.IsShowInteruptGUI == true)
+			return;
+		
 		base.OnTouchDown ();
 		
 		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
@@ -438,9 +438,9 @@ public class MarketBeh : BuildingBeh {
 		}
 	}
 	
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
 
         GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 

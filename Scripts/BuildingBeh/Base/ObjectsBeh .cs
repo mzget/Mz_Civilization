@@ -3,11 +3,11 @@ using System.Collections;
 
 public class ObjectsBeh : Base_ObjectBeh
 {
-    protected Mz_BaseScene baseScene;
+    protected CapitalCity sceneController;
 
-    public bool _canDragaable = false;
-    protected bool _isDraggable = false;
+    public bool _canMovable = false;
     protected bool _isDropObject = false;
+    protected bool _isDraggable = false;
     protected bool _canActive = false;
     internal Vector3 originalPosition;
 
@@ -26,17 +26,13 @@ public class ObjectsBeh : Base_ObjectBeh
 
     protected virtual void Awake() {
         GameObject scene_obj = GameObject.FindGameObjectWithTag("GameController");
-        baseScene = scene_obj.GetComponent<StageManager>();
+        sceneController = scene_obj.GetComponent<CapitalCity>();
     }
-
-    // Use this for initialization
-    protected virtual void Start()
-    {
-        this.originalPosition = this.transform.position;
-    }
+	
+	protected virtual void Start() {}
 
     protected virtual void ImplementDraggableObject()
-    {
+    {		
         Vector3 screenPoint;
 
         if (Input.touchCount >= 1)
@@ -45,6 +41,13 @@ public class ObjectsBeh : Base_ObjectBeh
             screenPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         this.transform.position = new Vector3(screenPoint.x, screenPoint.y, -2.5f);
+    }
+
+    public TileArea constructionArea;
+    internal virtual bool ShowAreaStatus() {
+        bool canCreateBuilding = sceneController.tiles_list[0, 0].CheckedTileStatus(constructionArea);
+
+        return canCreateBuilding;
     }
 
     // Update is called once per frame
@@ -56,7 +59,7 @@ public class ObjectsBeh : Base_ObjectBeh
             this.ImplementDraggableObject();
         }
 
-        if (baseScene.touch.phase == TouchPhase.Ended || baseScene.touch.phase == TouchPhase.Canceled) {
+        if (sceneController.touch.phase == TouchPhase.Ended || sceneController.touch.phase == TouchPhase.Canceled) {
             if (this._isDraggable)
                 _isDropObject = true;
         }
@@ -66,10 +69,8 @@ public class ObjectsBeh : Base_ObjectBeh
     {
         base.OnTouchDrag();
 
-        if (this._canDragaable && base._OnTouchBegin)
-        {
-            this._isDraggable = true;
-        }
+        if (this._canMovable && base._OnTouchBegin)
+			this._isDraggable = true;
     }
 
     protected override void OnTouchEnded()

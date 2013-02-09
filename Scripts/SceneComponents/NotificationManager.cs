@@ -18,7 +18,7 @@ public class NotificationSystem : MonoBehaviour {
 	protected Rect drawNoticeMessageContentRect;
 	protected Rect completeSessionMessage_Rect;
 	
-	protected StageManager sceneController;
+	protected CapitalCity sceneController;
     protected TaskManager taskManager;
 	protected MessageDataStore messageDataStore;
     protected MissionMessageData questMessageData;
@@ -27,7 +27,7 @@ public class NotificationSystem : MonoBehaviour {
     void Awake()
     {
         taskManager = this.gameObject.GetComponent<TaskManager>();
-		sceneController = this.gameObject.GetComponent<StageManager>();
+		sceneController = this.gameObject.GetComponent<CapitalCity>();
 		
 		messageDataStore = new MessageDataStore();
         questMessageData = new MissionMessageData();

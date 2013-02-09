@@ -37,12 +37,14 @@ public class StoneCrushingPlant : BuildingBeh {
 
     protected override void Awake()
     {
-        base.Awake(); 
-		sprite = this.GetComponent<OTSprite>();
+        base.Awake();
+        sprite = this.GetComponent<tk2dSprite>();
 		
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+
+        base.processbar_offsetPos = Vector3.up * 70;
     }
 	
 	// Use this for initialization
@@ -75,11 +77,11 @@ public class StoneCrushingPlant : BuildingBeh {
 
         buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "StoneBlock", typeof(Texture2D)) as Texture2D;
     }
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 
-        BuildingBeh.MillStoneInstance.Add(this);
+        BuildingBeh.StoneCrushingPlant_Instances.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
     }
 	protected override void CalculateNumberOfEmployed (int p_level)
@@ -116,7 +118,7 @@ public class StoneCrushingPlant : BuildingBeh {
 		base.ClearStorageData ();
 
         sceneController.resourceCycle_Event -= HaveResourceCycle_Event;
-		BuildingBeh.MillStoneInstance.Remove(this);
+		BuildingBeh.StoneCrushingPlant_Instances.Remove(this);
 	}
 	
 	protected override void Update ()
@@ -129,9 +131,9 @@ public class StoneCrushingPlant : BuildingBeh {
 		}
 	}
 
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
         
 //        if(base.notificationText == "") {
 //            base.notificationText = base.currentBuildingStatus.ToString();

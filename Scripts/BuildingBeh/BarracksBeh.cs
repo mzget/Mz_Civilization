@@ -65,20 +65,28 @@ public class BarracksBeh : BuildingBeh
     protected override void Awake()
     {
         base.Awake();
-        base.sprite = this.gameObject.GetComponent<OTSprite>();
+        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
 
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
+
+        base.processbar_offsetPos = Vector3.up * 70;
     }
     
 	// Use this for initialization
-	void Start () {
+    protected override void Start()
+    {
+        base.Start();
+
+        _canMovable = false;
+
         this.InitializingData();
-		this.InitializeTexturesResource();
-		
-		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResourceNotification_event;
+        this.InitializeTexturesResource();
+
+        base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResourceNotification_event;
     }
+    
 	
 	protected override void InitializeTexturesResource ()
 	{
@@ -108,11 +116,10 @@ public class BarracksBeh : BuildingBeh
 		training_group_rect = new Rect(5,80,base.currentJob_Rect.width - 10, 200);
     }
 
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 
-		this.sprite.position += Vector2.up * 40f;
         BuildingBeh.Barrack_Instance = this;
 
         this.CalculateNumberOfEmployed(p_level);
@@ -215,14 +222,17 @@ public class BarracksBeh : BuildingBeh
 	
 	protected override void OnTouchDown()
 	{
+		if(TaskManager.IsShowInteruptGUI == true)
+			return;
+		
 		base.OnTouchDown ();
 		
         sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_military;
 	}
 	
-	protected override void CreateWindow (int windowID)
+	protected override void CreateWindow ()
 	{
-        base.CreateWindow(windowID);
+        base.CreateWindow();
 		
         GUI.Box(base.notificationBox_rect, base.notificationText, standard_Skin.box);
 

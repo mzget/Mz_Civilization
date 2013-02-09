@@ -37,16 +37,20 @@ public class AcademyBeh : BuildingBeh {
 	protected override void Awake() {
         base.Awake();
 
-        sprite = this.gameObject.GetComponent<OTSprite>();
+        sprite = this.gameObject.GetComponent<tk2dSprite>();
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
 	}
 	
 	// Use this for initialization
-	void Start () {	
-        this.InitializeTexturesResource();
+	protected override void Start ()
+	{
+		base.Start ();
 
+		base._canMovable = true;
+
+        this.InitializeTexturesResource();
         base.NotEnoughResource_Notification_event += new EventHandler<NoEnoughResourceNotificationArg>(AcademyBeh_NotEnoughResource_Notification_event);
 	}
 
@@ -56,11 +60,10 @@ public class AcademyBeh : BuildingBeh {
         base.buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Academy", typeof(Texture2D)) as Texture2D;
     }
 
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 
-        this.sprite.position += Vector2.up * 20f;
         BuildingBeh.AcademyInstance = this;
 
         this.CalculateNumberOfEmployed(p_level);
@@ -108,9 +111,9 @@ public class AcademyBeh : BuildingBeh {
 		}
 	}
 	
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
 
         //if (base.notificationText == "")
         //    base.notificationText = base.currentBuildingStatus.ToString();

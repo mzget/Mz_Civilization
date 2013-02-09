@@ -55,20 +55,22 @@ public class HouseBeh : BuildingBeh {
     protected override void Awake()
     {
         base.Awake();
-        base.sprite = this.gameObject.GetComponent<OTSprite>();
 
+        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
 		base.buildingTimeData = new BuildingsTimeData(buildingType);
+		
+		base.processbar_offsetPos = Vector3.up * 60;
     }
 
 	// Use this for initialization
 	protected override void Start ()
 	{
 		base.Start ();
-		base.collisionPoint = new Vector2(-4.5f, - 13.75f);
-		base._canDragaable = true;
-
+		
+        //base.collisionPoint = new Vector2(-4.5f, - 13.75f);
+		
 		this.InitializeTexturesResource();
 		this.CalculationCurrentDweller();
 		
@@ -118,14 +120,14 @@ public class HouseBeh : BuildingBeh {
         Debug.Log("CalculationCurrentDweller");
     }
 	
-	public override void InitializingBuildingBeh (BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+	public override void InitializingBuildingBeh (BuildingStatus p_buildingState, TileArea area, int p_level)
 	{
-		base.InitializingBuildingBeh (p_buildingState, p_indexPosition, p_level);
+		base.InitializingBuildingBeh (p_buildingState, area, p_level);
 
-		this.sprite.position += Vector2.up * 20f;
         BuildingBeh.House_Instances.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
 	}
+	
 	protected override void CalculateNumberOfEmployed (int p_level)
 	{
 		base.CalculateNumberOfEmployed (p_level);
@@ -176,6 +178,9 @@ public class HouseBeh : BuildingBeh {
 
 	protected override void OnTouchDown ()
 	{
+		if(TaskManager.IsShowInteruptGUI == true)
+			return;
+		
 		base.OnTouchDown ();
 		
 		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
@@ -191,13 +196,14 @@ public class HouseBeh : BuildingBeh {
 		}
 	}
 	
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
 
         //if(base.notificationText == "") {
         //    base.notificationText = base.currentBuildingStatus.ToString();
         //}
+		
         GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 		
         scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),

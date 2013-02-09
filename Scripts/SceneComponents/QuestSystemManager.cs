@@ -158,16 +158,20 @@ public class QuestSystemManager : NotificationSystem {
         yield return null;
     }
 
-    private IEnumerator CheckingTodoMission()
-    {
-        if (CurrentMissionTopic_ID != 0 && CurrentMissionTopic_ID < list_questBeh.Count) {
-			if(list_questBeh[CurrentMissionTopic_ID]._IsComplete)
-				this.ActiveBeh_NoticeButton();
-        }
-		else if(CurrentMissionTopic_ID == 0 && list_questBeh[1]._IsComplete == false) {
-			MessageManager.CurrentMessageManagerState = MessageManager.MessageManagetStateBeh.drawNewPlayerMessage;
-		}
+    private IEnumerator CheckingTodoMission ()
+	{
+		Debug.Log("QuestSystemManager.CheckingTodoMission()");
 
+		if (Mz_SaveData.Username != string.Empty)
+		{
+			if (CurrentMissionTopic_ID != 0 && CurrentMissionTopic_ID < list_questBeh.Count) {
+				if (list_questBeh [CurrentMissionTopic_ID]._IsComplete)
+					this.ActiveBeh_NoticeButton ();
+			} 
+			else if (CurrentMissionTopic_ID == 0 && list_questBeh [1]._IsComplete == false) {
+				MessageManager.CurrentMessageManagerState = MessageManager.MessageManagetStateBeh.drawNewPlayerMessage;
+			}
+		}
         yield return null;
     }
 	
@@ -215,7 +219,8 @@ public class QuestSystemManager : NotificationSystem {
 
 				if (currentQuestManagerStateBeh == QuestManagerStateBeh.none)
                 {
-					if(CurrentMissionTopic_ID != 0 && CurrentMissionTopic_ID < list_questBeh.Count) {
+					if(CurrentMissionTopic_ID != 0 && CurrentMissionTopic_ID < list_questBeh.Count) 
+					{
 						if(list_questBeh[CurrentMissionTopic_ID]._IsComplete)
 							taskManager.MoveOutLeftSidebar(TaskManager.DISPLAY_MISSION_COMPLETE_ACTIVITY);
 						else

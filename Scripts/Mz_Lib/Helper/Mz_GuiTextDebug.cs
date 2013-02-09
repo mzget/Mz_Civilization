@@ -40,7 +40,7 @@ public class Mz_DebugLogingGUI : MonoBehaviour {
         if (debugIsOn)
         {
             GUI.depth = 10;
-            Rect logArea = new Rect(windowPosition, Screen.height - (Screen.height / 4), (Screen.width / 4) * 3, Screen.height / 4);
+            Rect logArea = new Rect(windowPosition, Screen.height - (Screen.height / 2), (Screen.width / 4) * 3, Screen.height / 2);
             if (GUI.Button(new Rect(0, logArea.y - 30, 75, 30), "Debug")) {
                 if (positionCheck == 1)
                 {
@@ -60,7 +60,7 @@ public class Mz_DebugLogingGUI : MonoBehaviour {
 
             GUI.BeginGroup(logArea, GUI.skin.box);
             {
-                scrollViewVector = GUI.BeginScrollView(new Rect(0, 0, (Screen.width/4) * 3, Screen.height/4), scrollViewVector, new Rect(0.0f, 30, Screen.width, Screen.height * 4));
+                scrollViewVector = GUI.BeginScrollView(new Rect(0, 0, (Screen.width/4) * 3, Screen.height/2), scrollViewVector, new Rect(0.0f, 30, Screen.width, Screen.height * 4));
                 {
                     GUI.Box(new Rect(0, 0, debugWidth - 20.0f, 2000.0f), windowText, debugBoxStyle);
                 }

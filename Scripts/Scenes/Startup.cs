@@ -7,7 +7,7 @@ public class Startup : Mz_BaseScene {
     public Texture2D mzLogo_Icon;
 
 	// Use this for initialization
-    IEnumerator Start()
+    new IEnumerator Start()
     {
         Mz_OnGUIManager.CalculateViewportScreen();
 

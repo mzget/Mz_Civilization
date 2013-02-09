@@ -37,21 +37,24 @@ public class Sawmill : BuildingBeh {
 	
 	protected override void Awake() {
         base.Awake();
-		sprite = this.gameObject.GetComponent<OTSprite>();
 		
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+		
+		base.processbar_offsetPos = Vector3.up * 60;
 	}
 	
 	// Use this for initialization
-    void Start()
-    {
+	protected override void Start ()
+	{
+		base.Start ();
+		
 		this.InitializeTexturesResource();
 		
 		base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
         base.NotEnoughResource_Notification_event += Sawmill_NotEnoughResource_Notification_event;
-    }
+	}
 
 	#region <@-- Events Handle.
 
@@ -77,14 +80,14 @@ public class Sawmill : BuildingBeh {
 		buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "PinePlanks", typeof(Texture2D)) as Texture2D;
 	}
 
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 		
-		this.sprite.position += Vector2.up * 20f;
-        BuildingBeh.Sawmill_Instance.Add(this);
+        BuildingBeh.Sawmill_Instances.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
     }
+	
 	protected override void CalculateNumberOfEmployed (int p_level)
 	{
 		int sumOfEmployed = 0;
@@ -124,7 +127,7 @@ public class Sawmill : BuildingBeh {
 		base.sceneController.resourceCycle_Event -= HaveResourceCycle_Event;
         base.NotEnoughResource_Notification_event -= Sawmill_NotEnoughResource_Notification_event;
 
-		BuildingBeh.Sawmill_Instance.Remove(this);
+		BuildingBeh.Sawmill_Instances.Remove(this);
 	}
 	
 	protected override void Update ()
@@ -137,9 +140,9 @@ public class Sawmill : BuildingBeh {
 		}
 	}
 	
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
         
 //        if(base.notificationText == "") {
 //            base.notificationText = base.currentBuildingStatus.ToString();

@@ -16,23 +16,6 @@ public class Mz_GuiButtonBeh : Base_ObjectBeh {
 		gameController = GameObject.FindGameObjectWithTag ("GameController").GetComponent<Mz_BaseScene> ();
 		
         originalScale = this.transform.localScale;
-		Mz_BaseScene.HasChangeTimeScale_Event += Handle_HasChangeTimeScale_Event;
-	}
-	
-	#region <!-- Handle events.
-	
-    void Handle_HasChangeTimeScale_Event (object sender, System.EventArgs e)
-    {
-		if(Time.timeScale == 0)
-			OnApplicationPause(true);
-		else if(Time.timeScale == 1) 
-			OnApplicationPause(false);
-    }
-	
-	#endregion
-	
-	void OnDestroy() {
-		Mz_BaseScene.HasChangeTimeScale_Event -= Handle_HasChangeTimeScale_Event;
 	}
 
 	void OnApplicationPause (bool pause) {
@@ -41,21 +24,23 @@ public class Mz_GuiButtonBeh : Base_ObjectBeh {
 	
 	#region <!-- OnInput Events.
 	
-	protected override void OnTouchBegan ()
+	protected override void OnTouchBegan()
 	{
 		base.OnTouchBegan ();
 		
 		if(this.enablePlayAudio)
 			gameController.audioEffect.PlayOnecSound(gameController.audioEffect.buttonDown_Clip);
 
-        iTween.ShakeScale(this.gameObject, new Vector3(0.1f, 0.1f, 0), 0.3f);
+        iTween.ShakeScale(this.gameObject, new Vector3(0.2f, 0.2f, 0), 0.3f);
 	}
+
 	protected override void OnTouchDown ()
 	{
-        gameController.OnInput(this.gameObject.name);
+        gameController.OnInput(this.gameObject.name, this.tag);
 		
 		base.OnTouchDown ();
 	}
+
 	protected override void OnTouchEnded ()
 	{
 		base.OnTouchEnded ();		

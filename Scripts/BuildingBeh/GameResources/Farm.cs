@@ -1,4 +1,4 @@
-using UnityEngine;
+  using UnityEngine;
 using System.Collections;
 
 public class Farm : BuildingBeh
@@ -38,20 +38,19 @@ public class Farm : BuildingBeh
     protected override void Awake()
     {
         base.Awake();
-        sprite = this.gameObject.GetComponent<OTSprite>();
 
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+		
+		base.processbar_offsetPos = Vector3.up * 60;
     }
 
     // Use this for initialization
     protected override void Start()
     {
         base.Start();
-        collisionPoint = new Vector2(0f, -26f);
 
-        base._canDragaable = true;
         this.InitializeTexturesResource();
 
         base.sceneController.resourceCycle_Event += HaveResourceCycle_Event;
@@ -65,12 +64,11 @@ public class Farm : BuildingBeh
         base.buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "Grain", typeof(Texture2D)) as Texture2D;
     }
 
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 		
-		this.sprite.position += Vector2.up * 15;
-        BuildingBeh.Farm_Instance.Add(this);
+        BuildingBeh.Farm_Instances.Add(this);
 		
 		this.CalculateNumberOfEmployed(p_level);
     }	
@@ -96,6 +94,7 @@ public class Farm : BuildingBeh
         if(QuestSystemManager.arr_isMissionComplete[2] == false)
             sceneController.taskManager.questManager.MissionComplete(2);	
     }
+
     /// <summary>
     /// Destruction building.
     /// </summary>
@@ -114,7 +113,7 @@ public class Farm : BuildingBeh
         base.sceneController.resourceCycle_Event -= this.HaveResourceCycle_Event;
         base.NotEnoughResource_Notification_event -= this.Farm_NotEnoughResource_Notification_event;
 
-		BuildingBeh.Farm_Instance.Remove(this);
+		BuildingBeh.Farm_Instances.Remove(this);
 	}
 	
 	#region <!-- Events handle.
@@ -143,9 +142,9 @@ public class Farm : BuildingBeh
 		}
 	}
 	
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
         
         //if(base.notificationText == "")
         //    base.notificationText = base.currentBuildingStatus.ToString();

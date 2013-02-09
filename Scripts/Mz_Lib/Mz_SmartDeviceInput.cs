@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Mz_SmartDeviceInput : MonoBehaviour {
 	
@@ -7,15 +8,12 @@ public class Mz_SmartDeviceInput : MonoBehaviour {
 	/// SmartDevice input call with Update or FixUpdate function.
 	/// </summary>
 	public void ImplementTouchInput () {
-		if(Camera.main == null) {
-			Debug.Log("MainCamera has null");
-			return;		
-		}
-
 		if(Input.touchCount >= 1)
         {
+            Camera spaceCam = this.camera;
+
             Touch touch = Input.GetTouch(0);
-            Ray cursorRay = Camera.main.ScreenPointToRay(touch.position);
+            Ray cursorRay = spaceCam.ScreenPointToRay(touch.position);
             RaycastHit hit;
 
             if (touch.phase == TouchPhase.Began) {
@@ -26,7 +24,7 @@ public class Mz_SmartDeviceInput : MonoBehaviour {
 
 			if (touch.phase == TouchPhase.Stationary) {
 				if( Physics.Raycast(cursorRay, out hit)) {
-					hit.collider.gameObject.SendMessage("OnMouseOver", SendMessageOptions.DontRequireReceiver);
+					hit.collider.gameObject.SendMessage("OnTouchOver", SendMessageOptions.DontRequireReceiver);
 				}
 			}
 			
@@ -48,17 +46,14 @@ public class Mz_SmartDeviceInput : MonoBehaviour {
 		}
 	}	
     
-	public Vector3 mousePos;
-	public Vector3 originalPos;
-	public Vector3 currentPos;   
+	private Vector3 mousePos;
+	private Vector3 originalPos;
+	private Vector3 currentPos;   
     public void ImplementMouseInput () {
-		if(Camera.main == null) {
-			Debug.Log("MainCamera has null");
-			return;		
-		}
+        Camera spaceCam = this.camera;
 
-		mousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-		Ray cursorRay = Camera.main.ScreenPointToRay (Input.mousePosition);
+		mousePos = spaceCam.ScreenToViewportPoint(Input.mousePosition);
+		Ray cursorRay = spaceCam.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hit;
 		
 		if(Input.GetMouseButtonDown(0)) {
@@ -66,7 +61,7 @@ public class Mz_SmartDeviceInput : MonoBehaviour {
 			originalPos = mousePos;
 			currentPos = mousePos;
 			if (Physics.Raycast (cursorRay, out hit)) {
-				hit.collider.SendMessage ("OnTouchBegan", SendMessageOptions.DontRequireReceiver);
+				hit.collider.SendMessage ("OnTouchBegan", this.tag, SendMessageOptions.DontRequireReceiver);
 			}
 		}
 		
@@ -76,6 +71,11 @@ public class Mz_SmartDeviceInput : MonoBehaviour {
 			if(currentPos != originalPos) {
 				if(Physics.Raycast(cursorRay, out hit)) {
 					hit.collider.SendMessage("OnTouchDrag", SendMessageOptions.DontRequireReceiver);
+				}	
+			}
+			else {
+				if(Physics.Raycast(cursorRay, out hit)) {
+					hit.collider.SendMessage("OnTouchOver", SendMessageOptions.DontRequireReceiver);
 				}	
 			}
 		}

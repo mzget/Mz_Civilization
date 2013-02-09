@@ -5,12 +5,12 @@ using System.Collections.Generic;
 public class IsometricEngine : MonoBehaviour {
     GameObject buildingArea_group;
 	public GameObject tile_prefab;
-    public StageManager sceneController;
+    public CapitalCity sceneController;
 	
-	private int x = 16;
-	private int y = 16;
-    private float tile_width = 64;
-    private float tile_height = 33.5f;
+	public const int x = 16;
+	public const int y = 16;
+    private float tile_width = 64f;
+    private float tile_height = 37f;
 
 
 	// Use this for initialization
@@ -28,12 +28,14 @@ public class IsometricEngine : MonoBehaviour {
                 float a = (j * tile_width / 2) + (i * tile_width / 2);
                 float b = (i * tile_height / 2) - (j * tile_height / 2);
                 GameObject tile = Instantiate(tile_prefab) as GameObject;
-                tile.transform.position = new Vector3(a, b, i);
-                tile.transform.parent = buildingArea_group.transform;
-				
-				tile.gameObject.name = i.ToString() + " : " + j.ToString();
 
-                sceneController.tiles_list[i, j] = tile.GetComponent<Tile>();
+				int j_order = y - j;
+				tile.gameObject.name = i.ToString() + " : " + j_order.ToString();
+
+				int z_pos = i + j_order;
+				tile.transform.position = new Vector3(a, b, z_pos);
+				tile.transform.parent = buildingArea_group.transform;
+                sceneController.tiles_list[i, j_order] = tile.GetComponent<Tile>();
             }
         }
 

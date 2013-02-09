@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Mz_GUITextureButton : MonoBehaviour {
 	
-	private StageManager stageManager;
+	private CapitalCity stageManager;
     private AudioEffectManager audioEffect; 
 	
 	public GUITexture guitexture;
@@ -13,7 +13,7 @@ public class Mz_GUITextureButton : MonoBehaviour {
 
     void Awake()
     {
-        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<StageManager>();
+        stageManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<CapitalCity>();
     }
 
 	// Use this for initialization
@@ -56,11 +56,11 @@ public class Mz_GUITextureButton : MonoBehaviour {
     void OnMouseDown ()
 	{
 //        audioEffect.PlaySoundClickButton();
-		stageManager.OnInput(this.gameObject.name);
+		stageManager.OnInput(this.gameObject.name, string.Empty);
 	}
 	
 	void OnMouseDrag() {		
-		stageManager.OnInput(this.gameObject.name);
+		stageManager.OnInput(this.gameObject.name, string.Empty);
 	}
 	
     void OnMouseEnter()

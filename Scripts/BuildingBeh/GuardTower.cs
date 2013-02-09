@@ -17,8 +17,8 @@ public class GuardTower : BuildingBeh {
         base.Update();
     }
 
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
     }
 }

@@ -22,7 +22,7 @@ public class MessageDataStore
 
     #region <@-- New player greeting message.
 
-    public const string NEW_PLAYER_GREETING_MESSAGE_TOPIC = "Welcome to Empire Civilization";
+    public const string NEW_PLAYER_GREETING_MESSAGE_TOPIC = "Welcome to League Of Empire.";
 	public string newPlayerGreetingMessage {
 		get {
 			if(Main.CurrentAppLanguage == Main.AppLanguage.Thai) 

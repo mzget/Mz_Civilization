@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using JsonFx.Json;
 
 
 public class MainMenu : Mz_BaseScene
@@ -23,19 +24,20 @@ public class MainMenu : Mz_BaseScene
     private string player_3;
 
     Rect viewport_rect = new Rect(0, 0, Main.FixedGameWidth, Main.FixedGameHeight);
-    Rect gameWindow_rect = new Rect((Screen.width / 2) - 200, (Screen.height / 2) - 150, 400, 300);
     Rect mainMenuGroup_rect = new Rect(Main.FixedGameWidth - 300, 0, 300, Main.FixedGameHeight);
     Rect newPlayer_rect = new Rect(75, 50, 150, 60);
     private Rect loadGameButton_rect = new Rect(75, 140, 150, 60);
     private Rect thirdButton_rect = new Rect(75, 240, 150, 60);
     private Rect fourthButton_rect = new Rect(75, 340, 150, 60);
     private Rect fifthButton_rect;
+	
     //<@-- New game data fields.
     float newGameGroup_width = 400f , newGameGroupHeight = 300f;
     Rect midCenterWindowGroup_rect;
     Rect usernameTextInput_rect;
     Rect startButton_rect;
     Rect cancelButton_rect;
+	
     //<@-- Savegame slot data fields.
     float group_width = 400f;
     float slot_width = 200f;
@@ -54,14 +56,17 @@ public class MainMenu : Mz_BaseScene
     }
 
     #endregion
-    
-	private Mz_SaveData saveData_Obj;
 
     // Use this for initialization
-	protected override void Initializing ()
-	{
-		base.Initializing ();
+    protected override void Start()
+    {
+        base.Start();
 
+        this.Initializing();
+    }
+
+	protected void Initializing ()
+	{
         StartCoroutine(this.InitializeAudio());
 		StartCoroutine(this.CreateSaveData_Obj());
         NewPlayer_Event += MessageManager.Handle_MainMenu_NewPlayer_Event;
@@ -113,7 +118,8 @@ public class MainMenu : Mz_BaseScene
 
         yield return null;
     }
-
+	
+	private Mz_SaveData saveData_Obj;
 	IEnumerator CreateSaveData_Obj ()
 	{
 		if(saveData_Obj == null)
@@ -127,8 +133,7 @@ public class MainMenu : Mz_BaseScene
         GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(Screen.width/Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
 
         //<!--- Draw menu outside viewport.
-        if (sceneState == SceneState.none)
-        {
+        if (sceneState == SceneState.none) {
             _isDuplicateUsername = false;
             _isNullUsernameNotification = false;
             _isFullSaveGameSlot = false;
@@ -136,8 +141,7 @@ public class MainMenu : Mz_BaseScene
 
             this.DrawMainMenuWindow();
         }
-        else
-        {
+        else {
             //@-- Viewport Screen rect.
             GUI.BeginGroup(viewport_rect, GUIContent.none, GUIStyle.none);
             {
@@ -190,9 +194,6 @@ public class MainMenu : Mz_BaseScene
             }
             else if (GUI.Button(loadGameButton_rect, "Load game", standard_Skin.button)) {
                 sceneState = SceneState.showLoadGame;
-                audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
-            }
-            else if (GUI.Button(thirdButton_rect, "Multiplayer", standard_Skin.button)) {
                 audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
             else if (GUI.Button(fourthButton_rect, "About", standard_Skin.button)) {
@@ -269,25 +270,25 @@ public class MainMenu : Mz_BaseScene
         //<!-- Autosave Mechanicism. When have empty game slot.  
         if (player_1 == string.Empty)
         {
-			Mz_StorageManagement.SaveSlot = 1;
+			Mz_SaveData.SaveSlot = 1;
             this.SaveNewPlayer();
             this.OnNewPlayer_Event(EventArgs.Empty);
         }
         else if (player_2 == string.Empty)
         {
-			Mz_StorageManagement.SaveSlot = 2;
+			Mz_SaveData.SaveSlot = 2;
             this.SaveNewPlayer();
             this.OnNewPlayer_Event(EventArgs.Empty);
         }
         else if (player_3 == string.Empty)
         {
-			Mz_StorageManagement.SaveSlot = 3;
+			Mz_SaveData.SaveSlot = 3;
             this.SaveNewPlayer();
             this.OnNewPlayer_Event(EventArgs.Empty);
         }
         else
         {
-			Mz_StorageManagement.SaveSlot = 0;
+			Mz_SaveData.SaveSlot = 0;
             _isFullSaveGameSlot = true;
 			sceneState = SceneState.showLoadGame;
 
@@ -326,7 +327,7 @@ public class MainMenu : Mz_BaseScene
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
-					Mz_StorageManagement.SaveSlot = 1;
+					Mz_SaveData.SaveSlot = 1;
                     this.SaveNewPlayer();
             		this.OnNewPlayer_Event(EventArgs.Empty);
                 }
@@ -334,7 +335,7 @@ public class MainMenu : Mz_BaseScene
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
-					Mz_StorageManagement.SaveSlot = 2;
+					Mz_SaveData.SaveSlot = 2;
                     this.SaveNewPlayer();
             		this.OnNewPlayer_Event(EventArgs.Empty);
                 }
@@ -342,7 +343,7 @@ public class MainMenu : Mz_BaseScene
                 {
                     audioEffect.PlayOnecWithOutStop(audioEffect.buttonDown_Clip);
 
-					Mz_StorageManagement.SaveSlot = 3;
+					Mz_SaveData.SaveSlot = 3;
                     this.SaveNewPlayer();
             		this.OnNewPlayer_Event(EventArgs.Empty);
                 }
@@ -376,7 +377,7 @@ public class MainMenu : Mz_BaseScene
 
                     if (player_1 != string.Empty)
                     {
-						Mz_StorageManagement.SaveSlot = 1;
+						Mz_SaveData.SaveSlot = 1;
                         this.saveData_Obj.Load();
 						this.LoadSceneTarget();
                     }
@@ -387,7 +388,7 @@ public class MainMenu : Mz_BaseScene
 
                     if (player_2 != string.Empty)
                     {
-						Mz_StorageManagement.SaveSlot = 2;
+						Mz_SaveData.SaveSlot = 2;
 						this.saveData_Obj.Load();
 						this.LoadSceneTarget();
                     }
@@ -398,7 +399,7 @@ public class MainMenu : Mz_BaseScene
 
                     if (player_3 != string.Empty)
                     {
-						Mz_StorageManagement.SaveSlot = 3;
+						Mz_SaveData.SaveSlot = 3;
 						this.saveData_Obj.Load();
 						this.LoadSceneTarget();
                     }
@@ -412,55 +413,55 @@ public class MainMenu : Mz_BaseScene
 
     private void SaveNewPlayer()
     {
-		PlayerPrefs.SetString(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_username, username);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood, 800);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood, 800);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone, 800);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfArmor, 10);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_sumOfWeapon, 10);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold, 3000);
+		PlayerPrefs.SetString(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_username, username);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumoffood, 800);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofwood, 800);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofstone, 800);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfArmor, 10);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_sumOfWeapon, 10);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_sumofgold, 3000);
 		
 		//<@-- Mission data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
-		PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, new bool[8]);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
+		PlayerPrefsX.SetBoolArray(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, new bool[8]);
 
 		//<@-- Building area state data.
         bool[] areaState_array = new bool[24];
-        PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_BuildingAreaState, areaState_array);
+		PlayerPrefsX.SetBoolArray(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_BuildingAreaState, areaState_array);
 
 		//<@-- Town center level.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);		
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.TownCenter_level, 1);		
 		
 		//<!--- House instance data. --->>
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance, 0);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.numberOfHouse_Instance, 0);
         //<!-- Academy instance data.
-		PlayerPrefsX.SetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_AcademyInstance, false);
+		PlayerPrefsX.SetBool(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_AcademyInstance, false);
         
         //<!-- Farm Data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_farm_instance, 0);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_farm_instance, 0);
 		//<!-- Sawmill Data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_sawmill_instance, 0);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.amount_sawmill_instance, 0);
 		//<!-- MillStone Data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_millstone_instance, 0);	
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_StoneCrushingPlant, 0);	
 		//<!-- Smelter Data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance, 0);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_AMOUNT_OF_SMELTER, 0);
 
         //<!-- Save Storehouse data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.numberOfStorehouseInstance, 0);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.numberOfStorehouseInstance, 0);
 		//<!-- Set default value of "MarketInstance".
-		PlayerPrefsX.SetBool(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_MarketInstance, false);
+		PlayerPrefsX.SetBool(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_MarketInstance, false);
 		
 		//<!-- Save Barracks data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.KEY_BarracksInstance, 0);
+		PlayerPrefsX.SetBool(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_BarracksInstance, false);
 
 		//<@!-- Greek tribe AI data.
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN, 500);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST, 500);
-		PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HOPLITE, 500);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_SPEARMAN, 500);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HAPASPIST, 500);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.GreekAI_DataStore.KEY_GREEK_AI_HOPLITE, 500);
 
         //<@-- Mission data.
-        PlayerPrefs.SetInt(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
-        PlayerPrefsX.SetBoolArray(Mz_StorageManagement.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, new bool[16]);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_CURRENT_MISSION_ID, 0);
+		PlayerPrefsX.SetBoolArray(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_ARRAY_MISSION_COMPLETE, new bool[16]);
 
 		saveData_Obj.Load();
 		this.LoadSceneTarget();

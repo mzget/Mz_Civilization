@@ -33,13 +33,13 @@ public class StoreHouse : BuildingBeh {
 	};
 
     //<!--- Static Data.
-	public static int sumOfGold = 0;
-	public static int sumOfWeapon = 0;
-	public static int sumOfArmor = 0;
+	public static int sumOfGold = 2000;
+	public static int sumOfWeapon = 2000;
+	public static int sumOfArmor = 2000;
 
 	#region <@-- Game resources.
 
-	private static int sumOfFood = 0;
+	private static int sumOfFood = 2000;
 	public static int SumOfFood {
 		get { return sumOfFood; } 
 		set { sumOfFood = value; } 
@@ -55,7 +55,7 @@ public class StoreHouse : BuildingBeh {
 		if(sumOfFood < 0) sumOfFood = 0;
 	}
 
-	private static int sumOfWood = 0;
+	private static int sumOfWood = 2000;
 	public static int SumOfWood {
 		get { return sumOfWood; } 
 		set { sumOfWood = value; }
@@ -71,7 +71,7 @@ public class StoreHouse : BuildingBeh {
 		if(sumOfWood < 0) sumOfWood = 0;
 	}
 
-	private static int sumOfStone = 0;
+	private static int sumOfStone = 2000;
 	public static int SumOfStone {		
 		get { return sumOfStone; }				
 		set { sumOfStone = value;}
@@ -87,7 +87,7 @@ public class StoreHouse : BuildingBeh {
 		if(sumOfStone < 0)	sumOfStone = 0;
 	}
 
-    private static int sumOfCopper = 0;
+    private static int sumOfCopper = 2000;
 	public static int SumOfCopper {
 		get { return sumOfCopper; } 
 		set {sumOfCopper = value;}
@@ -133,11 +133,11 @@ public class StoreHouse : BuildingBeh {
     }	
 	
     public static void ReachDayCycle(object sender, System.EventArgs e) {
-        if (BuildingBeh.Farm_Instance.Count == 0 && sumOfFood < SumOfMaxCapacity)
+        if (BuildingBeh.Farm_Instances.Count == 0 && sumOfFood < SumOfMaxCapacity)
             sumOfFood += 2;
-        if (BuildingBeh.Sawmill_Instance.Count == 0 && sumOfWood < SumOfMaxCapacity)
+        if (BuildingBeh.Sawmill_Instances.Count == 0 && sumOfWood < SumOfMaxCapacity)
             sumOfWood += 2;
-        if (BuildingBeh.MillStoneInstance.Count == 0 && sumOfStone < SumOfMaxCapacity)
+        if (BuildingBeh.StoneCrushingPlant_Instances.Count == 0 && sumOfStone < SumOfMaxCapacity)
             sumOfStone += 2;
 //        if (BuildingBeh.SmelterInstance.Count == 0 && sumOfCopper < SumOfMaxCapacity)
 //            sumOfCopper += 2;
@@ -158,13 +158,11 @@ public class StoreHouse : BuildingBeh {
         Debug.Log("StoreHouse.ReachDayCycle event");
     }
 
-	/// <summary>
 	/// Awake this instance.
-	/// </summary>
     protected override void Awake()
     {
 		base.Awake();
-		base.sprite = this.gameObject.GetComponent<OTSprite>();
+        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
 		
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
@@ -173,12 +171,16 @@ public class StoreHouse : BuildingBeh {
 			30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f,
 			600f, 700f, 800f, 900f, 1000f, 1100f, 1200f, 1300f, 1400f, 1500f, 
 		};
+
+        base.processbar_offsetPos = Vector3.up * 60;
     }
 	
 	// Use this for initialization
-    void Start()
+    protected override void Start()
     {
-		this.InitializeTexturesResource();
+        base.Start();
+
+        this.InitializeTexturesResource();
         this.ReCalculationCapacityData();
 
         base.NotEnoughResource_Notification_event += StoreHouse_NotEnoughResource_Notification_event;
@@ -214,11 +216,10 @@ public class StoreHouse : BuildingBeh {
         }
     }
 
-    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, int p_indexPosition, int p_level)
+    public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
-        base.InitializingBuildingBeh(p_buildingState, p_indexPosition, p_level);
+        base.InitializingBuildingBeh(p_buildingState, area, p_level);
 		
-		this.sprite.position += Vector2.up * 30f;
         BuildingBeh.StoreHouseInstance.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
     }
@@ -273,9 +274,9 @@ public class StoreHouse : BuildingBeh {
 		BuildingBeh.StoreHouseInstance.Remove(this);
 	}
 
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
 
 //        if(base.notificationText == "") {
 //            base.notificationText = base.currentBuildingStatus.ToString();

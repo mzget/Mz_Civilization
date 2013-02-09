@@ -35,37 +35,41 @@ public class MessageManager : NotificationSystem {
 
 	void OnGUI ()
 	{
+		GUI.depth = 0;
 		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (1, Screen.height / Main.FixedGameHeight, 1));
 
-		if (CurrentMessageManagerState == MessageManagetStateBeh.drawActivity) {
-            this.DrawMessageListsWindow();
+		if (CurrentMessageManagerState == MessageManagetStateBeh.drawActivity)
+		{
             TaskManager.IsShowInteruptGUI = true;
+            this.DrawMessageListsWindow();
 		}
         else if (CurrentMessageManagerState == MessageManagetStateBeh.drawNewPlayerMessage)
-        {
-            taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, this.Draw_NewPlayerMessageWindow,
-                new GUIContent("Message"), taskManager.taskbarUI_Skin.window);
-
+		{
             TaskManager.IsShowInteruptGUI = true;
+			this.Draw_NewPlayerMessageWindow();
         }
 	}
 
-    private void Draw_NewPlayerMessageWindow(int id)
+    internal void Draw_NewPlayerMessageWindow()
     {
-        GUI.Box(drawMessageRect, taskManager.messageFormSystem_icon);
-        GUI.DrawTexture(drawAdvisorRect, taskManager.newQuestAdvisor_img, ScaleMode.ScaleToFit);
-        GUI.Box(base.drawNoticeTopicRect, MessageDataStore.NEW_PLAYER_GREETING_MESSAGE_TOPIC, base.taskManager.taskbarUI_Skin.box);
-		GUI.Box(base.drawNoticeMessageContentRect, base.messageDataStore.newPlayerGreetingMessage, base.noticeMessageContent_boxStyle);
-
-		if(GUI.Button(base.completeSessionMessage_Rect, "The first mission", base.completeSessionMessage_buttonStyle)) {
-			if (base.taskManager.questManager.currentQuestManagerStateBeh == QuestSystemManager.QuestManagerStateBeh.none) {
-				taskManager.MoveOutLeftSidebar (TaskManager.DISPLAY_QUEST_ACTIVITY);
-                QuestSystemManager.CurrentMissionTopic_ID = 1;
-                taskManager.questManager.ActiveBeh_NoticeButton();
-            }
-            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
-            CloseGUIWindow();
+		GUI.BeginGroup(taskManager.standardWindow_rect, "Message", taskManager.taskbarUI_Skin.window);
+		{
+	        GUI.Box(drawMessageRect, taskManager.messageFormSystem_icon);
+	        GUI.DrawTexture(drawAdvisorRect, taskManager.newQuestAdvisor_img, ScaleMode.ScaleToFit);
+	        GUI.Box(base.drawNoticeTopicRect, MessageDataStore.NEW_PLAYER_GREETING_MESSAGE_TOPIC, base.taskManager.taskbarUI_Skin.box);
+			GUI.Box(base.drawNoticeMessageContentRect, base.messageDataStore.newPlayerGreetingMessage, base.noticeMessageContent_boxStyle);
+	
+			if(GUI.Button(base.completeSessionMessage_Rect, "The first mission", base.completeSessionMessage_buttonStyle)) {
+				if (base.taskManager.questManager.currentQuestManagerStateBeh == QuestSystemManager.QuestManagerStateBeh.none) {
+					taskManager.MoveOutLeftSidebar (TaskManager.DISPLAY_QUEST_ACTIVITY);
+	                QuestSystemManager.CurrentMissionTopic_ID = 1;
+	                taskManager.questManager.ActiveBeh_NoticeButton();
+	            }
+	            sceneController.audioEffect.PlayOnecSound(sceneController.audioEffect.buttonDown_Clip);
+	            CloseGUIWindow();
+			}
 		}
+		GUI.EndGroup();
     }
 
 	internal void DrawGUI_MessageIcon()

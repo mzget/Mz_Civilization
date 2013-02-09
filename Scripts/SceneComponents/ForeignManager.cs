@@ -90,8 +90,8 @@ public class ForeignManager : MonoBehaviour
 		GUI.EndGroup();
 		
 		/// Draw cities symbol.
-		GUI.DrawTexture(citiesSymbol_rect, StageManager.list_AICity[0].symbols);
-		GUI.Box(citiesTagName_rect, StageManager.list_AICity[0].name, taskManager.taskbarUI_Skin.box);
+		GUI.DrawTexture(citiesSymbol_rect, CapitalCity.list_AICity[0].symbols);
+		GUI.Box(citiesTagName_rect, CapitalCity.list_AICity[0].name, taskManager.taskbarUI_Skin.box);
 		
 		if (GUI.Button(sendButton_rect, "Send", taskManager.taskbarUI_Skin.button)) {
             this.SendTroopMechanism();
@@ -134,8 +134,8 @@ public class ForeignManager : MonoBehaviour
             {
                 TroopsActivity newTroopsActivity = new TroopsActivity();
                 newTroopsActivity.currentTroopsStatus = TroopsActivity.TroopsStatus.Pillage;
-                newTroopsActivity.targetCity = StageManager.list_AICity[0];
-                newTroopsActivity.timeToTravel = System.TimeSpan.FromSeconds(StageManager.list_AICity[0].distance);
+                newTroopsActivity.targetCity = CapitalCity.list_AICity[0];
+                newTroopsActivity.timeToTravel = System.TimeSpan.FromSeconds(CapitalCity.list_AICity[0].distance);
                 newTroopsActivity.startTime = System.DateTime.UtcNow;
                 newTroopsActivity.groupOfUnitBeh = groupOfUnitBehs;
                 newTroopsActivity.attackBonus = WarfareSystem.AttackBonus;

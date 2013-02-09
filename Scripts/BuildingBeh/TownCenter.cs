@@ -19,6 +19,7 @@ public class TownCenter : BuildingBeh {
             return temp;
         }
     }
+
     //<!--- Requirements Resource.
     public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[10] {
 		new GameMaterialDatabase() {Food = 80, Wood = 120, Gold = 60, Employee = 0},
@@ -37,30 +38,42 @@ public class TownCenter : BuildingBeh {
     private int[] increaseBuildingSpeed_arr = new int[10] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 10, };
     private int currentBuildingTimeAcceleration;
 	
-	
 	protected override void Awake ()
 	{
         base.Awake();
 		
-        BuildingBeh.TownCenter = this;
-
-        base.sprite = this.gameObject.GetComponent<OTSprite>();
-		
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
+				
+        BuildingBeh.TownCenter = this;		
+		BuildingBeh.List_buildings.Add(this);
+		base.processbar_offsetPos = Vector3.up * 75;
 	}
 	
 	// Use this for initialization
 	protected override void Start ()
 	{
 		base.Start ();
+		
+		StartCoroutine(this.WaitForStartingComplete());
+	}
 
-        base._canDragaable = true;
-        collisionPoint = new Vector2(0, -16f);
+	IEnumerator WaitForStartingComplete ()
+	{		
+		while(CapitalCity._StageInitialized == false)
+			yield return 0;
+		
+//		yield return new WaitForFixedUpdate();
+
+        base._canMovable = false;
+        constructionArea = new TileArea() { x = 8, y = 8, numSlotWidth = 3, numSlotHeight = 3 };
+        this.transform.position = sceneController.tiles_list[0, 0].GetAreaPosition(constructionArea);
+        sceneController.tiles_list[0, 0].SetNoEmptyArea(constructionArea);
 
         InitializeTexturesResource();
         buildingLevel_textmesh.text = Level.ToString();
+
 		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResource_Notification_event;
 	}
 	
@@ -91,12 +104,12 @@ public class TownCenter : BuildingBeh {
                 sceneController.taskManager.questManager.MissionComplete(6);
         }
 	}
+
 	protected override void DecreaseBuildingLevel ()
 	{
 		base.DecreaseBuildingLevel ();
 		buildingLevel_textmesh.text = this.Level.ToString();
 	}
-	
 	
 	protected override void Update ()
 	{
@@ -108,9 +121,9 @@ public class TownCenter : BuildingBeh {
 		}
 	}
 	
-    protected override void CreateWindow(int windowID)
+    protected override void CreateWindow()
     {
-        base.CreateWindow(windowID);
+        base.CreateWindow();
 
         //if (base.notificationText == "")
         //    base.notificationText = base.currentBuildingStatus.ToString();

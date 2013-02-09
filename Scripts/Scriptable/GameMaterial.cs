@@ -7,7 +7,5 @@ public class GameMaterial {
     public Texture2D materialIcon = null;
     public int materialNumber;
 	
-	public GameMaterial() {
-        Debug.Log("Starting :: GameMaterial");
-	}
+	public GameMaterial() {	}
 }

@@ -13,10 +13,10 @@ public class WarfareSystem {
 
     internal void WarfareProcessing(TroopsActivity troopsActivity)
     {
-		if(troopsActivity.targetCity == StageManager.list_AICity[0]) {
+		if(troopsActivity.targetCity == CapitalCity.list_AICity[0]) {
 			switch (troopsActivity.currentTroopsStatus) {
 				case TroopsActivity.TroopsStatus.Pillage :
-                    GroupOFUnitBeh groupOfUnits = StageManager.list_AICity[0].CreateTroopsActivity();
+                    GroupOFUnitBeh groupOfUnits = CapitalCity.list_AICity[0].CreateTroopsActivity();
 					WarfareSystem.CostOfPillageProcessing(ref troopsActivity, ref groupOfUnits);
 				break;
 				default:
