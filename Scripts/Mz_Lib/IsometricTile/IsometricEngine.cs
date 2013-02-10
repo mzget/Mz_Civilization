@@ -11,8 +11,17 @@ public class IsometricEngine : MonoBehaviour {
 	public const int y = 16;
     private float tile_width = 64f;
     private float tile_height = 37f;
-
-
+	
+	
+	public float map_width
+	{
+		get {return tile_width * x;}
+	}
+	public float map_height
+	{
+		get {return tile_height * y;}
+	}
+    
 	// Use this for initialization
     void Start()
     {

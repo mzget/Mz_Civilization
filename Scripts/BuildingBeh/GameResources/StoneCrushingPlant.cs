@@ -43,8 +43,6 @@ public class StoneCrushingPlant : BuildingBeh {
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
-
-        base.processbar_offsetPos = Vector3.up * 70;
     }
 	
 	// Use this for initialization

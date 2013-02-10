@@ -425,7 +425,7 @@ public class MarketBeh : BuildingBeh {
 		
 		base.OnTouchDown ();
 		
-		sceneController.taskManager.currentTopSidebarState = TaskManager.TopSidebarState.show_commerce;
+		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
 	}
 	
 	protected override void Update ()

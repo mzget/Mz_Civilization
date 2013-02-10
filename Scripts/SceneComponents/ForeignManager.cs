@@ -51,7 +51,7 @@ public class ForeignManager : MonoBehaviour
 		if(currentForeignTabStatus == ForeignManager.ForeignTabStatus.DrawActivity) {
 			taskManager.standardWindow_rect = GUI.Window(0, taskManager.standardWindow_rect, DrawActivityWindow, new GUIContent("Select troops"), taskManager.foreignActivityStyle);
 		}		
-		if(taskManager.currentTopSidebarState != TaskManager.TopSidebarState.show_ForeignTab && currentForeignTabStatus != ForeignManager.ForeignTabStatus.None) {
+		if(taskManager.currentRightSideState != TaskManager.RightSideState.show_ForeignTab && currentForeignTabStatus != ForeignManager.ForeignTabStatus.None) {
 			currentForeignTabStatus = ForeignManager.ForeignTabStatus.None;
 			TaskManager.IsShowInteruptGUI = false;
 		}

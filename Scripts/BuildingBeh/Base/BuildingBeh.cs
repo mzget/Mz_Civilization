@@ -447,12 +447,12 @@ public class BuildingBeh : ObjectsBeh {
         TaskManager.IsShowInteruptGUI = true;
         sceneController.taskManager.MoveOut_RightSidebarGUI();
 		
-		BuildingBeh.ActivateColliderComponent(false);
+		this.ActivateColliderComponent(false);
 		
         base.OnTouchDown();
     }
 
-    internal static void ActivateColliderComponent(bool p_active)
+    protected void ActivateColliderComponent(bool p_active)
     {
         foreach (BuildingBeh item in List_buildings) {
             item.collider.enabled = p_active;
@@ -490,8 +490,7 @@ public class BuildingBeh : ObjectsBeh {
 		
         this._IsShowInterface = false;
         TaskManager.IsShowInteruptGUI = false;
-		
-        BuildingBeh.ActivateColliderComponent(true);
+		this.ActivateColliderComponent(true);
     }
 	
 	/// <summary>

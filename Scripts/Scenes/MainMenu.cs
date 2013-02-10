@@ -196,6 +196,9 @@ public class MainMenu : Mz_BaseScene
                 sceneState = SceneState.showLoadGame;
                 audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
+            else if (GUI.Button(thirdButton_rect, "Multiplayer", standard_Skin.button)) {
+                audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
+            }
             else if (GUI.Button(fourthButton_rect, "About", standard_Skin.button)) {
                 audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
             }
@@ -444,7 +447,7 @@ public class MainMenu : Mz_BaseScene
 		//<!-- MillStone Data.
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_StoneCrushingPlant, 0);	
 		//<!-- Smelter Data.
-		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.KEY_AMOUNT_OF_SMELTER, 0);
+		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance, 0);
 
         //<!-- Save Storehouse data.
 		PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + Mz_SaveData.numberOfStorehouseInstance, 0);

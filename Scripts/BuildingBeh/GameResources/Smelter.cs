@@ -48,18 +48,14 @@ public class Smelter : BuildingBeh {
         this.name = Smelter.BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
-
-        base.processbar_offsetPos = Vector3.up * 60;
 	}
 
 	// Use this for initialization
-    protected override void Start()
-    {
-        base.Start();
-
-        this.InitializeTexturesResource();
-        base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
-    }
+    void Start() {
+		this.InitializeTexturesResource();
+		
+		base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
+	}
 	
 	protected override void InitializeTexturesResource ()
 	{

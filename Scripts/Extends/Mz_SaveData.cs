@@ -24,6 +24,7 @@ public class Mz_SaveData : ISaveData
 	
 	public const string amount_farm_instance = "amount_farm_instance";
 	public const string amount_sawmill_instance = "amount_sawmill_instance";
+	public const string amount_smelter_instance = "amount_smelter_instance";
 
 	public const string KEY_FARM_AREA_ = "farm_area_";
     public const string farm_level_ = "farm_level_";
@@ -35,9 +36,8 @@ public class Mz_SaveData : ISaveData
     public const string KEY_StoneCrushingPlant_AREA_ = "KEY_StoneCrushingPlant_AREA_";
     public const string KEY_StoneCrushingPlant_LEVEL_ = "KEY_StoneCrushingPlant_LEVEL_";
 
-    public const string KEY_AMOUNT_OF_SMELTER = "KEY_AMOUNT_OF_SMELTER";
-    public const string KEY_SMELTER_AREA_ = "KEY_SMELTER_AREA_";
-    public const string KEY_SMELTER_LEVEL_ = "KEY_SMELTER_LEVEL_";
+    public const string smelter_position_ = "smelter_position_";
+    public const string smelter_level_ = "smelter_level_";
 	
 	public const string KEY_BuildingAreaState = "BuildingAreaState";
 	public const string TownCenter_level = "TownCenter_level";
@@ -199,19 +199,10 @@ public class Mz_SaveData : ISaveData
 			}
 			
 			//<!-- Smelter Data.
-			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_AMOUNT_OF_SMELTER, BuildingBeh.Smelter_Instances.Count);
-            for (int i = 0; i < BuildingBeh.Smelter_Instances.Count; i++)
-            {
-                // this turns a C# object into a JSON string.
-                string encodedString = JsonWriter.Serialize(new TileArea()
-                {
-                    x = BuildingBeh.Smelter_Instances[i].constructionArea.x,
-                    y = BuildingBeh.Smelter_Instances[i].constructionArea.y,
-                    numSlotWidth = BuildingBeh.Smelter_Instances[i].constructionArea.numSlotWidth,
-                    numSlotHeight = BuildingBeh.Smelter_Instances[i].constructionArea.numSlotHeight,
-                });
-                PlayerPrefs.SetString(Mz_SaveData.SaveSlot + KEY_SMELTER_AREA_ + i, encodedString);
-				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + KEY_SMELTER_LEVEL_ + i, BuildingBeh.Smelter_Instances[i].Level);
+			PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + amount_smelter_instance, BuildingBeh.Smelter_Instances.Count);
+			for(int i = 0; i < BuildingBeh.Smelter_Instances.Count; i++) {
+                //PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + smelter_position_ + i, BuildingBeh.SmelterInstance[i].IndexOfPosition);
+				PlayerPrefs.SetInt(Mz_SaveData.SaveSlot + ":" + smelter_level_ + i, BuildingBeh.Smelter_Instances[i].Level);
 	        }
 	
 	        #endregion

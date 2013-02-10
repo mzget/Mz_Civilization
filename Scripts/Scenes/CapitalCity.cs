@@ -19,7 +19,7 @@ public class CapitalCity : Mz_BaseScene {
 	public Mz_SaveData saveManager;
     public List<GameMaterial> gameMaterials = new List<GameMaterial>();
     // Map and building area.
-    public Tile[,] tiles_list = new Tile[25, 25];
+    public Tile[,] tiles_list = new Tile[IsometricEngine.x + 1, IsometricEngine.y + 1];
     public static bool[] arr_buildingAreaState = new bool[24];
     //<!--- Private Data Fields.
     private Vector2 scrollPosition = Vector2.zero;
@@ -67,23 +67,25 @@ public class CapitalCity : Mz_BaseScene {
     {
         base.Start();
 
-        StartCoroutine(this.InitializeIsoMetricEngine());
         StartCoroutine(this.Initializing());
     }
 
 	private IEnumerator Initializing ()
 	{		
+        //this.GenerateBackground();
+        //this.CreateBuildingArea();
+
+        yield return StartCoroutine(this.InitializeIsoMetricEngine());
+
         taskManager = this.gameObject.GetComponent<TaskManager>();
         saveManager = new Mz_SaveData();
 
-        //this.GenerateBackground();
-        //this.CreateBuildingArea();
 		this.PrepareBuildingPrefabsFromResource();
 		this.Load_AmountOfBuildingInstance();
 		this.LoadingDataStorage();
-
-        yield return null;
-
+		this.initCenterCamera();
+		
+		
         StartCoroutine(this.InitializeAudio());
         StartCoroutine(this.CreateGameMaterials());
         StartCoroutine(this.InitializeAICities());
@@ -265,7 +267,7 @@ public class CapitalCity : Mz_BaseScene {
 		amount_Farm_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_farm_instance);
 		amount_Sawmill_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.amount_sawmill_instance);
 		amount_MillStone_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_StoneCrushingPlant);
-		amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_SMELTER);
+		amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance);
         //<!-- Economy --->>
 		numberOfStoreHouseInstances = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.numberOfStorehouseInstance);
 		marketInstance = PlayerPrefsX.GetBool(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_MarketInstance);
@@ -368,26 +370,6 @@ public class CapitalCity : Mz_BaseScene {
 
         #endregion
 
-        #region <!--- Smelter Data.
-
-        if (amount_Smelter_Instance != 0)
-        {
-            for (int i = 0; i < amount_Smelter_Instance; i++)
-            {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_SMELTER_LEVEL_ + i);
-                string tempArea = PlayerPrefs.GetString(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_SMELTER_AREA_ + i);
-
-                // Turn the JSON into C# objects.
-                TileArea area = JsonReader.Deserialize<TileArea>(tempArea);
-
-                GameObject new_smelter = Instantiate(smelter_prefab) as GameObject;
-                Smelter smelter = new_smelter.GetComponent<Smelter>();
-                smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, area, Level);
-            }
-        }
-
-        #endregion
-
         #region <!-- StoreHouse Data.
 
         if (numberOfStoreHouseInstances != 0) {
@@ -438,6 +420,25 @@ public class CapitalCity : Mz_BaseScene {
 		}
         
         #endregion
+
+/*
+        #region <!--- Smelter Data.
+
+        if (amount_Smelter_Instance != 0)
+        {
+            for (int i = 0; i < amount_Smelter_Instance; i++)
+            {
+				int Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.smelter_level_ + i);
+				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.smelter_position_ + i);
+
+                GameObject new_smelter = Instantiate(smelter_prefab) as GameObject;
+                Smelter smelter = new_smelter.GetComponent<Smelter>();
+                smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
+            }
+        }
+
+        #endregion
+*/
 
         Debug.Log("StageManager.LoadingDataStorage");
     }
@@ -506,7 +507,7 @@ public class CapitalCity : Mz_BaseScene {
 		}
 		else if(buildingName == EconomyIconData.STONECRUSHINGPLANT_ICON_NAME) {
             bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
-                buildingBeh.CheckingEnoughUpgradeResource(StoneCrushingPlant.RequireResource[0])) ? true : false;
+         buildingBeh.CheckingEnoughUpgradeResource(StoneCrushingPlant.RequireResource[0])) ? true : false;
 
             /// Have to research stonecutter before building.
             if(_canCreateBuilding) {
@@ -521,19 +522,7 @@ public class CapitalCity : Mz_BaseScene {
             }
 		}
 		else if(buildingName == EconomyIconData.SMELTER_ICON_NAME) {
-            bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
-            buildingBeh.CheckingEnoughUpgradeResource(Smelter.RequireResource[0]) &&
-            BuildingBeh.TownCenter.Level >= 5) ? true : false;
-            if (true) {
-                this.audioEffect.PlayOnecSound(this.audioEffect.buttonDown_Clip);
-
-                GameMaterialDatabase.UsedResource(Smelter.RequireResource[0]);
-
-                GameObject new_smelter = Instantiate(this.smelter_prefab) as GameObject;
-                Smelter smelter = new_smelter.GetComponent<Smelter>();
-                smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
-                smelter.OnBuildingProcess(smelter);
-            }
+			
 		}
 		else if(buildingName == EconomyIconData.STOREHOUSE_ICON_NAME) {
             bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
@@ -599,7 +588,7 @@ public class CapitalCity : Mz_BaseScene {
     protected override void Update()
     {
         base.Update();
-		
+			
         dayTime += Time.deltaTime;
         if (dayTime >= 60) {
             dayTime = 0;
@@ -646,14 +635,16 @@ public class CapitalCity : Mz_BaseScene {
         if(TaskManager.IsShowInteruptGUI == false)
             base.ImplementTouchPostion();
 		
-        if (Camera.main.transform.position.x > 700)
-            Camera.main.transform.position = new Vector3(700, Camera.main.transform.position.y, Camera.main.transform.position.z); 	//Vector3.left * Time.deltaTime;
-        if (Camera.main.transform.position.x < 220)
-            Camera.main.transform.position = new Vector3(220, Camera.main.transform.position.y, Camera.main.transform.position.z);	 //Vector3.right * Time.deltaTime;
-        if (Camera.main.transform.position.y > 140)
-            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, 140, Camera.main.transform.position.z);
-        if (Camera.main.transform.position.y < -140)
-            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, -140, Camera.main.transform.position.z);
+		Debug.Log (Camera.main.transform.position.x);
+		
+        if (Camera.main.transform.position.x > isomatricEngine.map_width) //left
+            Camera.main.transform.position = new Vector3(isomatricEngine.map_width, Camera.main.transform.position.y, Camera.main.transform.position.z); 	//Vector3.left * Time.deltaTime;
+        if (Camera.main.transform.position.x < 0) //right
+            Camera.main.transform.position = new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z);	 //Vector3.right * Time.deltaTime;
+        if (Camera.main.transform.position.y > isomatricEngine.map_height/2)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, isomatricEngine.map_height/2, Camera.main.transform.position.z);
+        if (Camera.main.transform.position.y < -isomatricEngine.map_height/2)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, -isomatricEngine.map_height/2, Camera.main.transform.position.z);
 	}
 
     protected override void MovingCameraTransform()
@@ -718,7 +709,7 @@ public class CapitalCity : Mz_BaseScene {
         }
 		
 		if(objectTag == "GUI") {
-			taskManager.Handle_OnInput(nameInput);
+			taskManager.OnInput(nameInput);
 		}
     }
 
@@ -744,4 +735,8 @@ public class CapitalCity : Mz_BaseScene {
         list_AICity.Clear();
         list_AICity = null;
     }
+	void initCenterCamera()
+	{
+		Camera.main.transform.position = new Vector3(isomatricEngine.map_width/2, 0, Camera.main.transform.position.z);
+	}
 }
