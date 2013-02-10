@@ -718,7 +718,7 @@ public class CapitalCity : Mz_BaseScene {
         }
 		
 		if(objectTag == "GUI") {
-			taskManager.OnInput(nameInput);
+			taskManager.Handle_OnInput(nameInput);
 		}
     }
 

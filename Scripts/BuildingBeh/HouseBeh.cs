@@ -183,7 +183,7 @@ public class HouseBeh : BuildingBeh {
 		
 		base.OnTouchDown ();
 		
-		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
+		sceneController.taskManager.currentTopSidebarState = TaskManager.TopSidebarState.show_domination;
 	}
 	
 	protected override void Update ()

@@ -22,7 +22,7 @@ public class TaskManager : MonoBehaviour
 
 	#region <@-- Right side bar data fields.
 
-    public enum RightSideState { 
+    public enum TopSidebarState { 
         none = 0, 
         show_domination, 
         show_agriculture, 
@@ -32,7 +32,7 @@ public class TaskManager : MonoBehaviour
         show_ForeignTab, 
         show_setting, 
     };
-    public RightSideState currentRightSideState = RightSideState.show_domination;	
+    public TopSidebarState currentTopSidebarState = TopSidebarState.none;	
 	private bool _showBaseRightSideBarGUIState = false;
 	public GameObject baseSpriteRightSideBar_obj;
 	private Hashtable moveInRightSideBarGUI_hash;
@@ -161,8 +161,6 @@ public class TaskManager : MonoBehaviour
 		
 		gamecontroller.AddComponent<QuestSystemManager>();
         questManager = gamecontroller.GetComponent<QuestSystemManager>();
-		
-		this.OnInput(utility_icon_button.name);
     }
 	
     void InitializeOnGUIDataFields()
@@ -176,7 +174,7 @@ public class TaskManager : MonoBehaviour
         foreignActivityStyle = new GUIStyle(taskbarUI_Skin.box);
         foreignActivityStyle.alignment = TextAnchor.UpperCenter;
 				
-        header_group_rect = new Rect(0, 0, 500, 50);
+        header_group_rect = new Rect(0, 0, (Screen.width/6) * 4, 50);
 		header_button_rect = new Rect(0, 0, header_group_rect.width / 5, 50);
 
         first_rect = new Rect(0, header_button_rect.y, header_button_rect.width, header_button_rect.height);
@@ -243,7 +241,7 @@ public class TaskManager : MonoBehaviour
         ToxotesUnitIcon = Resources.Load(PathOf_TroopIcons + "Toxotai", typeof(Texture2D)) as Texture2D;
     }
 
-	public void OnInput(string nameInput)
+	public void Handle_OnInput(string nameInput)
 	{
 		if(nameInput == menubarIcon_button.name) {
             if (TaskManager.IsShowInteruptGUI == false)
@@ -341,18 +339,25 @@ public class TaskManager : MonoBehaviour
 			#endregion
 		} 
 
-		GUI.BeginGroup (header_group_rect);
-		{
-			GUI.Box (first_rect, new GUIContent (StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity, food_icon), taskbarUI_Skin.button);
-			GUI.Box (second_rect, new GUIContent (StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity, wood_icon), taskbarUI_Skin.button);
-			GUI.Box (third_rect, new GUIContent (StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, stone_icon), taskbarUI_Skin.button);
-			GUI.Box (fourth_rect, new GUIContent (StoreHouse.sumOfGold.ToString (), gold_icon), taskbarUI_Skin.button);
-			GUI.Box (fifth_rect, new GUIContent (HouseBeh.SumOfPopulation.ToString (), employee_icon), taskbarUI_Skin.button);
-		}
-		GUI.EndGroup ();
-		
+        this.DrawTopSidebarGUI();
 //        this.DrawRightSidebar ();
-        this.DrawLeftSideBar ();
+        this.DrawLeftSideBar();
+    }
+
+    private void DrawTopSidebarGUI()
+    {
+        if(currentTopSidebarState == TopSidebarState.none) {
+	        
+        }
+		GUI.BeginGroup(header_group_rect, "", taskbarUI_Skin.box);
+        {
+            GUI.Box(first_rect, new GUIContent(StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity, food_icon), taskbarUI_Skin.button);
+            GUI.Box(second_rect, new GUIContent(StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity, wood_icon), taskbarUI_Skin.button);
+            GUI.Box(third_rect, new GUIContent(StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, stone_icon), taskbarUI_Skin.button);
+            GUI.Box(fourth_rect, new GUIContent(StoreHouse.SumOfCopper + "/" + StoreHouse.SumOfMaxCapacity, copper_icon), taskbarUI_Skin.button);
+            GUI.Box(fifth_rect, new GUIContent(HouseBeh.SumOfPopulation.ToString(), employee_icon), taskbarUI_Skin.button);
+        }
+        GUI.EndGroup();
     }
 
     private void GoToMainMenu() {
@@ -443,6 +448,7 @@ public class TaskManager : MonoBehaviour
             "onupdate", "OnMoveLeftSidebarCallBack", "onupdatetarget", this.gameObject,
             "oncomplete", "MoveInLeftSidebarCompleteCallBack", "oncompletetarget", this.gameObject));
     }
+
     private void MoveInLeftSidebarCompleteCallBack() {
         TaskManager.IsShowInteruptGUI = false;
     }
