@@ -11,7 +11,7 @@ public class MilitaryIconData {
 		BARRACKS_ICON_NAME,	
 	};
 	public TileArea[] areaOfBuildings = new TileArea[] {
-		new TileArea() { x = 0, y = 0, numSlotWidth = 3, numSlotHeight = 2, },
+		new TileArea() { x = 0, y = 0, numSlotWidth = 3, numSlotHeight = 3, },
 //		new TileArea() { x = 0, y = 0, numSlotWidth = 2, numSlotHeight = 2, },
 	};
 	

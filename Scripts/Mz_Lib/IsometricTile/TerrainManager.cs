@@ -38,36 +38,18 @@ public class TerrainManager : MonoBehaviour {
 		goldMine_areas.Add(new TileArea() { x = 6, y = 6, numSlotWidth = 1, numSlotHeight = 1 });
 
         stoneMine_areas.Add(new TileArea() { x = 6, y = 8, numSlotWidth = 1, numSlotHeight = 1 });
-		/*
-		tree_areas.Add(new TileArea() { x = 15, y = 0, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 1, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 2, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 3, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 4, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 5, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 6, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 7, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 8, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 9, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 10, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 11, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 12, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 13, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 14, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 15, y = 15, numSlotWidth = 1, numSlotHeight = 1});
-		tree_areas.Add(new TileArea() { x = 7, y = 7, numSlotWidth = 1, numSlotHeight = 1});
-		*/
+		
 		// <@-- Top width.
 		for (int i = 0; i < 16; i++) {
-			//tree_areas.Add(new TileArea() { x = i, y = 16, numSlotWidth = 1, numSlotHeight = 1});
+			tree_areas.Add(new TileArea() { x = i, y = 31, numSlotWidth = 1, numSlotHeight = 1});
 		}
 		// <@-- Down Width.
 		for (int i = 0; i < 16; i++) {
-			//tree_areas.Add(new TileArea() { x = i, y = 0, numSlotWidth = 1, numSlotHeight = 1});
+			tree_areas.Add(new TileArea() { x = i, y = 0, numSlotWidth = 1, numSlotHeight = 1});
 		}		
 		// <@-- Left Height.
 		for (int i = 1; i < 16; i++) {
-			//tree_areas.Add(new TileArea() { x = 0, y = i, numSlotWidth = 1, numSlotHeight = 1});
+			tree_areas.Add(new TileArea() { x = 0, y = i, numSlotWidth = 1, numSlotHeight = 1});
 		}
 
         this.CreateElement();

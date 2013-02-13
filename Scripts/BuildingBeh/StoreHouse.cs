@@ -161,18 +161,17 @@ public class StoreHouse : BuildingBeh {
 	/// Awake this instance.
     protected override void Awake()
     {
-		base.Awake();
-        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
-		
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData();
-		base.buildingTimeData.arrBuildingTimesData = new float[] { 
+        base.buildingTimeData.arrBuildingTimesData = new float[] { 
 			30f, 50f, 90f, 120f, 180f, 220f, 250f, 300f, 400f, 500f,
 			600f, 700f, 800f, 900f, 1000f, 1100f, 1200f, 1300f, 1400f, 1500f, 
 		};
 
         base.processbar_offsetPos = Vector3.up * 60;
+
+		base.Awake();
     }
 	
 	// Use this for initialization
@@ -239,7 +238,7 @@ public class StoreHouse : BuildingBeh {
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
 	
@@ -257,7 +256,6 @@ public class StoreHouse : BuildingBeh {
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);
         this.ReCalculationCapacityData();
 
         if (QuestSystemManager.arr_isMissionComplete[4] == false)

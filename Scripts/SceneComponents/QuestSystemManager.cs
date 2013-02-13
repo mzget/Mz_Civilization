@@ -191,7 +191,8 @@ public class QuestSystemManager : NotificationSystem {
 
     void OnGUI()
     {
-        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, Screen.height / Main.FixedGameHeight, 1));
+        GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity,
+            new Vector3(Screen.width / Main.FixedGameWidth, Screen.height / Main.FixedGameHeight, 1));
 
         if (currentQuestManagerStateBeh == QuestManagerStateBeh.DrawMissionActivity) {
 			if(CurrentMissionTopic_ID < list_questBeh.Count) {

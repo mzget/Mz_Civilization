@@ -7,13 +7,11 @@ public class IsometricEngine : MonoBehaviour {
 	public GameObject tile_prefab;
     public CapitalCity sceneController;
 	
-	public const int x = 16;
-	public const int y = 16;
+	public const int x = 31;
+    public const int y = 31;
     private float tile_width = 64f;
     private float tile_height = 37f;
-	
-	
-	public float map_width
+  	public float map_width
 	{
 		get {return tile_width * x;}
 	}
@@ -21,7 +19,9 @@ public class IsometricEngine : MonoBehaviour {
 	{
 		get {return tile_height * y;}
 	}
-    
+
+
+
 	// Use this for initialization
     void Start()
     {
@@ -30,7 +30,7 @@ public class IsometricEngine : MonoBehaviour {
 
     internal IEnumerator CreateTilemap()
     {
-        for (int i = 0; i < x; i++)
+        for (int i = 0; i <= x; i++)
         {
             for (int j = y; j >= 0; j--)
             {  // Changed loop condition here.
@@ -44,7 +44,7 @@ public class IsometricEngine : MonoBehaviour {
 				int z_pos = i + j_order;
 				tile.transform.position = new Vector3(a, b, z_pos);
 				tile.transform.parent = buildingArea_group.transform;
-                sceneController.tiles_list[i, j_order] = tile.GetComponent<Tile>();
+                Tile.Arr_BuildingAreas[i, j_order] = tile.GetComponent<Tile>();
             }
         }
 

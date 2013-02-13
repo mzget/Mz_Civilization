@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class BuildingIconBeh : ObjectsBeh {
+public class BuildingIconBeh : TilebaseObjBeh {
 	
 	// Use this for initialization
 	protected override void Start ()
@@ -57,12 +57,12 @@ public class BuildingIconBeh : ObjectsBeh {
 					numSlotWidth = constructionArea.numSlotWidth,
                     numSlotHeight = constructionArea.numSlotHeight,
 				};
-                bool canCreateBuilding = sceneController.tiles_list[0, 0].CheckedTileStatus(newarea);
+                bool canCreateBuilding = Tile.CheckedTileStatus(newarea);
 
                 if (this._isDropObject)
 				{
                     if(canCreateBuilding) {
-                        this.transform.position = sceneController.tiles_list[0, 0].GetAreaPosition(newarea);
+                        this.transform.position = Tile.GetAreaPosition(newarea);
                         this.originalPosition = this.transform.position;
 						constructionArea = newarea;
 
@@ -85,9 +85,9 @@ public class BuildingIconBeh : ObjectsBeh {
             }
             else if(hit.collider.tag == "Building" || hit.collider.tag == "TerrainElement") {
                 print("Tag == " + hit.collider.tag + " : Name == " + hit.collider.name);
-				
-                ObjectsBeh hit_obj = hit.collider.GetComponent<ObjectsBeh>();
-                hit_obj.ShowAreaStatus();
+
+                TilebaseObjBeh hit_obj = hit.collider.GetComponent<TilebaseObjBeh>();
+                hit_obj.ShowConstructionAreaStatus();
 
                 if(_isDropObject) {
                     Debug.LogWarning("Building and Terrain element cannot construction");

@@ -4,31 +4,20 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class BuildingBeh : ObjectsBeh {
+public class BuildingBeh : TilebaseObjBeh {
 	
     public const string BuildingIcons_TextureResourcePath = "Textures/Building_Icons/";
 	public const int MAX_LEVEL = 10;
-
-	//<!-- Font, Skin, Styles.
-    public Font ubuntu_font;
-    public GUISkin standard_Skin;
-    public GUISkin building_Skin;
-    public GUISkin taskbar_Skin;
-    protected GUIStyle job_style;
-    protected GUIStyle status_style;
-    protected GUIStyle closeButton_Style;
-	protected GUIStyle buildingWindowStyle;
-    protected GUIStyle notification_Style;
     //<!-- Building Icon.
     protected Texture2D buildingIcon_Texture;
-	
-	protected GameObject processbar_Obj_parent;
+
+    private GameObject processbar_Obj_parent;
+    private GameObject processBarBg_obj;
 	protected Vector3 processbar_offsetPos = Vector3.zero;
     private tk2dSprite processbarBG_sprite;
 	private GameObject scrollingBar_obj;
-
     protected tk2dSprite sprite;
-    protected TextMesh buildingLevel_textmesh;
+    protected TextMesh buildingStatus_textmesh;
 
     private int level = 0;
     public int Level { get { return level; } set { level = value; } }
@@ -45,7 +34,6 @@ public class BuildingBeh : ObjectsBeh {
 	public enum BuildingType { general = 0, resource, storehouse, barrack, };
 	protected BuildingType buildingType;
     protected BuildingsTimeData buildingTimeData;
-    internal Vector2 collisionPoint;
 
     #region <!-- buildings Data.
 
@@ -68,7 +56,17 @@ public class BuildingBeh : ObjectsBeh {
     public static BarracksBeh Barrack_Instance;
 
     #endregion
-
+    
+    //<!-- Font, Skin, Styles.
+    public Font ubuntu_font;
+    public GUISkin standard_Skin;
+    public GUISkin building_Skin;
+    public GUISkin taskbar_Skin;
+    protected GUIStyle job_style;
+    protected GUIStyle status_style;
+    protected GUIStyle closeButton_Style;
+    protected GUIStyle buildingWindowStyle;
+    protected GUIStyle notification_Style;
     protected Vector2 scrollPosition = Vector2.zero;
     protected Rect windowRect;
     protected Rect exitButton_Rect;
@@ -80,7 +78,6 @@ public class BuildingBeh : ObjectsBeh {
     protected Rect building_background_Rect;
     protected Rect descriptionGroup_Rect;
     protected Rect contentRect = new Rect(170, 20, 590, 160);
-    protected Rect warnningMessage_Rect = new Rect(Main.FixedGameWidth / 2 - 150, Main.FixedGameHeight / 2 - 120, 300, 240);
     protected Rect update_requireResource_Rect;
     protected Rect currentJob_Rect;
     protected Rect nextJob_Rect;
@@ -166,7 +163,6 @@ public class BuildingBeh : ObjectsBeh {
 		
         if (sceneController == null)
             sceneController = GameObject.FindGameObjectWithTag("GameController").GetComponent<CapitalCity>();
-
         if (standard_Skin == null)
             standard_Skin = Resources.Load("GUISkins/Standard_Skin", typeof(GUISkin)) as GUISkin;
         if (taskbar_Skin == null)
@@ -209,30 +205,48 @@ public class BuildingBeh : ObjectsBeh {
         currentJob_Rect = new Rect(10, update_requireResource_Rect.y - 80, descriptionGroup_Rect.width - 20, 32);
         nextJob_Rect = new Rect(10, update_requireResource_Rect.y - 40, descriptionGroup_Rect.width - 20, 32);
 //        destructionButton_Rect = new Rect(windowRect.width - 110, 40, 100, 32);
-
-        GameObject temp = Instantiate(Resources.Load("Buildings/Level_textmesh", typeof(GameObject))) as GameObject;
-        buildingLevel_textmesh = temp.GetComponent<TextMesh>();
-        buildingLevel_textmesh.gameObject.name = "Level_textmesh";
-        buildingLevel_textmesh.transform.parent = this.transform;
-        buildingLevel_textmesh.transform.localPosition = new Vector3(0, .6f, -8f);
-        buildingLevel_textmesh.transform.localScale = new Vector3(.1f, .1f, 1);
+        
+        this.CreateProcessbarObjParent();
     }
+
+	protected override void Start ()
+	{
+		base.Start ();
+
+		this.InitializingData();
+	}
+
+	protected virtual void InitializingData() {	}
 	
 	protected virtual void InitializeTexturesResource() { }
-	
-    protected virtual void InitializingData(){
-        Debug.Log(this.name + " : InitializingData");
+
+    /// <summary>
+    /// CreateProcessbarObjParent want to call at awake instance.
+    /// </summary>
+    private void CreateProcessbarObjParent()
+    {
+        processbar_Obj_parent = new GameObject("ProcessbarObj_group");
+        processbar_Obj_parent.transform.parent = this.transform;
+        processbar_Obj_parent.transform.localPosition = Vector3.zero + processbar_offsetPos;
+
+        GameObject temp = Instantiate(Resources.Load("Buildings/Level_textmesh", typeof(GameObject))) as GameObject;
+        buildingStatus_textmesh = temp.GetComponent<TextMesh>();
+        buildingStatus_textmesh.gameObject.name = "StatusTextmesh";
+        buildingStatus_textmesh.transform.parent = processbar_Obj_parent.transform;
+        buildingStatus_textmesh.transform.localPosition = new Vector3(0f, 0f, -2f);
+        buildingStatus_textmesh.transform.localScale = new Vector3(10f, 10f, 1);
+        buildingStatus_textmesh.gameObject.SetActive(false);
     }
-	
+
     public virtual void InitializingBuildingBeh(BuildingStatus p_buildingState, TileArea area, int p_level) {
         currentBuildingStatus = p_buildingState;
         constructionArea = area;
 
-        sceneController.tiles_list[0, 0].SetNoEmptyArea(constructionArea);
-        this.transform.position = sceneController.tiles_list[0, 0].GetAreaPosition(constructionArea);
+        Tile.SetNoEmptyArea(constructionArea);
+        this.transform.position = Tile.GetAreaPosition(constructionArea);
 
         Level = p_level;
-        buildingLevel_textmesh.text = this.level.ToString();
+        buildingStatus_textmesh.text = this.level.ToString();
 
         List_buildings.Add(this);
     }
@@ -265,13 +279,10 @@ public class BuildingBeh : ObjectsBeh {
 	
     protected virtual void CreateProcessBar(BuildingStatus buildingStatus)
     {
-        if (processbar_Obj_parent == null)
+        if (processBarBg_obj == null)
         {
-            processbar_Obj_parent = new GameObject("ProcessbarObj_group");
-            processbar_Obj_parent.transform.parent = this.transform;
-            processbar_Obj_parent.transform.localPosition = Vector3.zero + processbar_offsetPos;
-
-            GameObject processBarBg_obj = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Processbar", typeof(GameObject))) as GameObject;
+            buildingStatus_textmesh.gameObject.SetActive(true);
+            processBarBg_obj = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Processbar", typeof(GameObject))) as GameObject;
             processBarBg_obj.transform.parent = processbar_Obj_parent.transform;
             processBarBg_obj.transform.localPosition = Vector3.zero;
 
@@ -345,8 +356,11 @@ public class BuildingBeh : ObjectsBeh {
 	protected virtual void BuildingProcessComplete(BuildingBeh obj) {
         Debug.Log(obj.name + ": BuildingProcessComplete");
 
+        Destroy(this.processBarBg_obj);
+        buildingStatus_textmesh.gameObject.SetActive(false);
+
         this.Level += 1;
-        buildingLevel_textmesh.text = this.Level.ToString();
+        buildingStatus_textmesh.text = this.Level.ToString();
         onBuilding_Obj.Remove(obj);
 
         if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none) {
@@ -447,12 +461,12 @@ public class BuildingBeh : ObjectsBeh {
         TaskManager.IsShowInteruptGUI = true;
         sceneController.taskManager.MoveOut_RightSidebarGUI();
 		
-		this.ActivateColliderComponent(false);
+		BuildingBeh.ActivateColliderComponent(false);
 		
         base.OnTouchDown();
     }
 
-    protected void ActivateColliderComponent(bool p_active)
+    internal static void ActivateColliderComponent(bool p_active)
     {
         foreach (BuildingBeh item in List_buildings) {
             item.collider.enabled = p_active;
@@ -490,7 +504,8 @@ public class BuildingBeh : ObjectsBeh {
 		
         this._IsShowInterface = false;
         TaskManager.IsShowInteruptGUI = false;
-		this.ActivateColliderComponent(true);
+		
+        BuildingBeh.ActivateColliderComponent(true);
     }
 	
 	/// <summary>
@@ -509,6 +524,8 @@ public class BuildingBeh : ObjectsBeh {
 		MarketInstance = null;
 
 		Barrack_Instance = null;
+
+        List_buildings.Clear();
 	}
 
     protected override void ImplementDraggableObject()
@@ -519,51 +536,53 @@ public class BuildingBeh : ObjectsBeh {
 
         Ray cursorRay;
         RaycastHit hit;
-        cursorRay = new Ray(new Vector3(this.transform.position.x + collisionPoint.x, this.transform.position.y + collisionPoint.y, this.transform.position.z), Vector3.forward);
+        cursorRay = new Ray(new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z), Vector3.forward);
         if (Physics.Raycast(cursorRay, out hit, 100f))
         {
-            sceneController.tiles_list[0, 0].SetEmptyArea(constructionArea);
+            Tile.SetEmptyArea(constructionArea);
 			TileArea temp_originalArea = constructionArea;
 //			Debug.Log(constructionArea.x + ":" + constructionArea.y + ":" + constructionArea.numSlotWidth + ":" + constructionArea.numSlotDepth);
 
             if (hit.collider.tag == "BuildingArea")
             {
-				print(hit.collider.name);
                 string[] slotId = hit.collider.name.Split(':');
                 TileArea newarea = new TileArea() { 
-					x = int.Parse(slotId[0]), y = int.Parse(slotId[1]), 
+					x = int.Parse(slotId[0]), 
+					y = int.Parse(slotId[1]), 
 					numSlotWidth = constructionArea.numSlotWidth, 
 					numSlotHeight = constructionArea.numSlotHeight,
 				};
-                bool canCreateBuilding = sceneController.tiles_list[0, 0].CheckedTileStatus(newarea);
-
+                bool canCreateBuilding = Tile.CheckedTileStatus(newarea);
+				
                 if (this._isDropObject) {
                     if(canCreateBuilding) {
-                        this.transform.position = sceneController.tiles_list[0, 0].GetAreaPosition(newarea);
+                        this.transform.position = Tile.GetAreaPosition(newarea);
                         this.originalPosition = this.transform.position;
 						constructionArea = newarea;
-                        sceneController.tiles_list[0, 0].SetNoEmptyArea(newarea);
+                        Tile.SetNoEmptyArea(newarea);
                     }
                     else {
                         this.transform.position = this.originalPosition;
 						constructionArea = temp_originalArea;
-                        sceneController.tiles_list[0, 0].SetNoEmptyArea(constructionArea);
+                        Tile.SetNoEmptyArea(constructionArea);
                     }
-                    this._isDropObject = false;
+					
+                    base._isDropObject = false;
                     base._isDraggable = false;
 					TaskManager.IsShowInteruptGUI = false;
                 }
             }
             else if(hit.collider.tag == "Building" || hit.collider.tag == "TerrainElement") {
                 print("Tag == " + hit.collider.tag + " : Name == " + hit.collider.name);
-                ObjectsBeh hit_obj = hit.collider.GetComponent<ObjectsBeh>();
-                hit_obj.ShowAreaStatus();
+
+                TilebaseObjBeh hit_obj = hit.collider.GetComponent<TilebaseObjBeh>();
+                hit_obj.ShowConstructionAreaStatus();
 
                 if(_isDropObject) {
                     Debug.LogWarning("Building and Terrain element cannot construction");
                     this.transform.position = this.originalPosition;
 					constructionArea = temp_originalArea;
-                    sceneController.tiles_list[0, 0].SetNoEmptyArea(constructionArea);
+                    Tile.SetNoEmptyArea(constructionArea);
 
                     this._isDropObject = false;
                     base._isDraggable = false;

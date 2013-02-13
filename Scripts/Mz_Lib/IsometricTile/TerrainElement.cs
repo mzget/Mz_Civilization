@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class TerrainElement : ObjectsBeh {
+public class TerrainElement : TilebaseObjBeh {
     	
 	protected override void Awake ()
 	{
@@ -22,14 +22,20 @@ public class TerrainElement : ObjectsBeh {
             return;
         }
 		
-        this.transform.position = sceneController.tiles_list[0, 0].GetAreaPosition(constructionArea);
-        sceneController.tiles_list[0, 0].SetNoEmptyArea(constructionArea);
+        this.transform.position = Tile.GetAreaPosition(constructionArea);
+        Tile.SetNoEmptyArea(constructionArea);
         this.originalPosition = this.transform.position;
-	}
-	
-	// Update is called once per frame
-    protected override void Update()
+    }
+
+    // Enables the behaviour when it is visible
+    void OnBecameVisible()
     {
-        base.Update();
+        enabled = true;
+    }
+
+    // Disables the behaviour when it is invisible
+    void OnBecameInvisible()
+    {
+        enabled = false;
     }
 }

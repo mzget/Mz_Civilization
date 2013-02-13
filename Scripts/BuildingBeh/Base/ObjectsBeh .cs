@@ -8,7 +8,6 @@ public class ObjectsBeh : Base_ObjectBeh
     public bool _canMovable = false;
     protected bool _isDropObject = false;
     protected bool _isDraggable = false;
-    protected bool _canActive = false;
     internal Vector3 originalPosition;
 
     /// <summary>
@@ -29,7 +28,9 @@ public class ObjectsBeh : Base_ObjectBeh
         sceneController = scene_obj.GetComponent<CapitalCity>();
     }
 	
-	protected virtual void Start() {}
+	protected virtual void Start() {
+
+	}
 
     protected virtual void ImplementDraggableObject()
     {		
@@ -43,16 +44,9 @@ public class ObjectsBeh : Base_ObjectBeh
         this.transform.position = new Vector3(screenPoint.x, screenPoint.y, -2.5f);
     }
 
-    public TileArea constructionArea;
-    internal virtual bool ShowAreaStatus() {
-        bool canCreateBuilding = sceneController.tiles_list[0, 0].CheckedTileStatus(constructionArea);
-
-        return canCreateBuilding;
-    }
-
     // Update is called once per frame
     protected override void Update()
-    {
+    {	
         base.Update();
 
         if (_isDraggable) {
@@ -71,6 +65,8 @@ public class ObjectsBeh : Base_ObjectBeh
 
         if (this._canMovable && base._OnTouchBegin)
 			this._isDraggable = true;
+
+        Debug.Log(this.gameObject.name + " : " + "_isDraggable = " + _isDraggable);
     }
 
     protected override void OnTouchEnded()

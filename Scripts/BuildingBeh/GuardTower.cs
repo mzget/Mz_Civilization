@@ -7,9 +7,10 @@ public class GuardTower : BuildingBeh {
 //The Guard Tower researches upgrades that boost their offensive power and maximum health.
 
 	// Use this for initialization
-	void Start () {
-	
-	}
+    protected override void Start()
+    {
+        base.Start();
+    }
 	
 	// Update is called once per frame
     protected override void Update()

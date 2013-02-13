@@ -64,14 +64,13 @@ public class BarracksBeh : BuildingBeh
 
     protected override void Awake()
     {
-        base.Awake();
-        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
-
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 
         base.processbar_offsetPos = Vector3.up * 70;
+
+        base.Awake();
     }
     
 	// Use this for initialization
@@ -80,14 +79,11 @@ public class BarracksBeh : BuildingBeh
         base.Start();
 
         _canMovable = false;
-
-        this.InitializingData();
         this.InitializeTexturesResource();
 
         base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResourceNotification_event;
     }
     
-	
 	protected override void InitializeTexturesResource ()
 	{
 		base.InitializeTexturesResource ();
@@ -149,8 +145,6 @@ public class BarracksBeh : BuildingBeh
     protected override void BuildingProcessComplete(BuildingBeh obj)
     {
         base.BuildingProcessComplete(obj);
-
-        Destroy(base.processbar_Obj_parent);
 
         if (QuestSystemManager.arr_isMissionComplete[10] == false)
             sceneController.taskManager.questManager.MissionComplete(10);
@@ -216,7 +210,7 @@ public class BarracksBeh : BuildingBeh
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
     }
 	
@@ -227,7 +221,7 @@ public class BarracksBeh : BuildingBeh
 		
 		base.OnTouchDown ();
 		
-        sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_military;
+        sceneController.taskManager.currentTopSidebarState = TaskManager.TopSidebarState.show_military;
 	}
 	
 	protected override void CreateWindow ()

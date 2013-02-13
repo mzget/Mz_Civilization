@@ -54,22 +54,20 @@ public class HouseBeh : BuildingBeh {
     //<!--- Awake --->
     protected override void Awake()
     {
-        base.Awake();
-
         base.sprite = this.gameObject.GetComponent<tk2dSprite>();
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
-		base.buildingTimeData = new BuildingsTimeData(buildingType);
-		
-		base.processbar_offsetPos = Vector3.up * 60;
+        base.buildingTimeData = new BuildingsTimeData(buildingType);
+
+        base.processbar_offsetPos = Vector3.up * 60;
+
+        base.Awake();
     }
 
 	// Use this for initialization
 	protected override void Start ()
 	{
 		base.Start ();
-		
-        //base.collisionPoint = new Vector2(-4.5f, - 13.75f);
 		
 		this.InitializeTexturesResource();
 		this.CalculationCurrentDweller();
@@ -150,7 +148,6 @@ public class HouseBeh : BuildingBeh {
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);
         this.CalculationCurrentDweller();
 
         if (QuestSystemManager.CurrentMissionTopic_ID == 3)
@@ -163,7 +160,7 @@ public class HouseBeh : BuildingBeh {
 	{	
 		base.DecreaseBuildingLevel ();
 		
-		buildingLevel_textmesh.text = this.Level.ToString();
+		buildingStatus_textmesh.text = this.Level.ToString();
 		this.CalculationCurrentDweller();
 	}
 
@@ -183,7 +180,7 @@ public class HouseBeh : BuildingBeh {
 		
 		base.OnTouchDown ();
 		
-		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_domination;
+		sceneController.taskManager.currentTopSidebarState = TaskManager.TopSidebarState.show_domination;
 	}
 	
 	protected override void Update ()
@@ -192,7 +189,7 @@ public class HouseBeh : BuildingBeh {
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
 	

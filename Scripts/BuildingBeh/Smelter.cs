@@ -41,21 +41,23 @@ public class Smelter : BuildingBeh {
 	
 	
 	protected override void Awake() {
-		base.Awake();
-		
-        sprite = this.GetComponent<tk2dSprite>();
-		
         this.name = Smelter.BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+
+        base.processbar_offsetPos = Vector3.up * 60;
+
+        base.Awake();
 	}
 
 	// Use this for initialization
-    void Start() {
-		this.InitializeTexturesResource();
-		
-		base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
-	}
+    protected override void Start()
+    {
+        base.Start();
+
+        this.InitializeTexturesResource();
+        base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
+    }
 	
 	protected override void InitializeTexturesResource ()
 	{
@@ -95,8 +97,6 @@ public class Smelter : BuildingBeh {
     protected override void BuildingProcessComplete(BuildingBeh building)
     {
         base.BuildingProcessComplete(building);
-
-        Destroy(processbar_Obj_parent);
     }
 
     #endregion
@@ -126,7 +126,7 @@ public class Smelter : BuildingBeh {
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
 

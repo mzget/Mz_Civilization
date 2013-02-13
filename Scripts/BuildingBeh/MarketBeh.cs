@@ -92,26 +92,15 @@ public class MarketBeh : BuildingBeh {
 
 	
 	/// Awake this instance.
-    protected override void Awake() {
-        base.Awake();
-        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
-
+    protected override void Awake()
+    {
         this.name = MarketBeh.BuildingName;
         base.buildingType = BuildingBeh.BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
 
-        new_descriptionGroupRect = new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
-        importGroupRect = new Rect(10, 50, new_descriptionGroupRect.width - 20, 150);
-        exportGroupRect = new Rect(10, 210, new_descriptionGroupRect.width - 20, 150);
-		selectedNumberOfGoods_GroupRect = new Rect(25, 5, 100, 40);
-        selectedGoods1Group_rect = new Rect(importGroupRect.width - 160, 35, 150, 50);
-        selectedGoods2Group_rect = new Rect(importGroupRect.width - 160, 90, 150, 50);
-		selectedLeft_rect  = new Rect(0, 15, 20, 20);
-		selectedRight_rect  = new Rect(130, 15, 20, 20);
-		
-        goods_Label_style = new GUIStyle(standard_Skin.textField);
-        goods_Label_style.imagePosition = ImagePosition.ImageLeft;
-        goods_Label_style.alignment = TextAnchor.MiddleCenter;
+        base.processbar_offsetPos = Vector3.up * 60;
+
+        base.Awake();
     }
 
 	// Use this for initialization
@@ -125,6 +114,24 @@ public class MarketBeh : BuildingBeh {
         sceneController.dayCycle_Event += Handle_dayCycle_Event;
 		Handle_dayCycle_Event(this, System.EventArgs.Empty);
 	}
+
+    protected override void InitializingData()
+    {
+        base.InitializingData();
+
+        new_descriptionGroupRect = new Rect(base.descriptionGroup_Rect.x, base.descriptionGroup_Rect.y, base.descriptionGroup_Rect.width - 16, base.descriptionGroup_Rect.height);
+        importGroupRect = new Rect(10, 50, new_descriptionGroupRect.width - 20, 150);
+        exportGroupRect = new Rect(10, 210, new_descriptionGroupRect.width - 20, 150);
+        selectedNumberOfGoods_GroupRect = new Rect(25, 5, 100, 40);
+        selectedGoods1Group_rect = new Rect(importGroupRect.width - 160, 35, 150, 50);
+        selectedGoods2Group_rect = new Rect(importGroupRect.width - 160, 90, 150, 50);
+        selectedLeft_rect = new Rect(0, 15, 20, 20);
+        selectedRight_rect = new Rect(130, 15, 20, 20);
+
+        goods_Label_style = new GUIStyle(standard_Skin.textField);
+        goods_Label_style.imagePosition = ImagePosition.ImageLeft;
+        goods_Label_style.alignment = TextAnchor.MiddleCenter;
+    }
 
 	#region <@-- Events handle.
 
@@ -183,7 +190,6 @@ public class MarketBeh : BuildingBeh {
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);
         caravanList.Add(ScriptableObject.CreateInstance<CaravanBeh>());
         this.CheckingIdleCaravan();
 
@@ -196,7 +202,7 @@ public class MarketBeh : BuildingBeh {
     protected override void DecreaseBuildingLevel()
     {
         base.DecreaseBuildingLevel();
-        buildingLevel_textmesh.text = this.Level.ToString();
+        buildingStatus_textmesh.text = this.Level.ToString();
     }
 
     protected override void ClearStorageData()
@@ -425,7 +431,7 @@ public class MarketBeh : BuildingBeh {
 		
 		base.OnTouchDown ();
 		
-		sceneController.taskManager.currentRightSideState = TaskManager.RightSideState.show_commerce;
+		sceneController.taskManager.currentTopSidebarState = TaskManager.TopSidebarState.show_commerce;
 	}
 	
 	protected override void Update ()
@@ -434,7 +440,7 @@ public class MarketBeh : BuildingBeh {
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
 	

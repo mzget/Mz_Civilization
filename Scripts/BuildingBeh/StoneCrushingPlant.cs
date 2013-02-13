@@ -1,26 +1,26 @@
 using UnityEngine;
 using System.Collections;
 
-public class Sawmill : BuildingBeh {
-	
-	//<!--- Static Data.
+public class StoneCrushingPlant : BuildingBeh {
+
+    //<!-- Static Data.
     public static GameMaterialDatabase[] RequireResource = new GameMaterialDatabase[10] {
-        new GameMaterialDatabase(80, 60, 0, 120, 3),
-        new GameMaterialDatabase(160, 120, 0, 240, 5),
-        new GameMaterialDatabase(320, 240, 0, 480, 8),
-        new GameMaterialDatabase(640, 480, 0, 960, 12),
-        new GameMaterialDatabase(1280, 960, 0, 1920, 17),
-        new GameMaterialDatabase(2560, 1920, 0, 3840, 23),
-        new GameMaterialDatabase(3840, 2880, 0, 5760, 30),
-        new GameMaterialDatabase(5760, 4320, 0, 7680, 38),
-        new GameMaterialDatabase(7680, 6240, 0, 9600, 47),
-        new GameMaterialDatabase(9600, 8640, 0, 12000, 60),
+        new GameMaterialDatabase(80, 80, 0, 120, 3),
+        new GameMaterialDatabase(160, 160, 0, 240, 5),
+        new GameMaterialDatabase(320, 320, 0, 480, 8),
+        new GameMaterialDatabase(640, 640, 0, 960, 12),
+        new GameMaterialDatabase(1280, 1280, 0, 1920, 17),
+        new GameMaterialDatabase(2560, 2560, 0, 3840, 23),
+        new GameMaterialDatabase(3840, 3840, 0, 5760, 30),
+        new GameMaterialDatabase(5760, 5760, 0, 7680, 38),
+        new GameMaterialDatabase(7680, 7680, 0, 9600, 47),
+        new GameMaterialDatabase(9600, 9600, 0, 12000, 60),
     };
 
-    //<!--- Data.
-	public static string BuildingName = "Sawmill";
-    private static string Description_TH = "โรงตัดไม้ ตัดต้นไม้เพื่อนำมาทำท่อนไม้ ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้ไม้มากขึ้นไปด้วย";
-    private static string Description_EN = "Wood can only be gathered by cutting down trees. It is used to build almost all Structures.";
+    //<!-- Data.
+    public static string BuildingName = "Stone crushing plant";
+    private static string Description_TH = "โรงโม่หิน มีช่างหินเป็นผู้เชี่ยวชาญในการตัดหิน ยิ่งคุณอัพเกรดมันมากเท่าไหร่ \n คุณก็จะได้หินมากขึ้นไปด้วย";
+    private static string Description_EN = "Stone block can be gathered from stone mining. Upgrade millstone to increase stone block production.";
     public static string CurrentDescription {
         get {
             string temp = Description_EN;
@@ -32,62 +32,60 @@ public class Sawmill : BuildingBeh {
         }
     }
 	//<!--- produce food per second.
-    private int[] productionRate = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, };
+    private int[] productionRate = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, };       
+    
 
-	
-	protected override void Awake() {
-        base.Awake();
-		
+    protected override void Awake()
+    {
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
-		
-		base.processbar_offsetPos = Vector3.up * 60;
-	}
+
+        base.processbar_offsetPos = Vector3.up * 70;
+
+        base.Awake();
+    }
 	
 	// Use this for initialization
-	protected override void Start ()
-	{
-		base.Start ();
-		
-		this.InitializeTexturesResource();
-		
-		base.sceneController.resourceCycle_Event += this.HaveResourceCycle_Event;
-        base.NotEnoughResource_Notification_event += Sawmill_NotEnoughResource_Notification_event;
-	}
+    protected override void Start()
+    {
+        base.Start();
 
-	#region <@-- Events Handle.
+        this.InitializeTexturesResource();
+
+        base.sceneController.resourceCycle_Event += HaveResourceCycle_Event;
+        base.NotEnoughResource_Notification_event += MillStone_NotEnoughResource_Notification_event;
+    }
+
+    #region <!--- Events Handle.
 
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
-		if(this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {		
-			StoreHouse.Add_sumOfWood(this.productionRate[this.Level]);
-		}
+        if (this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
+			StoreHouse.Add_sumOfStone(this.productionRate[this.Level]);
+        }
     }
 
-    private void Sawmill_NotEnoughResource_Notification_event(object sender, NoEnoughResourceNotificationArg e)
+    private void MillStone_NotEnoughResource_Notification_event(object sender, NoEnoughResourceNotificationArg e)
     {
         base.notificationText = e.notification_args;
     }
 
-	#endregion
-	
-	protected override void InitializeTexturesResource ()
-	{
-		base.InitializeTexturesResource ();
-		
-        //<!-- Load textures resource.
-		buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "PinePlanks", typeof(Texture2D)) as Texture2D;
-	}
+    #endregion
 
+    protected override void InitializeTexturesResource()
+    {
+        base.InitializeTexturesResource();
+
+        buildingIcon_Texture = Resources.Load(BuildingBeh.BuildingIcons_TextureResourcePath + "StoneBlock", typeof(Texture2D)) as Texture2D;
+    }
     public override void InitializingBuildingBeh(BuildingBeh.BuildingStatus p_buildingState, TileArea area, int p_level)
     {
         base.InitializingBuildingBeh(p_buildingState, area, p_level);
-		
-        BuildingBeh.Sawmill_Instances.Add(this);
+
+        BuildingBeh.StoneCrushingPlant_Instances.Add(this);
 		this.CalculateNumberOfEmployed(p_level);
     }
-	
 	protected override void CalculateNumberOfEmployed (int p_level)
 	{
 		int sumOfEmployed = 0;
@@ -97,37 +95,30 @@ public class Sawmill : BuildingBeh {
 		
 		HouseBeh.SumOfEmployee += sumOfEmployed;
 	}
-    
-    /// <summary>
-    /// Building Processing.
-    /// </summary>
-    /// <param name="obj"></param>
+
+    #region <!-- Building Processing.
+
+    public override void OnBuildingProcess(BuildingBeh building)
+    {
+        base.OnBuildingProcess(building);
+    }
+    protected override void CreateProcessBar(BuildingBeh.BuildingStatus buildingState)
+    {
+        base.CreateProcessBar(buildingState);
+    }
     protected override void BuildingProcessComplete(BuildingBeh obj)
     {
         base.BuildingProcessComplete(obj);
-
-		Destroy(processbar_Obj_parent);
-
-        if (QuestSystemManager.arr_isMissionComplete[1] == false)
-            sceneController.taskManager.questManager.MissionComplete(1);
     }
-    /// <summary>
-    /// Destruction building.
-    /// </summary>
-    protected override void DecreaseBuildingLevel()
-    {
-        base.DecreaseBuildingLevel();
-        buildingLevel_textmesh.text = this.Level.ToString();
-    }
+
+    #endregion
 	
 	protected override void ClearStorageData ()
 	{
 		base.ClearStorageData ();
-		
-		base.sceneController.resourceCycle_Event -= HaveResourceCycle_Event;
-        base.NotEnoughResource_Notification_event -= Sawmill_NotEnoughResource_Notification_event;
 
-		BuildingBeh.Sawmill_Instances.Remove(this);
+        sceneController.resourceCycle_Event -= HaveResourceCycle_Event;
+		BuildingBeh.StoneCrushingPlant_Instances.Remove(this);
 	}
 	
 	protected override void Update ()
@@ -136,10 +127,10 @@ public class Sawmill : BuildingBeh {
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
-	
+
     protected override void CreateWindow()
     {
         base.CreateWindow();
@@ -149,9 +140,11 @@ public class Sawmill : BuildingBeh {
 //        }
         GUI.Box(base.notificationBox_rect, base.notificationText, base.notification_Style);
 
-        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height),
-            scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height));
+        scrollPosition = GUI.BeginScrollView(new Rect(0, 80, base.windowRect.width, base.background_Rect.height), 
+			scrollPosition, new Rect(0, 0, base.windowRect.width, base.background_Rect.height));
         {
+            building_Skin.box.contentOffset = new Vector2(128, 38);
+
             GUI.BeginGroup(base.building_background_Rect, GUIContent.none, building_Skin.box);
             {
                 GUI.DrawTexture(base.imgIcon_Rect, buildingIcon_Texture);
@@ -160,8 +153,7 @@ public class Sawmill : BuildingBeh {
                 #region <!--- Content group.
 
                 GUI.BeginGroup(base.descriptionGroup_Rect, CurrentDescription, building_Skin.textArea);
-                {   //<!-- group draw order.
-
+                {
                     //<!-- Current Production rate.
                     GUI.Label(currentJob_Rect, "Current production rate per minute : " + productionRate[Level] * 6, base.job_style);
                     GUI.Label(nextJob_Rect, "Next production rate per minute : " + productionRate[Level + 1] * 6, base.job_style);
@@ -171,13 +163,13 @@ public class Sawmill : BuildingBeh {
                     {
                         GUI.Label(GameMaterialDatabase.First_Rect, new GUIContent(RequireResource[Level].Food.ToString(), 
                             base.sceneController.taskManager.food_icon), standard_Skin.box);
-                        GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Second_Rect, new GUIContent(RequireResource[Level].Wood.ToString(),
                             base.sceneController.taskManager.wood_icon), standard_Skin.box);
                         //GUI.Label(GameResource.Third_Rect, new GUIContent(RequireResource[Level].Stone.ToString(), 
                         //    base.stageManager.taskbarManager.stone_icon), standard_Skin.box);
-                        GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Third_Rect, new GUIContent(RequireResource[Level].Gold.ToString(),
                             base.sceneController.taskManager.gold_icon), standard_Skin.box);
-                        GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(), 
+                        GUI.Label(GameMaterialDatabase.Fourth_Rect, new GUIContent(RequireResource[Level].Employee.ToString(),
                             base.sceneController.taskManager.employee_icon), standard_Skin.box);
                     }
                     GUI.EndGroup();
@@ -188,7 +180,8 @@ public class Sawmill : BuildingBeh {
 
                 #region <!--- Upgrade Button mechanichm.
 
-				GUI.enabled = (base.CheckingCanUpgradeLevel() && base.CheckingEnoughUpgradeResource(RequireResource[Level])) ? true:false;
+				/// Have to research stonecutter before upgrade.
+				GUI.enabled = (base.CheckingCanUpgradeLevel() && CheckingEnoughUpgradeResource(RequireResource[Level])) ? true : false;
                 if (GUI.Button(base.upgrade_Button_Rect, new GUIContent("Upgrade")))
                 {
                     GameMaterialDatabase.UsedResource(RequireResource[Level]);
@@ -200,19 +193,19 @@ public class Sawmill : BuildingBeh {
                 GUI.enabled = true;
 
                 #endregion
-				
-				#region <!--- Destruction button.
-				
-		        GUI.enabled = this.CheckingCanDestructionBuilding();
-		        if (GUI.Button(destruction_Button_Rect, new GUIContent("Destruct")))
-		        {
-		            this.currentBuildingStatus = BuildingStatus.OnDestructionProcess;
+
+                #region <!--- Destruction button.
+
+                GUI.enabled = this.CheckingCanDestructionBuilding();
+                if (GUI.Button(destruction_Button_Rect, new GUIContent("Destruct")))
+                {
+                    this.currentBuildingStatus = BuildingStatus.OnDestructionProcess;
                     this.DestructionBuilding();
                     base.CloseGUIWindow();
-		        }
-				GUI.enabled = true;
-				
-				#endregion
+                }
+                GUI.enabled = true;
+
+                #endregion
             }
             GUI.EndGroup();
         }

@@ -25,11 +25,10 @@ public class LordsHouse : BuildingBeh {
 		base.Start ();
 		
 		base._canMovable = true;
-		collisionPoint = new Vector2(0f, -30f);
 		constructionArea = new TileArea() { x = 3, y = 8, numSlotWidth = 2, numSlotHeight = 3 };
-		this.transform.position = sceneController.tiles_list[0, 0].GetAreaPosition(constructionArea);
+		this.transform.position = Tile.GetAreaPosition(constructionArea);
 		originalPosition = this.transform.position;
-		sceneController.tiles_list[0, 0].SetNoEmptyArea(constructionArea);
+        Tile.SetNoEmptyArea(constructionArea);
 		
 		this.InitializeTexturesResource();
 		this.CalculationCurrentDweller();

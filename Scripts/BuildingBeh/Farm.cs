@@ -37,13 +37,13 @@ public class Farm : BuildingBeh
 
     protected override void Awake()
     {
-        base.Awake();
-
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
-		
-		base.processbar_offsetPos = Vector3.up * 60;
+
+        base.processbar_offsetPos = Vector3.up * 60;
+
+        base.Awake();
     }
 
     // Use this for initialization
@@ -89,8 +89,6 @@ public class Farm : BuildingBeh
     {
         base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);
-
         if(QuestSystemManager.arr_isMissionComplete[2] == false)
             sceneController.taskManager.questManager.MissionComplete(2);	
     }
@@ -103,7 +101,7 @@ public class Farm : BuildingBeh
         HouseBeh.SumOfEmployee -= RequireResource[this.Level].Employee;
 		
         base.DecreaseBuildingLevel();
-        buildingLevel_textmesh.text = this.Level.ToString();
+        buildingStatus_textmesh.text = this.Level.ToString();
     }
 	
 	protected override void ClearStorageData ()
@@ -138,7 +136,7 @@ public class Farm : BuildingBeh
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
 	

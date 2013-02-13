@@ -6,7 +6,7 @@ public class Base_ObjectBeh : MonoBehaviour {
     protected bool _OnTouchBegin = false;
     protected bool _OnTouchRelease = false;
 	
-	protected virtual void Update() {       
+	protected virtual void Update() {
         if (_OnTouchBegin && _OnTouchRelease) {
             OnTouchDown();
         }
@@ -16,11 +16,13 @@ public class Base_ObjectBeh : MonoBehaviour {
     {
         if (_OnTouchBegin == false)
             _OnTouchBegin = true;
+
+        Debug.Log(this.gameObject.name + " : " + "_OnTouchBegin == " + _OnTouchBegin);
     }
 
     protected virtual void OnTouchDown()
     {
-        //Debug.Log("Class : Base_ObjectBeh." + "OnTouchDown");
+        Debug.Log(this.gameObject.name + " : " + "OnTouchDown");
 
         /// do something.
 		
@@ -32,18 +34,15 @@ public class Base_ObjectBeh : MonoBehaviour {
 		//Debug.Log("Class : Base_ObjectBeh." + "OnTouchOver"); 
 	}
 
-    protected virtual void OnTouchDrag()
-    {
-//		Debug.Log("Class : Base_ObjectBeh." + "OnTouchDrag");
+    protected virtual void OnTouchDrag() {
+        //Debug.Log("Class : Base_ObjectBeh." + "OnTouchDrag");
     }
 
-    protected virtual void OnTouchEnded()
-    {
+    protected virtual void OnTouchEnded() {
+        Debug.Log(this.gameObject.name + " : " + "OnTouchEnded == " + _OnTouchRelease);
+		
         if (_OnTouchRelease == false && _OnTouchBegin)
-        {
-            _OnTouchRelease = true;
-            print("Call OnTouchEnded_Function() : " + _OnTouchRelease);
-        }
+			_OnTouchRelease = true;
     }
 	
 	protected virtual void OnMouseExit() {

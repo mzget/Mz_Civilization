@@ -40,22 +40,22 @@ public class TownCenter : BuildingBeh {
 	
 	protected override void Awake ()
 	{
-        base.Awake();
-		
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
-				
-        BuildingBeh.TownCenter = this;		
-		BuildingBeh.List_buildings.Add(this);
-		base.processbar_offsetPos = Vector3.up * 75;
+
+        BuildingBeh.TownCenter = this;
+        BuildingBeh.List_buildings.Add(this);
+
+        base.processbar_offsetPos = Vector3.up * 75;
+     
+        base.Awake();
 	}
 	
 	// Use this for initialization
 	protected override void Start ()
 	{
 		base.Start ();
-		
 		StartCoroutine(this.WaitForStartingComplete());
 	}
 
@@ -63,16 +63,13 @@ public class TownCenter : BuildingBeh {
 	{		
 		while(CapitalCity._StageInitialized == false)
 			yield return 0;
-		
-//		yield return new WaitForFixedUpdate();
 
         base._canMovable = false;
-        constructionArea = new TileArea() { x = 8, y = 8, numSlotWidth = 3, numSlotHeight = 3 };
-        this.transform.position = sceneController.tiles_list[0, 0].GetAreaPosition(constructionArea);
-        sceneController.tiles_list[0, 0].SetNoEmptyArea(constructionArea);
+        constructionArea = new TileArea() { x = 15, y = 15, numSlotWidth = 3, numSlotHeight = 3 };
+        this.transform.position = Tile.GetAreaPosition(constructionArea);
+        Tile.SetNoEmptyArea(constructionArea);
 
         InitializeTexturesResource();
-        buildingLevel_textmesh.text = Level.ToString();
 
 		base.NotEnoughResource_Notification_event += HandleBaseNotEnoughResource_Notification_event;
 	}
@@ -97,8 +94,6 @@ public class TownCenter : BuildingBeh {
 	{
 		base.BuildingProcessComplete(obj);
 
-        Destroy(base.processbar_Obj_parent);
-
         if (BuildingBeh.TownCenter.Level == 3) {
             if(QuestSystemManager.arr_isMissionComplete[6] == false)
                 sceneController.taskManager.questManager.MissionComplete(6);
@@ -108,7 +103,6 @@ public class TownCenter : BuildingBeh {
 	protected override void DecreaseBuildingLevel ()
 	{
 		base.DecreaseBuildingLevel ();
-		buildingLevel_textmesh.text = this.Level.ToString();
 	}
 	
 	protected override void Update ()
@@ -117,7 +111,7 @@ public class TownCenter : BuildingBeh {
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
 	

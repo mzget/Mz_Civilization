@@ -35,12 +35,11 @@ public class AcademyBeh : BuildingBeh {
 
 	
 	protected override void Awake() {
-        base.Awake();
-
-        sprite = this.gameObject.GetComponent<tk2dSprite>();
         this.gameObject.name = BuildingName;
         base.buildingType = BuildingBeh.BuildingType.resource;
         base.buildingTimeData = new BuildingsTimeData(base.buildingType);
+
+        base.Awake();
 	}
 	
 	// Use this for initialization
@@ -84,8 +83,6 @@ public class AcademyBeh : BuildingBeh {
     protected override void BuildingProcessComplete(BuildingBeh obj)
     {
         base.BuildingProcessComplete(obj);
-
-        Destroy(base.processbar_Obj_parent);
 		
 		if(this.Level == 3) {
         	if (QuestSystemManager.arr_isMissionComplete[9] == false)
@@ -107,7 +104,7 @@ public class AcademyBeh : BuildingBeh {
 		
 		if(currentBuildingStatus == BuildingBeh.BuildingStatus.onBuildingProcess
 			|| currentBuildingStatus == BuildingBeh.BuildingStatus.onUpgradeProcess) {
-			buildingLevel_textmesh.text = base.notificationText;
+			buildingStatus_textmesh.text = base.notificationText;
 		}
 	}
 	
