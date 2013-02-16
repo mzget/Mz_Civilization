@@ -36,10 +36,10 @@ public class NotificationSystem : MonoBehaviour {
         noticeMessageBox_img = Resources.Load(TaskManager.PathOfMainGUI + "GUI_box", typeof(Texture2D)) as Texture2D;
         quest_icon = Resources.Load(TaskManager.PathOfMainGUI + "Quest_icon", typeof(Texture2D)) as Texture2D;
 
-        drawMessageRect = new Rect(40 * Mz_OnGUIManager.Extend_heightScale, 40, 100 * Mz_OnGUIManager.Extend_heightScale, 100);
-        drawAdvisorRect = new Rect(0, (taskManager.standardWindow_rect.height / 2) - 100, 200 * Mz_OnGUIManager.Extend_heightScale, 200);
+        drawMessageRect = new Rect(200 * Mz_OnGUIManager.Extend_heightScale, 40, 100 * Mz_OnGUIManager.Extend_heightScale, 100);
+        drawAdvisorRect = new Rect(10 * Mz_OnGUIManager.Extend_heightScale, (taskManager.standardWindow_rect.height - 400), 200 * Mz_OnGUIManager.Extend_heightScale, 400);
         drawNoticeTopicRect = new Rect(225 * Mz_OnGUIManager.Extend_heightScale, 40, 400 * Mz_OnGUIManager.Extend_heightScale, 40);
-		drawNoticeMessageContentRect = new Rect(190 * Mz_OnGUIManager.Extend_heightScale, 90, 500 * Mz_OnGUIManager.Extend_heightScale, 300);
+		drawNoticeMessageContentRect = new Rect(250 * Mz_OnGUIManager.Extend_heightScale, 90, 650 * Mz_OnGUIManager.Extend_heightScale, 400);
 		completeSessionMessage_Rect = new Rect(190 * Mz_OnGUIManager.Extend_heightScale, 440, 200 * Mz_OnGUIManager.Extend_heightScale, 40);
 		
         if (NoticeButton_style == null) {

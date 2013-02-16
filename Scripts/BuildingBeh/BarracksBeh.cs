@@ -221,7 +221,7 @@ public class BarracksBeh : BuildingBeh
 		
 		base.OnTouchDown ();
 		
-        sceneController.taskManager.currentTopSidebarState = TaskManager.TopSidebarState.show_military;
+        sceneController.taskManager.currentRightSidebarState = TaskManager.RightSidebarState.show_military;
 	}
 	
 	protected override void CreateWindow ()

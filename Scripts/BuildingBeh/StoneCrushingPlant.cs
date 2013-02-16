@@ -61,7 +61,7 @@ public class StoneCrushingPlant : BuildingBeh {
 
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
-        if (this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
+        if (this.currentBuildingStatus == BuildingBeh.BuildingStatus.idle) {
 			StoreHouse.Add_sumOfStone(this.productionRate[this.Level]);
         }
     }

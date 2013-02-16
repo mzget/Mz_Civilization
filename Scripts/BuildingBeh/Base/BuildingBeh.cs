@@ -8,6 +8,7 @@ public class BuildingBeh : TilebaseObjBeh {
 	
     public const string BuildingIcons_TextureResourcePath = "Textures/Building_Icons/";
 	public const int MAX_LEVEL = 10;
+	
     //<!-- Building Icon.
     protected Texture2D buildingIcon_Texture;
 
@@ -23,8 +24,9 @@ public class BuildingBeh : TilebaseObjBeh {
     public int Level { get { return level; } set { level = value; } }
     private bool _IsShowInterface = false;
 	public enum BuildingStatus { 
-        none = 0, 
-        onBuildingProcess = 1, 
+        none = 0,
+		idle, 
+        onBuildingProcess, 
         buildingComplete, 
         onUpgradeProcess, 
         OnDestructionProcess, 
@@ -56,7 +58,19 @@ public class BuildingBeh : TilebaseObjBeh {
     public static BarracksBeh Barrack_Instance;
 
     #endregion
-    
+
+    #region <!-- Events handles.
+
+    public event EventHandler CreateConstructionEvent;
+	protected virtual void OnCreateConstructionEvent (EventArgs e)
+	{
+		EventHandler handler = this.CreateConstructionEvent;
+		if (handler != null)
+			handler (this, e);
+	}
+
+    #endregion
+
     //<!-- Font, Skin, Styles.
     public Font ubuntu_font;
     public GUISkin standard_Skin;
@@ -82,26 +96,40 @@ public class BuildingBeh : TilebaseObjBeh {
     protected Rect currentJob_Rect;
     protected Rect nextJob_Rect;
     protected Rect upgrade_Button_Rect = new Rect(25, 190, 120, 48);
-    protected Rect destruction_Button_Rect = new Rect(25, 260, 120, 32);
+    protected Rect destruction_Button_Rect = new Rect(25, 260, 120, 48);
 	protected string notificationText = string.Empty;
 	protected DateTime startingContruction_datetime;
 
     public static bool CheckingOnBuildingList() {
-        if (onBuilding_Obj.Count < 2)
+        if (BuildingBeh.onBuilding_Obj.Count < 2)
             return true;
         else
             return false;
     }
-    public bool CheckingCanUpgradeLevel()
+
+    public bool CheckingCanUpgradeLevel ()
 	{
-        if (this.currentBuildingStatus == BuildingStatus.none) {
-            if (onBuilding_Obj.Count < 2)
-                return true;
-            else
-                return false;
-        }
-        else 
-			return false;
+		if (this != TownCenter) {
+			if (this.level < TownCenter.MAX_CanUpgradeLevel) {
+				if (this.currentBuildingStatus == BuildingStatus.idle) {
+					if (BuildingBeh.onBuilding_Obj.Count < 2)
+						return true;
+					else
+						return false;
+				} else
+					return false;
+			}
+			else return false;
+		}
+		else {
+			if (this.currentBuildingStatus == BuildingStatus.idle) {
+					if (BuildingBeh.onBuilding_Obj.Count < 2)
+							return true;
+					else
+							return false;
+			} else
+					return false;
+		}
     }
 	
 	#region <!-- Checking Resource pre construction Event.
@@ -282,7 +310,7 @@ public class BuildingBeh : TilebaseObjBeh {
         if (processBarBg_obj == null)
         {
             buildingStatus_textmesh.gameObject.SetActive(true);
-            processBarBg_obj = Instantiate(Resources.Load(TaskManager.PathOfGUISprite + "Processbar", typeof(GameObject))) as GameObject;
+            processBarBg_obj = Instantiate(Resources.Load(TaskManager.PATH_OF_GUI_SPRITE + "Processbar", typeof(GameObject))) as GameObject;
             processBarBg_obj.transform.parent = processbar_Obj_parent.transform;
             processBarBg_obj.transform.localPosition = Vector3.zero;
 
@@ -363,8 +391,8 @@ public class BuildingBeh : TilebaseObjBeh {
         buildingStatus_textmesh.text = this.Level.ToString();
         onBuilding_Obj.Remove(obj);
 
-        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.none) {
-            this.currentBuildingStatus = BuildingBeh.BuildingStatus.none;
+        if (this.currentBuildingStatus != BuildingBeh.BuildingStatus.idle) {
+            this.currentBuildingStatus = BuildingBeh.BuildingStatus.idle;
             notificationText = string.Empty;
         }
 	}
@@ -373,7 +401,7 @@ public class BuildingBeh : TilebaseObjBeh {
 	
 	protected bool CheckingCanDestructionBuilding()
 	{
-		if(this.currentBuildingStatus == BuildingStatus.none) {
+		if(this.currentBuildingStatus == BuildingStatus.idle) {
 			if(onBuilding_Obj == null)
 				return true;
 			else
@@ -409,7 +437,7 @@ public class BuildingBeh : TilebaseObjBeh {
 
 		this.CalculateNumberOfEmployed(this.level);
 		onBuilding_Obj.Remove(this);
-		currentBuildingStatus = BuildingStatus.none;
+		currentBuildingStatus = BuildingStatus.idle;
     }
 	
     /// <summary>
@@ -454,7 +482,7 @@ public class BuildingBeh : TilebaseObjBeh {
 	/// </summary>
     protected override void OnTouchDown()
     {
-		if(TaskManager.IsShowInteruptGUI == true)
+		if(TaskManager.IsShowInteruptGUI == true || currentBuildingStatus == BuildingStatus.none)
 			return;
 		
         this._IsShowInterface = true;
@@ -556,10 +584,10 @@ public class BuildingBeh : TilebaseObjBeh {
 				
                 if (this._isDropObject) {
                     if(canCreateBuilding) {
-                        this.transform.position = Tile.GetAreaPosition(newarea);
-                        this.originalPosition = this.transform.position;
 						constructionArea = newarea;
                         Tile.SetNoEmptyArea(newarea);
+                        this.transform.position = Tile.GetAreaPosition(newarea);
+                        this.originalPosition = this.transform.position;
                     }
                     else {
                         this.transform.position = this.originalPosition;
@@ -605,4 +633,14 @@ public class BuildingBeh : TilebaseObjBeh {
 
         Debug.DrawRay(cursorRay.origin, Vector3.forward * 100f, Color.red);
     }
+
+	public void CreateBuilding ()
+	{
+		this.OnCreateConstructionEvent(EventArgs.Empty);
+	}
+
+	public void Destroybuilding ()
+	{
+		base.OnDestroyObject_event(EventArgs.Empty);
+	}
 }

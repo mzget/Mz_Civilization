@@ -13,9 +13,10 @@ public class BuildingIconBeh : TilebaseObjBeh {
 	
 	protected override void OnTouchDown ()
 	{
-		base.OnTouchDown ();
-		
 		TaskManager.IsShowInteruptGUI = true;
+		sceneController.taskManager.MoveOut_RightSidebarGUI();
+			
+		base.OnTouchDown ();
 	}
 	
 	protected override void OnTouchOver ()
@@ -119,4 +120,6 @@ public class BuildingIconBeh : TilebaseObjBeh {
 
         Debug.DrawRay(cursorRay.origin, Vector3.forward * 100f, Color.red);
 	}
+	
+	
 }

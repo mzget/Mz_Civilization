@@ -34,9 +34,8 @@ public class TownCenter : BuildingBeh {
         new GameMaterialDatabase() {Food = 40960, Wood = 61440, Gold = 30720, Employee = 0},
 	};
 
-    // Technology Point.
-    private int[] increaseBuildingSpeed_arr = new int[10] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 10, };
-    private int currentBuildingTimeAcceleration;
+    //<@-- Building ability.
+	public static int MAX_CanUpgradeLevel = 1;
 	
 	protected override void Awake ()
 	{
@@ -56,6 +55,7 @@ public class TownCenter : BuildingBeh {
 	protected override void Start ()
 	{
 		base.Start ();
+		
 		StartCoroutine(this.WaitForStartingComplete());
 	}
 
@@ -68,6 +68,9 @@ public class TownCenter : BuildingBeh {
         constructionArea = new TileArea() { x = 15, y = 15, numSlotWidth = 3, numSlotHeight = 3 };
         this.transform.position = Tile.GetAreaPosition(constructionArea);
         Tile.SetNoEmptyArea(constructionArea);
+		
+		currentBuildingStatus = BuildingBeh.BuildingStatus.idle;
+		TownCenter.MAX_CanUpgradeLevel = this.Level;
 
         InitializeTexturesResource();
 
@@ -93,16 +96,13 @@ public class TownCenter : BuildingBeh {
 	protected override void BuildingProcessComplete (BuildingBeh obj)
 	{
 		base.BuildingProcessComplete(obj);
+		
+		TownCenter.MAX_CanUpgradeLevel += 1;
 
         if (BuildingBeh.TownCenter.Level == 3) {
             if(QuestSystemManager.arr_isMissionComplete[6] == false)
                 sceneController.taskManager.questManager.MissionComplete(6);
         }
-	}
-
-	protected override void DecreaseBuildingLevel ()
-	{
-		base.DecreaseBuildingLevel ();
 	}
 	
 	protected override void Update ()
@@ -138,8 +138,7 @@ public class TownCenter : BuildingBeh {
                     //<!-- Current Production rate.
                     if (base.Level < 10)
                     {
-                        GUI.Label(currentJob_Rect, "Current Job : " + this.currentBuildingTimeAcceleration, base.job_style);
-                        GUI.Label(nextJob_Rect, "Next level: " + this.increaseBuildingSpeed_arr[base.Level], base.job_style);
+						GUI.Label(base.currentJob_Rect, "Max can upgrade all buildings level : " + TownCenter.MAX_CanUpgradeLevel, base.job_style);
 
                         //<!-- Requirements Resource.
                         GUI.BeginGroup(update_requireResource_Rect);
@@ -159,7 +158,7 @@ public class TownCenter : BuildingBeh {
                     }
                     else
                     {
-                        GUI.Label(currentJob_Rect, "Current Max Capacity : " + this.currentBuildingTimeAcceleration, base.job_style);
+                        GUI.Label(currentJob_Rect, "Max can upgrade level : " + TownCenter.MAX_CanUpgradeLevel, base.job_style);
                         GUI.Label(nextJob_Rect, "Max upgrade building.", base.job_style);
                     }
                 }
@@ -188,18 +187,6 @@ public class TownCenter : BuildingBeh {
 
                 #endregion
 
-                #region <!--- Destruction button.
-
-                GUI.enabled = false;
-                if (GUI.Button(destruction_Button_Rect, new GUIContent("Destruct")))
-                {
-//                    this.currentBuildingStatus = BuildingStatus.OnDestructionProcess;
-//                    this.DestructionBuilding();
-//                    base.CloseGUIWindow();
-                }
-                GUI.enabled = true;
-
-                #endregion
             }
             GUI.EndGroup();
         }

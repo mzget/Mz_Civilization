@@ -113,7 +113,7 @@ public class Smelter : BuildingBeh {
 	
     void HaveResourceCycle_Event(object sender, System.EventArgs e)
     {
-        if (this.currentBuildingStatus == BuildingBeh.BuildingStatus.none) {
+        if (this.currentBuildingStatus == BuildingBeh.BuildingStatus.idle) {
             StoreHouse.Add_sumOfCopper(this.productionRate[this.Level]);
         }
     }

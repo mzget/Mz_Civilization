@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class TaskManager : MonoBehaviour 
 {
 	public const string PATH_OF_GUISKIN = "GUISkins/";
-	public const string PathOfGUISprite = "UI_Sprites/";
+	public const string PATH_OF_GUI_SPRITE = "UI_Sprites/";
     public const string PathOfMainGUI = "Textures/MainGUI/";
     public const string PathOfGameItemTextures = "Textures/GameItems/";
     public const string Advisor_ResourcePath = "Textures/Advisors/";
@@ -22,24 +22,27 @@ public class TaskManager : MonoBehaviour
 
 	#region <@-- Right side bar data fields.
 
-    public enum TopSidebarState { 
+    public enum RightSidebarState { 
         none = 0, 
-        show_domination, 
-        show_agriculture, 
-        show_industry, 
-        show_commerce, 
+        //show_domination, 
+        //show_agriculture, 
+        //show_industry, 
+        //show_commerce, 
+        show_utility,
+		show_economy,
         show_military, 
-        show_ForeignTab, 
+        //show_ForeignTab, 
         show_setting, 
     };
-    public TopSidebarState currentTopSidebarState = TopSidebarState.none;	
+    public RightSidebarState currentRightSidebarState = RightSidebarState.none;	
 	private bool _showBaseRightSideBarGUIState = false;
 	public GameObject baseSpriteRightSideBar_obj;
 	private Hashtable moveInRightSideBarGUI_hash;
 	private Hashtable moveOutRightSideBarGUI_hash;
-	private Vector3 rightSide_BaseSpritePos_movein = new Vector3(-150f, -384f, 50f);
-	private Vector3 rightSide_BaseSpritePos_moveout = new Vector3(148f, -384f, 50f);
+	private Vector3 rightSide_BaseSpritePos_movein = new Vector3(-150f, -450f, 50f);
+	private Vector3 rightSide_BaseSpritePos_moveout = new Vector3(148f, -450f, 50f);
 
+	public GameObject close_button;
 	public GameObject menubarIcon_button;
 	public GameObject utility_icon_button;
 	public GameObject economy_icon_button;
@@ -92,6 +95,8 @@ public class TaskManager : MonoBehaviour
     public Texture2D advisor_villageElder;
 	public Texture2D messageFormSystem_icon;
 	internal Texture2D newQuestAdvisor_img;
+	internal Texture2D face_femaleNpc;
+	internal Texture2D face_femaleNpc2;
 	internal Texture2D completeQuestAdvisor_img;
     //@!-- Troops units.
     public Texture2D spearmanUnitIcon;
@@ -104,10 +109,11 @@ public class TaskManager : MonoBehaviour
     public Texture2D PersianIcon_Texture;
     public Texture2D CelticIcon_Texture;
 
-	//<@!-- Rectangles.
+	//<@!-- Top side bar.
     protected Rect header_group_rect;
     protected Rect header_button_rect;
 	Rect first_rect, second_rect, third_rect, fourth_rect, fifth_rect, sixth_rect;
+	
     public Rect baseSidebarGroup_rect;
     Rect sidebarButtonGroup_rect = new Rect(0, 0, 50, Main.FixedGameHeight);
     Rect sidebarContentGroup_rect;
@@ -174,8 +180,8 @@ public class TaskManager : MonoBehaviour
         foreignActivityStyle = new GUIStyle(taskbarUI_Skin.box);
         foreignActivityStyle.alignment = TextAnchor.UpperCenter;
 				
-        header_group_rect = new Rect(0, 0, (Screen.width/6) * 4, 50);
-		header_button_rect = new Rect(0, 0, header_group_rect.width / 5, 50);
+        header_group_rect = new Rect(0, 0, Screen.width, 50);
+		header_button_rect = new Rect(0, 0, header_group_rect.width / 6, 50);
 
         first_rect = new Rect(0, header_button_rect.y, header_button_rect.width, header_button_rect.height);
         second_rect = new Rect((header_button_rect.width) * 1, header_button_rect.y, header_button_rect.width, header_button_rect.height);
@@ -230,7 +236,9 @@ public class TaskManager : MonoBehaviour
         marketTradingIcon = Resources.Load(PathOfMainGUI + "Market", typeof(Texture2D)) as Texture2D;
 
 		advisor_villageElder = Resources.Load(Advisor_ResourcePath + "VillageElder_idle", typeof(Texture2D)) as Texture2D;
-		newQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_idle", typeof(Texture2D)) as Texture2D;
+		newQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "Female_npc", typeof(Texture2D)) as Texture2D;
+		face_femaleNpc = Resources.Load(TaskManager.Advisor_ResourcePath + "Female_npc_face", typeof(Texture2D)) as Texture2D;
+		face_femaleNpc2 = Resources.Load(TaskManager.Advisor_ResourcePath + "Female_npc_face2", typeof(Texture2D)) as Texture2D;
 		completeQuestAdvisor_img = Resources.Load(TaskManager.Advisor_ResourcePath + "VillageElder_idle", typeof(Texture2D)) as Texture2D;
 
 		messageFormSystem_icon = Resources.Load(PathOfMainGUI + "MessageIcon", typeof(Texture2D)) as Texture2D;
@@ -244,12 +252,16 @@ public class TaskManager : MonoBehaviour
 	public void Handle_OnInput(string nameInput)
 	{
 		if(nameInput == menubarIcon_button.name) {
-            if (TaskManager.IsShowInteruptGUI == false)
-                MoveRightSideBarGUI();
-            else
+//            if (TaskManager.IsShowInteruptGUI == false)
+//                MoveRightSideBarGUI();
+//            else
                 return;
 		}
-		else if(nameInput == utility_icon_button.name) {
+        else if (nameInput == utility_icon_button.name)
+        {
+            this.MoveIn_RightSidebarGUI();
+            currentRightSidebarState = RightSidebarState.show_utility;
+
 			this.ActivateBuildingIconArrObject(false);
 			for (int i = 0; i < utilityIconData.nameOfBuildingIcon.Length; i++) {				
 				buildingsIcon_sprite[i].gameObject.SetActive(true);
@@ -260,7 +272,11 @@ public class TaskManager : MonoBehaviour
 				buildingIcon_beh[i].constructionArea = utilityIconData.areaOfBuildings[i];
 			}
 		}
-		else if(nameInput == economy_icon_button.name) {
+        else if (nameInput == economy_icon_button.name)
+        {
+            this.MoveIn_RightSidebarGUI();
+			this.currentRightSidebarState = RightSidebarState.show_economy;
+
 			this.ActivateBuildingIconArrObject(false);
 			for (int i = 0; i < economyIconData.nameOfBuildingIcon.Length; i++) {				
 				buildingsIcon_sprite[i].gameObject.SetActive(true);
@@ -271,7 +287,11 @@ public class TaskManager : MonoBehaviour
 				buildingIcon_beh[i].constructionArea = economyIconData.areaOfBuildings[i];
 			}
 		}
-        else if(nameInput == military_icon_button.name) {
+        else if (nameInput == military_icon_button.name)
+        {
+            this.MoveIn_RightSidebarGUI();
+			this.currentRightSidebarState = RightSidebarState.show_military;
+
             this.ActivateBuildingIconArrObject(false);
             for (int i = 0; i < militaryIconData.nameOfBuildingIcon.Length; i++)
             {
@@ -283,14 +303,27 @@ public class TaskManager : MonoBehaviour
 				buildingIcon_beh[i].constructionArea = militaryIconData.areaOfBuildings[i];
             }
         }
-		else if(nameInput == setting_icon_button.name) {
+        else if (nameInput == setting_icon_button.name)
+        {
+            this.MoveIn_RightSidebarGUI();
+			this.currentRightSidebarState = RightSidebarState.show_setting;
+
 			this.ActivateBuildingIconArrObject(false);
 			buildingsIcon_sprite[0].gameObject.SetActive(true);
 			buildingsIcon_sprite[0].spriteId = buildingsIcon_sprite[0].GetSpriteIdByName("ExitButton");
 			buildingsIcon_sprite[0].gameObject.name = "ExitButton";
 		}
+		else if(nameInput == close_button.name) {
+			this.MoveOut_RightSidebarGUI();
+		}
 		else if(nameInput == "ExitButton") {
 			this.GoToMainMenu();
+		}
+		else if(nameInput == "Yes_button") {
+			this.UserConfirmConstructionCommand();
+		}
+		else if(nameInput == "No_button") {
+			this.UserCancelConstructionCommand();
 		}
 	}
 
@@ -342,20 +375,21 @@ public class TaskManager : MonoBehaviour
         this.DrawTopSidebarGUI();
 //        this.DrawRightSidebar ();
         this.DrawLeftSideBar();
+		
+        //GUI.DrawTexture(new Rect(0, Main.FixedGameHeight - 512, 425 * Mz_OnGUIManager.Extend_heightScale, 512), face_femaleNpc);
+        //GUI.DrawTexture(new Rect(Screen.width - (385 * Mz_OnGUIManager.Extend_heightScale), Main.FixedGameHeight - 600, 385 * Mz_OnGUIManager.Extend_heightScale, 600), face_femaleNpc2);
     }
 
     private void DrawTopSidebarGUI()
     {
-        if(currentTopSidebarState == TopSidebarState.none) {
-	        
-        }
 		GUI.BeginGroup(header_group_rect, "", taskbarUI_Skin.box);
         {
             GUI.Box(first_rect, new GUIContent(StoreHouse.SumOfFood + "/" + StoreHouse.SumOfMaxCapacity, food_icon), taskbarUI_Skin.button);
             GUI.Box(second_rect, new GUIContent(StoreHouse.SumOfWood + "/" + StoreHouse.SumOfMaxCapacity, wood_icon), taskbarUI_Skin.button);
             GUI.Box(third_rect, new GUIContent(StoreHouse.SumOfStone + "/" + StoreHouse.SumOfMaxCapacity, stone_icon), taskbarUI_Skin.button);
             GUI.Box(fourth_rect, new GUIContent(StoreHouse.SumOfCopper + "/" + StoreHouse.SumOfMaxCapacity, copper_icon), taskbarUI_Skin.button);
-            GUI.Box(fifth_rect, new GUIContent(HouseBeh.SumOfPopulation.ToString(), employee_icon), taskbarUI_Skin.button);
+			GUI.Box(fifth_rect, new GUIContent(HouseBeh.SumOfEmployee + "/"+ HouseBeh.SumOfPopulation, employee_icon), taskbarUI_Skin.button);
+            GUI.Box(sixth_rect, new GUIContent(StoreHouse.sumOfGold.ToString(), gold_icon), taskbarUI_Skin.button);
         }
         GUI.EndGroup();
     }
@@ -453,8 +487,9 @@ public class TaskManager : MonoBehaviour
         TaskManager.IsShowInteruptGUI = false;
     }
 
-    #region <@-- Call by const string method name HookUp.
-
+	/// <summary>
+	/// <@-- Call by const string method name HookUp.
+	/// </summary>
     private void DisplayMessageActivity()
     {
         messageManager.InitializeMessageMechanism();
@@ -472,7 +507,6 @@ public class TaskManager : MonoBehaviour
         foreignManager.currentForeignTabStatus = ForeignManager.ForeignTabStatus.DrawActivity;
     }
 
-    #endregion
 
     #endregion
 
@@ -770,4 +804,36 @@ public class TaskManager : MonoBehaviour
     {
         Debug.LogWarning("Cannot create building, Your construction queue is full.");
     }
+
+	private GameObject confirmationWindows;
+
+	public void CreateConfirmationWindows (Vector3 p_position)
+	{
+		if(confirmationWindows == null) {
+			confirmationWindows = Instantiate(Resources.Load(PATH_OF_GUI_SPRITE + "ConfirmationWindows", typeof(GameObject))) as GameObject;
+			confirmationWindows.transform.position = p_position + Vector3.back * 10;
+			confirmationWindows.transform.parent = stageManager.currentConstructionCommand.transform;
+			
+			TaskManager.IsShowInteruptGUI = true;
+		}
+		else {
+			Debug.LogError(confirmationWindows);
+		}
+	}
+
+	void UserConfirmConstructionCommand ()
+	{
+		Destroy(confirmationWindows);
+		TaskManager.IsShowInteruptGUI = false;
+		
+		stageManager.currentConstructionCommand.CreateBuilding();
+	}
+
+	void UserCancelConstructionCommand ()
+	{
+		Destroy(confirmationWindows);
+		TaskManager.IsShowInteruptGUI = false;
+		
+		stageManager.currentConstructionCommand.Destroybuilding();
+	}
 }

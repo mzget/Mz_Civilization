@@ -110,15 +110,7 @@ public class Mz_BaseScene : MonoBehaviour {
 	
     // Update is called once per frame
     protected virtual void Update()
-    {
-//        if (TaskManager.IsShowInteruptGUI == false)
-//        {
-//            if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
-//                worldSpaceInput.ImplementTouchInput(); Debug.Log(worldSpaceInput);
-//            if (Application.isWebPlayer || Application.isEditor)
-//                worldSpaceInput.ImplementMouseInput(); Debug.Log(worldSpaceInput);
-//        }
-		
+    {		
         if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer) {
            worldSpaceInput.ImplementTouchInput();
 			if(gui_camera_obj)

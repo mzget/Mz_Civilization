@@ -54,7 +54,6 @@ public class HouseBeh : BuildingBeh {
     //<!--- Awake --->
     protected override void Awake()
     {
-        base.sprite = this.gameObject.GetComponent<tk2dSprite>();
         this.name = BuildingName;
         base.buildingType = BuildingType.general;
         base.buildingTimeData = new BuildingsTimeData(buildingType);
@@ -180,7 +179,7 @@ public class HouseBeh : BuildingBeh {
 		
 		base.OnTouchDown ();
 		
-		sceneController.taskManager.currentTopSidebarState = TaskManager.TopSidebarState.show_domination;
+//		sceneController.taskManager.currentRightSidebarState = TaskManager.RightSidebarState.show_domination;
 	}
 	
 	protected override void Update ()
