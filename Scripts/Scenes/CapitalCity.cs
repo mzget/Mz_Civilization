@@ -19,6 +19,7 @@ public class CapitalCity : Mz_BaseScene {
 	public Mz_SaveData saveManager;
     public List<GameMaterial> gameMaterials = new List<GameMaterial>();
     // Map and building area.
+    public Tile[,] tiles_list = new Tile[IsometricEngine.x + 1, IsometricEngine.y + 1];
     public static bool[] arr_buildingAreaState = new bool[24];
     //<!--- Private Data Fields.
     private Vector2 scrollPosition = Vector2.zero;
@@ -65,25 +66,26 @@ public class CapitalCity : Mz_BaseScene {
     protected override void Start()
     {
         base.Start();
+
         StartCoroutine(this.Initializing());
     }
 
 	private IEnumerator Initializing ()
 	{		
-        taskManager = this.gameObject.GetComponent<TaskManager>();
-        saveManager = new Mz_SaveData();
+        //this.GenerateBackground();
+        //this.CreateBuildingArea();
 
         yield return StartCoroutine(this.InitializeIsoMetricEngine());
 
-        //this.GenerateBackground();
-        //this.CreateBuildingArea();
-		this.initCenterCamera();
+        taskManager = this.gameObject.GetComponent<TaskManager>();
+        saveManager = new Mz_SaveData();
+
 		this.PrepareBuildingPrefabsFromResource();
 		this.Load_AmountOfBuildingInstance();
-		this.LoadingDataStorage();		
-
-        yield return null;
-
+		this.LoadingDataStorage();
+		this.initCenterCamera();
+		
+		
         StartCoroutine(this.InitializeAudio());
         StartCoroutine(this.CreateGameMaterials());
         StartCoroutine(this.InitializeAICities());
@@ -122,11 +124,7 @@ public class CapitalCity : Mz_BaseScene {
 		yield return StartCoroutine(isomatricEngine.CreateTilemap());
 		this.InitailizeTerrainManager();
 	}
-	
-	void initCenterCamera() {	
-		Camera.main.transform.position = new Vector3(isomatricEngine.map_width/2, 0, Camera.main.transform.position.z);
-	}
-	
+
 	private void InitailizeTerrainManager ()
 	{
 		GameObject terrainManager_obj = Instantiate(terrainManager_prefab) as GameObject;
@@ -269,7 +267,7 @@ public class CapitalCity : Mz_BaseScene {
 		amount_Farm_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_farm_instance);
 		amount_Sawmill_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.amount_sawmill_instance);
 		amount_MillStone_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_StoneCrushingPlant);
-		amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_AMOUNT_OF_SMELTER);
+		amount_Smelter_Instance = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + ":" + Mz_SaveData.amount_smelter_instance);
         //<!-- Economy --->>
 		numberOfStoreHouseInstances = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.numberOfStorehouseInstance);
 		marketInstance = PlayerPrefsX.GetBool(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_MarketInstance);
@@ -372,26 +370,6 @@ public class CapitalCity : Mz_BaseScene {
 
         #endregion
 
-        #region <!--- Smelter Data.
-
-        if (amount_Smelter_Instance != 0)
-        {
-            for (int i = 0; i < amount_Smelter_Instance; i++)
-            {
-                int Level = PlayerPrefs.GetInt(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_SMELTER_LEVEL_ + i);
-                string tempArea = PlayerPrefs.GetString(Mz_SaveData.SaveSlot + Mz_SaveData.KEY_SMELTER_AREA_ + i);
-
-                // Turn the JSON into C# objects.
-                TileArea area = JsonReader.Deserialize<TileArea>(tempArea);
-
-                GameObject new_smelter = Instantiate(smelter_prefab) as GameObject;
-                Smelter smelter = new_smelter.GetComponent<Smelter>();
-                smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, area, Level);
-            }
-        }
-
-        #endregion
-
         #region <!-- StoreHouse Data.
 
         if (numberOfStoreHouseInstances != 0) {
@@ -443,6 +421,25 @@ public class CapitalCity : Mz_BaseScene {
         
         #endregion
 
+/*
+        #region <!--- Smelter Data.
+
+        if (amount_Smelter_Instance != 0)
+        {
+            for (int i = 0; i < amount_Smelter_Instance; i++)
+            {
+				int Level = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.smelter_level_ + i);
+				int Position = PlayerPrefs.GetInt(Mz_StorageManagement.SaveSlot + ":" + Mz_SaveData.smelter_position_ + i);
+
+                GameObject new_smelter = Instantiate(smelter_prefab) as GameObject;
+                Smelter smelter = new_smelter.GetComponent<Smelter>();
+                smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.none, Position, Level);
+            }
+        }
+
+        #endregion
+*/
+
         Debug.Log("StageManager.LoadingDataStorage");
     }
 
@@ -456,17 +453,13 @@ public class CapitalCity : Mz_BaseScene {
             bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() && 
                 buildingBeh.CheckingEnoughUpgradeResource(HouseBeh.RequireResource[0])) ? true:false;
 		
-            if(_canCreateBuilding) {
+            if(true) {
 			    GameMaterialDatabase.UsedResource(HouseBeh.RequireResource[0]);
 
                 GameObject temp_House = Instantiate(house_prefab, position, Quaternion.identity) as GameObject;
                 HouseBeh housebeh = temp_House.GetComponent<HouseBeh>();
                 housebeh.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea , 0);
                 housebeh.OnBuildingProcess(housebeh);
-            }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
             }
 		}
 		else if(buildingName == UtilityIconData.ACADEMY_ICON_NAME) {   
@@ -475,7 +468,7 @@ public class CapitalCity : Mz_BaseScene {
             && BuildingBeh.TownCenter.Level >= 5
             && BuildingBeh.AcademyInstance == null) ? true : false;
 		
-			if(_canCreateBuilding) {
+			if(true) {
                 GameMaterialDatabase.UsedResource(AcademyBeh.RequireResource[0]);
 
                 GameObject temp_Academy = Instantiate(academy_prefab, position, Quaternion.identity) as GameObject;
@@ -483,37 +476,25 @@ public class CapitalCity : Mz_BaseScene {
                 academy.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
                 academy.OnBuildingProcess(academy);
             }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
-            }
 		}
 
 		#endregion
 		
 		#region <@-- Economy building section..
 		
-		else if(buildingName == EconomyIconData.FARM_ICON_NAME) {	        
-			bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
-    		buildingBeh.CheckingEnoughUpgradeResource(Farm.RequireResource[0])) ? true : false;
-	        if (_canCreateBuilding) {
-			    GameMaterialDatabase.UsedResource(Farm.RequireResource[0]);
-			
-			    GameObject temp = Instantiate(farm_prefab, position, Quaternion.identity) as GameObject;				
-			    Farm farm = temp.GetComponent<Farm>();
-			    farm.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
-			    farm.OnBuildingProcess(farm);
-            }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
-            }
+		else if(buildingName == EconomyIconData.FARM_ICON_NAME) {
+		    GameMaterialDatabase.UsedResource(Farm.RequireResource[0]);
+		
+		    GameObject temp = Instantiate(farm_prefab, position, Quaternion.identity) as GameObject;				
+		    Farm farm = temp.GetComponent<Farm>();
+		    farm.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
+		    farm.OnBuildingProcess(farm);
 		}
 		else if(buildingName == EconomyIconData.SAWMILL_ICON_NAME) {
 			bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
 				buildingBeh.CheckingEnoughUpgradeResource(Sawmill.RequireResource[0])) ? true : false;
 
-			if(_canCreateBuilding) {
+			if(true) {
 	            audioEffect.PlayOnecSound(audioEffect.buttonDown_Clip);
 	
 	            GameMaterialDatabase.UsedResource(Sawmill.RequireResource[0]);
@@ -522,15 +503,11 @@ public class CapitalCity : Mz_BaseScene {
 	            Sawmill sawmill = new_sawmill.GetComponent<Sawmill>();
 	            sawmill.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
 	            sawmill.OnBuildingProcess(sawmill);
-            }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
-            }
+	        }
 		}
 		else if(buildingName == EconomyIconData.STONECRUSHINGPLANT_ICON_NAME) {
             bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
-                buildingBeh.CheckingEnoughUpgradeResource(StoneCrushingPlant.RequireResource[0])) ? true : false;
+         buildingBeh.CheckingEnoughUpgradeResource(StoneCrushingPlant.RequireResource[0])) ? true : false;
 
             /// Have to research stonecutter before building.
             if(_canCreateBuilding) {
@@ -543,35 +520,15 @@ public class CapitalCity : Mz_BaseScene {
                 stoneCrushing.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
                 stoneCrushing.OnBuildingProcess(stoneCrushing);
             }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
-            }
 		}
 		else if(buildingName == EconomyIconData.SMELTER_ICON_NAME) {
-            bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
-            buildingBeh.CheckingEnoughUpgradeResource(Smelter.RequireResource[0]) &&
-            BuildingBeh.TownCenter.Level >= 5) ? true : false;
-            if (_canCreateBuilding) {
-                this.audioEffect.PlayOnecSound(this.audioEffect.buttonDown_Clip);
-
-                GameMaterialDatabase.UsedResource(Smelter.RequireResource[0]);
-
-                GameObject new_smelter = Instantiate(this.smelter_prefab) as GameObject;
-                Smelter smelter = new_smelter.GetComponent<Smelter>();
-                smelter.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
-                smelter.OnBuildingProcess(smelter);
-            }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
-            }
+			
 		}
 		else if(buildingName == EconomyIconData.STOREHOUSE_ICON_NAME) {
             bool _canCreateBuilding = (BuildingBeh.CheckingOnBuildingList() &&
                 buildingBeh.CheckingEnoughUpgradeResource(StoreHouse.RequireResource[0])) ? true : false;
             
-            if(_canCreateBuilding) {
+            if(true) {
                 this.audioEffect.PlayOnecSound(this.audioEffect.buttonDown_Clip);
 
                 GameMaterialDatabase.UsedResource(StoreHouse.RequireResource[0]);
@@ -580,10 +537,6 @@ public class CapitalCity : Mz_BaseScene {
                 StoreHouse storeHouse = new_storehouse.GetComponent<StoreHouse>();
                 storeHouse.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
                 storeHouse.OnBuildingProcess(storeHouse);
-            }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
             }
 		}
 		else if(buildingName == EconomyIconData.MARKET_ICON_NAME) {
@@ -601,10 +554,6 @@ public class CapitalCity : Mz_BaseScene {
                 market.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
                 market.OnBuildingProcess(market);
             }
-            else
-            {
-                taskManager.ShowWarnningCannotCreateBuilding();
-            }
 		}
 		
 		#endregion
@@ -612,15 +561,15 @@ public class CapitalCity : Mz_BaseScene {
 		#region <@-- Military buildings section.
 		
         else if(buildingName == MilitaryIconData.BARRACKS_ICON_NAME) {
-            bool _canCreateBuilding = false;
+            bool enableBuildingButton = false;
             if (BuildingBeh.CheckingOnBuildingList() &&
                 buildingBeh.CheckingEnoughUpgradeResource(BarracksBeh.RequireResource[0]) &&
                 BuildingBeh.Barrack_Instance == null && BuildingBeh.AcademyInstance != null)
             {
-                _canCreateBuilding = (BuildingBeh.AcademyInstance.Level >= 3) ? true : false;
+                enableBuildingButton = (BuildingBeh.AcademyInstance.Level >= 3) ? true : false;
             }
 
-            if (_canCreateBuilding) {
+            if (true) {
                 this.audioEffect.PlayOnecSound(this.audioEffect.buttonDown_Clip);
 
                 GameMaterialDatabase.UsedResource(BarracksBeh.RequireResource[0]);
@@ -629,9 +578,6 @@ public class CapitalCity : Mz_BaseScene {
                 BarracksBeh barracks = barracks_obj.GetComponent<BarracksBeh>();
                 barracks.InitializingBuildingBeh(BuildingBeh.BuildingStatus.onBuildingProcess, P_constructionArea, 0);
                 barracks.OnBuildingProcess(barracks);
-            }
-            else {
-                taskManager.ShowWarnningCannotCreateBuilding();
             }
         }
 		
@@ -642,7 +588,7 @@ public class CapitalCity : Mz_BaseScene {
     protected override void Update()
     {
         base.Update();
-		
+			
         dayTime += Time.deltaTime;
         if (dayTime >= 60) {
             dayTime = 0;
@@ -689,15 +635,14 @@ public class CapitalCity : Mz_BaseScene {
         if(TaskManager.IsShowInteruptGUI == false)
             base.ImplementTouchPostion();
 		
-        if (Camera.main.transform.position.x > isomatricEngine.map_width) //left
-            Camera.main.transform.position = new Vector3(isomatricEngine.map_width, Camera.main.transform.position.y, Camera.main.transform.position.z); 	//Vector3.left * Time.deltaTime;
-        if (Camera.main.transform.position.x < 0) //right
-            Camera.main.transform.position = new Vector3(0, Camera.main.transform.position.y, Camera.main.transform.position.z);	 //Vector3.right * Time.deltaTime;
-        if (Camera.main.transform.position.y > isomatricEngine.map_height/2)
-            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, isomatricEngine.map_height/2, Camera.main.transform.position.z);
-        if (Camera.main.transform.position.y < -isomatricEngine.map_height/2)
-            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, -isomatricEngine.map_height/2, Camera.main.transform.position.z);
-
+        if (Camera.main.transform.position.x > isomatricEngine.crop_right)
+            Camera.main.transform.position = new Vector3(isomatricEngine.crop_right, Camera.main.transform.position.y, Camera.main.transform.position.z); 	//Vector3.left * Time.deltaTime;
+        if (Camera.main.transform.position.x < isomatricEngine.crop_left)
+            Camera.main.transform.position = new Vector3(isomatricEngine.crop_left, Camera.main.transform.position.y, Camera.main.transform.position.z);	 //Vector3.right * Time.deltaTime;
+        if (Camera.main.transform.position.y > isomatricEngine.crop_up)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, isomatricEngine.crop_up, Camera.main.transform.position.z);
+        if (Camera.main.transform.position.y < isomatricEngine.crop_down)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, isomatricEngine.crop_down, Camera.main.transform.position.z);
 	}
 
     protected override void MovingCameraTransform()
@@ -762,7 +707,7 @@ public class CapitalCity : Mz_BaseScene {
         }
 		
 		if(objectTag == "GUI") {
-			taskManager.Handle_OnInput(nameInput);
+			taskManager.OnInput(nameInput);
 		}
     }
 
@@ -788,4 +733,8 @@ public class CapitalCity : Mz_BaseScene {
         list_AICity.Clear();
         list_AICity = null;
     }
+	void initCenterCamera()
+	{
+		Camera.main.transform.position = new Vector3(isomatricEngine.map_width/2, 0, Camera.main.transform.position.z);
+	}
 }
